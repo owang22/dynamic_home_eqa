@@ -486,3 +486,169 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+def extra_tables():
+    """Why the formula and the measurement disagree: is q monotone in the confidence, or inverted?"""
+    rows = load()
+    K = 4
+    print("=" * 112)
+    print("TABLE 10  the ordering profile: q-hat by confidence rank bin (bin 1 = least confident),")
+    print("  mean +- se over households. A THRESHOLD policy can only exploit a profile that RISES.")
+    print("=" * 112)
+    print(f"{'method':22s} {'window':13s} " + "".join(f"{'q bin'+str(i):>16}" for i in range(1, 5)))
+    for m in ORDER:
+        by_hh = rows[m]
+        for wn, days in WINDOWS.items():
+            cells = {h: cell(by_hh, h, days) for h in by_hh}
+            cells = {h: p for h, p in cells.items() if len(p) >= MIN_CELL}
+            prof = collections.defaultdict(list)
+            for h, p in cells.items():
+                bs = bins_by_rank(p, K)
+                if len(bs) != K:
+                    continue
+                for i, b in enumerate(bs):
+                    prof[i].append(sum(b) / len(b))
+            if not prof:
+                continue
+            line = ""
+            for i in range(K):
+                line += f"{fmt(*mse(prof[i])[:2]) if len(prof[i]) >= 3 else '  --  ':>16}"
+            print(f"{NAME[m]:22s} {wn:13s} " + line + f"   (n hh {len(prof[0])})")
+        print()
+
+    print("=" * 112)
+    print("TABLE 11  honest cross-fitted V per day, by what the decline rule is ALLOWED to do:")
+    print("  ANY  = decline any rank bin whose out-of-fold q < 1/2 (the optimum in the formula)")
+    print("  LOW  = decline only a bottom segment of the confidence order (a real threshold policy)")
+    print("  HIGH = decline only a top segment (the inverted policy)")
+    print("=" * 112)
+    print(f"{'method':22s} {'window':13s} {'ANY':>16} {'LOW (threshold)':>18} {'HIGH (inverted)':>18}")
+    SPL = 200
+    for m in ORDER:
+        by_hh = rows[m]
+        for wn, days in WINDOWS.items():
+            cells = {h: cell(by_hh, h, days) for h in by_hh}
+            cells = {h: p for h, p in cells.items() if len(p) >= MIN_CELL}
+            Q = {h: qpd(by_hh, h, days) for h in cells}
+            acc = {"any": [], "low": [], "high": []}
+            for h, pairs in cells.items():
+                rnd = random.Random(7 + hash(h) % 997)
+                per = {"any": [], "low": [], "high": []}
+                for _ in range(SPL):
+                    idx = list(range(len(pairs)))
+                    rnd.shuffle(idx)
+                    for ia, ib in ((idx[:len(idx) // 2], idx[len(idx) // 2:]),
+                                   (idx[len(idx) // 2:], idx[:len(idx) // 2])):
+                        A = [pairs[i] for i in ia]
+                        B = [pairs[i] for i in ib]
+                        if len(A) < 2 * MIN_BIN_CF or len(B) < MIN_BIN_CF:
+                            continue
+                        groups = collections.OrderedDict()
+                        for c, ok in sorted(A, key=lambda x: x[0]):
+                            groups.setdefault(c, []).append(ok)
+                        target = max(MIN_BIN_CF, math.ceil(len(A) / K))
+                        bs, cuts, cur, curc = [], [], [], []
+                        for c, oks in groups.items():
+                            cur.extend(oks)
+                            curc.append(c)
+                            if len(cur) >= target:
+                                bs.append(cur); cuts.append(curc[-1]); cur, curc = [], []
+                        if cur:
+                            if bs:
+                                bs[-1].extend(cur)
+                            else:
+                                bs.append(cur); cuts.append(curc[-1])
+                        cuts[-1] = float("inf")
+                        qs = [sum(b) / len(b) for b in bs]
+                        nb = len(bs)
+                        rules = {"any": [q < 0.5 for q in qs]}
+                        # best bottom segment and best top segment, both chosen on A only
+                        def seg_val(dec):
+                            return sum(len(b) * (1 - 2 * q) for b, q, d in zip(bs, qs, dec) if d)
+                        low = max(([True] * k + [False] * (nb - k) for k in range(nb + 1)), key=seg_val)
+                        high = max(([False] * (nb - k) + [True] * k for k in range(nb + 1)), key=seg_val)
+                        rules["low"], rules["high"] = low, high
+                        for kind, dec in rules.items():
+                            reg = 0.0
+                            for c, ok in B:
+                                j = next(i for i, cut in enumerate(cuts) if c <= cut)
+                                if j < len(dec) and dec[j]:
+                                    reg += (-1.0 if ok else 1.0)
+                            per[kind].append(reg / len(B))
+                for kind in acc:
+                    if per[kind]:
+                        acc[kind].append(st.mean(per[kind]) * Q[h])
+            if not acc["any"]:
+                continue
+            print(f"{NAME[m]:22s} {wn:13s} " + "".join(
+                f"{fmt(*mse(acc[k])[:2]):>{w}}" for k, w in (("any", 16), ("low", 18), ("high", 18)))
+                + f"   (n hh {len(acc['any'])})")
+        print()
+
+
+def floor_tables():
+    """The part of V that needs NO signal at all: if accuracy in the window is below 1/2, declining
+    EVERYTHING already has value (1-2*acc), because V = E[(1-2q)^+] >= (1-2E[q])^+ by Jensen."""
+    rows = load()
+    K = 4
+    print("=" * 118)
+    print("TABLE 12  V has a signal-free floor. V_const = (1 - 2*accuracy)^+ per day is what a method gets by")
+    print("  declining EVERY question; V_order = honest V - V_const is what the confidence ORDER adds.")
+    print("=" * 118)
+    print(f"{'method':22s} {'window':13s} {'accuracy %':>15} {'V_const/day':>16} {'V honest/day':>16} "
+          f"{'V_order/day':>16} {'F9 meas':>8}")
+    SPL = 200
+    for m in ORDER:
+        by_hh = rows[m]
+        for wn, days in WINDOWS.items():
+            cells = {h: cell(by_hh, h, days) for h in by_hh}
+            cells = {h: p for h, p in cells.items() if len(p) >= MIN_CELL}
+            Q = {h: qpd(by_hh, h, days) for h in cells}
+            konst, hon, order, accs = [], [], [], []
+            for h, pairs in cells.items():
+                acc = sum(1 for _, ok in pairs if ok) / len(pairs)
+                accs.append(100 * acc)
+                vc = max(0.0, 1 - 2 * acc) * Q[h]
+                rnd = random.Random(7 + hash(h) % 997)
+                per = []
+                for _ in range(SPL):
+                    idx = list(range(len(pairs)))
+                    rnd.shuffle(idx)
+                    for ia, ib in ((idx[:len(idx) // 2], idx[len(idx) // 2:]),
+                                   (idx[len(idx) // 2:], idx[:len(idx) // 2])):
+                        A = [pairs[i] for i in ia]
+                        B = [pairs[i] for i in ib]
+                        if len(A) < 2 * MIN_BIN_CF or len(B) < MIN_BIN_CF:
+                            continue
+                        groups = collections.OrderedDict()
+                        for c, ok in sorted(A, key=lambda x: x[0]):
+                            groups.setdefault(c, []).append(ok)
+                        target = max(MIN_BIN_CF, math.ceil(len(A) / K))
+                        bs, cuts, cur, curc = [], [], [], []
+                        for c, oks in groups.items():
+                            cur.extend(oks); curc.append(c)
+                            if len(cur) >= target:
+                                bs.append(cur); cuts.append(curc[-1]); cur, curc = [], []
+                        if cur:
+                            if bs:
+                                bs[-1].extend(cur)
+                            else:
+                                bs.append(cur); cuts.append(curc[-1])
+                        cuts[-1] = float("inf")
+                        dec = [sum(b) / len(b) < 0.5 for b in bs]
+                        reg = 0.0
+                        for c, ok in B:
+                            j = next(i for i, cut in enumerate(cuts) if c <= cut)
+                            if dec[j]:
+                                reg += (-1.0 if ok else 1.0)
+                        per.append(reg / len(B))
+                if per:
+                    v = st.mean(per) * Q[h]
+                    konst.append(vc); hon.append(v); order.append(v - vc)
+            if not hon:
+                continue
+            _, gain, _ = measured_gain(by_hh, days)
+            print(f"{NAME[m]:22s} {wn:13s} {fmt(*mse(accs)[:2]):>15} {fmt(*mse(konst)[:2]):>16} "
+                  f"{fmt(*mse(hon)[:2]):>16} {fmt(*mse(order)[:2]):>16} {gain:>8.2f}   (n {len(hon)})")
+        print()

@@ -108,4 +108,45 @@ Two biases pull in opposite directions and both are measured rather than argued 
 
 ## Part 2 — confidence is concentration, and concentration is not a change statistic
 
-<!-- PART 2 -->
+### 2.1 Derivation
+
+Fix a question at time `t`. The method holds a predictive distribution `p_t(·)` over the 38 places, and the
+truth is `y_t`. Two functionals of that same object:
+
+    C_t = max_x p_t(x)                    "confidence": how PEAKED the distribution is
+    L_t = -log p_t(y_t)                   "surprise": how much mass it put where the world actually was
+
+`C_t` is a function of `p_t` alone. It can be computed before `y_t` is revealed, and it is therefore, by
+construction, incapable of containing any information about whether `p_t` is right — except through the prior
+statistical relation between peakedness and accuracy that holds *while the regime is the one the model was
+fitted to*. `L_t` is the per-observation log-likelihood ratio term against the truth; the sum of `L_t` over
+recent questions is, up to an additive constant, the statistic a CUSUM or a likelihood-ratio change detector
+accumulates:
+
+    CUSUM_t = max(0, CUSUM_{t-1} + (L_t - E_0[L]))
+
+where `E_0[L]` is the entropy-scale reference under the pre-change regime. A change in the world changes the
+*location* of the mass relative to the truth, which is `L`; it need not change how *concentrated* the mass
+is, which is `C`. Under a pure relocation of the truth with the model unchanged, `C` is exactly invariant:
+if the world moves object `o` from place `a` to place `b` while `p_t` still says `a`, then `C_t` is
+unchanged and `L_t` goes from `-log p_t(a)` to `-log p_t(b)`, an increase of `log(p_t(a)/p_t(b))`, which is
+LARGE exactly when the model was confident. Hence the sharp corollary:
+
+**The methods are most confidently wrong on the objects with the most regular past**, because regularity is
+what produced the peak, and the peak is both what makes `C` high and what makes `L` explode when the truth
+moves. Confidence and change evidence are not merely different; at a regime change they are *anti*-aligned.
+
+### PREDICTIONS (written before Tables 13-16 were computed)
+
+* **P5.** The max probability barely moves from the settled week to the first sick days: the shift in daily
+  mean `C` is under 0.5 settled-week standard deviations for each timetable. The negative log-likelihood of
+  the truth moves by more than 2 settled-week standard deviations.
+* **P6.** As a detector of "the regime has changed", `C` is close to useless and `L` is good: question-level
+  AUC for days 14-16 against days 9-13 near 0.5 for `C` (say within [0.45, 0.60]) and at least 0.70 for `L`,
+  for the never-forgets timetable. If `C`'s AUC comes out high, the formalisation is wrong and I will say so.
+* **P7 (the sharp one).** Within the first sick days, a method's stated confidence is HIGHER on objects whose
+  truth differs from their settled-period modal location than on objects that did not move. Point-biserial
+  `r(C, moved) > 0` per household, and positive for all three timetables on average. If `r` is negative or
+  zero the corollary is refuted, and with it the "confidently wrong" reading of the effect.
+
+<!-- TABLES PART 2 -->

@@ -30,6 +30,7 @@ import collections
 import glob
 import json
 import os
+import math
 import statistics as st
 import sys
 
@@ -100,12 +101,71 @@ def candidate_bars(by_hh):
     return [-1.0] + vals[::step]
 
 
+def tracks_correctness(rows_by_method):
+    """Does a method's stated confidence predict whether it is actually right?
+
+    Measured as the correlation between confidence and being correct, computed INSIDE each household and then
+    averaged over them, per window. This is the mechanism under both the inversion and the value of declining:
+    a rule that declines when confidence is low can only help if confidence still predicts correctness.
+
+    Reported with the paired change from the settled weeks, because the claim is about what the shift DOES to
+    a method rather than about which method knows itself best in general -- in the settled world they are
+    about equal.
+    """
+    W = {"settled 1-13": range(1, 14), "first sick days 14-16": range(14, 17),
+         "rest of spell 17-23": range(17, 24), "first days back 24-26": range(24, 27),
+         "a week later 27-31": range(27, 32)}
+
+    def corr(g):
+        xs = [c for _, c, _ in g]
+        ys = [1.0 if ok else 0.0 for _, _, ok in g]
+        n = len(xs)
+        if n < 10:
+            return None
+        mx, my = st.mean(xs), st.mean(ys)
+        sx, sy = st.pstdev(xs), st.pstdev(ys)
+        if sx == 0 or sy == 0:
+            return None
+        return sum((a - mx) * (b - my) for a, b in zip(xs, ys)) / (n * sx * sy)
+
+    out = {}
+    for mem, by_hh in rows_by_method.items():
+        per_window, settled = {}, {}
+        for hh, g in by_hh.items():
+            settled[hh] = corr([x for x in g if x[0] in W["settled 1-13"]])
+        for wname, days in W.items():
+            vals, diffs = [], []
+            for hh, g in by_hh.items():
+                c = corr([x for x in g if x[0] in days])
+                if c is None:
+                    continue
+                vals.append(c)
+                if settled.get(hh) is not None:
+                    diffs.append(c - settled[hh])
+            if len(vals) < 2:
+                continue
+            se = st.stdev(vals) / math.sqrt(len(vals))
+            row = {"r": round(st.mean(vals), 3), "se": round(se, 3), "n_hh": len(vals),
+                   "differs_from_zero": abs(st.mean(vals)) >= 2 * se}
+            if len(diffs) > 1 and wname != "settled 1-13":
+                dse = st.stdev(diffs) / math.sqrt(len(diffs))
+                row.update({"change_from_settled": round(st.mean(diffs), 3),
+                            "change_se": round(dse, 3),
+                            "change_clears": abs(st.mean(diffs)) >= 2 * dse})
+            per_window[wname] = row
+        out[mem] = per_window
+    return out
+
+
 def main():
     rows = load_rows()
     if not rows:
         print("no decision rows found")
         return 1
-    out = {"windows_order": list(WINDOWS), "methods": {}}
+    out = {"windows_order": list(WINDOWS), "methods": {},
+           "confidence_tracks_correctness": tracks_correctness(
+               {m: {hh: [(d, c, ok) for d, c, ok in seq] for hh, seq in by.items()}
+                for m, by in rows.items()})}
     print(f"{'method':14s} {'hh':>3} {'best bar':>9} | " + "  ".join(f"{w:>24s}" for w in WINDOWS))
     for m, by_hh in sorted(rows.items()):
         bars = candidate_bars(by_hh)

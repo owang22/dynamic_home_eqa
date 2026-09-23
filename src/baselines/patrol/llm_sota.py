@@ -149,6 +149,29 @@ def policy_schema(pol: str) -> Dict[str, Any]:
         "required": ["new_facts", "old_facts"], "additionalProperties": False}
 
 
+def stays(h: List[Tuple[int, str]], day: int) -> List[str]:
+    """One day's episode text for the fact extractor: consecutive sightings at the same spot merged into a stay
+    'spot from-to (seen t1, t2)', where 'to' is the first sighting elsewhere; a stay running in from the night
+    before starts at 00:00, one still open at the last sighting says 'still there at HH:MM'."""
+    d0, d1 = day * DAY_SECONDS, (day + 1) * DAY_SECONDS
+    out = []
+    i = 0
+    while i < len(h):
+        j = i
+        while j + 1 < len(h) and h[j + 1][1] == h[i][1]:
+            j += 1
+        start, end = h[i][0], (h[j + 1][0] if j + 1 < len(h) else None)
+        seen = [t for t, _ in h[i:j + 1] if d0 <= t < d1]
+        if start < d1 and (end is None or end > d0) and (seen or (end is not None and end > d0)):
+            a = "00:00" if start < d0 else L.hhmm(start)
+            b = (L.hhmm(end) if end is not None and end < d1 else
+                 ("24:00" if end is not None else f"still there at {L.hhmm(seen[-1]) if seen else '00:00'}"))
+            sn = f" (seen {', '.join(L.hhmm(t) for t in seen)})" if seen else ""
+            out.append(f"{h[i][1]} {a}-{b}{sn}" if not b.startswith("still") else f"{h[i][1]} from {a}, {b}{sn}")
+        i = j + 1
+    return out
+
+
 class FactStore(Store):
     kind, policy = "facts", None
 
@@ -169,15 +192,18 @@ class FactStore(Store):
             h = memory.history(o)
             if len({r for _, r in h}) < 2:
                 continue
-            today = [(t, r) for t, r in h if day * DAY_SECONDS <= t < (day + 1) * DAY_SECONDS]
-            if today:
-                movers.append(f"- {o}: " + ", ".join(f"{L.hhmm(t)} {r}" for t, r in today))
+            st = stays(h, day)
+            if st:
+                movers.append(f"- {o}: " + "; ".join(st))
         if not movers:
             return
         ex = L0 + ["", f"It is the end of {L.day_label(day, self.day_names)}. Extract facts for the robot's memory.", "",
-                   "Today's sightings of the objects that move (time spot, in order; the 03:00 entry is the nightly round):"]
-        ex += movers + ["", "Write facts of the form: object, spot, the hours of a typical day when it is at that spot, as "
-                        "today's sightings show them. One fact per object and spot. Use only object and spot names above.",
+                   "Today's stays of the objects that move: each stay is a spot and the stretch from the first sighting "
+                   "there until the object was next seen somewhere else (times in between are when it was seen there):"]
+        ex += movers + ["", "Write facts about each object's ROUTINE: which spot it is at during which stretch of a typical "
+                        "day, as today's stays show it. Give stretches, not single moments (write 09:30-17:30, never "
+                        "09:30-09:30); merge stays at the same spot. One fact per object and spot. Use only object and "
+                        "spot names above.",
                         'Reply with JSON: {"facts": [{"object": ..., "spot": ..., "hours": "HH:MM-HH:MM"}, ...]}']
         text, _ = self.ask([{"role": "system", "content": L.SYSTEM}, {"role": "user", "content": "\n".join(ex)}],
                            FACTS_SCHEMA, 2500, f"facts extract day {day}")
