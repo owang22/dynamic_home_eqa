@@ -102,3 +102,18 @@ chain_person run (prompts verified byte-identical, 16/16 on day 11). This arm ha
 - Coordinator (theirs): the floor is LARGER than the recent-sightings list's (~3% of answers changed), because longer
   prompts give batching more to vary over.
 - Mine: about the same (~3%), because the floor tracks how marginal each decision is more than prompt length.
+
+## Stage-only card (`stagecard`) — written ~03:46, before launch (launched 03:47). hh_s0-5, same days.
+On days 14-23 only the sick resident's line changes, to "Every day: home sick at the moment; not working." No location
+named. On all other days the original card. It separates "an accurate card" from "a card that names the couch".
+- Mine: it sits between the stale card and the couch card. Cold spell gain about +10 to +15 over the stale card (the
+  couch card gave +29); all questions about +5 to +8. Lead-up and return are identical to the baseline by construction.
+- If it matches the couch card, accuracy alone carries the effect. If it matches the stale card, the effect was the
+  location information.
+- Coordinator (theirs; written 03:55, AFTER the 03:47 launch and BEFORE any stage-card result was read): the stage-only card
+  may land near the couch card, by analogy with the whole-log memory's start message (+10.4 first sick days, +26.9 cold,
+  against the couch card's +13.9 / +29.3).
+- A closer analogue exists on the SAME memory (noted 03:55, from STORY.md): the recent-sightings list with the start message
+  gave +12.9 (se 3.0, n=10) on the first three sick days and +23.5 cold (n=10). That arm keeps the stale card and ADDS a
+  message; the stage card REPLACES the card's line. If the stage card lands near +13 / +24, the message and the card are
+  two routes to the same information.

@@ -117,3 +117,44 @@ hits shared with that arm.
 How it was found, for the methods section: prompts were compared as strings and completions separately. Comparing
 accuracies would have shown two similar numbers and hidden it. A prompt cache silently turns nondeterminism into apparent
 determinism, so a cached arm and a freshly generated arm are not the same kind of measurement even when prompts match.
+
+## SIX HOUSEHOLDS (03:47): the resident card kept true, removed, or left stale — against tonight's same-session baseline
+Baseline = the recent-sightings list re-run tonight (nottold_rerun), whose card is the original one, i.e. STALE on days
+14-23. Days 11-17, 21-22, 24-28; hh_s0-5; paired per household; detected = mean >= 2 standard errors (n=6). Floor = the
+mean absolute rerun difference of the baseline itself in that window (rerun_noise.py, six households: 3% of answers change
+overall; 0.7-3.2 points per window). Tool: six.py.
+
+**The card kept true for its day. On sick days it says the resident is home sick, resting on the couch in the living
+room, which is where their things now are**, so it carries location information, not just the stage:
+| window | all questions | cold questions |
+|---|---|---|
+| first sick days 14-16 | **+13.9** (se 4.0; 20x floor): 44->69, 62->69, 50->77, 52->65, 75->83, 73->77 | **+29.3** (se 7.4; 17x floor) |
+| later spell 17, 21, 22 | **+12.8** (se 5.3; 12x floor): 44->79, 69->79, 60->81, 77->81, 83->88, 79->81 | **+28.4** (se 10.6; 24x floor) |
+| lead-up and return | identical to the baseline: the prompts are byte-identical there, so the answers were shared cache hits | identical |
+
+**Card removed** (three-household figures from 02:50 in brackets, to show the shrinkage):
+| window | all questions | cold questions |
+|---|---|---|
+| lead-up 11-13 | -3.4 (se 2.9) not detected | **-7.5 (se 3.7) detected: removing a TRUE card costs** (3x floor) |
+| first sick days 14-16 | **+6.6** (se 2.6; 10x floor) [+9.7] | **+11.2** (se 4.5) [+5.5] |
+| later spell 17, 21, 22 | +9.0 (se 5.9) not detected [+18.8] | **+18.2** (se 8.7; 2.1 se, marginal) [+28.6] |
+| first days back 24-26 | -2.7 (se 3.6) not detected [-8.3] | -7.9 (se 9.4) not detected |
+| 27-28 | -0.6 not detected | -3.7 not detected |
+Winner's curse, third time tonight: on the later spell, card removal gave +35 on hh_s0 alone, +18.8 on three households and
++9.0 on six. hh_s3 went the other way (77->71 all, 75->56 cold).
+
+**Corrected card minus card removed**, paired: later spell all +3.8 (se 1.6) detected; cold lead-up +7.5 (se 3.7)
+detected (this is the same lead-up cost of removal); every other window not detected (first sick days cold +18.1, se 10.8).
+
+Reading:
+- A standing written routine is a real input the model follows. Kept true, it is worth about +13 on all questions and +29
+  on first-of-day questions through the whole spell, 12-24x the rerun floor. Left stale, it costs that much. Removed, the
+  model loses the stale harm in the spell but also the true card's help in the settled fortnight (cold -7.5), so
+  removal is a trade, not a fix.
+- The honest scope of "kept true": this card NAMES THE COUCH. The gap between it and the stale card combines two things,
+  accuracy and extra location information. A stage-only card ("home sick today", no location) would separate them; not run.
+- The return cost of card removal, borderline at three households, is NOT detected at six (-2.7, se 3.6).
+- Predictions: the coordinator's "true card beats stale card and no card in the spell" holds against the stale card
+  (large) and holds against no card on all questions in the later spell only (+3.8). The coordinator's "beats no card on
+  the return" is not detected. My "cold +30 or more" nearly held (+29.3, +28.4). My "lead-up identical" and "return
+  equal" were true by construction (identical prompts), so they were checks, not predictions.

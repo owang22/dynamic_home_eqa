@@ -38,6 +38,6 @@ for cold_only in (False, True):
             d = [x[2] - x[1] for x in per]
             if len(d) < 2: continue
             m, sd = st.mean(d), st.stdev(d); se = sd / len(d) ** 0.5
-            bar = "detected (>=2 se)" if abs(m) >= 2 * se else "not detected"
+            bar = ("IDENTICAL (byte-identical prompts, shared cache)" if se == 0 and m == 0 else "detected (>=2 se)" if abs(m) >= 2 * se else "not detected")
             print(f"  {w:14s} n={len(d)}  " + " ".join(f"{b0:.0f}->{b1:.0f}" for _, b0, b1, _ in per)
                   + f" | mean {m:+.1f}, se {se:.1f}, spread {sd:.1f} -> {bar}; floor {floors[w]:.1f} -> {abs(m) / floors[w] if floors[w] else float('inf'):.0f}x floor")

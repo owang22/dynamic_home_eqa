@@ -123,6 +123,12 @@ class TrueCard(Store):
     SICK = "Weekdays: home sick at the moment, resting on the couch in the living room through the day; no work or trips out."
 
 
+class StageCard(TrueCard):
+    """like truecard, but the sick-day line names no location: separates 'accurate' from 'says where'."""
+    kind = "stagecard"
+    SICK = "Weekdays: home sick at the moment; not working."
+
+
 class Debate(Store):
     kind, in_house = "debate", "naive"
     oracle = False
@@ -333,7 +339,7 @@ class FactsStale(FactStore):
     kind, policy = "facts_stale", "stale"
 
 
-STORES = {c.kind: c for c in (Naive, LongContext, Pinned, NoCard, TrueCard, Debate, DebateOracle, FactsMem0, FactsZep, FactsStale)}
+STORES = {c.kind: c for c in (Naive, LongContext, Pinned, NoCard, TrueCard, StageCard, Debate, DebateOracle, FactsMem0, FactsZep, FactsStale)}
 
 
 def strip_cards(lines: List[str], names: Dict[str, str]) -> List[str]:
@@ -467,7 +473,7 @@ def run_arm(bank_path: pathlib.Path, kind: str, told: bool, client: L.LLMClient,
                 if sick:
                     who = sick[0].split(": ", 1)[-1].split(" is home sick")[0].strip()
                     assert who in names.values(), (who, names)
-                    q_cards = [{**c, "weekday": TrueCard.SICK} if c["name"] == who else c for c in cards]
+                    q_cards = [{**c, "weekday": type(store).SICK} if c["name"] == who else c for c in cards]
             Lh = L.header_lines(q.t_query, day_names, q_cards, rooms, patrol_hours, False, hints, "conf", patrol_times,
                                 question_moments, feedback_delay_min)
             if getattr(store, "strip_cards", False):
