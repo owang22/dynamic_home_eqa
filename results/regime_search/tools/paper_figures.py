@@ -511,7 +511,12 @@ def save(fig, name, manifest, entry):
         head = entry.get("claim_head") or ""
         f.write(f"# What {entry['figure']} does and does not support\n\n## The claim\n\n> {head}{entry['claim']}\n\n")
         f.write("## What in the figure demonstrates it\n\n" + entry.get("look_for", "_not written_") + "\n\n")
+        if entry.get("mechanism"):
+            f.write("## Why this happens\n\n" + entry["mechanism"] + "\n\n")
         f.write("## What it does NOT show\n\n" + entry.get("not_shown", "_not written_") + "\n\n")
+        if entry.get("hypothesis_tested_and_failed"):
+            f.write("## A hypothesis that was tested and failed\n\n"
+                    + entry["hypothesis_tested_and_failed"] + "\n\n")
         if entry.get("history"):
             f.write("## How this claim changed\n\n" + entry["history"] + "\n\n")
         f.write("## The numbers\n\nMeasured on the DAILY values, not read off the plotted line.\n\n")
@@ -959,6 +964,8 @@ def f9(DATA, EXTRA, manifest):
                         ha="center", va="bottom", fontsize=5.4, color=INK, rotation=90)
         hh[m] = M["n_hh"]
         nums[DEC_NAME[m]] = {k: M["windows"].get(k, {}).get("gain") for k in order}
+    T = EXTRA["decision_live"]["confidence_tracks_correctness"]
+    tc = lambda m, w: T.get(m, {}).get(w, {})
     ax.axhline(0, color=INK, lw=0.8, zorder=2)
     ax.set_xticks(range(len(order)))
     ax.set_xticklabels([textwrap.fill(k, 12) for k in order], fontsize=6.4)
@@ -994,6 +1001,41 @@ def f9(DATA, EXTRA, manifest):
                                         f"else at or below {max(v for k, v in back.items() if k != 'the survival-time model'):.1f}."
                      )({k: v["first sick days 14-16"] or 0 for k, v in nums.items()},
                        {k: v["first days back 24-26"] or 0 for k, v in nums.items()}),
+        "mechanism": ("WHY declining is worth so much to one method and so little to the others. A rule that "
+                      "declines when confidence is low can only help if confidence still predicts correctness. "
+                      "In the settled weeks all three are about equally good at that: the correlation between "
+                      f"what a method claims and whether it is right runs {tc('tt3d','settled 1-13')['r']:+.2f} "
+                      f"to {tc('perpetua','settled 1-13')['r']:+.2f}. At the shift both timetables stop "
+                      f"predicting \u2014 the timetable that never forgets falls "
+                      f"{tc('ttfrozen','first sick days 14-16')['change_from_settled']:+.2f} and the three-day "
+                      f"one {tc('tt3d','first sick days 14-16')['change_from_settled']:+.2f}, both clearing "
+                      "the bar, and what is left of either cannot be told from zero. The survival-time "
+                      f"model's does not move ({tc('perpetua','first sick days 14-16')['change_from_settled']:+.2f}, "
+                      f"not distinguishable from no change) and stays at "
+                      f"{tc('perpetua','first sick days 14-16')['r']:+.2f}, which DOES differ from zero. That "
+                      "one fact explains the inversion, the value of declining, and why a confidence signal "
+                      "that barely moves can still be worth acting on.\n\nIt also predicts what the return "
+                      "should do, and the prediction holds. The timetable that never forgets, which does not "
+                      "break when the old routine comes back, regains its footing immediately "
+                      f"({tc('ttfrozen','first days back 24-26')['r']:+.2f}); the three-day timetable, which "
+                      f"does break there, is still not predicting ({tc('tt3d','first days back 24-26')['r']:+.2f}, "
+                      "not distinguishable from zero) until a week later. The survival-time model's accuracy "
+                      "breaks at both boundaries as much as anyone's and its confidence keeps tracking anyway "
+                      "\u2014 which is the point: knowing you are wrong is separable from being right."),
+        "hypothesis_tested_and_failed": ("A hypothesis worth recording because a reader will arrive with it, "
+            "as we did. The coordinator proposed that the survival-time model's confidence is a function of "
+            "how long its evidence has stood, so that at a shift the objects whose placement had just changed "
+            "would be the ones with the oldest supporting evidence, and its confidence would fall on precisely "
+            "the questions it was about to get wrong; and that a timetable, whose confidence reflects how "
+            "regular the past was, would do the opposite and be MOST confident on the objects that moved. "
+            "Both halves were tested on the ten households and both failed. Its confidence is not lower on the "
+            "objects that moved but 4.5 points higher, which is not distinguishable from no difference, and "
+            "its accuracy on those objects is 16.3 points HIGHER \u2014 a model of displacement doing its job "
+            "rather than a defect. Its confidence RISES with the age of its evidence (+0.13 \u00b1 0.03) "
+            "rather than falling, which is also correct for it: its hazard is lognormal and therefore "
+            "decreasing, so the longer a thing has sat undisturbed the longer it expects it to stay. And the "
+            "timetable is not most confident on the objects that moved (\u22122.4, not distinguishable). The "
+            "mechanism is not about WHICH objects; it is the one above."),
         "not_shown": (lambda st: "This is not a claim that the survival-time model is the better model — F8's settled-week "
                                  f"numbers show it scoring {st['perpetua']:.1f} against the timetables' "
                                  f"{st['ttfrozen']:.1f} and {st['tt3d']:.1f}. The claim is narrower and stranger: "
