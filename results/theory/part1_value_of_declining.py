@@ -396,6 +396,89 @@ def main():
                   f"{nullv:>19.2f}")
         print()
 
+    print("=" * 104)
+    print("TABLE 8  does finer binning close the gap? corrected V per day (raw minus label-shuffle null)")
+    print("  for the first sick days, by number of rank bins")
+    print("=" * 104)
+    print(f"{'method':22s} " + "".join(f"{'K='+str(k):>22}" for k in (2, 3, 4, 6, 8)))
+    for m in ORDER:
+        by_hh = rows[m]
+        days = WINDOWS["sick 14-16"]
+        cells = {h: cell(by_hh, h, days) for h in by_hh}
+        cells = {h: p for h, p in cells.items() if len(p) >= MIN_CELL}
+        Q = {h: qpd(by_hh, h, days) for h in cells}
+        line = ""
+        for k in (2, 3, 4, 6, 8):
+            v = [(V_cell(p, k)[0] - V_null(p, k, seed=hash(h) % 1000)) * Q[h] for h, p in cells.items()]
+            line += f"{fmt(*mse(v)[:2]):>22}"
+        print(f"{NAME[m]:22s} " + line)
+    print()
+
+    print("=" * 112)
+    print("TABLE 9  HONEST cross-fitted value of declining. The decline rule (which rank bins have q<1/2) is")
+    print("  fitted on a random half of the cell and its value is measured on the other half, 200 splits.")
+    print("  This estimator has null EXPECTATION ZERO, so no bias subtraction is needed; it is a lower bound")
+    print("  on V (it pays for not knowing q exactly), and m, d are measured out of sample.")
+    print("=" * 112)
+    print(f"{'method':22s} {'window':13s} {'V/day honest':>17} {'mass m':>16} {'shortfall d':>16} "
+          f"{'m*d/day':>9} {'F9 meas':>8}")
+    SPL = 200
+    for m in ORDER:
+        by_hh = rows[m]
+        for wn, days in WINDOWS.items():
+            cells = {h: cell(by_hh, h, days) for h in by_hh}
+            cells = {h: p for h, p in cells.items() if len(p) >= MIN_CELL}
+            if not cells:
+                continue
+            Q = {h: qpd(by_hh, h, days) for h in cells}
+            perV, perM, perD = [], [], []
+            for h, pairs in cells.items():
+                rnd = random.Random(7 + hash(h) % 997)
+                vs, ms, ds = [], [], []
+                for _ in range(SPL):
+                    idx = list(range(len(pairs)))
+                    rnd.shuffle(idx)
+                    A = [pairs[i] for i in idx[:len(idx) // 2]]
+                    B = [pairs[i] for i in idx[len(idx) // 2:]]
+                    if len(A) < 2 * MIN_BIN or len(B) < MIN_BIN:
+                        continue
+                    # bins on A, as confidence cut points, with q on each
+                    bs, cuts, cur, curc = [], [], [], []
+                    groups = collections.OrderedDict()
+                    for c, ok in sorted(A, key=lambda x: x[0]):
+                        groups.setdefault(c, []).append(ok)
+                    target = max(MIN_BIN, math.ceil(len(A) / K))
+                    for c, oks in groups.items():
+                        cur.extend(oks)
+                        curc.append(c)
+                        if len(cur) >= target:
+                            bs.append(cur); cuts.append(curc[-1]); cur, curc = [], []
+                    if cur:
+                        if bs:
+                            bs[-1].extend(cur); cuts[-1] = curc[-1] if curc else cuts[-1]
+                        else:
+                            bs.append(cur); cuts.append(curc[-1])
+                    cuts[-1] = float("inf")
+                    decline = [sum(b) / len(b) < 0.5 for b in bs]
+                    dec_n, dec_reg = 0, 0.0
+                    for c, ok in B:
+                        j = next(i for i, cut in enumerate(cuts) if c <= cut)
+                        if decline[j]:
+                            dec_n += 1
+                            dec_reg += (-1.0 if ok else 1.0)      # avoided regret on this question
+                    vs.append(dec_reg / len(B))
+                    ms.append(dec_n / len(B))
+                    ds.append((dec_reg / dec_n) if dec_n else 0.0)
+                if vs:
+                    perV.append(st.mean(vs) * Q[h]); perM.append(st.mean(ms)); perD.append(st.mean(ds))
+            if not perV:
+                continue
+            vv, mm2, dd2 = mse(perV), mse(perM), mse(perD)
+            _, gain, _ = measured_gain(by_hh, days)
+            print(f"{NAME[m]:22s} {wn:13s} {fmt(*vv):>17} {fmt(*mm2):>16} {fmt(*dd2):>16} "
+                  f"{mm2[0]*dd2[0]*st.mean(list(Q.values())):>9.2f} {gain:>8.2f}")
+        print()
+
 
 if __name__ == "__main__":
     main()

@@ -10,13 +10,13 @@ A change in the household's hidden routine costs accuracy TWICE: once when it ha
 
 These memories can represent the new regime perfectly well — told about it, they adapt at once. What none of them can do is notice from evidence that the old regime expired, or that an instruction has. Neither a sighting nor a sentence carries a validity window, so language does not fix the problem, it moves it: from failing to notice that sightings went stale to failing to notice that an instruction did. the survival-time model is the exception because how long a thing stays true is precisely what it models. The return break is that defect seen from the other side: what expired was the sick-day routine, and nothing in these memories dates what they learned during it.
 
-*1.5-column, 3.92 in wide.* Population one resident off sick, that resident's own things; households ttfrozen 10, tt3d 10, perpetua 10, longcontext 10. Renders, caption and claims in `F1_learn_break_relearn/`.
+*single-column, 3.15 in wide.* Population one resident off sick, that resident's own things; households ttfrozen 10, tt3d 10, perpetua 10, longcontext 10. Renders, caption and claims in `F1_learn_break_relearn/`.
 
 ## [F2](F2_relearning_inside_the_spell/) — F2_relearning_inside_the_spell
 
 Given ten days of the new routine the timetable with a three-day memory re-learns it 2.0 to 3.0 times as fast as any language memory: +31 points from the first sick days to the end of the spell, against +15 for reflection, +12 for the whole-log-in-the-prompt memory and +10 for retrieval.
 
-*1.5-column, 4.07 in wide.* Population one resident off sick, that resident's own things; households tt3d 10, reflect 10, longcontext 10, retrieval 10. Renders, caption and claims in `F2_relearning_inside_the_spell/`.
+*single-column, 3.15 in wide.* Population one resident off sick, that resident's own things; households tt3d 10, reflect 10, longcontext 10, retrieval 10. Renders, caption and claims in `F2_relearning_inside_the_spell/`.
 
 ## [F3](F3_what_one_sentence_buys/) — F3_what_one_sentence_buys
 
@@ -30,13 +30,13 @@ These memories can represent the new regime perfectly well — told about it, th
 
 Reacting is not recovering. When the routine changes these rules that decide whether to answer DO notice — every one of them roughly doubles or triples how often it declines to answer — and the answers they keep are still wrong 2.4 to 6.3 times more often than the rate they promised. Noticing that something is wrong is not the same as knowing WHICH answers are wrong, and only the second one protects a user.
 
-*single-column, 3.27 in wide.* Population one resident off sick, that resident's own things; households whole-log-in-the-prompt memory 10, timetable that never forgets 10, timetable with a three-day memory 10, survival-time model 10. Renders, caption and claims in `F4_reacting_is_not_recovering/`.
+*single-column, 3.27 in wide.* Population one resident off sick, that resident's own things; households timetable that never forgets 10, timetable with a three-day memory 10, whole-log-in-the-prompt memory 10, survival-time model 10. Renders, caption and claims in `F4_reacting_is_not_recovering/`.
 
 ## [F5](F5_confidence_against_accuracy/) — F5_confidence_against_accuracy
 
 The timetables do not move their stated confidence when they break, so the gap between what they claim and what they achieve opens at the shift; the memory that follows its last sighting states 98% while being right 58% of the time, a confidence number carrying no information at all; the survival-time model is the one whose stated confidence tracks its own accuracy through the change.
 
-*double-column, 7.5 in wide.* Population one resident off sick, that resident's own things; households ttfrozen 10, tt3d 10, perpetua 10, longcontext 10, lastseen 10. Renders, caption and claims in `F5_confidence_against_accuracy/`.
+*double-column, 6.42 in wide.* Population one resident off sick, that resident's own things; households ttfrozen 10, tt3d 10, perpetua 10, longcontext 10, lastseen 10. Renders, caption and claims in `F5_confidence_against_accuracy/`.
 
 ## [F6](F6_the_inversion/) — F6_the_inversion
 
@@ -56,11 +56,11 @@ The list of places the rule offers does not widen when the routine changes. On t
 
 Scored the way a user would feel it — +1 for a right answer, −1 for a wrong one, 0 for declining — the ranking inverts at the moment of change: the methods that are most accurate in the settled world are the ones that collapse, and one goes NEGATIVE. On day 14 the timetable that never forgets scores below zero, meaning it would have done better answering nothing at all. Accuracy in a stable world does not predict value when the world moves.
 
-*1.5-column, 3.92 in wide.* Population one resident off sick, that resident's own things; households ttfrozen 10, tt3d 10, perpetua 10, longcontext 10. Renders, caption and claims in `F8_decision_score_per_day/`.
+*single-column, 3.09 in wide.* Population one resident off sick, that resident's own things; households ttfrozen 10, tt3d 10, perpetua 10, longcontext 10. Renders, caption and claims in `F8_decision_score_per_day/`.
 
 ## [F9](F9_value_of_declining/) — F9_value_of_declining
 
 At the shift, being allowed to decline is worth almost nothing to the timetables (+0.3 and +0.4) and a great deal to the survival-time model (+2.8). the survival-time model scores BELOW both timetables while the world is stable: it is not the better model, it is the only one whose uncertainty is worth acting on.
 
-*1.5-column, 4.11 in wide.* Population one resident off sick, that resident's own things; households ttfrozen 10, tt3d 10, perpetua 10, longcontext 10. Renders, caption and claims in `F9_value_of_declining/`.
+*1.5-column, 3.85 in wide.* Population one resident off sick, that resident's own things; households ttfrozen 10, tt3d 10, perpetua 10, longcontext 10. Renders, caption and claims in `F9_value_of_declining/`.
 

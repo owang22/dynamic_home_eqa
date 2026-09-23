@@ -8,12 +8,12 @@ Paste and edit; written as a caption, not a summary.
 
 ---
 
-Top: how often each method is wrong on the questions it chose to answer, as a multiple of the error rate it was set to hold; the dashed line at 1 is that promise. Bottom: how often it declined to answer. The rule that decides whether to answers react to the change — the lower panel roughly doubles — and the upper panel shows that reacting did not make the kept answers reliable.
+The figure in each legend entry is that method's miss rate over the first sick days (14–16), as a multiple of what it promised, worst first. Top: how often each method is wrong on the questions it chose to answer, as a multiple of the error rate it was set to hold; the dashed line at 1 is that promise. Bottom: how often it declined to answer. The rule that decides whether to answers react to the change — the lower panel roughly doubles — and the upper panel shows that reacting did not make the kept answers reliable.
 
 ---
 
 - **Population:** one resident off sick, that resident's own things
-- **Households:** whole-log-in-the-prompt memory 10, timetable that never forgets 10, timetable with a three-day memory 10, survival-time model 10
+- **Households:** timetable that never forgets 10, timetable with a three-day memory 10, whole-log-in-the-prompt memory 10, survival-time model 10
 - **Questions:** all questions
 - **Bands:** none: these are rates
 - **Dotted vertical rules:** the stage boundaries — the first sick day and the first day back. Nothing is shaded, so the lines and their bands sit on a plain ground.

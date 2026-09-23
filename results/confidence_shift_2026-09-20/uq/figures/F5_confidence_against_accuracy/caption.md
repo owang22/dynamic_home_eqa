@@ -1,6 +1,6 @@
 # Caption for F5
 
-**Double-column figure** — reproduce at full text width, about 7.5 in. Do NOT squeeze it into one column: at single-column width its text lands near 4pt and is unreadable.
+**Double-column figure** — reproduce at full text width, about 6.4 in. Do NOT squeeze it into one column: at single-column width its text lands near 4pt and is unreadable.
 
 **Title line:** _none needed — this figure does not carry its own title; the paper caption is enough._
 

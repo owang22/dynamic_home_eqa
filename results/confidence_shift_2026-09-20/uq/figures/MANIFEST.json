@@ -50,8 +50,8 @@
         "break at 24": -14.5
       }
     },
-    "width_inches": 3.92,
-    "column": "1.5",
+    "width_inches": 3.15,
+    "column": "single",
     "files": [
       "F1_learn_break_relearn.png",
       "F1_learn_break_relearn.svg",
@@ -109,8 +109,8 @@
         "counter re-learns this many times faster": 3.0
       }
     },
-    "width_inches": 4.07,
-    "column": "1.5",
+    "width_inches": 3.15,
+    "column": "single",
     "files": [
       "F2_relearning_inside_the_spell.png",
       "F2_relearning_inside_the_spell.svg",
@@ -181,9 +181,9 @@
     "claim": "Reacting is not recovering. When the routine changes these rules that decide whether to answer DO notice \u2014 every one of them roughly doubles or triples how often it declines to answer \u2014 and the answers they keep are still wrong 2.4 to 6.3 times more often than the rate they promised. Noticing that something is wrong is not the same as knowing WHICH answers are wrong, and only the second one protects a user.",
     "population": "one resident off sick, that resident's own things",
     "households": {
-      "whole-log-in-the-prompt memory": 10,
       "timetable that never forgets": 10,
       "timetable with a three-day memory": 10,
+      "whole-log-in-the-prompt memory": 10,
       "survival-time model": 10
     },
     "split": "all questions",
@@ -192,19 +192,11 @@
       "0.1": "alpha, the error rate the rule that decides whether to answer was set to hold -- a setting"
     },
     "note": "The top axis is the miss rate among ANSWERED questions divided by the rate the rule that decides whether to answer was set to hold (alpha=0.1), so the dashed line at 1 is the promise and 3 means three times as many wrong answers as promised. The lower panel is the evidence that the rule that decides whether to answer did react.",
-    "caption": "Top: how often each method is wrong on the questions it chose to answer, as a multiple of the error rate it was set to hold; the dashed line at 1 is that promise. Bottom: how often it declined to answer. The rule that decides whether to answers react to the change \u2014 the lower panel roughly doubles \u2014 and the upper panel shows that reacting did not make the kept answers reliable.",
+    "caption": "The figure in each legend entry is that method's miss rate over the first sick days (14\u201316), as a multiple of what it promised, worst first. Top: how often each method is wrong on the questions it chose to answer, as a multiple of the error rate it was set to hold; the dashed line at 1 is that promise. Bottom: how often it declined to answer. The rule that decides whether to answers react to the change \u2014 the lower panel roughly doubles \u2014 and the upper panel shows that reacting did not make the kept answers reliable.",
     "look_for": "The top panel at the first dotted rule, where every line leaves the promise behind. The ranking is printed on the plot: worst is the timetable that never timetable at 6.3 times its promised rate. Then the lower panel, which shows this is not a failure to react: hand-over roughly doubles at the same moment.",
     "not_shown": "It does not show WHY the rule that decides whether to answer reacts, which differs by method and is the more interesting half. The last column of the table is that answer: the timetables' own confidence falls at the shift, by 10.1 and 8.6 points, while the whole-log-in-the-prompt memory's moves +0.1. So whole-log memory's entire reaction is the controller raising its bar after mistakes have already been made, and none of the four moves its confidence as far as its accuracy fell. Nor does it show what the questions it hands over would have scored: that is F6, and for one method the answer is worse than what it kept.",
     "drawing": "The line is a centred three-day average computed within each stage, never across a boundary. These are rates rather than averages over households, so no band is drawn.",
     "numbers": {
-      "whole-log-in-the-prompt memory": {
-        "hands over, settled 9-13": 45.5,
-        "hands over, days 14-16": 57.9,
-        "wrong on what it keeps, settled": 19.0,
-        "wrong on what it keeps, 14-16": 27.7,
-        "times the promised rate, 14-16": 2.8,
-        "its own confidence moved (points)": 0.1
-      },
       "timetable that never forgets": {
         "hands over, settled 9-13": 21.4,
         "hands over, days 14-16": 70.6,
@@ -220,6 +212,14 @@
         "wrong on what it keeps, 14-16": 41.2,
         "times the promised rate, 14-16": 4.1,
         "its own confidence moved (points)": -8.6
+      },
+      "whole-log-in-the-prompt memory": {
+        "hands over, settled 9-13": 45.5,
+        "hands over, days 14-16": 57.9,
+        "wrong on what it keeps, settled": 19.0,
+        "wrong on what it keeps, 14-16": 27.7,
+        "times the promised rate, 14-16": 2.8,
+        "its own confidence moved (points)": 0.1
       },
       "survival-time model": {
         "hands over, settled 9-13": 48.7,
@@ -294,7 +294,7 @@
         "gap at day 14": 40.6
       }
     },
-    "width_inches": 7.5,
+    "width_inches": 6.42,
     "column": "double",
     "files": [
       "F5_confidence_against_accuracy.png",
@@ -453,8 +453,8 @@
         "worst single day": 0.9
       }
     },
-    "width_inches": 3.92,
-    "column": "1.5",
+    "width_inches": 3.09,
+    "column": "single",
     "files": [
       "F8_decision_score_per_day.png",
       "F8_decision_score_per_day.svg",
@@ -515,7 +515,7 @@
         "a week later 27-31": 0.6
       }
     },
-    "width_inches": 4.11,
+    "width_inches": 3.85,
     "column": "1.5",
     "files": [
       "F9_value_of_declining.png",

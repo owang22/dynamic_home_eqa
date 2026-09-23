@@ -1,6 +1,6 @@
 # Caption for F2
 
-**Wider than a single column** — reproduce at about 4.1 in. Do NOT squeeze it into one column; its labels are set for this width and shrinking them puts the smallest text near 4pt.
+**Single-column figure** — reproduce at 3.15 in, its rendered width.
 
 **Title line:** _none needed — this figure does not carry its own title; the paper caption is enough._
 

@@ -85,8 +85,13 @@ NAME = {
 # where the full description will not fit a legend, the LEGEND shortens and the caption carries the full name.
 # Never a third abbreviation that exists nowhere else.
 NAME_LEGEND = {
-    "lastseen":    "follows its last sighting",
+    "ttfrozen":    "timetable, never forgets",
+    "tt3d":        "timetable, three-day memory",
     "longcontext": "whole log in the prompt",
+    "retrieval":   "same-hour lookup",
+    "reflect":     "nightly self-notes",
+    "naive":       "recent sightings",
+    "lastseen":    "follows its last sighting",
 }
 # the literature name, used once per folder in the caption and then dropped
 NAME_TECH = {
@@ -561,7 +566,7 @@ def f1(DATA, EXTRA, manifest):
                          "break at 24": r2(None if val(23) is None or val(24) is None else val(24) - val(23))}
     boundaries([ax], DATA, pop)
     finish(ax, "Accuracy")
-    legend_below(ax, ncol=2)
+    legend_below(ax, ncol=1)
     save(fig, "F1_learn_break_relearn", manifest, {
         "figure": "F1",
         "claim": (lambda n: "A change in the household's hidden routine costs accuracy TWICE: once when it "
@@ -652,7 +657,7 @@ def f2(DATA, EXTRA, manifest):
              lw=1.9 if m == "tt3d" else 1.3, marker=mk)
     boundaries([ax], DATA, pop)
     finish(ax, "Accuracy")
-    legend_below(ax, ncol=2)
+    legend_below(ax, ncol=1)
     save(fig, "F2_relearning_inside_the_spell", manifest, {
         "figure": "F2",
         "claim_head": ("The language memories do not behave as one class, and the one that behaves most like "
@@ -891,7 +896,7 @@ def f8(DATA, EXTRA, manifest):
                     fontsize=6.2, color=INK, va="bottom", ha="left",
                     arrowprops=dict(arrowstyle="-", lw=0.6, color=INK, shrinkA=2, shrinkB=3))
     finish(ax, "Score", ylim=None)
-    legend_below(ax, ncol=2)
+    legend_below(ax, ncol=1)
     save(fig, "F8_decision_score_per_day", manifest, {
         "figure": "F8",
         "claim": "Scored the way a user would feel it — +1 for a right answer, \u22121 for a wrong one, 0 for "
@@ -962,7 +967,7 @@ def f9(DATA, EXTRA, manifest):
     ax.grid(False, axis="x")
     # two lines. The hindsight caveat stays -- it is what stops this being read as a deployable policy --
     # so the population line goes, since the caption carries it.
-    legend_below(ax, ncol=2)
+    legend_below(ax, ncol=1)
     save(fig, "F9_value_of_declining", manifest, {
         "figure": "F9",
         "claim": (lambda g: "At the shift, being allowed to decline is worth almost nothing to the "
@@ -1053,19 +1058,27 @@ def f4(DATA, EXTRA, manifest):
                            gridspec_kw={"hspace": 0.14, "height_ratios": [1.35, 1]})
     st = stage_lookup(DATA, "person")
     nums, hh, peaks = {}, {}, []
+    # rank first, then draw worst-first, so the legend below reads as a ranking without a second block
+    ranked = []
     for m in GATE_ORDER:
         M = D.get(m)
         if not M:
             continue
+        pdm = M["per_day"]
+        sickv = avg([pdm[str(d)]["wrong_when_answered"] for d in range(14, 17) if str(d) in pdm])
+        ranked.append((sickv / promise, m, M))
+    ranked.sort(reverse=True)
+    for mx, m, M in ranked:
         mult = gate_series(M, "wrong_when_answered")
         mult["mean"] = [v / promise for v in mult["mean"]]
-        line(ax[0], mult, COL[m], nm_legend(m), band=False, stage_of=st)
-        line(ax[1], gate_series(M, "hand_over"), COL[m], nm_legend(m), band=False, stage_of=st)
+        lab = f"{mx:.1f}\u00d7  {nm_legend(m)}"
+        line(ax[0], mult, COL[m], lab, band=False, stage_of=st)
+        line(ax[1], gate_series(M, "hand_over"), COL[m], lab, band=False, stage_of=st)
         hh[GATE_NAME[m]] = gate_hh(M)
         pd = M["per_day"]
         w = lambda f, days: avg([pd[str(d)][f] for d in days if str(d) in pd])
         sick = w("wrong_when_answered", range(14, 17))
-        peaks.append((sick / promise, GATE_NAME[m], COL[m]))
+        peaks.append((sick / promise, nm_legend(m), COL[m]))
         nums[GATE_NAME[m]] = {
             "hands over, settled 9-13": r2(w("hand_over", range(9, 14))),
             "hands over, days 14-16": r2(w("hand_over", range(14, 17))),
@@ -1082,15 +1095,11 @@ def f4(DATA, EXTRA, manifest):
                    ha="right", va="top", fontsize=6.2, color=REF)
     # rank the methods ON the plot, worst first, so a reader can tell good from bad without tracing four lines
     peaks.sort(reverse=True)
-    ax[0].annotate("averaged over days 14\u201316:", xy=(0.03, 0.975),
-                   xycoords="axes fraction", fontsize=5.9, color="#555555", va="top", style="italic")
-    for r, (mx, name, c) in enumerate(peaks):
-        ax[0].annotate(f"{mx:.1f}\u00d7  {name}", xy=(0.03, 0.885 - r * 0.098), xycoords="axes fraction",
-                       fontsize=6.1, color=c, va="top", fontweight="bold" if r == 0 else "normal")
     top = max(v["mean"][d] for v in (gate_series(D[m], "wrong_when_answered") for m in GATE_ORDER if m in D)
               for d in range(len(v["mean"])) if v["mean"][d] is not None) / promise
-    finish(ax[0], "Wrong answers \u00f7\nwhat it promised", xlab="", ylim=(0, top + 2.4))
+    finish(ax[0], "Wrong answers \u00f7\nwhat it promised", xlab="", ylim=(0, top + 0.8))
     finish(ax[1], "How often it hands\nthe question over", ylim=(0, 100))
+    legend_below(ax[1], ncol=1, gap=0.30)
     save(fig, "F4_reacting_is_not_recovering", manifest, {
         "figure": "F4",
         "claim": (lambda n: "Reacting is not recovering. When the routine changes these rules that decide whether to answer DO notice \u2014 "
@@ -1106,7 +1115,9 @@ def f4(DATA, EXTRA, manifest):
         "note": ("The top axis is the miss rate among ANSWERED questions divided by the rate the rule that decides whether to answer was set "
                  f"to hold (alpha={alpha}), so the dashed line at 1 is the promise and 3 means three times as "
                  "many wrong answers as promised. The lower panel is the evidence that the rule that decides whether to answer did react."),
-        "caption": "Top: how often each method is wrong on the questions it chose to answer, as a multiple of "
+        "caption": "The figure in each legend entry is that method's miss rate over the first sick days "
+                   "(14\u201316), as a multiple of what it promised, worst first. Top: how often each method "
+                   "is wrong on the questions it chose to answer, as a multiple of "
                    "the error rate it was set to hold; the dashed line at 1 is that promise. Bottom: how "
                    "often it declined to answer. The rule that decides whether to answers react to the change \u2014 the lower panel roughly "
                    "doubles \u2014 and the upper panel shows that reacting did not make the kept answers "
@@ -1159,7 +1170,7 @@ def f5(DATA, EXTRA, manifest):
     boundaries([ax[1]], DATA, pop)
     finish(ax[0], "Accuracy", ylim=(0, 100))
     finish(ax[1], "Confidence", ylim=(0, 100))
-    legend_below(ax[0], ncol=3, gap=0.22)
+    legend_below(ax[0], ncol=2, gap=0.22)
     save(fig, "F5_confidence_against_accuracy", manifest, {
         "figure": "F5",
         "claim_head": ("A confidence number can be perfectly stable and mean nothing at all. The memory that follows its last sighting states "

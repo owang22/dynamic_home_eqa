@@ -30,6 +30,20 @@ Memories
   resident line becomes "- <name> (a resident)". Every other arm carries a written daily routine
   ("at the desk at home from 9 to about 5:30") that is never updated when the routine changes; this
   asks how much of the evidence-overriding comes from that written routine rather than a learned prior.
+* ``facts_mem0`` / ``facts_zep`` / ``facts_stale``: one shared nightly FACT STORE, three published
+  revision policies. Each night an LLM writes routine-level facts from that day's sightings of the
+  objects that move ("laptop_yuki: desk_b1, 09:00-17:30"); a second call applies the policy against
+  the facts already held about the same objects:
+    - mem0  (Chhikara et al. 2025): per new fact ADD / UPDATE an old one / NOOP; old facts it
+      contradicts are DELETED and gone.
+    - zep   (Rasmussen et al. 2025, Graphiti): a contradicted fact is INVALIDATED -- its validity window
+      is closed on that day -- and kept; the reader sees every fact with the period it held.
+    - stale (Chao et al. 2026, STALE/CUPMem): old facts are labelled KEEP / STALE / REPLACE; the reader
+      is told current facts ground the answer and stale ones are history only.
+  Read budget, identical for all three: at most FACT_CAP facts about the object + its newest
+  RECENT_CAP sightings + up to 10 empty-listing lines (the recent-sightings list shows 60 sightings).
+  Adaptations, stated: ingestion is nightly per day rather than per message; sightings are structured
+  already, so there is no entity-extraction step; facts are keyed by object.
 ``--days`` answers only the listed days. Exact for memories with no LLM writes (naive, pinned, debate):
 the store's state never depends on the answers.
 """
@@ -99,7 +113,172 @@ class DebateOracle(Debate):
     kind, oracle = "debate_oracle", True
 
 
-STORES = {c.kind: c for c in (Naive, Pinned, NoCard, Debate, DebateOracle)}
+FACT_CAP, RECENT_CAP = 20, 40
+FACTS_SCHEMA: Dict[str, Any] = {
+    "type": "object",
+    "properties": {"facts": {"type": "array", "maxItems": 80, "items": {
+        "type": "object", "properties": {"object": {"type": "string"}, "spot": {"type": "string"},
+                                         "hours": {"type": "string", "maxLength": 40}},
+        "required": ["object", "spot", "hours"], "additionalProperties": False}}},
+    "required": ["facts"], "additionalProperties": False}
+POLICY_TEXT = {
+    "mem0": ("You maintain the robot's memory. For each NEW fact choose one operation: ADD (it is new information), "
+             "UPDATE an old fact (it refines or replaces that old fact; give the old fact's id), or NOOP (the memory already "
+             "holds it). For each OLD fact that the new facts contradict, choose DELETE; old facts not mentioned are kept."),
+    "zep": ("You maintain a temporal knowledge graph. For each NEW fact decide whether it DUPLICATES an old current fact "
+            "(give its id) or is ADDed. For each OLD current fact that a new fact contradicts (the object can no longer be "
+            "at that spot in those hours), choose INVALIDATE: the old fact is kept, but its validity period ends today. "
+            "Old facts not mentioned stay current."),
+    "stale": ("You maintain the robot's memory and must decide which memories are no longer valid. For each OLD current "
+              "fact affected by today's evidence, label it KEEP (still valid), STALE (no longer valid, even if nothing states "
+              "so explicitly), or REPLACE (superseded by a specific new fact; give its id). For each NEW fact decide whether it "
+              "DUPLICATES an old current fact (give its id) or is ADDed."),
+}
+OLD_OPS = {"mem0": ["DELETE"], "zep": ["INVALIDATE"], "stale": ["KEEP", "STALE", "REPLACE"]}
+NEW_OPS = {"mem0": ["ADD", "UPDATE", "NOOP"], "zep": ["ADD", "DUPLICATE"], "stale": ["ADD", "DUPLICATE"]}
+
+
+def policy_schema(pol: str) -> Dict[str, Any]:
+    return {"type": "object", "properties": {
+        "new_facts": {"type": "array", "items": {"type": "object", "properties": {
+            "new": {"type": "string"}, "op": {"type": "string", "enum": NEW_OPS[pol]}, "old": {"type": ["string", "null"]}},
+            "required": ["new", "op", "old"], "additionalProperties": False}},
+        "old_facts": {"type": "array", "items": {"type": "object", "properties": {
+            "old": {"type": "string"}, "op": {"type": "string", "enum": OLD_OPS[pol]}, "by": {"type": ["string", "null"]}},
+            "required": ["old", "op", "by"], "additionalProperties": False}}},
+        "required": ["new_facts", "old_facts"], "additionalProperties": False}
+
+
+class FactStore(Store):
+    kind, policy = "facts", None
+
+    def __init__(self, ask, day_names):
+        super().__init__(ask, day_names)
+        self.facts: List[Dict[str, Any]] = []     # id, obj, spot, hours, since, until, status
+        self.n = 0
+        self.log: List[dict] = []
+
+    def fact_text(self, f: dict) -> str:
+        return f"{f['spot']}, {f['hours']}"
+
+    def nightly(self, day: int, memory: L.Memory, ctx: dict) -> None:
+        L0 = L.header_lines((day + 1) * DAY_SECONDS - 60, self.day_names, ctx["cards"], ctx["rooms"], ctx["patrol_hours"],
+                            False, ctx["hints"](day))
+        movers = []
+        for o in sorted(memory.sightings):
+            h = memory.history(o)
+            if len({r for _, r in h}) < 2:
+                continue
+            today = [(t, r) for t, r in h if day * DAY_SECONDS <= t < (day + 1) * DAY_SECONDS]
+            if today:
+                movers.append(f"- {o}: " + ", ".join(f"{L.hhmm(t)} {r}" for t, r in today))
+        if not movers:
+            return
+        ex = L0 + ["", f"It is the end of {L.day_label(day, self.day_names)}. Extract facts for the robot's memory.", "",
+                   "Today's sightings of the objects that move (time spot, in order; the 03:00 entry is the nightly round):"]
+        ex += movers + ["", "Write facts of the form: object, spot, the hours of a typical day when it is at that spot, as "
+                        "today's sightings show them. One fact per object and spot. Use only object and spot names above.",
+                        'Reply with JSON: {"facts": [{"object": ..., "spot": ..., "hours": "HH:MM-HH:MM"}, ...]}']
+        text, _ = self.ask([{"role": "system", "content": L.SYSTEM}, {"role": "user", "content": "\n".join(ex)}],
+                           FACTS_SCHEMA, 2500, f"facts extract day {day}")
+        try:
+            new = [f for f in json.loads(text or "{}").get("facts", [])
+                   if f.get("object") in memory.sightings and f.get("spot") in ctx["allowed"]]
+        except ValueError:
+            new = []
+        if not new:
+            self.log.append({"day": day, "extracted": 0}); return
+        new_ids = {f"n{i + 1}": f for i, f in enumerate(new)}
+        objs = sorted({f["object"] for f in new})
+        cur = {f["id"]: f for f in self.facts if f["obj"] in objs and f["status"] == "current"}
+        pr = L0 + ["", f"It is the end of {L.day_label(day, self.day_names)}.", POLICY_TEXT[self.policy], ""]
+        for o in objs:
+            pr.append(f"{o}:")
+            pr += [f"  old {i}: {self.fact_text(f)} (since day {f['since']})" for i, f in cur.items() if f["obj"] == o] or ["  old: none"]
+            pr += [f"  new {i}: {f['spot']}, {f['hours']}" for i, f in new_ids.items() if f["object"] == o]
+        pr += ["", 'Reply with JSON: {"new_facts": [{"new": id, "op": ..., "old": old id or null}], '
+                   '"old_facts": [{"old": id, "op": ..., "by": new id or null}]}']
+        text, _ = self.ask([{"role": "system", "content": L.SYSTEM}, {"role": "user", "content": "\n".join(pr)}],
+                           policy_schema(self.policy), 2500, f"facts revise day {day}",
+                           llm_authored=tuple(self.fact_text(f) for f in cur.values()))
+        try:
+            dec = json.loads(text or "{}")
+        except ValueError:
+            dec = {}
+        ops: Dict[str, int] = {}
+        for d in dec.get("old_facts", []):
+            f = cur.get(d.get("old"))
+            if f is None:
+                continue
+            op = d.get("op")
+            ops[op] = ops.get(op, 0) + 1
+            if op == "DELETE":
+                f["status"] = "deleted"
+            elif op in ("INVALIDATE", "STALE", "REPLACE"):
+                f["status"], f["until"] = "stale", day
+        for d in dec.get("new_facts", []):
+            nf = new_ids.get(d.get("new"))
+            if nf is None:
+                continue
+            op = d.get("op")
+            ops[op] = ops.get(op, 0) + 1
+            if op in ("NOOP", "DUPLICATE") and d.get("old") in cur:
+                continue
+            if op == "UPDATE" and d.get("old") in cur:
+                old = cur[d["old"]]
+                old.update(spot=nf["spot"], hours=nf["hours"], since=day)
+                continue
+            self.n += 1
+            self.facts.append({"id": f"f{self.n}", "obj": nf["object"], "spot": nf["spot"], "hours": nf["hours"],
+                               "since": day, "until": None, "status": "current"})
+        self.log.append({"day": day, "extracted": len(new), "ops": ops,
+                         "current": sum(f["status"] == "current" for f in self.facts), "total": len(self.facts)})
+
+    def fact_lines(self, obj: str) -> List[str]:
+        mine = [f for f in self.facts if f["obj"] == obj]
+        if self.policy == "mem0":
+            cur = [f for f in mine if f["status"] == "current"][-FACT_CAP:]
+            return [f"Memories about {obj}:"] + ([f"- {self.fact_text(f)} (noted day {f['since']})" for f in cur] or ["- none"])
+        if self.policy == "zep":
+            keep = [f for f in mine if f["status"] in ("current", "stale")][-FACT_CAP:]
+            return [f"Facts about {obj}, each with the period it held:"] + (
+                [f"- {self.fact_text(f)} (valid from day {f['since']}" + (f" to day {f['until']})" if f["until"] is not None else "; still current)")
+                 for f in keep] or ["- none"])
+        cur = [f for f in mine if f["status"] == "current"]
+        old = [f for f in mine if f["status"] == "stale"]
+        old = old[-max(0, FACT_CAP - len(cur[-FACT_CAP:])):] if len(cur) < FACT_CAP else []
+        cur = cur[-FACT_CAP:]
+        return ([f"Current facts about {obj} (ground your answer in these):"]
+                + ([f"- {self.fact_text(f)} (since day {f['since']})" for f in cur] or ["- none"])
+                + ["", f"Historical facts about {obj} (no longer valid; context only, not a default answer):"]
+                + ([f"- {self.fact_text(f)} (day {f['since']} to day {f['until']})" for f in old] or ["- none"]))
+
+    def lines(self, memory, obj, t_query):
+        h = memory.history(obj)
+        out = self.fact_lines(obj) + ["", f"Latest sightings of {obj} (oldest first, at most {RECENT_CAP}):"]
+        out += [f"- {L.clock(t, self.day_names)}: {r}" for t, r in h[-RECENT_CAP:]] or ["- none"]
+        chk = memory.checked_lines(obj, self.day_names, 10)
+        if chk:
+            out += ["", "Listings since the last sighting that did NOT show it:"] + chk
+        return out
+
+    def authored(self):
+        return tuple(self.fact_text(f) for f in self.facts)
+
+
+class FactsMem0(FactStore):
+    kind, policy = "facts_mem0", "mem0"
+
+
+class FactsZep(FactStore):
+    kind, policy = "facts_zep", "zep"
+
+
+class FactsStale(FactStore):
+    kind, policy = "facts_stale", "stale"
+
+
+STORES = {c.kind: c for c in (Naive, Pinned, NoCard, Debate, DebateOracle, FactsMem0, FactsZep, FactsStale)}
 
 
 def strip_cards(lines: List[str], names: Dict[str, str]) -> List[str]:
@@ -192,6 +371,9 @@ def run_arm(bank_path: pathlib.Path, kind: str, told: bool, client: L.LLMClient,
         cursor += 1
 
     noticing_day = -1
+    store_day = -1
+    ctx = {"cards": cards, "rooms": rooms, "patrol_hours": patrol_hours, "allowed": allowed,
+           "hints": lambda d: [h["text"] for h in hint_rows if h["day_index"] <= d]}
     noticing: List[dict] = []
     records: List[dict] = []
     n_fallback = 0
@@ -209,6 +391,10 @@ def run_arm(bank_path: pathlib.Path, kind: str, told: bool, client: L.LLMClient,
             if days is not None and q.day_index not in days:
                 continue
             hints = [h["text"] for h in hint_rows if h["day_index"] <= q.day_index]
+            if isinstance(store, FactStore):
+                while store_day < q.day_index - 1:
+                    store_day += 1
+                    store.nightly(store_day, memory, ctx)
             while noticing_day < q.day_index - 1:      # identical to llm.run_arm: every arm self-reports nightly
                 noticing_day += 1
                 day_hints = [h["text"] for h in hint_rows if h["day_index"] <= noticing_day]
@@ -276,6 +462,8 @@ def run_arm(bank_path: pathlib.Path, kind: str, told: bool, client: L.LLMClient,
     with open(run_dir / "run_log.jsonl", "w") as f:
         for r in records:
             f.write(json.dumps(r, sort_keys=True) + "\n")
+    if isinstance(store, FactStore):
+        (run_dir / "facts.json").write_text(json.dumps({"log": store.log, "facts": store.facts}, indent=1))
     with open(run_dir / "noticing.jsonl", "w") as f:
         for r in noticing:
             f.write(json.dumps({**tag, **r}, sort_keys=True) + "\n")
