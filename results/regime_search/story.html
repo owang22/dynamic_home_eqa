@@ -634,10 +634,19 @@ function gapCellsFor(reg, key, source){
     const S = EXTRA.samples_live && EXTRA.samples_live.gap && EXTRA.samples_live.gap[source];
     return S ? {cells:S.cells, days:(EXTRA.samples_live.n_days||32)} : null;
   }
-  if(source !== "stated") return null;          // no sampling reading exists for anything but the sampled arm
+  // Sampling was only ever run for the language arm, so under that source every other method falls back to
+  // its OWN stated confidence rather than dropping off the chart and taking the reference lines with it. That
+  // puts two different quantities on one axis, which is fine only because it is said: `mixed` is carried
+  // through to every legend entry and end label, and the caption states it once. It is not signalled by line
+  // style -- dotted means annotation on this page now, and a second style would undo that.
   const G = EXTRA.gap && EXTRA.gap.populations[reg]; if(!G) return null;
   const M = G.methods[key]; if(!M) return null;
-  return {cells:M.cells, days:G.days};
+  return {cells:M.cells, days:G.days, mixed: source !== "stated"};
+}
+// "Perpetua* (own confidence — not sampled)" — the one word per entry that stops the axis being misread.
+function gapLabel(e){
+  return e.s.name + (e.mixed ? " (own confidence \u2014 not sampled)" : "")
+       + (e.dash && !e.s.progress ? " (per person)" : "");
 }
 function dailyGapLevel(reg, key, mode, source){
   // the confidence ITSELF, per day, rather than its distance from accuracy
@@ -671,7 +680,8 @@ function gapSeries(){
   // The sampled arm, which is the only method with a second confidence source at all.
   if(state.on.has(LC_KEY) && EXTRA.samples_live && EXTRA.samples_live.gap)
     out.push({s:{k:SAMPLE_GAP_KEY, name:"long-context, sampled 10\u00d7", v:"--m-longcontext"}, key:SAMPLE_GAP_KEY, dash:false});
-  return out.filter(e => dailyGap(reg, e.key, mode, source));
+  return out.filter(e => dailyGap(reg, e.key, mode, source))
+            .map(e => ({...e, mixed: e.key !== SAMPLE_GAP_KEY && source !== "stated"}));
 }
 // Everything the reader picked that this source cannot serve, named rather than dropped.
 function gapMissing(){
@@ -707,16 +717,20 @@ function renderGapLevel(){
   for(let d=1; d<nd; d++){ if(d%2===1) g+=`<text x="${x(d).toFixed(1)}" y="${H-B+15}" text-anchor="middle">${d}</text>`; }
   g+=`<text x="${((L+W-Rt)/2).toFixed(1)}" y="${H-4}" text-anchor="middle" class="lbl">day \u2014 the confidence itself, before it is compared with anything</text>`;
   const ends=[];
-  for(const {s,D,dash} of lines){ const col=`var(${s.v})`;
+  for(const {s,D,dash,mixed} of lines){ const col=`var(${s.v})`;
     const pts=[]; D.mean.forEach((m,i)=>{ if(m!=null) pts.push(`${x(i+1).toFixed(1)},${y(m).toFixed(1)}`); });
     g+=`<polyline fill="none" stroke="${col}" stroke-width="${dash?1.6:2.2}" stroke-linejoin="round" ${dash?'stroke-dasharray="5 3"':""} points="${pts.join(" ")}"/>`;
-    const last=D.mean.map((m,i)=>[m,i]).filter(a=>a[0]!=null).pop(); if(last) ends.push({s,col,yy:y(last[0]),v:last[0]}); }
+    const last=D.mean.map((m,i)=>[m,i]).filter(a=>a[0]!=null).pop(); if(last) ends.push({s,col,yy:y(last[0]),v:last[0],mixed,dash}); }
   ends.sort((a,b)=>a.yy-b.yy); let prev=-99;
   for(const e of ends){ let yy=Math.max(e.yy, prev+14); prev=yy;
-    g+=`<circle cx="${(W-Rt).toFixed(1)}" cy="${e.yy.toFixed(1)}" r="3.5" fill="${e.col}"/><text class="lbl" x="${W-Rt+8}" y="${(yy+4).toFixed(1)}" style="fill:var(--ink)">${e.s.name} · ${e.v.toFixed(0)}%</text>`; }
+    g+=`<circle cx="${(W-Rt).toFixed(1)}" cy="${e.yy.toFixed(1)}" r="3.5" fill="${e.col}"/><text class="lbl" x="${W-Rt+8}" y="${(yy+4).toFixed(1)}" style="fill:var(--ink)">${gapLabel(e)} · ${e.v.toFixed(0)}%</text>`; }
   svg.innerHTML=g;
+  const anyMixed = lines.some(l=>l.mixed);
   $("#gapconfnote").textContent = lines.length
-    ? (state.gapSource==="sampling" ? "How often the ten samples agreed with the answer given, per day." : "The confidence each method states, per day.")
+    ? (state.gapSource==="sampling"
+        ? "How often the ten samples agreed with the answer given, per day"
+          + (anyMixed ? " \u2014 for the sampled arm only. The other lines are each method's own stated confidence, marked as such where they are named, because sampling was run for the language memory alone. Compare their SHAPES, not their heights: agreement among ten samples and a self-reported probability are not the same quantity, so one sitting above another here means little. The panel below, which measures each line against its own accuracy, is the fair comparison." : ".")
+        : "The confidence each method states, per day.")
       + (mode==="leadcal" ? " Shown after the lead-day translation, so this is the accuracy the translation predicts rather than the raw number." : "")
       + " Read it against the gap below: a line that is flat here while the gap moves is a confidence that is not tracking anything."
     : "";
@@ -742,34 +756,45 @@ function renderGap(){
   for(let d=1; d<nd; d++){ if(d%2===1) g+=`<text x="${x(d).toFixed(1)}" y="${H-B+16}" text-anchor="middle">${d}</text>`; }
   g+=`<text x="${((L+W-Rt)/2).toFixed(1)}" y="${H-6}" text-anchor="middle" class="lbl">day — above 0: overconfident (stated &gt; actual) · below 0: underconfident</text>`;
   const ends=[];
-  for(const {s,D,dash} of lines){ const col=`var(${s.v})`;
+  for(const {s,D,dash,mixed} of lines){ const col=`var(${s.v})`;
     if(state.bands){ const up=[],lo=[]; D.mean.forEach((m,i)=>{ if(m==null) return; up.push(`${x(i+1).toFixed(1)},${y(Math.min(ymax,m+D.sd[i])).toFixed(1)}`); lo.unshift(`${x(i+1).toFixed(1)},${y(Math.max(ymin,m-D.sd[i])).toFixed(1)}`); }); if(up.length>1) g+=`<polygon points="${up.join(" ")} ${lo.join(" ")}" fill="${col}" opacity="0.1"/>`; }
     const pts=[]; D.mean.forEach((m,i)=>{ if(m!=null) pts.push(`${x(i+1).toFixed(1)},${y(m).toFixed(1)}`); });
     g+=`<polyline fill="none" stroke="${col}" stroke-width="${dash?1.6:2.2}" stroke-linejoin="round" ${dash?'stroke-dasharray="5 3"':""} points="${pts.join(" ")}"/>`;
-    const last=D.mean.map((m,i)=>[m,i]).filter(a=>a[0]!=null).pop(); if(last) ends.push({s,col,yy:y(last[0]),v:last[0],dash}); }
-  ends.sort((a,b)=>a.yy-b.yy); let prev=-99; for(const e of ends){ let yy=Math.max(e.yy, prev+14); prev=yy; g+=`<circle cx="${(W-Rt).toFixed(1)}" cy="${e.yy.toFixed(1)}" r="3.5" fill="${e.col}"/><text class="lbl" x="${W-Rt+8}" y="${(yy+4).toFixed(1)}" style="fill:var(--ink)">${e.s.name}${e.dash&&!e.s.progress?" (per person)":""} · ${e.v>0?"+":""}${e.v.toFixed(0)}pp${e.s.progress?" "+e.s.progress:""}</text>`; }
+    const last=D.mean.map((m,i)=>[m,i]).filter(a=>a[0]!=null).pop(); if(last) ends.push({s,col,yy:y(last[0]),v:last[0],dash,mixed}); }
+  ends.sort((a,b)=>a.yy-b.yy); let prev=-99; for(const e of ends){ let yy=Math.max(e.yy, prev+14); prev=yy; g+=`<circle cx="${(W-Rt).toFixed(1)}" cy="${e.yy.toFixed(1)}" r="3.5" fill="${e.col}"/><text class="lbl" x="${W-Rt+8}" y="${(yy+4).toFixed(1)}" style="fill:var(--ink)">${gapLabel(e)} · ${e.v>0?"+":""}${e.v.toFixed(0)}pp${e.s.progress?" "+e.s.progress:""}</text>`; }
   g+=`<line id="gapxh" class="axis" x1="0" x2="0" y1="${T}" y2="${H-B}" style="display:none"/>`;
   svg.innerHTML=g; svg.dataset.geom=JSON.stringify({L,Rt,W,nd});
 
   const popTxt = POP_LABEL[reg] || reg;
-  const srcTxt = source==="sampling" ? "how often its 10 sampled answers agree with the one it gave" : "the number each method states";
+  const srcTxt = source==="sampling"
+    ? "how often the sampled arm's 10 answers agree with the one it gave, and each other method's own stated confidence"
+    : "the number each method states";
   const modeTxt = mode==="raw"? "as it comes" : "after the lead-day translation";
   $("#gapnote").textContent = lines.length
     ? `Confidence taken as ${srcTxt}, ${modeTxt}, pooled over households of the "${popTxt}" population. Dashed lines (where shown) are the per-person-grouped variant of the same-coloured method.`
     : "Nothing selected at the top of the page has a reading for this confidence source.";
   const miss = gapMissing();
   const resid = mode==="leadcal" ? gapLeadResidual() : [];
+  const mixedNames = gapSeries().filter(e=>e.mixed).map(e=>e.s.name);
   $("#gapsrcnote").innerHTML =
-    (miss.length ? `<b>No ${source==="sampling"?"sampling":"stated"} reading for:</b> ${miss.join(", ")}. `
-       + (source==="sampling" ? "Only the long-context arm was sampled ten times per question, so it is the only method with a second reading; the rest are drawn from the number they state." : "") + "<br>" : "")
+    (mixedNames.length
+      ? `<b>Two quantities on one axis, on purpose.</b> The long-context line is the share of its ten sampled answers `
+        + `that agree with the answer it gave. ${mixedNames.join(", ")} ${mixedNames.length===1?"is":"are"} each drawn from `
+        + `its own stated confidence, because sampling was only ever run for the language memory. They are kept on the `
+        + `chart rather than dropped so the comparison keeps its shape, and every one of them is marked `
+        + `\u201cown confidence \u2014 not sampled\u201d where it is named.`
+        + (mode==="leadcal" ? " Under the lead-day translation each line is calibrated on its own lead days using its own quantity: the counters on their stated confidence, the language arm on its agreement." : "")
+        + "<br>"
+      : "")
+    + (miss.length ? `<b>No reading at all for:</b> ${miss.join(", ")}.<br>` : "")
     + (resid.length ? `<b>What the lead-day translation leaves behind on the days it was fitted on:</b> `
         + resid.map(r=>`${r.name} ${r.v>0?"+":""}${r.v.toFixed(1)}pp`).join(" · ")
         + `. It is not zero: the fit bins confidences but maps them back by value, so a question sitting above its own bin's average is translated using the next bin's rate. That matters most for a confidence taking few distinct values.` : "");
   let th=`<thead><tr><th>method</th><th class="num">lead (1–13)</th><th class="num">days 14–16</th><th class="num">days 24–26</th></tr></thead><tbody>`;
   // the sampled arm has no precomputed window summary, so it is absent from this table by design
-  for(const {s,key,dash} of series){ const M=G.methods[key]; if(!M||!M.summary) continue; const sm=M.summary; const idx = mode==="raw"?"raw":"leadcal";
+  for(const {s,key,dash,mixed} of series){ const M=G.methods[key]; if(!M||!M.summary) continue; const sm=M.summary; const idx = mode==="raw"?"raw":"leadcal";
     const cell=w=>{ const v=sm[w] && sm[w][idx]; return v? `${v.gap>0?"+":""}${v.gap.toFixed(0)} <span class="muted">±${v.sd.toFixed(0)}</span>` : "–"; };
-    th+=`<tr><td><i class="swatch" style="background:var(${s.v})"></i>${s.name}${dash?" (per person)":""}</td><td class="num">${cell("lead")}</td><td class="num">${cell("d14_16")}</td><td class="num">${cell("d24_26")}</td></tr>`; }
+    th+=`<tr><td><i class="swatch" style="background:var(${s.v})"></i>${gapLabel({s,dash,mixed})}</td><td class="num">${cell("lead")}</td><td class="num">${cell("d14_16")}</td><td class="num">${cell("d24_26")}</td></tr>`; }
   $("#gaptable").innerHTML = series.length? th+"</tbody>" : "";
 }
 function hoverGap(ev){
@@ -928,7 +953,7 @@ function mergeLLMLive(){
     }
   }
 }
-const BUILT = "Tue 17:32, 22 Sep 2026";
+const BUILT = "Tue 17:41, 22 Sep 2026";
 // ---------------------------------------------------------------------------------------------------------------
 // Small-multiple panels. Each is at most four lines and answers one question. Bands are +-1 STANDARD ERROR across
 // households (sd/sqrt(k)), matching the bar the paired contrasts are judged on; the per-day sd is kept in the hover.
