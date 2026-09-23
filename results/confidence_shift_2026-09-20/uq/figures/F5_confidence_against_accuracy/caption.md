@@ -8,12 +8,12 @@ Paste and edit; written as a caption, not a summary.
 
 ---
 
-The same five methods twice: accuracy per day on the left, the confidence each states in its own answer on the right, on one shared scale. A method whose right-hand line moves with its left-hand one knows when it is in trouble.
+The same five methods twice: accuracy per day on the left, the confidence each states in its own answer on the right, on one shared scale. A method whose right-hand line moves with its left-hand one knows when it is in trouble; last seen's, which never moves at all, is the case where the number means nothing.
 
 ---
 
 - **Population:** one resident off sick, that resident's own things
-- **Households:** ttfrozen 10, tt3d 10, perpetua 10, longcontext 6
+- **Households:** ttfrozen 10, tt3d 10, perpetua 10, longcontext 6, lastseen 10
 - **Questions:** all questions
 - **Bands:** ±1 standard error across households
 - **Dotted vertical rules:** the stage boundaries — the first sick day and the first day back. Nothing is shaded, so the lines and their bands sit on a plain ground.

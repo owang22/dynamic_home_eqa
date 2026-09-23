@@ -17,3 +17,5 @@ What being allowed to decline is worth, by window: the decision score under the 
 - **Questions:** all questions
 - **Bands:** none: bars are a difference of two scores
 - **Dotted vertical rules:** the stage boundaries — the first sick day and the first day back. Nothing is shaded, so the lines and their bands sit on a plain ground.
+- **About the data:** Score under the best threshold for that window, minus the score when forced to answer every question. Settled figures for context are in F8's numbers: Perpetua* 4.6 against the timetables' 7.7 and 7.6.
+- **Read with care:** thresholds chosen with hindsight, so these are upper bounds, not a deployable policy, which makes the negative result stronger: even handed the answers in advance, declining buys the counters nothing at the moment it would matter

@@ -70,12 +70,12 @@
       "retrieval": 10
     },
     "split": "all questions",
-    "band": "\u00b11 standard error across households",
+    "band": "\u00b11 standard error across households, on the 3-day timetable only",
     "caption": "Accuracy per day for the 3-day timetable and three language memories. All four break on the first sick day. Over the following ten days, during which every method is living in the new routine and is told the right answer after every question, the counter re-learns the routine and the language memories recover far less.",
     "look_for": "The slope between the first sick days and the end of the spell. The 3-day timetable goes from 57.9 to 88.8, a gain of 30.8 points. Reflection gains 15.2, retrieval 10.4 and long-context 9.7.",
     "not_shown": "It does not show that the language memories learn NOTHING: reflection's +15.2 is a real gain, about 49% of the counter's. It also does not separate re-learning from same-day feedback, since these are all questions rather than cold ones. Long-context is on fewer households than the rest.",
     "history": "This figure asserted until 22 Sept that the language memories \"barely move\". Its own numbers contradicted that \u2014 reflection re-learns half as much as the counter, which is not \"barely\" \u2014 so the claim was changed to the ratio it can actually support and the file was renamed off `F2_counters_relearn_language_does_not`, which had encoded the overclaim in its name.",
-    "note": "The counts are per method above; long-context ran on fewer households than the counters.",
+    "note": "The counts are per method above; long-context ran on fewer households than the counters. The shaded envelope behind the three language memories spans the highest and lowest of THEIR OWN three estimates on each day \u2014 it is the spread between those methods, not a pooled standard error, and it is there so the three read as one class against the counter.",
     "drawing": "The line is a centred three-day average, computed WITHIN each stage so that it never averages across a stage boundary \u2014 a window straddling the boundary borrows the level from the other side and flattens the very change the figure is about. The band, where a figure draws one, is \u00b11 standard error across households computed on the daily values. On this figure's axis the effect of getting that wrong is concrete: an unbounded window renders the 3-day timetable's 40.8-point fall at day 14 as 6.8.",
     "provisional": "long-context household count will rise: a larger run is in progress",
     "numbers": {
@@ -215,18 +215,19 @@
   },
   {
     "figure": "F5",
-    "claim": "The timetables do not move their stated confidence when they break, so the gap between what they claim and what they achieve opens at the shift; Perpetua* is the one whose stated confidence tracks its own accuracy through it.",
+    "claim": "The timetables do not move their stated confidence when they break, so the gap between what they claim and what they achieve opens at the shift; last seen states 98% while being right 58% of the time, a confidence number carrying no information at all; Perpetua* is the one whose stated confidence tracks its own accuracy through the change.",
     "population": "one resident off sick, that resident's own things",
     "households": {
       "ttfrozen": 10,
       "tt3d": 10,
       "perpetua": 10,
-      "longcontext": 6
+      "longcontext": 6,
+      "lastseen": 10
     },
     "split": "all questions",
     "band": "\u00b11 standard error across households",
-    "caption": "The same five methods twice: accuracy per day on the left, the confidence each states in its own answer on the right, on one shared scale. A method whose right-hand line moves with its left-hand one knows when it is in trouble.",
-    "look_for": "Compare each method's two lines at the first dotted rule. The never-forgets timetable's accuracy falls 47 points between day 13 and day 14 while the confidence it states moves 14. Perpetua*'s two lines move together: its stated-versus-actual gap at day 14 is +24.8 points against the never-forgets timetable's +10.3.",
+    "caption": "The same five methods twice: accuracy per day on the left, the confidence each states in its own answer on the right, on one shared scale. A method whose right-hand line moves with its left-hand one knows when it is in trouble; last seen's, which never moves at all, is the case where the number means nothing.",
+    "look_for": "Compare each method's two lines at the first dotted rule. The never-forgets timetable's accuracy falls 47 points between day 13 and day 14 while the confidence it states moves 14. Perpetua*'s two lines move together: its stated-versus-actual gap at day 14 is +24.8 points against the never-forgets timetable's +10.3. Last seen is the reductio: its right-hand line sits near the top of the scale all month at about 98% while its left-hand line sits near 46%.",
     "not_shown": "Being well-tracked is not being accurate: Perpetua* is the least accurate of the counters here, which is the point of the pairing rather than an inconsistency. The right panel is each method's own number on its own scale, so heights are not comparable between methods \u2014 only each line against its own left-hand partner.",
     "drawing": "The line is a centred three-day average, computed WITHIN each stage so that it never averages across a stage boundary \u2014 a window straddling the boundary borrows the level from the other side and flattens the very change the figure is about. The band, where a figure draws one, is \u00b11 standard error across households computed on the daily values.",
     "numbers": {
@@ -257,6 +258,13 @@
         "accuracy day 14": 61.5,
         "confidence day 14": 91.3,
         "gap at day 14": 29.8
+      },
+      "last seen": {
+        "accuracy day 13": 46.5,
+        "confidence day 13": 98.1,
+        "accuracy day 14": 57.5,
+        "confidence day 14": 98.1,
+        "gap at day 14": 40.6
       }
     },
     "width_inches": 5.88,
@@ -319,7 +327,7 @@
       "0.7": "the sampling temperature \u2014 a setting, not a measurement"
     },
     "note": "Each question was put to the model ten times at temperature 0.7 and the conformal set built from how often each place came back. Each household's first 20 questions are excluded while the threshold warms up, and a day is shown only once all households have finished it.",
-    "caption": "Top: how often the truth was inside the conformal set, against the 90% the method promises (dashed). Bottom: how many places the set contained. At the first sick day the guarantee breaks while the set stays the same width \u2014 the method's uncertainty does not notice the change, it simply becomes wrong about it.",
+    "caption": "Top: how often the truth was inside the conformal set, against the 90% the method promises (dashed). Bottom: how many places the set contained. At the first sick day the guarantee breaks while the set gets no wider \u2014 narrower, in fact \u2014 so the method's uncertainty does not register the change at all; it simply becomes wrong about it.",
     "look_for": "Day 14 in both panels, marked: coverage 69% against a 90% promise, with a set of 1.42 places \u2014 NARROWER than the settled-week average of 1.59. A method reacting to the change would have widened it.",
     "not_shown": "Three households, so treat the levels as indicative. Applying our claim bar to the per-household changes, the coverage fall is the part that survives \u2014 it has the same sign in all three households \u2014 while the set-size change does not differ from zero. This is also one conformal wrapper; four others were tried and are on the page, not here.",
     "drawing": "Drawn per day rather than as a three-day average: this figure's claim is about a single day, and even a stage-bounded average pairs day 14 with day 15 and reports 75% where the day itself is 69%.",
@@ -413,7 +421,7 @@
         "worst single day": 0.2
       }
     },
-    "width_inches": 3.05,
+    "width_inches": 3.21,
     "column": "single",
     "files": [
       "F8_decision_score_per_day.png",

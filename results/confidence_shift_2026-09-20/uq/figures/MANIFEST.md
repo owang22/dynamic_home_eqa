@@ -30,9 +30,9 @@ A method that hands a question over when unsure should be right about what it ke
 
 ## [F5](F5_confidence_against_accuracy/) — F5_confidence_against_accuracy
 
-The timetables do not move their stated confidence when they break, so the gap between what they claim and what they achieve opens at the shift; Perpetua* is the one whose stated confidence tracks its own accuracy through it.
+The timetables do not move their stated confidence when they break, so the gap between what they claim and what they achieve opens at the shift; last seen states 98% while being right 58% of the time, a confidence number carrying no information at all; Perpetua* is the one whose stated confidence tracks its own accuracy through the change.
 
-*double-column, 5.88 in wide.* Population one resident off sick, that resident's own things; households ttfrozen 10, tt3d 10, perpetua 10, longcontext 6. Renders, caption and claims in `F5_confidence_against_accuracy/`.
+*double-column, 5.88 in wide.* Population one resident off sick, that resident's own things; households ttfrozen 10, tt3d 10, perpetua 10, longcontext 6, lastseen 10. Renders, caption and claims in `F5_confidence_against_accuracy/`.
 
 ## [F6](F6_the_inversion/) — F6_the_inversion
 
@@ -50,7 +50,7 @@ The conformal set does not widen when the routine changes. On the first sick day
 
 Scored +1 for a right answer, −1 for a wrong one and 0 for declining, the timetables collapse at the shift while Perpetua* and long-context do not.
 
-*single-column, 3.05 in wide.* Population one resident off sick, that resident's own things; households ttfrozen 10, tt3d 10, perpetua 10, longcontext 6. Renders, caption and claims in `F8_decision_score_per_day/`.
+*single-column, 3.21 in wide.* Population one resident off sick, that resident's own things; households ttfrozen 10, tt3d 10, perpetua 10, longcontext 6. Renders, caption and claims in `F8_decision_score_per_day/`.
 
 ## [F9](F9_value_of_declining/) — F9_value_of_declining
 

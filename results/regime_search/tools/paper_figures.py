@@ -46,23 +46,30 @@ COL = {
     "tt3d":        "#eb6834",
     "perpetua":    "#206e44",
     "longcontext": "#7a3aa7",
-    "lastseen":    "#9a9a93",
+    "lastseen":    "#918f88",
 }
+# Reference lines -- the promised error rate, the 90% coverage target -- are drawn in the annotation ink, not
+# in red. A red rule against Perpetua*'s green fell to dE 5.2 under protanopia, and no accent hue clears all
+# four series hues by a comfortable margin. Ink clears every one of them by 29 or more, and it makes the
+# page's rule exact: all annotation is one ink, dotted for a stage boundary and dashed for a target.
 # The language memories as a CLASS: one hue at three steps, stepped by measured contrast against white
 # (12.2:1, 6.8:1, 3.8:1) and clear of the counter's orange by dE 19 or better under every deficiency.
-LANG_FAMILY = ["#4a1d6b", "#7a3aa7", "#a266d4"]
+# Re-stepped: the old three were 13.8-15.0 apart in NORMAL vision, under the floor at which a reader with no
+# deficiency can tell them apart. These are 22 apart and still clear the counter's orange by 17.
+LANG_FAMILY = ["#2d123f", "#712d9e", "#b178d7"]
 INK = "#141413"
+REF = INK          # reference lines share the annotation ink; see the note above COL
 NAME = {
     "ttfrozen": "never-forgets timetable", "tt3d": "3-day timetable", "perpetua": "Perpetua*",
     "longcontext": "long-context", "retrieval": "retrieval", "reflect": "reflection",
     "naive": "recency buffer", "lastseen": "last seen",
 }
 EDGE = {"sick": "sick", "return": "back to normal", "sick2": "sick again", "return2": "back again"}
-# Three steps of the long-context hue for its three message arms -- one memory told different things, so one
+# The message arms use the same three steps as the language family, for the same reason -- one memory told different things, so one
 # colour. Stepped by measured contrast against white (12.5:1, 7.0:1, 3.9:1) rather than by transparency: the
 # old lightest arm was an alpha wash that came out at 1.98:1 and was the hardest line on the page, which is
 # unacceptable for the arm that carries the return claim.
-ARM_STEPS = ["#4a1d6b", "#7a3aa7", "#a266d4"]
+ARM_STEPS = LANG_FAMILY
 
 # said in plain words on every figure that smooths, because a reader must know which line is which
 NOTE = "line = 3-day average within each stage, band = \u00b11 s.e."
@@ -312,12 +319,32 @@ def audit_prose(entry):
     # wholesale: an unexplained exemption is how a stale number hides.
     allowed = dict(entry.get("prose_numbers_ok") or {})
     bad = []
+    # A caption saying "stays the same" where the claim says "gets smaller" is a number disagreement with the
+    # digits taken out, and the numeral check above cannot see it. This is a tripwire, not a proof: it knows
+    # the opposing phrasings we have actually written into these folders, and nothing more.
+    OPPOSED = [({"stays the same", "keeps its width", "unchanged", "does not change", "no change",
+                 "gets no wider", "does not widen"},
+                {"gets smaller", "narrower", "shrinks", "gets wider", "widens", "grows"}),
+               ({"rises", "increases", "goes up", "climbs"},
+                {"falls", "drops", "decreases", "goes down"}),
+               ({"barely moves", "does not move", "stays flat"},
+                {"collapses", "craters", "moves sharply"})]
+    claim_txt = (entry.get("claim") or "").lower()
+    for field in ("caption", "look_for", "not_shown"):
+        other = (entry.get(field) or "").lower()
+        for a_set, b_set in OPPOSED:
+            hit_a = [a for a in a_set if a in other]
+            hit_b = [b for b in b_set if b in claim_txt]
+            # only a complaint when BOTH sides are asserted about the same thing and neither text hedges by
+            # containing the other side as well
+            if hit_a and hit_b and not any(b in other for b in b_set) and not any(a in claim_txt for a in a_set):
+                bad.append(f"{entry['figure']}/{field}: says '{hit_a[0]}' where the claim says '{hit_b[0]}'")
     for field in ("caption", "look_for", "not_shown", "claim", "note", "history"):
         text = entry.get(field) or ""
         for lit in re.findall(r"(?<![\w.])\d+\.\d+(?![\w])", text):
             if lit not in table and lit not in allowed:
                 bad.append(f"{entry['figure']}/{field}: '{lit}' is not in this figure's numbers table")
-    return bad
+    return sorted(set(bad))
 
 
 def save(fig, name, manifest, entry):
@@ -342,7 +369,8 @@ def save(fig, name, manifest, entry):
     hh = ", ".join(f"{k} {v}" for k, v in entry["households"].items())
     with open(os.path.join(folder, "caption.md"), "w") as f:
         f.write(f"# Caption for {entry['figure']}\n\n")
-        colw = {"single": "**Single-column figure** — reproduce at about 3.4 in wide.",
+        colw = {"single": "**Single-column figure** — reproduce at "
+                          f"{entry['width_inches']:.2f} in, its rendered width.",
                 "1.5": "**Wider than a single column** — reproduce at about "
                        f"{entry['width_inches']:.1f} in. Do NOT squeeze it into one column; its labels are "
                        "set for this width and shrinking them puts the smallest text near 4pt.",
@@ -360,6 +388,10 @@ def save(fig, name, manifest, entry):
                 "Nothing is shaded, so the lines and their bands sit on a plain ground.\n")
         if entry.get("drawing"):
             f.write(f"- **How the line is drawn:** {entry['drawing']}\n")
+        if entry.get("note"):
+            f.write(f"- **About the data:** {entry['note']}\n")
+        if entry.get("caveat"):
+            f.write(f"- **Read with care:** {entry['caveat']}\n")
         if entry.get("provisional"):
             f.write(f"- **Provisional:** {entry['provisional']}\n")
 
@@ -376,6 +408,18 @@ def save(fig, name, manifest, entry):
         f.write(f"# {entry['figure']} — numbers behind the figure\n\n"
                 "Regenerated with the figure from the same data. Never read a value off the picture.\n\n")
         f.write(numbers_table(entry))
+
+    # Every piece of text an entry carries must end up in a file somebody reads. `note` and `caveat` were
+    # being set on seven figures and written nowhere -- the alpha explanation, the warm-up rule, the hindsight
+    # warning, all of it inert. A field that looks declared and does nothing is the same fault as a width that
+    # looks measured and is a default.
+    written = "".join(open(os.path.join(folder, f)).read()
+                      for f in ("caption.md", "claims.md", "numbers.md"))
+    for k, v in entry.items():
+        if k in ("files", "folder", "numbers", "prose_numbers_ok", "width_inches", "column", "households"):
+            continue
+        if isinstance(v, str) and len(v) > 25 and v[:25] not in written:
+            print(f"    FIELD NOT SURFACED -> {entry['figure']}: '{k}' is set but appears in no file")
 
     entry["files"] = paths
     entry["folder"] = name
@@ -501,7 +545,7 @@ def f2(DATA, EXTRA, manifest):
                             f"long-context and +{g['retrieval']:.0f} for retrieval."
                   )({k: v["re-learning inside the spell"] for k, v in nums.items()}),
         "population": POP_LABEL[pop], "households": hh, "split": "all questions",
-        "band": "±1 standard error across households",
+        "band": "±1 standard error across households, on the 3-day timetable only",
         "caption": "Accuracy per day for the 3-day timetable and three language memories. All four break on "
                    "the first sick day. Over the following ten days, during which every method is living in "
                    "the new routine and is told the right answer after every question, the counter re-learns "
@@ -524,7 +568,10 @@ def f2(DATA, EXTRA, manifest):
                    "\"barely\" — so the claim was changed to the ratio it can actually support and the file "
                    "was renamed off `F2_counters_relearn_language_does_not`, which had encoded the overclaim "
                    "in its name.",
-                "note": "The counts are per method above; long-context ran on fewer households than the counters.",
+        "note": "The counts are per method above; long-context ran on fewer households than the counters. "
+                "The shaded envelope behind the three language memories spans the highest and lowest of "
+                "THEIR OWN three estimates on each day — it is the spread between those methods, not a "
+                "pooled standard error, and it is there so the three read as one class against the counter.",
         "drawing": NOTE_LONG_ACC,
         "provisional": grow and "long-context household count will rise: a larger run is in progress",
         "numbers": nums})
@@ -642,8 +689,9 @@ def f8(DATA, EXTRA, manifest):
     if worst_below:
         d, v, who = worst_below
         ax.plot([d], [v], "o", ms=3.4, color=COL["ttfrozen"], zorder=6)
-        ax.annotate(f"{v:+.1f}: worse than\nanswering nothing", xy=(d, v), xytext=(6, -2),
-                    textcoords="offset points", fontsize=6.2, color=INK, va="top")
+        ax.annotate(f"{v:+.1f}: worse than answering nothing", xy=(d, v), xytext=(8, 14),
+                    textcoords="offset points", fontsize=6.2, color=INK, va="bottom",
+                    arrowprops=dict(arrowstyle="-", lw=0.6, color=INK, shrinkA=0, shrinkB=2))
     finish(ax, "daily score (+1 / \u22121 / 0)", ylim=None)
     legend_below(ax, f"{POP_LABEL['person']} · {hh.get('ttfrozen', '?')} households, long-context "
                      f"{hh.get('longcontext', '?')}{'; rising' if growing() else ''}\n"
@@ -801,10 +849,10 @@ def f4(DATA, EXTRA, manifest):
             "wrong on what it keeps, 14-16": r2(avg([pd[str(d)]["wrong_when_answered"] for d in range(14, 17) if str(d) in pd])),
         }
     boundaries(ax, DATA, "person")
-    ax[1].axhline(100 * alpha, color="#c0392b", ls="--", lw=1.0, zorder=2)
+    ax[1].axhline(100 * alpha, color=REF, ls="--", lw=1.0, zorder=2)
     ax[1].annotate(f"the {int(100*alpha)}-in-100 it promised", xy=(0.985, 100 * alpha),
                    xycoords=("axes fraction", "data"), xytext=(0, -4), textcoords="offset points",
-                   ha="right", va="top", fontsize=6.2, color="#c0392b", zorder=6)
+                   ha="right", va="top", fontsize=6.2, color=REF, zorder=6)
     finish(ax[0], "% handed over", xlab="", ylim=(0, 100))
     finish(ax[1], "% wrong, of those kept", ylim=(0, 100))
     legend_below(ax[1], f"{POP_LABEL['person']} · line = 3-day average within each stage; these are rates, "
@@ -834,11 +882,13 @@ def f4(DATA, EXTRA, manifest):
 def f5(DATA, EXTRA, manifest):
     """Confidence beside accuracy, per day, for the four."""
     pop = "person"
-    # Last seen was here as the never-learns baseline and is gone: its grey separated from Perpetua*'s green
-    # by only dE 5.0 under simulated deficiency, and five series is one more than this palette can carry
-    # safely. Its behaviour is described in the folder instead.
+    # Last seen is back. It was dropped when its grey separated from Perpetua*'s OLD green by only dE 5.0;
+    # against the current green the same grey clears at 9.6 under every deficiency, so the figure keeps the
+    # case it exists for -- a method stating near-total confidence while right about half the time is the
+    # sharpest demonstration that a confidence number can carry no information, and the other four cannot
+    # make it.
     keys = [("ttfrozen", "ttfrozen"), ("tt3d", "tt3d"), ("perpetua", "perpetua"),
-            ("person:llm_longcontext_nomsg", "longcontext")]
+            ("person:llm_longcontext_nomsg", "longcontext"), ("lastseen", "lastseen")]
     fig, ax = plt.subplots(1, 2, figsize=(FULL, 2.6), sharey=True, gridspec_kw={"wspace": 0.06})
     nums, hh = {}, {}
     st = stage_lookup(DATA, pop)
@@ -863,21 +913,28 @@ def f5(DATA, EXTRA, manifest):
                         f"{hh.get('longcontext','?')} · " + NOTE, ncol=3, gap=0.22)
     save(fig, "F5_confidence_against_accuracy", manifest, {
         "figure": "F5",
-        "claim": "The timetables do not move their stated confidence when they break, so the gap between "
-                 "what they claim and what they achieve opens at the shift; Perpetua* is the one whose stated "
-                 "confidence tracks its own accuracy through it.",
+        "claim": (lambda n: "The timetables do not move their stated confidence when they break, so the gap "
+                            "between what they claim and what they achieve opens at the shift; last seen "
+                            f"states {n['last seen']['confidence day 14']:.0f}% while being right "
+                            f"{n['last seen']['accuracy day 14']:.0f}% of the time, a confidence number "
+                            "carrying no information at all; Perpetua* is the one whose stated confidence "
+                            "tracks its own accuracy through the change.")(nums),
         "population": POP_LABEL[pop], "households": hh, "split": "all questions",
         "band": "±1 standard error across households",
         "caption": "The same five methods twice: accuracy per day on the left, the confidence each states in "
                    "its own answer on the right, on one shared scale. A method whose right-hand line moves "
-                   "with its left-hand one knows when it is in trouble.",
+                   "with its left-hand one knows when it is in trouble; last seen's, which never moves at "
+                   "all, is the case where the number means nothing.",
         "look_for": (lambda n: "Compare each method's two lines at the first dotted rule. The never-forgets "
                                f"timetable's accuracy falls {abs(n['never-forgets timetable']['accuracy day 14'] - n['never-forgets timetable']['accuracy day 13']):.0f} "
                                "points between day 13 and day 14 while the confidence it states moves "
                                f"{abs(n['never-forgets timetable']['confidence day 14'] - n['never-forgets timetable']['confidence day 13']):.0f}. "
                                "Perpetua*'s two lines move together: its stated-versus-actual gap at day 14 is "
                                f"{n['Perpetua*']['gap at day 14']:+.1f} points against the never-forgets "
-                               f"timetable's {n['never-forgets timetable']['gap at day 14']:+.1f}.")(nums),
+                               f"timetable's {n['never-forgets timetable']['gap at day 14']:+.1f}. Last "
+                               "seen is the reductio: its right-hand line sits near the top of the scale all "
+                               f"month at about {n['last seen']['confidence day 13']:.0f}% while its left-hand "
+                               f"line sits near {n['last seen']['accuracy day 13']:.0f}%.")(nums),
         "not_shown": "Being well-tracked is not being accurate: Perpetua* is the least accurate of the "
                      "counters here, which is the point of the pairing rather than an inconsistency. The right "
                      "panel is each method's own number on its own scale, so heights are not comparable "
@@ -901,12 +958,15 @@ def f6(DATA, EXTRA, manifest):
         kept = [M["answered_vs_handed"][w]["answered_acc"] for w in wins]
         gave = [M["answered_vs_handed"][w]["handed_acc"] for w in wins]
         a.bar([x - 0.2 for x in xs], kept, width=0.38, color=COL[m], label="questions it answered", zorder=3)
-        a.bar([x + 0.2 for x in xs], gave, width=0.38, color=COL[m], alpha=0.42, label="questions it handed over",
-              zorder=3)
+        # NOT a 42% tint of the same colour: composited over white those two pale bars fell to dE 3.9 under
+        # tritanopia, a failure created by the transparency rather than by the hues underneath it. Hatching
+        # keeps the identity in the full-strength hue and carries the kept/handed distinction as texture.
+        a.bar([x + 0.2 for x in xs], gave, width=0.38, facecolor="white", edgecolor=COL[m], hatch="////",
+              linewidth=0.8, label="questions it handed over", zorder=3)
         for x, (k, g) in enumerate(zip(kept, gave)):
             if k < g:      # the inversion: mark it rather than leave it to be spotted
                 a.annotate("inverted", xy=(x, max(k, g)), xytext=(0, 8), textcoords="offset points",
-                           ha="center", fontsize=6, color="#c0392b", fontweight="bold")
+                           ha="center", fontsize=6, color=REF, fontweight="bold")
         a.set_xticks(xs)
         a.set_xticklabels([WLAB[w] for w in wins], fontsize=5.9)
         a.set_title(GATE_NAME[m], fontsize=7.5)
@@ -950,9 +1010,9 @@ def f7(DATA, EXTRA, manifest):
     # day 14 with day 15 and reports 75% where the day itself is 69%, softening the one number the figure
     # exists to show. Drawn per day, with that day marked, rather than smoothed.
     ax[0].plot(days, cov, "-", color=COL["longcontext"], lw=1.6, zorder=4)
-    ax[0].axhline(90, color="#c0392b", ls="--", lw=1.0, zorder=2)
+    ax[0].axhline(90, color=REF, ls="--", lw=1.0, zorder=2)
     ax[0].annotate("dashed line = the 90% it promises", xy=(0.015, 0.06), xycoords="axes fraction",
-                   ha="left", va="bottom", fontsize=6.2, color="#c0392b")
+                   ha="left", va="bottom", fontsize=6.2, color=REF)
     ax[1].plot(days, size, "-", color=COL["longcontext"], lw=1.6, zorder=4)
     d14 = C.get("14")
     if d14:
@@ -990,8 +1050,8 @@ def f7(DATA, EXTRA, manifest):
                 "the threshold warms up, and a day is shown only once all households have finished it.",
         "caption": "Top: how often the truth was inside the conformal set, against the 90% the method promises "
                    "(dashed). Bottom: how many places the set contained. At the first sick day the guarantee "
-                   "breaks while the set stays the same width — the method's uncertainty does not notice the "
-                   "change, it simply becomes wrong about it.",
+                   "breaks while the set gets no wider — narrower, in fact — so the method's uncertainty does "
+                   "not register the change at all; it simply becomes wrong about it.",
         "look_for": f"Day 14 in both panels, marked: coverage {d14['coverage']:.0f}% against a 90% promise, "
                     f"with a set of {d14['set_size']:.2f} places — NARROWER than the settled-week average of "
                     f"{avg(lead_s):.2f}. A method reacting to the change would have widened it.",
