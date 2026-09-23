@@ -61,7 +61,7 @@
   },
   {
     "figure": "F10",
-    "claim": "Refitting the threshold every single day \u2014 the most generous reading there is \u2014 does not rescue the timetables at the shift. The timetable that never forgets has a confidence signal that beats hindsight-on-shuffled-labels in every window of the run except one: 0.20 against a bar of 0.10 in the settled week, 0.35 against 0.21 on the first days back \u2014 and at the first sick days 0.07 against a bar of 0.33, which is nothing. The three-day timetable is clears at neither boundary (0.18 against 0.39 at the shift, 0.29 against 0.35 on the return). The survival-time model moves the other way, from 0.51 settled to 2.25 at the shift, the largest value it reaches all run. So the never-forgets timetable does not have a weak signal that the shift weakens further: it has a working signal that stops working on the day the routine changes and works again a week later.",
+    "claim": "Refitting the threshold every single day \u2014 the most generous reading there is \u2014 does not rescue either timetable at the shift, and it separates them into two findings that the window version ran together.\n\nFIRST, and this is the paper's thesis stated by a method rather than about one: the timetable that never forgets has a confidence signal that works, and it fails at the one moment it is needed. It beats hindsight-on-shuffled-labels in every window of the run except one \u2014 0.20 against a bar of 0.10 in the settled week, 0.35 against 0.21 on the first days back, 0.53 against 0.16 a week after that \u2014 and at the first sick days 0.07 against a bar of 0.33, which is nothing. Not a weak signal that the shift weakens further: a working one that stops working on the day the routine changes and works again a week later.\n\nSECOND, and separately, the timetable with a three-day memory never had much of a signal to lose. It clears its bar in only two of the five windows and at neither boundary \u2014 0.18 against 0.39 at the shift, 0.29 against 0.35 on the return, and 0.10 against 0.12 even in the settled week. That is a weaker and less interesting story than the first one, and merging the two timetables into a single sentence costs the first one its point.\n\nThe survival-time model moves the other way, from 0.51 settled to 2.25 at the shift, the largest value it reaches all run.",
     "population": "one resident off sick, that resident's own things",
     "households": {
       "ttfrozen": 10,
@@ -72,59 +72,95 @@
     "split": "all questions",
     "band": "none: the zero line IS the noise floor, because what is plotted is already the excess over it",
     "note": "One threshold per DAY, shared across the ten households, chosen knowing that day's outcomes. The floor subtracted from it is the same procedure run on labels shuffled inside each household on that day, averaged over 40 shuffles.",
-    "bound_wording": "The three decision figures use three different amounts of hindsight, and each should be described with the words that match it. F8: ONE threshold per method for the whole run, then scored day by day \u2014 oracular in that the constant was chosen knowing the whole run, but it is at least a single policy someone could hold. F9: one threshold per method per WINDOW, chosen knowing that window's outcomes, and one per household. F10: one threshold per method per DAY, chosen knowing that day. None of the three is swept per day in the sense of being refitted on held-out data, and none is a deployable policy; all three are upper bounds on what declining could be worth, F8 the tightest and F10 the loosest.",
-    "caption": "Per day, the score under the best threshold for that day minus the score from answering everything, with the same quantity on shuffled labels subtracted off. Zero means the confidence tells you nothing a coin could not have told you, once hindsight is paid for.",
-    "look_for": "The first dotted rule. The never-forgets timetable dips to and below the zero line there, at the same moment the survival-time model rises to its highest point of the run. The three-day timetable is near zero at both rules, which is why the claim above treats the two timetables differently rather than as one story.",
+    "bound_wording": "The three decision figures use three different amounts of hindsight, and each should be described with the words that match it. F8: ONE threshold per method for the whole run, then scored day by day \u2014 oracular in that the constant was chosen knowing the whole run, but it is at least a single policy someone could hold. F9: one threshold per method per WINDOW, chosen knowing that window's outcomes, and one per household. F10: one threshold per method per DAY, chosen knowing that day. None of the three is refitted on held-out data: every threshold in all three is chosen knowing the outcomes it is then scored on, which is what makes them upper bounds on what declining could be worth rather than policies. F8 is the tightest of the three and F10 the loosest.",
+    "caption": "Per day, the score under the best threshold for that day minus the score from answering everything, with the same quantity on shuffled labels subtracted off. Zero means the confidence tells you nothing a coin could not have told you, once hindsight is paid for. The subtraction matters most exactly where the figure does: a method that is right about half the time hands hindsight far more to work with, so at the shift the shuffled-label floor under the timetables climbs from about 0.02 to 1.23. Their raw gain climbs at the shift too \u2014 which is why the unfloored number looks like a result \u2014 but no faster than the floor beneath it.",
+    "look_for": "The first dotted rule, and then the rest of the run. The never-forgets timetable dips to and below the zero line at that rule and is clear of it everywhere else, which is the whole of the first finding. The three-day timetable hugs the zero line for most of the run, which is the whole of the second. The survival-time model rises to its highest point of the run at the same rule where the first timetable fails.",
     "not_shown": "It does not show the total value of declining, most of which comes from the level term and not from the ordering \u2014 that split is F9's. It is not a deployable policy: the threshold is chosen knowing the day it is scored on, which is why a noise floor has to be subtracted at all. Days 1 to 8 are drawn for completeness and nothing is claimed from them: the methods' memories are still filling, and the settled comparison in every window table starts at day 9.",
     "mechanism": "The floor itself moves, and that is the point. In the settled week hindsight on shuffled labels buys almost nothing, because a method that is right four times in five leaves little for a threshold to find. At the shift the timetables are right about half the time, and hindsight on pure noise then buys a great deal. Their observed gain rises at the shift too \u2014 which is why the raw number looks like a result \u2014 but it rises no faster than the floor beneath it.",
     "numbers": {
-      "timetable that never forgets": {
+      "timetable that never forgets \u2014 beats the floor by": {
         "settled week 9-13": 0.2,
-        "settled week 9-13 (bar to clear)": 0.1,
         "first sick days 14-16": 0.07,
-        "first sick days 14-16 (bar to clear)": 0.33,
         "rest of the spell 17-23": 0.22,
-        "rest of the spell 17-23 (bar to clear)": 0.2,
         "first days back 24-26": 0.35,
-        "first days back 24-26 (bar to clear)": 0.21,
-        "a week later 27-31": 0.53,
-        "a week later 27-31 (bar to clear)": 0.16
+        "a week later 27-31": 0.53
       },
-      "timetable with a three-day memory": {
+      "timetable that never forgets \u2014 bar it has to clear": {
         "settled week 9-13": 0.1,
-        "settled week 9-13 (bar to clear)": 0.12,
+        "first sick days 14-16": 0.33,
+        "rest of the spell 17-23": 0.2,
+        "first days back 24-26": 0.21,
+        "a week later 27-31": 0.16
+      },
+      "timetable that never forgets \u2014 the floor itself": {
+        "settled week 9-13": 0.02,
+        "first sick days 14-16": 1.23,
+        "rest of the spell 17-23": 0.06,
+        "first days back 24-26": 0.05,
+        "a week later 27-31": 0.05
+      },
+      "timetable with a three-day memory \u2014 beats the floor by": {
+        "settled week 9-13": 0.1,
         "first sick days 14-16": 0.18,
-        "first sick days 14-16 (bar to clear)": 0.39,
         "rest of the spell 17-23": 0.13,
-        "rest of the spell 17-23 (bar to clear)": 0.07,
         "first days back 24-26": 0.29,
-        "first days back 24-26 (bar to clear)": 0.35,
-        "a week later 27-31": 0.33,
-        "a week later 27-31 (bar to clear)": 0.12
+        "a week later 27-31": 0.33
       },
-      "survival-time model": {
+      "timetable with a three-day memory \u2014 bar it has to clear": {
+        "settled week 9-13": 0.12,
+        "first sick days 14-16": 0.39,
+        "rest of the spell 17-23": 0.07,
+        "first days back 24-26": 0.35,
+        "a week later 27-31": 0.12
+      },
+      "timetable with a three-day memory \u2014 the floor itself": {
+        "settled week 9-13": 0.04,
+        "first sick days 14-16": 0.92,
+        "rest of the spell 17-23": 0.01,
+        "first days back 24-26": 0.24,
+        "a week later 27-31": 0.03
+      },
+      "survival-time model \u2014 beats the floor by": {
         "settled week 9-13": 0.51,
-        "settled week 9-13 (bar to clear)": 0.23,
         "first sick days 14-16": 2.25,
-        "first sick days 14-16 (bar to clear)": 0.5,
         "rest of the spell 17-23": 0.59,
-        "rest of the spell 17-23 (bar to clear)": 0.16,
         "first days back 24-26": 1.05,
-        "first days back 24-26 (bar to clear)": 0.51,
-        "a week later 27-31": 1.55,
-        "a week later 27-31 (bar to clear)": 0.33
+        "a week later 27-31": 1.55
       },
-      "whole-log-in-the-prompt memory": {
+      "survival-time model \u2014 bar it has to clear": {
+        "settled week 9-13": 0.23,
+        "first sick days 14-16": 0.5,
+        "rest of the spell 17-23": 0.16,
+        "first days back 24-26": 0.51,
+        "a week later 27-31": 0.33
+      },
+      "survival-time model \u2014 the floor itself": {
+        "settled week 9-13": 0.09,
+        "first sick days 14-16": 0.88,
+        "rest of the spell 17-23": 0.05,
+        "first days back 24-26": 0.58,
+        "a week later 27-31": 0.15
+      },
+      "whole-log-in-the-prompt memory \u2014 beats the floor by": {
         "settled week 9-13": 0.28,
-        "settled week 9-13 (bar to clear)": 0.17,
         "first sick days 14-16": 0.75,
-        "first sick days 14-16 (bar to clear)": 0.26,
         "rest of the spell 17-23": 0.37,
-        "rest of the spell 17-23 (bar to clear)": 0.14,
         "first days back 24-26": 0.38,
-        "first days back 24-26 (bar to clear)": 0.21,
-        "a week later 27-31": 0.65,
-        "a week later 27-31 (bar to clear)": 0.22
+        "a week later 27-31": 0.65
+      },
+      "whole-log-in-the-prompt memory \u2014 bar it has to clear": {
+        "settled week 9-13": 0.17,
+        "first sick days 14-16": 0.26,
+        "rest of the spell 17-23": 0.14,
+        "first days back 24-26": 0.21,
+        "a week later 27-31": 0.22
+      },
+      "whole-log-in-the-prompt memory \u2014 the floor itself": {
+        "settled week 9-13": 0.04,
+        "first sick days 14-16": 0.11,
+        "rest of the spell 17-23": 0.04,
+        "first days back 24-26": 0.05,
+        "a week later 27-31": 0.07
       }
     },
     "width_inches": 3.7,
@@ -463,7 +499,7 @@
   },
   {
     "figure": "F8",
-    "bound_wording": "The three decision figures use three different amounts of hindsight, and each should be described with the words that match it. F8: ONE threshold per method for the whole run, then scored day by day \u2014 oracular in that the constant was chosen knowing the whole run, but it is at least a single policy someone could hold. F9: one threshold per method per WINDOW, chosen knowing that window's outcomes, and one per household. F10: one threshold per method per DAY, chosen knowing that day. None of the three is swept per day in the sense of being refitted on held-out data, and none is a deployable policy; all three are upper bounds on what declining could be worth, F8 the tightest and F10 the loosest.",
+    "bound_wording": "The three decision figures use three different amounts of hindsight, and each should be described with the words that match it. F8: ONE threshold per method for the whole run, then scored day by day \u2014 oracular in that the constant was chosen knowing the whole run, but it is at least a single policy someone could hold. F9: one threshold per method per WINDOW, chosen knowing that window's outcomes, and one per household. F10: one threshold per method per DAY, chosen knowing that day. None of the three is refitted on held-out data: every threshold in all three is chosen knowing the outcomes it is then scored on, which is what makes them upper bounds on what declining could be worth rather than policies. F8 is the tightest of the three and F10 the loosest.",
     "claim": "Scored the way a user would feel it \u2014 +1 for a right answer, \u22121 for a wrong one, 0 for declining \u2014 the ranking inverts at the moment of change: the methods that are most accurate in the settled world are the ones that collapse, and one goes NEGATIVE. On day 14 the timetable that never forgets scores below zero, meaning it would have done better answering nothing at all. Accuracy in a stable world does not predict value when the world moves.",
     "population": "one resident off sick, that resident's own things",
     "households": {
@@ -478,7 +514,7 @@
       "0.95": "an illustrative confidence value, not a measured one",
       "0.5": "the half-way bar the +1/\u22121/0 scoring implies \u2014 a setting"
     },
-    "note": "Each method uses its OWN best fixed threshold, because the comparison would otherwise measure their confidence scales rather than their judgement \u2014 the timetables spread mass over dozens of places and rarely exceed 0.5, the whole-log-in-the-prompt memory says 0.95 to almost everything.",
+    "note": "Each method uses its OWN best fixed threshold, because the comparison would otherwise measure their confidence scales rather than their judgement \u2014 the timetables spread mass over dozens of places and rarely exceed 0.5, the whole-log-in-the-prompt memory says 0.95 to almost everything. Every window figure in the table below is the mean of the DRAWN daily series, computed from it rather than recomputed beside it. That is the structural fix, not a repair: this table previously held per-window refits \u2014 a different estimator, in the same units, with values close enough that a reader comparing table to line saw an agreement that was not there. Wherever a table sits beside a line, compute the table from the line.",
     "caption": "Daily decision score under a rule that needs no target to explain: +1 for a right answer, \u22121 for a wrong one, 0 for declining to answer. Each method uses its own best fixed confidence threshold. Both timetables collapse on the first sick day; the survival-time model and the whole-log-in-the-prompt memory do not.",
     "below_zero": [
       14,
@@ -542,7 +578,7 @@
   },
   {
     "figure": "F9",
-    "bound_wording": "The three decision figures use three different amounts of hindsight, and each should be described with the words that match it. F8: ONE threshold per method for the whole run, then scored day by day \u2014 oracular in that the constant was chosen knowing the whole run, but it is at least a single policy someone could hold. F9: one threshold per method per WINDOW, chosen knowing that window's outcomes, and one per household. F10: one threshold per method per DAY, chosen knowing that day. None of the three is swept per day in the sense of being refitted on held-out data, and none is a deployable policy; all three are upper bounds on what declining could be worth, F8 the tightest and F10 the loosest.",
+    "bound_wording": "The three decision figures use three different amounts of hindsight, and each should be described with the words that match it. F8: ONE threshold per method for the whole run, then scored day by day \u2014 oracular in that the constant was chosen knowing the whole run, but it is at least a single policy someone could hold. F9: one threshold per method per WINDOW, chosen knowing that window's outcomes, and one per household. F10: one threshold per method per DAY, chosen knowing that day. None of the three is refitted on held-out data: every threshold in all three is chosen knowing the outcomes it is then scored on, which is what makes them upper bounds on what declining could be worth rather than policies. F8 is the tightest of the three and F10 the loosest.",
     "claim": "Being allowed to decline is worth something to every method at the shift, but for the timetables that is not because their confidence knows anything. The value splits in two: what the best all-or-nothing choice gives, which needs no signal at all and pays whenever a method is wrong more often than right, and what the ORDER of the confidences adds on top. At the shift the timetable that never forgets is right 51.3% of the time, so declining is worth 2.07 to it on the level alone \u2014 and its ordering adds 0.37 against a hindsight-on-noise floor of 0.29, which is nothing. The three-day timetable is the same story (0.43 against 0.36). The survival-time model's ordering adds 2.70 against a floor of 0.52, and the whole-log-in-the-prompt memory's 1.33 against 0.30. The honest contrast is not a big effect against a small one. It is a real effect against no measurable effect.",
     "population": "one resident off sick, that resident's own things",
     "households": {
@@ -555,7 +591,7 @@
     "band": "none: the black line on each bar is a noise floor, not an error bar",
     "note": "Threshold chosen PER HOUSEHOLD with hindsight, which is the generous reading and suits a figure whose point is that even given hindsight the timetables gain nothing from their own confidence. The floor is that same quantity computed on shuffled labels.",
     "conservative_variant": "A stricter estimator gives the same ranking. Choosing ONE threshold for all ten households instead of one each, the totals are 0.33 for the timetable that never forgets, 0.40 for the three-day one, 2.83 for the survival-time model and 0.77 for the whole-log memory. Its noise floor sits near 0.01, because a single policy applied to every household has far less freedom to chase noise, so on that estimator every bar clears its floor. The two agree on the ranking and disagree on the floor: that is a fact about the estimators rather than about the methods, and a reviewer who recomputes one of them should expect a different-looking number.",
-    "caption": "What the ORDER of a method's confidences is worth at each stage: the score under the best threshold for that window, minus the score from the best all-or-nothing choice, so that only the part needing the confidence to carry information is shown. The black line on each bar is what the same procedure extracts from shuffled labels. A bar that does not clear its own line is not a result.",
+    "caption": "What the ORDER of a method's confidences is worth at each stage: the score under the best threshold for that window, minus the score from the best all-or-nothing choice, so that only the part needing the confidence to carry information is shown. The black line on each bar is what the same procedure extracts from shuffled labels, and it is drawn per bar because it moves: a method that is right about half the time hands hindsight far more to work with, so the floor rises at the shift for exactly the methods whose bars rise there. A bar that does not clear its own line is not a result.",
     "look_for": "The first-sick-days group. Both timetables' bars sit on their own floors; the survival-time model's stands well clear of it and the whole-log-in-the-prompt memory's clears too.",
     "not_shown": "It does not show the level part, which is real and is where the timetables' apparent gain comes from; those numbers are in the claim. It is not a deployable policy \u2014 the threshold is fitted after the fact on the very window being scored, which is why a floor is drawn at all. And a floor is not an error bar: it says what noise would give, not how uncertain this estimate is.",
     "mechanism": "The same result by a second route, which is why it is stated as a finding rather than as one test. Correlating each method's stated confidence with whether it was actually right, inside each household, both timetables fall at the shift to something indistinguishable from zero while the survival-time model's is unchanged. One statistic subtracts a shuffled-label floor and the other measures association directly; they agree on which methods have a real ordering and on the timetables having none.",

@@ -872,8 +872,9 @@ BOUND_WORDING = (
     "oracular in that the constant was chosen knowing the whole run, but it is at least a single policy "
     "someone could hold. F9: one threshold per method per WINDOW, chosen knowing that window's outcomes, and "
     "one per household. F10: one threshold per method per DAY, chosen knowing that day. None of the three is "
-    "swept per day in the sense of being refitted on held-out data, and none is a deployable policy; all "
-    "three are upper bounds on what declining could be worth, F8 the tightest and F10 the loosest."
+    "refitted on held-out data: every threshold in all three is chosen knowing the outcomes it is then "
+    "scored on, which is what makes them upper bounds on what declining could be worth rather than policies. "
+    "F8 is the tightest of the three and F10 the loosest."
 )
 
 
@@ -940,7 +941,12 @@ def f8(DATA, EXTRA, manifest):
                              "0.5": "the half-way bar the +1/\u22121/0 scoring implies \u2014 a setting"},
         "note": "Each method uses its OWN best fixed threshold, because the comparison would otherwise measure "
                 "their confidence scales rather than their judgement \u2014 the timetables spread mass over "
-                "dozens of places and rarely exceed 0.5, the whole-log-in-the-prompt memory says 0.95 to almost everything.",
+                "dozens of places and rarely exceed 0.5, the whole-log-in-the-prompt memory says 0.95 to almost everything. "
+                "Every window figure in the table below is the mean of the DRAWN daily series, computed from it "
+                "rather than recomputed beside it. That is the structural fix, not a repair: this table "
+                "previously held per-window refits \u2014 a different estimator, in the same units, with values "
+                "close enough that a reader comparing table to line saw an agreement that was not there. "
+                "Wherever a table sits beside a line, compute the table from the line.",
         "caption": "Daily decision score under a rule that needs no target to explain: +1 for a "
                    "right answer, −1 for a wrong one, 0 for declining to answer. Each method uses its own best "
                    "fixed confidence threshold. Both timetables collapse on the first sick day; the survival-time model and "
@@ -1047,8 +1053,10 @@ def f9(DATA, EXTRA, manifest):
         "caption": ("What the ORDER of a method's confidences is worth at each stage: the score under the best "
                     "threshold for that window, minus the score from the best all-or-nothing choice, so that "
                     "only the part needing the confidence to carry information is shown. The black line on "
-                    "each bar is what the same procedure extracts from shuffled labels. A bar that does not "
-                    "clear its own line is not a result."),
+                    "each bar is what the same procedure extracts from shuffled labels, and it is drawn per "
+                    "bar because it moves: a method that is right about half the time hands hindsight far "
+                    "more to work with, so the floor rises at the shift for exactly the methods whose bars "
+                    "rise there. A bar that does not clear its own line is not a result."),
         "look_for": ("The first-sick-days group. Both timetables' bars sit on their own floors; the "
                      "survival-time model's stands well clear of it and the whole-log-in-the-prompt memory's "
                      "clears too."),
@@ -1409,40 +1417,55 @@ def f10(DATA, EXTRA, manifest):
              "mean": [M["gain"][str(d)] - M["null_gain"][str(d)] for d in days]}
         line(ax, S, COL[m], nm_legend(m), band=False, stage_of=stage_lookup(DATA, "person"))
         hh[m] = M["n_hh"]
-        row = {}
+        # A row per part, as in F9: the caption argues from the FLOOR as well as from the plotted excess, and
+        # every number in a folder's prose has to be a number that folder's own table produces.
+        beats, bar, floorrow = {}, {}, {}
         for w, rng in WIN_DAYS.items():
             g = avg([M["gain"][str(d)] for d in rng if str(d) in M["gain"]])
             f = avg([M["null_gain"][str(d)] for d in rng if str(d) in M["null_gain"]])
             sd = avg([M["null_sd"][str(d)] for d in rng if str(d) in M["null_sd"]])
-            row[w] = None if g is None else round(g - f, 2)
-            row[w + " (bar to clear)"] = None if sd is None else round(2 * sd, 2)
-        nums[nm(m)] = row
+            beats[w] = None if g is None else round(g - f, 2)
+            bar[w] = None if sd is None else round(2 * sd, 2)
+            floorrow[w] = None if f is None else round(f, 2)
+        nums[f"{nm(m)} \u2014 beats the floor by"] = beats
+        nums[f"{nm(m)} \u2014 bar it has to clear"] = bar
+        nums[f"{nm(m)} \u2014 the floor itself"] = floorrow
     boundaries([ax], DATA, "person")
     ax.axhline(0, color=INK, lw=0.9, zorder=3)
     finish(ax, "What the confidence beats\nhindsight-on-noise by", ylim=None)
     legend_below(ax, ncol=2)
-    v = lambda m, w, k="": nums[nm(m)][w + k]
+    v = lambda m, w, k="beats the floor by": nums[f"{nm(m)} \u2014 {k}"][w]
     sick = "first sick days 14-16"
     save(fig, "F10_the_same_test_one_day_at_a_time", manifest, {
         "figure": "F10",
         "claim": ("Refitting the threshold every single day \u2014 the most generous reading there is \u2014 "
-                  "does not rescue the timetables at the shift. The timetable that never forgets has a "
-                  "confidence signal that beats hindsight-on-shuffled-labels in every window of the run "
-                  f"except one: {v('ttfrozen','settled week 9-13'):.2f} against a bar of "
-                  f"{v('ttfrozen','settled week 9-13',' (bar to clear)'):.2f} in the settled week, "
+                  "does not rescue either timetable at the shift, and it separates them into two findings "
+                  "that the window version ran together.\n\n"
+                  "FIRST, and this is the paper's thesis stated by a method rather than about one: the "
+                  "timetable that never forgets has a confidence signal that works, and it fails at the one "
+                  "moment it is needed. It beats hindsight-on-shuffled-labels in every window of the run "
+                  f"except one \u2014 {v('ttfrozen','settled week 9-13'):.2f} against a bar of "
+                  f"{v('ttfrozen','settled week 9-13','bar it has to clear'):.2f} in the settled week, "
                   f"{v('ttfrozen','first days back 24-26'):.2f} against "
-                  f"{v('ttfrozen','first days back 24-26',' (bar to clear)'):.2f} on the first days back "
+                  f"{v('ttfrozen','first days back 24-26','bar it has to clear'):.2f} on the first days back, "
+                  f"{v('ttfrozen','a week later 27-31'):.2f} against "
+                  f"{v('ttfrozen','a week later 27-31','bar it has to clear'):.2f} a week after that "
                   f"\u2014 and at the first sick days {v('ttfrozen',sick):.2f} against a bar of "
-                  f"{v('ttfrozen',sick,' (bar to clear)'):.2f}, which is nothing. The three-day timetable is "
-                  "clears at neither boundary "
-                  f"({v('tt3d',sick):.2f} against {v('tt3d',sick,' (bar to clear)'):.2f} at the shift, "
-                  f"{v('tt3d','first days back 24-26'):.2f} against "
-                  f"{v('tt3d','first days back 24-26',' (bar to clear)'):.2f} on the return). The "
-                  "survival-time model moves the other way, from "
+                  f"{v('ttfrozen',sick,'bar it has to clear'):.2f}, which is nothing. Not a weak signal that "
+                  "the shift weakens further: a working one that stops working on the day the routine "
+                  "changes and works again a week later.\n\n"
+                  "SECOND, and separately, the timetable with a three-day memory never had much of a signal "
+                  "to lose. It clears its bar in only two of the five windows and at neither boundary "
+                  f"\u2014 {v('tt3d',sick):.2f} against {v('tt3d',sick,'bar it has to clear'):.2f} at the "
+                  f"shift, {v('tt3d','first days back 24-26'):.2f} against "
+                  f"{v('tt3d','first days back 24-26','bar it has to clear'):.2f} on the return, and "
+                  f"{v('tt3d','settled week 9-13'):.2f} against "
+                  f"{v('tt3d','settled week 9-13','bar it has to clear'):.2f} even in the settled week. That "
+                  "is a weaker and less interesting story than the first one, and merging the two timetables "
+                  "into a single sentence costs the first one its point.\n\n"
+                  "The survival-time model moves the other way, from "
                   f"{v('perpetua','settled week 9-13'):.2f} settled to {v('perpetua',sick):.2f} at the shift, "
-                  "the largest value it reaches all run. So the never-forgets timetable does not have a weak "
-                  "signal that the shift weakens further: it has a working signal that stops working on the "
-                  "day the routine changes and works again a week later."),
+                  "the largest value it reaches all run."),
         "population": POP_LABEL["person"], "households": hh, "split": "all questions",
         "band": "none: the zero line IS the noise floor, because what is plotted is already the excess over it",
         "note": ("One threshold per DAY, shared across the ten households, chosen knowing that day's outcomes. "
@@ -1451,11 +1474,17 @@ def f10(DATA, EXTRA, manifest):
         "bound_wording": BOUND_WORDING,
         "caption": ("Per day, the score under the best threshold for that day minus the score from answering "
                     "everything, with the same quantity on shuffled labels subtracted off. Zero means the "
-                    "confidence tells you nothing a coin could not have told you, once hindsight is paid for."),
-        "look_for": ("The first dotted rule. The never-forgets timetable dips to and below the zero line "
-                     "there, at the same moment the survival-time model rises to its highest point of the "
-                     "run. The three-day timetable is near zero at both rules, which is why the claim above "
-                     "treats the two timetables differently rather than as one story."),
+                    "confidence tells you nothing a coin could not have told you, once hindsight is paid for. "
+                    "The subtraction matters most exactly where the figure does: a method that is right about "
+                    "half the time hands hindsight far more to work with, so at the shift the shuffled-label "
+                    "floor under the timetables climbs from about 0.02 to 1.23. Their raw gain climbs at the "
+                    "shift too \u2014 which is why the unfloored number looks like a result \u2014 but no "
+                    "faster than the floor beneath it."),
+        "look_for": ("The first dotted rule, and then the rest of the run. The never-forgets timetable dips "
+                     "to and below the zero line at that rule and is clear of it everywhere else, which is "
+                     "the whole of the first finding. The three-day timetable hugs the zero line for most of "
+                     "the run, which is the whole of the second. The survival-time model rises to its highest "
+                     "point of the run at the same rule where the first timetable fails."),
         "not_shown": ("It does not show the total value of declining, most of which comes from the level term "
                       "and not from the ordering \u2014 that split is F9's. It is not a deployable policy: the "
                       "threshold is chosen knowing the day it is scored on, which is why a noise floor has to "

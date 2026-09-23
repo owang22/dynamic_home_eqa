@@ -524,8 +524,15 @@ stale, not one that has quietly become a different measurement with the same val
 
 The wording is now written once, as a constant carried by all three decision figures, and it says what each one
 actually does: one threshold per run (F8), one per window per household (F9), one per day (F10). None of them is
-"swept per day" in the sense of being refitted on held-out data. That phrase had been used in conversation about
-F8 and is wrong about all three.
+refitted on held-out data — every threshold in all three is chosen knowing the outcomes it is then scored on,
+which is what makes them upper bounds rather than policies. An earlier description of F8 said its threshold was
+swept for each day, which is true of none of the three; the replacement wording is deliberately the sort a
+reader can check line by line against the code.
+
+The structural fix, rather than the repair: **wherever a table sits beside a line, compute the table FROM the
+drawn series.** F8's window figures are now the means of the daily values the figure actually plots, so the two
+cannot come apart again. Recomputing a summary alongside a drawing, from the same source data by a second
+route, is the arrangement that produced this.
 
 **Separately: replacing a function by slicing between two markers deleted four other functions.** The slice ran
 from `def f9` to `FIGS = {`, on the assumption that f9 was the last figure. It is not — f4 through f7 are
