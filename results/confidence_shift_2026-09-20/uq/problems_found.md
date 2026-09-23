@@ -376,3 +376,49 @@ reaches them.
 
 **Rule.** Both were found by rendering the output and looking at it, not by reading the code — the code looks
 correct in both cases. And a guard is not exempt from the check it enforces.
+
+## 22 Sept, evening — two summaries that erased what they were summarising
+
+**3. A three-day average turned a 41-point cliff into a 6.8-point slope, on the figure whose whole purpose is that
+cliff.** The paper figures draw a centred three-day rolling mean so the learn/break/re-learn shape reads at a
+glance. Oliver then asked, reasonably, to drop the faint raw-daily lines underneath and keep only the smoothed one.
+Measured before doing it: the 3-day timetable's fall at day 14 is **40.8 points** on the daily values, and the
+centred average draws it as **6.8**. Day 13's window reaches forward into the first sick day and day 14's reaches
+back into the last settled day, so each borrows the other's level and the boundary flattens. With the raw lines
+removed there would have been nothing left on the figure to contradict it.
+
+The fix is to bound the window by stage: a day's average only includes days in its own stage, so the boundary days
+average over two days or one. That holds the break at 30.5. Smoothing still shrinks a one-day cliff even bounded,
+so the manifest header and every `claims.md` now state that the numbers are measured on the daily values and must
+be quoted from there rather than read off the line.
+
+**This is the same failure as the mean hiding the mass, in a different costume.** There, an average over questions
+concealed that a quarter of the sets were empty. Here, an average over days conceals the single day the whole
+figure exists to show. In both cases the summary statistic is not wrong — it is faithfully reporting something
+other than the effect, and it is most misleading exactly where the effect is sharpest. **Any smoothing applied
+across a discontinuity has to be checked against the discontinuity it crosses, by computing the thing the reader
+will try to read off the picture and comparing it with the raw number.** One line of arithmetic separated this
+from publishing a figure that contradicts our own headline.
+
+**4. A guard justified by a temporary state, with nothing able to expire it.** `llm_live_extra.py` carried
+`ABANDONED = {("person","longcontext","nomsg"): hh_s3..s9}`, excluding seven households from every long-context
+number on the page. The comment gave a sound reason: long-context costs about ten times the compute per question,
+its told arms had only ever run on hh_s0–s2, and extra untold households could not improve a comparison that had
+no told counterpart. All true when written.
+
+It stopped being true at 19:12, when the run extending long-context to the other households started — and nothing
+in the code, the comment or the page knew that. The untold arms for s3, s4 and s5 turned out to be almost entirely
+cached and completed in two to four minutes, and the page went on reporting **3 households where it had 10** until
+the exclusion was found by hand. Every long-context level on the page was computed from a third of the data
+available.
+
+**Rule.** A constant that hard-codes "we decided not to use this" is a decision with an expiry date and no timer.
+Prefer a guard that derives the exclusion from the data — skip a household because its run log is missing or short,
+which stops being true on its own — over a literal set of names that only a person can revisit. Where a literal is
+unavoidable, the comment must say what event ends it, so a reader hitting it knows what to check.
+
+**What removing it exposed.** With the untold arm back at ten households, told-once at six and told-twice at three,
+the told-vs-untold figure would have drawn three different household sets on one chart and invited the gaps between
+them to be read as the effect of the message. The figure now matches all three arms to the households all three
+ran. The lesson is that a fix which enlarges one arm of a paired comparison silently unbalances the pair: after
+lifting any restriction, re-check every comparison built on it.

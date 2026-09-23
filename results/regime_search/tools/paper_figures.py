@@ -224,7 +224,7 @@ def line(ax, S, colour, label, clip_from=1, lw=1.6, band=True, smooth=True, stag
         ax.plot(xs, ys, "-", color=colour, lw=lw, label=label, zorder=4, solid_joinstyle="round")
 
 
-def legend_below(ax, note, ncol=2, order=None, inside=None):
+def legend_below(ax, note, ncol=2, order=None, inside=None, gap=0.17):
     """Legend and footnote as ONE stacked block under the axis. At single-column width a legend inside the axes
     covers a quarter of the plot, and a footnote placed independently lands on the legend -- both of which
     happened before this was one function that knows how tall the legend is."""
@@ -238,7 +238,7 @@ def legend_below(ax, note, ncol=2, order=None, inside=None):
                   handlelength=1.5, columnspacing=1.0, borderaxespad=0.3, fontsize=6.6)
         y0 = -0.24
     else:
-        leg = ax.legend(h, l, loc="upper center", bbox_to_anchor=(0.5, -0.17), ncol=ncol,
+        leg = ax.legend(h, l, loc="upper center", bbox_to_anchor=(0.5, -gap), ncol=ncol,
                         frameon=False, handlelength=1.5, columnspacing=1.0, borderaxespad=0)
         # Ask the legend where it actually ended rather than guessing from a row count: a guessed row height
         # left a gap of a couple of lines under a three-row legend and none under a one-row one.
@@ -576,6 +576,11 @@ def f9(DATA, EXTRA, manifest):
         xs = [j + (i - (len(meths) - 1) / 2) * w for j in range(len(order))]
         ys = [M["windows"].get(k, {}).get("gain", 0.0) for k in order]
         ax.bar(xs, ys, width=w * 0.92, color=COL[m], label=DEC_NAME[m], zorder=3)
+        # the value on the bar: a reader quoting "+2.9 against +0.3" should not have to measure against the
+        # axis, and the numbers table is not in the paper beside the figure
+        for xx, yy in zip(xs, ys):
+            ax.annotate(f"{yy:.1f}", xy=(xx, yy), xytext=(0, 1.5), textcoords="offset points",
+                        ha="center", va="bottom", fontsize=5.4, color=INK, rotation=90)
         hh[m] = M["n_hh"]
         nums[DEC_NAME[m]] = {k: M["windows"].get(k, {}).get("gain") for k in order}
     ax.axhline(0, color=INK, lw=0.8, zorder=2)
@@ -584,15 +589,17 @@ def f9(DATA, EXTRA, manifest):
     finish(ax, "points gained by declining", xlab="", ylim=None)
     ax.grid(True, axis="y", alpha=0.5)
     ax.grid(False, axis="x")
-    legend_below(ax, f"{POP_LABEL['person']} · {hh.get('ttfrozen', '?')} households, long-context "
-                     f"{hh.get('longcontext', '?')}{'; rising' if growing() else ''}\n"
-                     f"best threshold per window minus answering everything; {HINDSIGHT}", ncol=2)
+    # two lines. The hindsight caveat stays -- it is what stops this being read as a deployable policy --
+    # so the population line goes, since the caption carries it.
+    legend_below(ax, f"best threshold per window minus answering everything; {HINDSIGHT}", ncol=4)
     save(fig, "F9_value_of_declining", manifest, {
         "figure": "F9",
-        "claim": "At the shift, being allowed to decline is worth almost nothing to the timetables (+0.2 and "
-                 "+0.4) and a great deal to Perpetua* (+2.9). Perpetua* scores BELOW both timetables while the "
-                 "world is stable: it is not the better model, it is the only one whose uncertainty is worth "
-                 "acting on.",
+        "claim": (lambda g: "At the shift, being allowed to decline is worth almost nothing to the "
+                            f"timetables (+{g['never-forgets timetable']:.1f} and +{g['3-day timetable']:.1f}) "
+                            f"and a great deal to Perpetua* (+{g['Perpetua*']:.1f}). Perpetua* scores BELOW "
+                            "both timetables while the world is stable: it is not the better model, it is the "
+                            "only one whose uncertainty is worth acting on."
+                  )({k: v["first sick days 14-16"] or 0 for k, v in nums.items()}),
         "population": POP_LABEL["person"], "households": hh, "split": "all questions",
         "band": "none: bars are a difference of two scores",
         "note": "Score under the best threshold for that window, minus the score when forced to answer every "
@@ -617,7 +624,168 @@ def f9(DATA, EXTRA, manifest):
         "numbers": nums})
 
 
-FIGS = {"F1": f1, "F2": f2, "F3": f3, "F8": f8, "F9": f9}
+GATE_ORDER = ["longcontext", "ttfrozen", "tt3d", "perpetua"]
+GATE_NAME = {"longcontext": "long-context", "ttfrozen": "never-forgets timetable",
+             "tt3d": "3-day timetable", "perpetua": "Perpetua*"}
+
+
+def gate_series(M, field):
+    days = sorted(int(d) for d in M["per_day"])
+    return {"days": days, "mean": [M["per_day"][str(d)][field] for d in days],
+            "se": [0] * len(days), "hh": M["n"]}
+
+
+def f4(DATA, EXTRA, manifest):
+    """Handing the question over: how often, and how often still wrong on what it kept."""
+    D = EXTRA["deferral_live"]["memories"]
+    alpha = EXTRA["deferral_live"]["alpha"]
+    fig, ax = plt.subplots(2, 1, figsize=(SINGLE, 3.6), sharex=True,
+                           gridspec_kw={"hspace": 0.16})
+    nums, hh = {}, {}
+    for m in GATE_ORDER:
+        M = D.get(m)
+        if not M:
+            continue
+        st = stage_lookup(DATA, "person")
+        line(ax[0], gate_series(M, "hand_over"), COL[m], GATE_NAME[m], band=False, stage_of=st)
+        line(ax[1], gate_series(M, "wrong_when_answered"), COL[m], GATE_NAME[m], band=False, stage_of=st)
+        hh[m] = M["n"]
+        pd = M["per_day"]
+        nums[GATE_NAME[m]] = {
+            "hands over, settled 9-13": r2(avg([pd[str(d)]["hand_over"] for d in range(9, 14) if str(d) in pd])),
+            "hands over, days 14-16": r2(avg([pd[str(d)]["hand_over"] for d in range(14, 17) if str(d) in pd])),
+            "wrong on what it keeps, settled": r2(avg([pd[str(d)]["wrong_when_answered"] for d in range(9, 14) if str(d) in pd])),
+            "wrong on what it keeps, 14-16": r2(avg([pd[str(d)]["wrong_when_answered"] for d in range(14, 17) if str(d) in pd])),
+        }
+    boundaries(ax, DATA, "person")
+    ax[1].axhline(100 * alpha, color="#c0392b", ls="--", lw=1.0, zorder=2)
+    ax[1].annotate(f"the {int(100*alpha)}-in-100 it promised", xy=(0.985, 100 * alpha),
+                   xycoords=("axes fraction", "data"), xytext=(0, -4), textcoords="offset points",
+                   ha="right", va="top", fontsize=6.2, color="#c0392b", zorder=6)
+    finish(ax[0], "% handed over", xlab="", ylim=(0, 100))
+    finish(ax[1], "% wrong, of those kept", ylim=(0, 100))
+    legend_below(ax[1], f"{POP_LABEL['person']} · line = 3-day average within each stage; these are rates, "
+                        "so no band", ncol=2, gap=0.30)
+    save(fig, "F4_handing_the_question_over", manifest, {
+        "figure": "F4",
+        "claim": "A method that hands a question over when unsure should be right about what it keeps. At the "
+                 "shift the timetables hand over most of the day's questions and are still wrong on a large "
+                 "share of the rest.",
+        "population": POP_LABEL["person"], "households": hh, "split": "all questions",
+        "band": "none: these are rates, drawn as a three-day average within each stage",
+        "note": f"The dashed line is the one-in-ten error rate the gate was set to hold (alpha={alpha}).",
+        "caption": "Top: how often each method declines to answer. Bottom: how often it is nonetheless wrong on "
+                   "the questions it did answer, against the one-in-ten rate it was set to hold (dashed). A "
+                   "gate that worked would keep the lower line flat across the dotted boundary by giving up "
+                   "more questions; these do not.",
+        "look_for": "The bottom panel at the first dotted rule. The promise is held comfortably through the "
+                    "settled fortnight and broken immediately at the shift, and the top panel shows the gate "
+                    "reacting by handing over more — but a day late and not by enough.",
+        "not_shown": "It does not show WHY each method fails the promise; F5 separates confidence from "
+                     "accuracy, and F6 shows the inversion behind the never-forgets timetable's failure. The "
+                     "gate threshold is adaptive, so these are not a fixed policy.",
+        "drawing": NOTE_LONG, "numbers": nums})
+
+
+def f5(DATA, EXTRA, manifest):
+    """Confidence beside accuracy, per day, for the four."""
+    pop = "person"
+    keys = [("ttfrozen", "ttfrozen"), ("tt3d", "tt3d"), ("perpetua", "perpetua"),
+            ("person:llm_longcontext_nomsg", "longcontext"), ("lastseen", "lastseen")]
+    fig, ax = plt.subplots(1, 2, figsize=(FULL, 2.6), sharey=True, gridspec_kw={"wspace": 0.06})
+    nums, hh = {}, {}
+    st = stage_lookup(DATA, pop)
+    for key, m in keys:
+        only = complete_hh(DATA, pop, key)
+        A = series(DATA, pop, key, only_hh=only)
+        C = series(DATA, pop, key, field="conf", only_hh=only)
+        line(ax[0], A, COL[m], NAME[m], stage_of=st)
+        line(ax[1], C, COL[m], NAME[m], stage_of=st)
+        hh[m] = A["hh"]
+        g = lambda S, d: S["mean"][d - 1]
+        nums[NAME[m]] = {"accuracy day 13": r2(g(A, 13)), "confidence day 13": r2(g(C, 13)),
+                         "accuracy day 14": r2(g(A, 14)), "confidence day 14": r2(g(C, 14)),
+                         "gap at day 14": r2(None if g(A, 14) is None or g(C, 14) is None else g(C, 14) - g(A, 14))}
+    boundaries([ax[0]], DATA, pop)
+    boundaries([ax[1]], DATA, pop)
+    finish(ax[0], "%", ylim=(0, 100))
+    finish(ax[1], "", ylim=(0, 100))
+    ax[0].set_title("is it right?", fontsize=7.5, pad=16)
+    ax[1].set_title("how sure does it say it is?", fontsize=7.5, pad=16)
+    legend_below(ax[0], f"{POP_LABEL[pop]} · {hh.get('ttfrozen','?')} households, long-context "
+                        f"{hh.get('longcontext','?')} · " + NOTE, ncol=3, gap=0.22)
+    save(fig, "F5_confidence_against_accuracy", manifest, {
+        "figure": "F5",
+        "claim": "The timetables state a confidence far below their own accuracy and do not move it when they "
+                 "break; last seen sits pinned near the top whatever happens; Perpetua* is the one whose "
+                 "stated confidence tracks its own accuracy.",
+        "population": POP_LABEL[pop], "households": hh, "split": "all questions",
+        "band": "±1 standard error across households",
+        "caption": "The same five methods twice: accuracy per day on the left, the confidence each states in "
+                   "its own answer on the right, on one shared scale. A method whose right-hand line moves "
+                   "with its left-hand one knows when it is in trouble.",
+        "look_for": "Compare each method's two lines at the first dotted rule. The timetables' accuracy falls "
+                    "roughly 40 points while their stated confidence barely moves. Last seen's confidence sits "
+                    "near the top throughout while its accuracy sits near 50. Perpetua*'s two lines move "
+                    "together.",
+        "not_shown": "Being well-tracked is not being accurate: Perpetua* is the least accurate of the "
+                     "counters here, which is the point of the pairing rather than an inconsistency. The right "
+                     "panel is each method's own number on its own scale, so heights are not comparable "
+                     "between methods — only each line against its own left-hand partner.",
+        "drawing": NOTE_LONG, "numbers": nums})
+
+
+def f6(DATA, EXTRA, manifest):
+    """The inversion: what the gate keeps against what it hands over."""
+    D = EXTRA["deferral_live"]["memories"]
+    order = EXTRA["deferral_live"]["memories"]["ttfrozen"]["answered_vs_handed"]
+    wins = [w for w in ("lead", "d14_16", "d17_23", "d24_26", "d27_31") if w in order]
+    WLAB = {"lead": "settled", "d14_16": "first\nsick days", "d17_23": "in the\nspell",
+            "d24_26": "first days\nback", "d27_31": "a week\nlater"}
+    meths = ["ttfrozen", "perpetua"]
+    fig, ax = plt.subplots(1, 2, figsize=(FULL * 0.72, 2.5), sharey=True, gridspec_kw={"wspace": 0.05})
+    nums, hh = {}, {}
+    for a, m in zip(ax, meths):
+        M = D[m]
+        xs = list(range(len(wins)))
+        kept = [M["answered_vs_handed"][w]["answered_acc"] for w in wins]
+        gave = [M["answered_vs_handed"][w]["handed_acc"] for w in wins]
+        a.bar([x - 0.2 for x in xs], kept, width=0.38, color=COL[m], label="questions it answered", zorder=3)
+        a.bar([x + 0.2 for x in xs], gave, width=0.38, color=COL[m], alpha=0.42, label="questions it handed over",
+              zorder=3)
+        for x, (k, g) in enumerate(zip(kept, gave)):
+            if k < g:      # the inversion: mark it rather than leave it to be spotted
+                a.annotate("inverted", xy=(x, max(k, g)), xytext=(0, 8), textcoords="offset points",
+                           ha="center", fontsize=6, color="#c0392b", fontweight="bold")
+        a.set_xticks(xs)
+        a.set_xticklabels([WLAB[w] for w in wins], fontsize=5.9)
+        a.set_title(GATE_NAME[m], fontsize=7.5)
+        finish(a, "% right" if m == meths[0] else "", xlab="", ylim=(0, 100))
+        a.grid(False, axis="x")
+        hh[m] = M["n"]
+        nums[GATE_NAME[m]] = {WLAB[w].replace("\n", " "): M["answered_vs_handed"][w]["edge"] for w in wins}
+    legend_below(ax[0], "bars are the accuracy of the questions the gate kept and of those it handed over; "
+                        "a handed-over bar taller than a kept one is a gate working backwards", ncol=2)
+    save(fig, "F6_the_inversion", manifest, {
+        "figure": "F6",
+        "claim": "At the shift the never-forgets timetable answers the questions it gets wrong and hands over "
+                 "the ones it would have got right — its gate runs backwards. Perpetua* keeps the sign the "
+                 "right way round in every window.",
+        "population": POP_LABEL["person"], "households": hh, "split": "all questions",
+        "band": "none: these are window accuracies",
+        "caption": "For two methods, the accuracy of the questions the gate chose to answer (solid) against "
+                   "the accuracy of the questions it handed over (pale), by window. A gate that is working "
+                   "keeps the solid bar above the pale one. Where it does not, the figure says so.",
+        "look_for": "The never-forgets timetable's first-sick-days pair, where the pale bar overtakes the "
+                    "solid one, against Perpetua*'s, where it does not. The per-window edge — kept minus "
+                    "handed over — is in the numbers.",
+        "not_shown": "Two methods only; the 3-day timetable is close to a wash and long-context never inverts, "
+                     "so neither adds to the contrast. It also does not show how MANY questions each bar "
+                     "rests on, which differs a great deal between the kept and handed-over halves.",
+        "numbers": nums})
+
+
+FIGS = {"F1": f1, "F2": f2, "F3": f3, "F4": f4, "F5": f5, "F6": f6, "F8": f8, "F9": f9}
 
 
 def main():

@@ -2,7 +2,7 @@
 
 ## The claim
 
-> At the shift, being allowed to decline is worth almost nothing to the timetables (+0.2 and +0.4) and a great deal to Perpetua* (+2.9). Perpetua* scores BELOW both timetables while the world is stable: it is not the better model, it is the only one whose uncertainty is worth acting on.
+> At the shift, being allowed to decline is worth almost nothing to the timetables (+0.3 and +0.4) and a great deal to Perpetua* (+2.8). Perpetua* scores BELOW both timetables while the world is stable: it is not the better model, it is the only one whose uncertainty is worth acting on.
 
 ## What in the figure demonstrates it
 

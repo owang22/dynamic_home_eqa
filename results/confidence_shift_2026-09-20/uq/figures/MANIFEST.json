@@ -149,6 +149,153 @@
     "folder": "F3_what_one_sentence_buys"
   },
   {
+    "figure": "F4",
+    "claim": "A method that hands a question over when unsure should be right about what it keeps. At the shift the timetables hand over most of the day's questions and are still wrong on a large share of the rest.",
+    "population": "one resident off sick, that resident's own things",
+    "households": {
+      "longcontext": 3549,
+      "ttfrozen": 4130,
+      "tt3d": 4130,
+      "perpetua": 4130
+    },
+    "split": "all questions",
+    "band": "none: these are rates, drawn as a three-day average within each stage",
+    "note": "The dashed line is the one-in-ten error rate the gate was set to hold (alpha=0.1).",
+    "caption": "Top: how often each method declines to answer. Bottom: how often it is nonetheless wrong on the questions it did answer, against the one-in-ten rate it was set to hold (dashed). A gate that worked would keep the lower line flat across the dotted boundary by giving up more questions; these do not.",
+    "look_for": "The bottom panel at the first dotted rule. The promise is held comfortably through the settled fortnight and broken immediately at the shift, and the top panel shows the gate reacting by handing over more \u2014 but a day late and not by enough.",
+    "not_shown": "It does not show WHY each method fails the promise; F5 separates confidence from accuracy, and F6 shows the inversion behind the never-forgets timetable's failure. The gate threshold is adaptive, so these are not a fixed policy.",
+    "drawing": "The line is a centred three-day average, computed WITHIN each stage so it never averages across a boundary: a window straddling day 14 renders the 3-day timetable's 40.8-point fall as 6.8. The band is \u00b11 standard error across households, computed on the daily values.",
+    "numbers": {
+      "long-context": {
+        "hands over, settled 9-13": 45.5,
+        "hands over, days 14-16": 57.9,
+        "wrong on what it keeps, settled": 19.0,
+        "wrong on what it keeps, 14-16": 27.7
+      },
+      "never-forgets timetable": {
+        "hands over, settled 9-13": 21.4,
+        "hands over, days 14-16": 70.6,
+        "wrong on what it keeps, settled": 12.5,
+        "wrong on what it keeps, 14-16": 63.0
+      },
+      "3-day timetable": {
+        "hands over, settled 9-13": 29.1,
+        "hands over, days 14-16": 70.4,
+        "wrong on what it keeps, settled": 12.5,
+        "wrong on what it keeps, 14-16": 41.2
+      },
+      "Perpetua*": {
+        "hands over, settled 9-13": 48.7,
+        "hands over, days 14-16": 53.3,
+        "wrong on what it keeps, settled": 16.5,
+        "wrong on what it keeps, 14-16": 23.9
+      }
+    },
+    "files": [
+      "F4_handing_the_question_over.png",
+      "F4_handing_the_question_over.svg",
+      "F4_handing_the_question_over.pdf"
+    ],
+    "folder": "F4_handing_the_question_over"
+  },
+  {
+    "figure": "F5",
+    "claim": "The timetables state a confidence far below their own accuracy and do not move it when they break; last seen sits pinned near the top whatever happens; Perpetua* is the one whose stated confidence tracks its own accuracy.",
+    "population": "one resident off sick, that resident's own things",
+    "households": {
+      "ttfrozen": 10,
+      "tt3d": 10,
+      "perpetua": 10,
+      "longcontext": 6,
+      "lastseen": 10
+    },
+    "split": "all questions",
+    "band": "\u00b11 standard error across households",
+    "caption": "The same five methods twice: accuracy per day on the left, the confidence each states in its own answer on the right, on one shared scale. A method whose right-hand line moves with its left-hand one knows when it is in trouble.",
+    "look_for": "Compare each method's two lines at the first dotted rule. The timetables' accuracy falls roughly 40 points while their stated confidence barely moves. Last seen's confidence sits near the top throughout while its accuracy sits near 50. Perpetua*'s two lines move together.",
+    "not_shown": "Being well-tracked is not being accurate: Perpetua* is the least accurate of the counters here, which is the point of the pairing rather than an inconsistency. The right panel is each method's own number on its own scale, so heights are not comparable between methods \u2014 only each line against its own left-hand partner.",
+    "drawing": "The line is a centred three-day average, computed WITHIN each stage so it never averages across a boundary: a window straddling day 14 renders the 3-day timetable's 40.8-point fall as 6.8. The band is \u00b11 standard error across households, computed on the daily values.",
+    "numbers": {
+      "never-forgets timetable": {
+        "accuracy day 13": 87.3,
+        "confidence day 13": 63.9,
+        "accuracy day 14": 40.0,
+        "confidence day 14": 50.3,
+        "gap at day 14": 10.3
+      },
+      "3-day timetable": {
+        "accuracy day 13": 83.3,
+        "confidence day 13": 47.5,
+        "accuracy day 14": 42.5,
+        "confidence day 14": 38.9,
+        "gap at day 14": -3.6
+      },
+      "Perpetua*": {
+        "accuracy day 13": 69.3,
+        "confidence day 13": 71.1,
+        "accuracy day 14": 44.4,
+        "confidence day 14": 69.1,
+        "gap at day 14": 24.8
+      },
+      "long-context": {
+        "accuracy day 13": 79.4,
+        "confidence day 13": 88.1,
+        "accuracy day 14": 61.5,
+        "confidence day 14": 91.3,
+        "gap at day 14": 29.8
+      },
+      "last seen": {
+        "accuracy day 13": 46.5,
+        "confidence day 13": 98.1,
+        "accuracy day 14": 57.5,
+        "confidence day 14": 98.1,
+        "gap at day 14": 40.6
+      }
+    },
+    "files": [
+      "F5_confidence_against_accuracy.png",
+      "F5_confidence_against_accuracy.svg",
+      "F5_confidence_against_accuracy.pdf"
+    ],
+    "folder": "F5_confidence_against_accuracy"
+  },
+  {
+    "figure": "F6",
+    "claim": "At the shift the never-forgets timetable answers the questions it gets wrong and hands over the ones it would have got right \u2014 its gate runs backwards. Perpetua* keeps the sign the right way round in every window.",
+    "population": "one resident off sick, that resident's own things",
+    "households": {
+      "ttfrozen": 4130,
+      "perpetua": 4130
+    },
+    "split": "all questions",
+    "band": "none: these are window accuracies",
+    "caption": "For two methods, the accuracy of the questions the gate chose to answer (solid) against the accuracy of the questions it handed over (pale), by window. A gate that is working keeps the solid bar above the pale one. Where it does not, the figure says so.",
+    "look_for": "The never-forgets timetable's first-sick-days pair, where the pale bar overtakes the solid one, against Perpetua*'s, where it does not. The per-window edge \u2014 kept minus handed over \u2014 is in the numbers.",
+    "not_shown": "Two methods only; the 3-day timetable is close to a wash and long-context never inverts, so neither adds to the contrast. It also does not show how MANY questions each bar rests on, which differs a great deal between the kept and handed-over halves.",
+    "numbers": {
+      "never-forgets timetable": {
+        "settled": 26.3,
+        "first sick days": -22.4,
+        "in the spell": 11.8,
+        "first days back": 25.6,
+        "a week later": 35.0
+      },
+      "Perpetua*": {
+        "settled": 33.1,
+        "first sick days": 37.6,
+        "in the spell": 29.5,
+        "first days back": 28.3,
+        "a week later": 37.4
+      }
+    },
+    "files": [
+      "F6_the_inversion.png",
+      "F6_the_inversion.svg",
+      "F6_the_inversion.pdf"
+    ],
+    "folder": "F6_the_inversion"
+  },
+  {
     "figure": "F8",
     "claim": "Scored +1 for a right answer, \u22121 for a wrong one and 0 for declining, the timetables collapse at the shift while Perpetua* and long-context do not.",
     "population": "one resident off sick, that resident's own things",
@@ -213,7 +360,7 @@
   },
   {
     "figure": "F9",
-    "claim": "At the shift, being allowed to decline is worth almost nothing to the timetables (+0.2 and +0.4) and a great deal to Perpetua* (+2.9). Perpetua* scores BELOW both timetables while the world is stable: it is not the better model, it is the only one whose uncertainty is worth acting on.",
+    "claim": "At the shift, being allowed to decline is worth almost nothing to the timetables (+0.3 and +0.4) and a great deal to Perpetua* (+2.8). Perpetua* scores BELOW both timetables while the world is stable: it is not the better model, it is the only one whose uncertainty is worth acting on.",
     "population": "one resident off sick, that resident's own things",
     "households": {
       "ttfrozen": 10,

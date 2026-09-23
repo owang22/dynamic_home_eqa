@@ -22,6 +22,24 @@ One sentence buys back much of the break and costs on the return; each told arm 
 
 Population one resident off sick, that resident's own things; households longcontext (matched across all three arms) 3. Renders, caption and claims in `F3_what_one_sentence_buys/`.
 
+## [F4](F4_handing_the_question_over/) — F4_handing_the_question_over
+
+A method that hands a question over when unsure should be right about what it keeps. At the shift the timetables hand over most of the day's questions and are still wrong on a large share of the rest.
+
+Population one resident off sick, that resident's own things; households longcontext 3549, ttfrozen 4130, tt3d 4130, perpetua 4130. Renders, caption and claims in `F4_handing_the_question_over/`.
+
+## [F5](F5_confidence_against_accuracy/) — F5_confidence_against_accuracy
+
+The timetables state a confidence far below their own accuracy and do not move it when they break; last seen sits pinned near the top whatever happens; Perpetua* is the one whose stated confidence tracks its own accuracy.
+
+Population one resident off sick, that resident's own things; households ttfrozen 10, tt3d 10, perpetua 10, longcontext 6, lastseen 10. Renders, caption and claims in `F5_confidence_against_accuracy/`.
+
+## [F6](F6_the_inversion/) — F6_the_inversion
+
+At the shift the never-forgets timetable answers the questions it gets wrong and hands over the ones it would have got right — its gate runs backwards. Perpetua* keeps the sign the right way round in every window.
+
+Population one resident off sick, that resident's own things; households ttfrozen 4130, perpetua 4130. Renders, caption and claims in `F6_the_inversion/`.
+
 ## [F8](F8_decision_score_per_day/) — F8_decision_score_per_day
 
 Scored +1 for a right answer, −1 for a wrong one and 0 for declining, the timetables collapse at the shift while Perpetua* and long-context do not.
@@ -30,7 +48,7 @@ Population one resident off sick, that resident's own things; households ttfroze
 
 ## [F9](F9_value_of_declining/) — F9_value_of_declining
 
-At the shift, being allowed to decline is worth almost nothing to the timetables (+0.2 and +0.4) and a great deal to Perpetua* (+2.9). Perpetua* scores BELOW both timetables while the world is stable: it is not the better model, it is the only one whose uncertainty is worth acting on.
+At the shift, being allowed to decline is worth almost nothing to the timetables (+0.3 and +0.4) and a great deal to Perpetua* (+2.8). Perpetua* scores BELOW both timetables while the world is stable: it is not the better model, it is the only one whose uncertainty is worth acting on.
 
 Population one resident off sick, that resident's own things; households ttfrozen 10, tt3d 10, perpetua 10, longcontext 6. Renders, caption and claims in `F9_value_of_declining/`.
 
