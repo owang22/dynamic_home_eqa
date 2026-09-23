@@ -517,6 +517,8 @@ def save(fig, name, manifest, entry):
         if entry.get("hypothesis_tested_and_failed"):
             f.write("## A hypothesis that was tested and failed\n\n"
                     + entry["hypothesis_tested_and_failed"] + "\n\n")
+        if entry.get("conservative_variant"):
+            f.write("## The same quantity measured a stricter way\n\n" + entry["conservative_variant"] + "\n\n")
         if entry.get("history"):
             f.write("## How this claim changed\n\n" + entry["history"] + "\n\n")
         f.write("## The numbers\n\nMeasured on the DAILY values, not read off the plotted line.\n\n")
@@ -945,111 +947,99 @@ def f8(DATA, EXTRA, manifest):
 
 
 def f9(DATA, EXTRA, manifest):
-    """What being allowed to decline is worth, by window."""
-    D = EXTRA["decision_live"]["methods"]
+    """What the confidence ORDERING is worth, against the floor hindsight reaches on shuffled labels."""
+    DD = EXTRA["decision_live"]["declining_decomposition"]
     order = EXTRA["decision_live"]["windows_order"]
-    fig, ax = plt.subplots(figsize=(FULL * 0.62, 2.5))
-    meths = [m for m in DEC_ORDER if m in D]
+    meths = [m for m in DEC_ORDER if m in DD]
+    fig, ax = plt.subplots(figsize=(FULL * 0.62, 2.6))
     w = 0.8 / len(meths)
     nums, hh = {}, {}
-    for i, m in enumerate(meths):
-        M = D[m]
-        xs = [j + (i - (len(meths) - 1) / 2) * w for j in range(len(order))]
-        ys = [M["windows"].get(k, {}).get("gain", 0.0) for k in order]
-        ax.bar(xs, ys, width=w * 0.92, color=COL[m], label=nm_legend(m), zorder=3)
-        # the value on the bar: a reader quoting "+2.9 against +0.3" should not have to measure against the
-        # axis, and the numbers table is not in the paper beside the figure
-        for xx, yy in zip(xs, ys):
-            ax.annotate(f"{yy:.1f}", xy=(xx, yy), xytext=(0, 1.5), textcoords="offset points",
-                        ha="center", va="bottom", fontsize=5.4, color=INK, rotation=90)
-        hh[m] = M["n_hh"]
-        nums[DEC_NAME[m]] = {k: M["windows"].get(k, {}).get("gain") for k in order}
-    T = EXTRA["decision_live"]["confidence_tracks_correctness"]
-    tc = lambda m, w: T.get(m, {}).get(w, {})
+    for i_m, m in enumerate(meths):
+        M = DD[m]
+        xs = [k + (i_m - (len(meths) - 1) / 2) * w for k in range(len(order))]
+        ax.bar(xs, [M.get(k, {}).get("ordering", 0.0) for k in order], width=w * 0.92,
+               color=COL[m], label=nm_legend(m), zorder=3)
+        # The floor is drawn PER BAR, not as one band: it is what a threshold chosen with hindsight reaches on
+        # SHUFFLED labels, and it differs by method because a method whose accuracy sits near a half gives
+        # hindsight more to work with. A bar that does not clear its own line is not a result.
+        for x, k in zip(xs, order):
+            f = M.get(k, {}).get("null_ordering")
+            if f is not None:
+                ax.plot([x - w * 0.46, x + w * 0.46], [f, f], "-", color=INK, lw=1.1, zorder=5)
+        hh[nm(m)] = M.get(order[0], {}).get("n_hh")
+        # One row per PART of the decomposition, not one per method: the claim argues from the level and the
+        # accuracy as well as from the plotted bar, and every number it states has to be in this table.
+        for part, field in (("what the ordering adds", "ordering"), ("noise floor for that", "null_ordering"),
+                            ("the level part", "level"), ("% right", "accuracy")):
+            nums[f"{nm(m)} \u2014 {part}"] = {k: M.get(k, {}).get(field) for k in order}
     ax.axhline(0, color=INK, lw=0.8, zorder=2)
     ax.set_xticks(range(len(order)))
     ax.set_xticklabels([textwrap.fill(k, 12) for k in order], fontsize=6.4)
-    finish(ax, "Gain from declining", xlab="", ylim=None)
+    finish(ax, "What the confidence\nordering adds", xlab="", ylim=None)
     ax.grid(True, axis="y", alpha=0.5)
     ax.grid(False, axis="x")
-    # two lines. The hindsight caveat stays -- it is what stops this being read as a deployable policy --
-    # so the population line goes, since the caption carries it.
-    legend_below(ax, ncol=1)
-    save(fig, "F9_value_of_declining", manifest, {
+    # Headroom measured from the TALLEST BAR, not a constant: the note sat across the survival-time model's
+    # first-sick-days bar, which is the one bar the figure exists to show.
+    tall = max(max(DD[m].get(k, {}).get("ordering", 0.0) for k in order) for m in meths)
+    ax.set_ylim(0, tall * 1.34)
+    ax.annotate("black line on each bar = what hindsight reaches on shuffled labels;\n"
+                "a bar that does not clear its own line is not a result",
+                xy=(0.02, 0.97), xycoords="axes fraction", ha="left", va="top", fontsize=6.0, color=INK)
+    legend_below(ax, ncol=2)
+    sick = "first sick days 14-16"
+    g = lambda m, f: DD[m][sick][f]
+    save(fig, "F9_what_the_confidence_adds", manifest, {
         "figure": "F9",
-        "claim": (lambda g: "At the shift, being allowed to decline is worth almost nothing to the "
-                            f"timetables (+{g[nm("ttfrozen")]:.1f} and +{g[nm("tt3d")]:.1f}) "
-                            f"and a great deal to the survival-time model (+{g[nm("perpetua")]:.1f}). the survival-time model scores BELOW "
-                            "both timetables while the world is stable: it is not the better model, it is the "
-                            "only one whose uncertainty is worth acting on."
-                  )({k: v["first sick days 14-16"] or 0 for k, v in nums.items()}),
+        "claim": ("Being allowed to decline is worth something to every method at the shift, but for the "
+                  "timetables that is not because their confidence knows anything. The value splits in two: "
+                  "what the best all-or-nothing choice gives, which needs no signal at all and pays whenever a "
+                  "method is wrong more often than right, and what the ORDER of the confidences adds on top. "
+                  f"At the shift the timetable that never forgets is right {g('ttfrozen','accuracy'):.1f}% of "
+                  f"the time, so declining is worth {g('ttfrozen','level'):.2f} to it on the level alone "
+                  f"\u2014 and its ordering adds {g('ttfrozen','ordering'):.2f} against a hindsight-on-noise "
+                  f"floor of {g('ttfrozen','null_ordering'):.2f}, which is nothing. The three-day timetable is "
+                  f"the same story ({g('tt3d','ordering'):.2f} against {g('tt3d','null_ordering'):.2f}). The "
+                  f"survival-time model's ordering adds {g('perpetua','ordering'):.2f} against a floor of "
+                  f"{g('perpetua','null_ordering'):.2f}, and the whole-log-in-the-prompt memory's "
+                  f"{g('longcontext','ordering'):.2f} against {g('longcontext','null_ordering'):.2f}. The "
+                  "honest contrast is not a big effect against a small one. It is a real effect against no "
+                  "measurable effect."),
         "population": POP_LABEL["person"], "households": hh, "split": "all questions",
-        "band": "none: bars are a difference of two scores",
-        "note": "Score under the best threshold for that window, minus the score when forced to answer every "
-                "question. Settled figures for context are in F8's numbers: the survival-time model 4.6 against the "
-                "timetables' 7.7 and 7.6.",
-        "caption": "What being allowed to decline is worth, by window: the decision score under the best "
-                   "threshold for that window, minus the score when the method is forced to answer every "
-                   "question. Higher bars mean the method's own confidence carries information worth acting "
-                   "on. At the moment the routine changes, only the survival-time model gains materially.",
-        "look_for": (lambda sick, back: "The first-sick-days group. the survival-time model gains "
-                                        f"{sick[nm("perpetua")]:.1f} points from being allowed to decline, "
-                                        f"against {sick[nm("ttfrozen")]:.1f} for the timetable that never "
-                                        f"forgets, {sick[nm("tt3d")]:.1f} for the timetable with a three-day memory and "
-                                        f"{sick[nm("longcontext")]:.1f} for the whole-log-in-the-prompt memory. On the first days back "
-                                        f"the pattern repeats: the survival-time model {back[nm("perpetua")]:.1f}, everything "
-                                        f"else at or below {max(v for k, v in back.items() if k != 'the survival-time model'):.1f}."
-                     )({k: v["first sick days 14-16"] or 0 for k, v in nums.items()},
-                       {k: v["first days back 24-26"] or 0 for k, v in nums.items()}),
-        "mechanism": ("WHY declining is worth so much to one method and so little to the others. A rule that "
-                      "declines when confidence is low can only help if confidence still predicts correctness. "
-                      "In the settled weeks all three are about equally good at that: the correlation between "
-                      f"what a method claims and whether it is right runs {tc('tt3d','settled 1-13')['r']:+.2f} "
-                      f"to {tc('perpetua','settled 1-13')['r']:+.2f}. At the shift both timetables stop "
-                      f"predicting \u2014 the timetable that never forgets falls "
-                      f"{tc('ttfrozen','first sick days 14-16')['change_from_settled']:+.2f} and the three-day "
-                      f"one {tc('tt3d','first sick days 14-16')['change_from_settled']:+.2f}, both clearing "
-                      "the bar, and what is left of either cannot be told from zero. The survival-time "
-                      f"model's does not move ({tc('perpetua','first sick days 14-16')['change_from_settled']:+.2f}, "
-                      f"not distinguishable from no change) and stays at "
-                      f"{tc('perpetua','first sick days 14-16')['r']:+.2f}, which DOES differ from zero. That "
-                      "one fact explains the inversion, the value of declining, and why a confidence signal "
-                      "that barely moves can still be worth acting on.\n\nIt also predicts what the return "
-                      "should do, and the prediction holds. The timetable that never forgets, which does not "
-                      "break when the old routine comes back, regains its footing immediately "
-                      f"({tc('ttfrozen','first days back 24-26')['r']:+.2f}); the three-day timetable, which "
-                      f"does break there, is still not predicting ({tc('tt3d','first days back 24-26')['r']:+.2f}, "
-                      "not distinguishable from zero) until a week later. The survival-time model's accuracy "
-                      "breaks at both boundaries as much as anyone's and its confidence keeps tracking anyway "
-                      "\u2014 which is the point: knowing you are wrong is separable from being right."),
-        "hypothesis_tested_and_failed": ("A hypothesis worth recording because a reader will arrive with it, "
-            "as we did. The coordinator proposed that the survival-time model's confidence is a function of "
-            "how long its evidence has stood, so that at a shift the objects whose placement had just changed "
-            "would be the ones with the oldest supporting evidence, and its confidence would fall on precisely "
-            "the questions it was about to get wrong; and that a timetable, whose confidence reflects how "
-            "regular the past was, would do the opposite and be MOST confident on the objects that moved. "
-            "Both halves were tested on the ten households and both failed. Its confidence is not lower on the "
-            "objects that moved but 4.5 points higher, which is not distinguishable from no difference, and "
-            "its accuracy on those objects is 16.3 points HIGHER \u2014 a model of displacement doing its job "
-            "rather than a defect. Its confidence RISES with the age of its evidence (+0.13 \u00b1 0.03) "
-            "rather than falling, which is also correct for it: its hazard is lognormal and therefore "
-            "decreasing, so the longer a thing has sat undisturbed the longer it expects it to stay. And the "
-            "timetable is not most confident on the objects that moved (\u22122.4, not distinguishable). The "
-            "mechanism is not about WHICH objects; it is the one above."),
-        "not_shown": (lambda st: "This is not a claim that the survival-time model is the better model — F8's settled-week "
-                                 f"numbers show it scoring {st['perpetua']:.1f} against the timetables' "
-                                 f"{st['ttfrozen']:.1f} and {st['tt3d']:.1f}. The claim is narrower and stranger: "
-                                 "it is the worst forecaster of the four and the only one whose uncertainty "
-                                 "is worth acting on. The thresholds are also chosen with hindsight, which "
-                                 "strengthens the negative half — even given the answers in advance, declining "
-                                 "buys the counters almost nothing exactly when it would matter."
-                     )({m: D[m]["windows"]["settled week 9-13"]["best"] for m in DEC_ORDER if m in D}),
-                "caveat": HINDSIGHT + ", which makes the negative result stronger: even handed the answers in advance, "
-                  "declining buys the counters nothing at the moment it would matter",
-        "prose_numbers_ok": {f"{D[m]['windows']['settled week 9-13']['best']:.1f}":
-                             "live settled-week score from the same extractor, shown in F8's table"
-                             for m in DEC_ORDER if m in D},
+        "band": "none: the black line on each bar is a noise floor, not an error bar",
+        "note": ("Threshold chosen PER HOUSEHOLD with hindsight, which is the generous reading and suits a "
+                 "figure whose point is that even given hindsight the timetables gain nothing from their own "
+                 "confidence. The floor is that same quantity computed on shuffled labels."),
+        "conservative_variant": ("A stricter estimator gives the same ranking. Choosing ONE threshold for all "
+                                 "ten households instead of one each, the totals are 0.33 for the timetable "
+                                 "that never forgets, 0.40 for the three-day one, 2.83 for the survival-time "
+                                 "model and 0.77 for the whole-log memory. Its noise floor sits near 0.01, "
+                                 "because a single policy applied to every household has far less freedom to "
+                                 "chase noise, so on that estimator every bar clears its floor. The two agree "
+                                 "on the ranking and disagree on the floor: that is a fact about the "
+                                 "estimators rather than about the methods, and a reviewer who recomputes one "
+                                 "of them should expect a different-looking number."),
+        "caption": ("What the ORDER of a method's confidences is worth at each stage: the score under the best "
+                    "threshold for that window, minus the score from the best all-or-nothing choice, so that "
+                    "only the part needing the confidence to carry information is shown. The black line on "
+                    "each bar is what the same procedure extracts from shuffled labels. A bar that does not "
+                    "clear its own line is not a result."),
+        "look_for": ("The first-sick-days group. Both timetables' bars sit on their own floors; the "
+                     "survival-time model's stands well clear of it and the whole-log-in-the-prompt memory's "
+                     "clears too."),
+        "not_shown": ("It does not show the level part, which is real and is where the timetables' apparent "
+                      "gain comes from; those numbers are in the claim. It is not a deployable policy \u2014 "
+                      "the threshold is fitted after the fact on the very window being scored, which is why a "
+                      "floor is drawn at all. And a floor is not an error bar: it says what noise would give, "
+                      "not how uncertain this estimate is."),
+        "mechanism": ("The same result by a second route, which is why it is stated as a finding rather than "
+                      "as one test. Correlating each method's stated confidence with whether it was actually "
+                      "right, inside each household, both timetables fall at the shift to something "
+                      "indistinguishable from zero while the survival-time model's is unchanged. One statistic "
+                      "subtracts a shuffled-label floor and the other measures association directly; they "
+                      "agree on which methods have a real ordering and on the timetables having none."),
         "numbers": nums})
+
+
 
 
 GATE_ORDER = ["longcontext", "ttfrozen", "tt3d", "perpetua"]

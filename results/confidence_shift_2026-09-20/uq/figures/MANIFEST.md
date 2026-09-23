@@ -58,9 +58,9 @@ Scored the way a user would feel it — +1 for a right answer, −1 for a wrong 
 
 *single-column, 3.09 in wide.* Population one resident off sick, that resident's own things; households ttfrozen 10, tt3d 10, perpetua 10, longcontext 10. Renders, caption and claims in `F8_decision_score_per_day/`.
 
-## [F9](F9_value_of_declining/) — F9_value_of_declining
+## [F9](F9_what_the_confidence_adds/) — F9_what_the_confidence_adds
 
-At the shift, being allowed to decline is worth almost nothing to the timetables (+0.3 and +0.4) and a great deal to the survival-time model (+2.8). the survival-time model scores BELOW both timetables while the world is stable: it is not the better model, it is the only one whose uncertainty is worth acting on.
+Being allowed to decline is worth something to every method at the shift, but for the timetables that is not because their confidence knows anything. The value splits in two: what the best all-or-nothing choice gives, which needs no signal at all and pays whenever a method is wrong more often than right, and what the ORDER of the confidences adds on top. At the shift the timetable that never forgets is right 51.3% of the time, so declining is worth 2.07 to it on the level alone — and its ordering adds 0.37 against a hindsight-on-noise floor of 0.29, which is nothing. The three-day timetable is the same story (0.43 against 0.36). The survival-time model's ordering adds 2.70 against a floor of 0.52, and the whole-log-in-the-prompt memory's 1.33 against 0.30. The honest contrast is not a big effect against a small one. It is a real effect against no measurable effect.
 
-*1.5-column, 3.85 in wide.* Population one resident off sick, that resident's own things; households ttfrozen 10, tt3d 10, perpetua 10, longcontext 10. Renders, caption and claims in `F9_value_of_declining/`.
+*1.5-column, 4.06 in wide.* Population one resident off sick, that resident's own things; households timetable that never forgets 10, timetable with a three-day memory 10, survival-time model 10, whole-log-in-the-prompt memory 10. Renders, caption and claims in `F9_what_the_confidence_adds/`.
 

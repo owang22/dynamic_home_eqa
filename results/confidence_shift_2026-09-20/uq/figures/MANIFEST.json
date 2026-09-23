@@ -464,66 +464,143 @@
   },
   {
     "figure": "F9",
-    "claim": "At the shift, being allowed to decline is worth almost nothing to the timetables (+0.3 and +0.4) and a great deal to the survival-time model (+2.8). the survival-time model scores BELOW both timetables while the world is stable: it is not the better model, it is the only one whose uncertainty is worth acting on.",
+    "claim": "Being allowed to decline is worth something to every method at the shift, but for the timetables that is not because their confidence knows anything. The value splits in two: what the best all-or-nothing choice gives, which needs no signal at all and pays whenever a method is wrong more often than right, and what the ORDER of the confidences adds on top. At the shift the timetable that never forgets is right 51.3% of the time, so declining is worth 2.07 to it on the level alone \u2014 and its ordering adds 0.37 against a hindsight-on-noise floor of 0.29, which is nothing. The three-day timetable is the same story (0.43 against 0.36). The survival-time model's ordering adds 2.70 against a floor of 0.52, and the whole-log-in-the-prompt memory's 1.33 against 0.30. The honest contrast is not a big effect against a small one. It is a real effect against no measurable effect.",
     "population": "one resident off sick, that resident's own things",
     "households": {
-      "ttfrozen": 10,
-      "tt3d": 10,
-      "perpetua": 10,
-      "longcontext": 10
+      "timetable that never forgets": 10,
+      "timetable with a three-day memory": 10,
+      "survival-time model": 10,
+      "whole-log-in-the-prompt memory": 10
     },
     "split": "all questions",
-    "band": "none: bars are a difference of two scores",
-    "note": "Score under the best threshold for that window, minus the score when forced to answer every question. Settled figures for context are in F8's numbers: the survival-time model 4.6 against the timetables' 7.7 and 7.6.",
-    "caption": "What being allowed to decline is worth, by window: the decision score under the best threshold for that window, minus the score when the method is forced to answer every question. Higher bars mean the method's own confidence carries information worth acting on. At the moment the routine changes, only the survival-time model gains materially.",
-    "look_for": "The first-sick-days group. the survival-time model gains 2.8 points from being allowed to decline, against 0.3 for the timetable that never forgets, 0.4 for the timetable with a three-day memory and 0.8 for the whole-log-in-the-prompt memory. On the first days back the pattern repeats: the survival-time model 1.4, everything else at or below 1.4.",
-    "mechanism": "WHY declining is worth so much to one method and so little to the others. A rule that declines when confidence is low can only help if confidence still predicts correctness. In the settled weeks all three are about equally good at that: the correlation between what a method claims and whether it is right runs +0.28 to +0.37. At the shift both timetables stop predicting \u2014 the timetable that never forgets falls -0.47 and the three-day one -0.28, both clearing the bar, and what is left of either cannot be told from zero. The survival-time model's does not move (+0.07, not distinguishable from no change) and stays at +0.43, which DOES differ from zero. That one fact explains the inversion, the value of declining, and why a confidence signal that barely moves can still be worth acting on.\n\nIt also predicts what the return should do, and the prediction holds. The timetable that never forgets, which does not break when the old routine comes back, regains its footing immediately (+0.39); the three-day timetable, which does break there, is still not predicting (+0.11, not distinguishable from zero) until a week later. The survival-time model's accuracy breaks at both boundaries as much as anyone's and its confidence keeps tracking anyway \u2014 which is the point: knowing you are wrong is separable from being right.",
-    "hypothesis_tested_and_failed": "A hypothesis worth recording because a reader will arrive with it, as we did. The coordinator proposed that the survival-time model's confidence is a function of how long its evidence has stood, so that at a shift the objects whose placement had just changed would be the ones with the oldest supporting evidence, and its confidence would fall on precisely the questions it was about to get wrong; and that a timetable, whose confidence reflects how regular the past was, would do the opposite and be MOST confident on the objects that moved. Both halves were tested on the ten households and both failed. Its confidence is not lower on the objects that moved but 4.5 points higher, which is not distinguishable from no difference, and its accuracy on those objects is 16.3 points HIGHER \u2014 a model of displacement doing its job rather than a defect. Its confidence RISES with the age of its evidence (+0.13 \u00b1 0.03) rather than falling, which is also correct for it: its hazard is lognormal and therefore decreasing, so the longer a thing has sat undisturbed the longer it expects it to stay. And the timetable is not most confident on the objects that moved (\u22122.4, not distinguishable). The mechanism is not about WHICH objects; it is the one above.",
-    "not_shown": "This is not a claim that the survival-time model is the better model \u2014 F8's settled-week numbers show it scoring 4.6 against the timetables' 7.7 and 7.6. The claim is narrower and stranger: it is the worst forecaster of the four and the only one whose uncertainty is worth acting on. The thresholds are also chosen with hindsight, which strengthens the negative half \u2014 even given the answers in advance, declining buys the counters almost nothing exactly when it would matter.",
-    "caveat": "thresholds chosen with hindsight, so these are upper bounds, not a deployable policy, which makes the negative result stronger: even handed the answers in advance, declining buys the counters nothing at the moment it would matter",
-    "prose_numbers_ok": {
-      "7.7": "live settled-week score from the same extractor, shown in F8's table",
-      "7.6": "live settled-week score from the same extractor, shown in F8's table",
-      "4.6": "live settled-week score from the same extractor, shown in F8's table",
-      "5.4": "live settled-week score from the same extractor, shown in F8's table"
-    },
+    "band": "none: the black line on each bar is a noise floor, not an error bar",
+    "note": "Threshold chosen PER HOUSEHOLD with hindsight, which is the generous reading and suits a figure whose point is that even given hindsight the timetables gain nothing from their own confidence. The floor is that same quantity computed on shuffled labels.",
+    "conservative_variant": "A stricter estimator gives the same ranking. Choosing ONE threshold for all ten households instead of one each, the totals are 0.33 for the timetable that never forgets, 0.40 for the three-day one, 2.83 for the survival-time model and 0.77 for the whole-log memory. Its noise floor sits near 0.01, because a single policy applied to every household has far less freedom to chase noise, so on that estimator every bar clears its floor. The two agree on the ranking and disagree on the floor: that is a fact about the estimators rather than about the methods, and a reviewer who recomputes one of them should expect a different-looking number.",
+    "caption": "What the ORDER of a method's confidences is worth at each stage: the score under the best threshold for that window, minus the score from the best all-or-nothing choice, so that only the part needing the confidence to carry information is shown. The black line on each bar is what the same procedure extracts from shuffled labels. A bar that does not clear its own line is not a result.",
+    "look_for": "The first-sick-days group. Both timetables' bars sit on their own floors; the survival-time model's stands well clear of it and the whole-log-in-the-prompt memory's clears too.",
+    "not_shown": "It does not show the level part, which is real and is where the timetables' apparent gain comes from; those numbers are in the claim. It is not a deployable policy \u2014 the threshold is fitted after the fact on the very window being scored, which is why a floor is drawn at all. And a floor is not an error bar: it says what noise would give, not how uncertain this estimate is.",
+    "mechanism": "The same result by a second route, which is why it is stated as a finding rather than as one test. Correlating each method's stated confidence with whether it was actually right, inside each household, both timetables fall at the shift to something indistinguishable from zero while the survival-time model's is unchanged. One statistic subtracts a shuffled-label floor and the other measures association directly; they agree on which methods have a real ordering and on the timetables having none.",
     "numbers": {
-      "timetable that never forgets": {
+      "timetable that never forgets \u2014 what the ordering adds": {
+        "settled week 9-13": 0.14,
+        "first sick days 14-16": 0.37,
+        "rest of the spell 17-23": 0.33,
+        "first days back 24-26": 0.54,
+        "a week later 27-31": 0.92
+      },
+      "timetable that never forgets \u2014 noise floor for that": {
         "settled week 9-13": 0.04,
-        "first sick days 14-16": 0.333,
-        "rest of the spell 17-23": 0.186,
-        "first days back 24-26": 0.167,
-        "a week later 27-31": 0.44
+        "first sick days 14-16": 0.29,
+        "rest of the spell 17-23": 0.08,
+        "first days back 24-26": 0.12,
+        "a week later 27-31": 0.1
       },
-      "timetable with a three-day memory": {
-        "settled week 9-13": 0.1,
-        "first sick days 14-16": 0.4,
-        "rest of the spell 17-23": 0.057,
-        "first days back 24-26": 0.033,
-        "a week later 27-31": 0.18
+      "timetable that never forgets \u2014 the level part": {
+        "settled week 9-13": 0.0,
+        "first sick days 14-16": 2.07,
+        "rest of the spell 17-23": 0.71,
+        "first days back 24-26": 0.0,
+        "a week later 27-31": 0.0
       },
-      "survival-time model": {
-        "settled week 9-13": 0.32,
-        "first sick days 14-16": 2.833,
-        "rest of the spell 17-23": 0.343,
-        "first days back 24-26": 1.433,
-        "a week later 27-31": 1.5
+      "timetable that never forgets \u2014 % right": {
+        "settled week 9-13": 81.6,
+        "first sick days 14-16": 51.3,
+        "rest of the spell 17-23": 70.2,
+        "first days back 24-26": 77.2,
+        "a week later 27-31": 79.3
       },
-      "whole-log-in-the-prompt memory": {
+      "timetable with a three-day memory \u2014 what the ordering adds": {
         "settled week 9-13": 0.3,
-        "first sick days 14-16": 0.767,
-        "rest of the spell 17-23": 0.3,
-        "first days back 24-26": 0.433,
-        "a week later 27-31": 0.6
+        "first sick days 14-16": 0.43,
+        "rest of the spell 17-23": 0.14,
+        "first days back 24-26": 0.29,
+        "a week later 27-31": 0.62
+      },
+      "timetable with a three-day memory \u2014 noise floor for that": {
+        "settled week 9-13": 0.05,
+        "first sick days 14-16": 0.36,
+        "rest of the spell 17-23": 0.03,
+        "first days back 24-26": 0.32,
+        "a week later 27-31": 0.08
+      },
+      "timetable with a three-day memory \u2014 the level part": {
+        "settled week 9-13": 0.0,
+        "first sick days 14-16": 1.0,
+        "rest of the spell 17-23": 0.0,
+        "first days back 24-26": 0.83,
+        "a week later 27-31": 0.0
+      },
+      "timetable with a three-day memory \u2014 % right": {
+        "settled week 9-13": 80.4,
+        "first sick days 14-16": 57.9,
+        "rest of the spell 17-23": 85.8,
+        "first days back 24-26": 61.4,
+        "a week later 27-31": 76.6
+      },
+      "survival-time model \u2014 what the ordering adds": {
+        "settled week 9-13": 0.9,
+        "first sick days 14-16": 2.7,
+        "rest of the spell 17-23": 0.71,
+        "first days back 24-26": 1.96,
+        "a week later 27-31": 1.84
+      },
+      "survival-time model \u2014 noise floor for that": {
+        "settled week 9-13": 0.15,
+        "first sick days 14-16": 0.52,
+        "rest of the spell 17-23": 0.07,
+        "first days back 24-26": 0.52,
+        "a week later 27-31": 0.25
+      },
+      "survival-time model \u2014 the level part": {
+        "settled week 9-13": 0.06,
+        "first sick days 14-16": 0.67,
+        "rest of the spell 17-23": 0.0,
+        "first days back 24-26": 0.42,
+        "a week later 27-31": 0.26
+      },
+      "survival-time model \u2014 % right": {
+        "settled week 9-13": 66.3,
+        "first sick days 14-16": 55.4,
+        "rest of the spell 17-23": 73.7,
+        "first days back 24-26": 56.8,
+        "a week later 27-31": 59.1
+      },
+      "whole-log-in-the-prompt memory \u2014 what the ordering adds": {
+        "settled week 9-13": 0.38,
+        "first sick days 14-16": 1.33,
+        "rest of the spell 17-23": 0.37,
+        "first days back 24-26": 0.83,
+        "a week later 27-31": 0.84
+      },
+      "whole-log-in-the-prompt memory \u2014 noise floor for that": {
+        "settled week 9-13": 0.08,
+        "first sick days 14-16": 0.3,
+        "rest of the spell 17-23": 0.06,
+        "first days back 24-26": 0.16,
+        "a week later 27-31": 0.1
+      },
+      "whole-log-in-the-prompt memory \u2014 the level part": {
+        "settled week 9-13": 0.0,
+        "first sick days 14-16": 0.0,
+        "rest of the spell 17-23": 0.0,
+        "first days back 24-26": 0.0,
+        "a week later 27-31": 0.0
+      },
+      "whole-log-in-the-prompt memory \u2014 % right": {
+        "settled week 9-13": 69.6,
+        "first sick days 14-16": 61.7,
+        "rest of the spell 17-23": 71.3,
+        "first days back 24-26": 67.4,
+        "a week later 27-31": 69.5
       }
     },
-    "width_inches": 3.85,
+    "width_inches": 4.06,
     "column": "1.5",
     "files": [
-      "F9_value_of_declining.png",
-      "F9_value_of_declining.svg",
-      "F9_value_of_declining.pdf"
+      "F9_what_the_confidence_adds.png",
+      "F9_what_the_confidence_adds.svg",
+      "F9_what_the_confidence_adds.pdf"
     ],
-    "folder": "F9_value_of_declining"
+    "folder": "F9_what_the_confidence_adds"
   }
 ]
