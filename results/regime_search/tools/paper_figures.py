@@ -931,43 +931,39 @@ DEC_ORDER = ["ttfrozen", "tt3d", "perpetua", "longcontext"]
 WIN_DAYS = {"settled week 9-13": range(9, 14), "first sick days 14-16": range(14, 17),
             "rest of the spell 17-23": range(17, 24), "first days back 24-26": range(24, 27),
             "a week later 27-31": range(27, 32)}
-# How much of a difference is just the run being run again. Measured by the memory strand: the recent-sightings
-# list run twice over the same data, one run kept from the workshop session and one fresh on 22-23 Sept.
-#
-# One dict, and the paragraph below is built from it, so the prose cannot drift from the measurement the way a
-# table drifts from a line. When the extended version lands (six households), edit these values only.
-RERUN_FLOOR_VALUES = {
-    "households": 3, "answers_changed_pct": 3, "answers_changed_lo": 0, "answers_changed_hi": 9,
-    "typical_points": "1 to 2", "worst_hh_window": 6,
-    "pooled_mean": 0.0, "pooled_mean_abs": 1.2, "pooled_spread": 1.8,
-    "by_window": {"lead-up": 1.8, "first sick days": -0.7, "later spell": 0.0,
-                  "first days back": 0.7, "days 27-28": -2.1},
-}
-_RF = RERUN_FLOOR_VALUES
+# The rerun floor lives in tools/rerun_floor.py, read by the page as well, so the two cannot drift. The
+# paragraph below is BUILT from those values rather than typed beside them -- same rule as computing a table
+# from the line it sits under.
+from rerun_floor import VALUES as _RF, by_window_text as _RF_WIN      # noqa: E402
 RERUN_FLOOR = (
     "Some of any difference here is the run having been run again. Identical prompts at temperature zero do "
     "not reproduce on this server, so a repeat of the same arm on the same data does not give the same "
     "answers, and that sets a floor under every effect involving a memory whose answers a language model "
-    f"generates. Measured so far on {_RF['households']} households, by repeating the recent-sightings list "
-    f"over the same data: about {_RF['answers_changed_pct']}% of answers change "
+    f"generates. Measured so far on {_RF['households']} households, by repeating {_RF['measured_on']} over "
+    f"the same data: about {_RF['answers_changed_pct']}% of answers change "
     f"({_RF['answers_changed_lo']} to {_RF['answers_changed_hi']}% depending on the household and the "
     f"window), accuracy moves {_RF['typical_points']} points typically and at most "
     f"{_RF['worst_hh_window']} in a single household-window. Pooled over all three households and every day: "
     f"mean {_RF['pooled_mean']:.1f}, mean absolute {_RF['pooled_mean_abs']:.1f}, spread "
     f"{_RF['pooled_spread']:.1f} points.\n\n"
     "  Two things to do with that, rather than quoting the pooled number and moving on. FIRST, the floor is "
-    "NOT uniform across the run. By window its mean is "
-    + ", ".join(f"{k} {v:+.1f}" if v else f"{k} {v:.1f}" for k, v in _RF["by_window"].items())
-    + " \u2014 so an effect resting on a single window has a larger floor under it than the pooled figure "
-      "suggests, and quoting the pooled number beside a one-window effect understates it. SECOND, where it "
-      "helps a reader, state an effect as a multiple of the floor: nineteen points against a floor of one to "
-      "two is actionable in a way that a value with a spread beside it is not.\n\n"
+    f"NOT uniform across the run. By window its mean is {_RF_WIN()} \u2014 so an effect resting on a single "
+    "window has a larger floor under it than the pooled figure suggests, and quoting the pooled number "
+    "beside a one-window effect understates it. SECOND, where it helps a reader, state an effect as a "
+    "multiple of the floor: nineteen points against a floor of one to two is actionable in a way that a "
+    "value with a spread beside it is not.\n\n"
     "  What this floor does NOT cover: the counting methods \u2014 the timetables and the survival-time "
-    "model \u2014 generate no text and reproduce exactly on the same data, so they have no rerun floor of "
-    "this kind. And it is measured on ONE language memory; it is indicative for the others rather than "
-    "measured on them. Rerun noise is symmetric, so it does not bias a paired mean, and every spread quoted "
-    "in these folders is computed across households from the runs as they happened \u2014 the noise is "
-    "already inside each band, and an effect that cleared its bar cleared it with the noise included."
+    + ("model \u2014 make no model calls and " + str(_RF["classical_reproduced"]) + ".\n\n"
+       if _RF.get("classical_reproduced") else
+       "model \u2014 make no model calls and should reproduce exactly on the same data. That is an argument "
+       "from their implementation rather than a measurement, and it is the same shape of argument that was "
+       "made for the language arms at temperature zero and turned out to be wrong, so it is written here as "
+       "unverified until one of them has actually been re-run and diffed.\n\n")
+    + f"  It is measured on ONE language memory, {_RF['measured_on']}; it is indicative for the others "
+    "rather than measured on them. Rerun noise is symmetric, so it does not bias a paired mean, and every "
+    "spread quoted in these folders is computed across households from the runs as they happened \u2014 the "
+    "noise is already inside each band, and an effect that cleared its bar cleared it with the noise "
+    "included."
 )
 
 

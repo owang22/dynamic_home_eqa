@@ -574,3 +574,39 @@ What changed:
 Nothing in any figure's numbers changes. Rerun noise is symmetric, so it does not bias a paired mean, and our
 spreads are computed across households from the runs as they happened — the noise was already inside every bar,
 and every effect that cleared the bar did so with it included.
+
+## 23 Sept — the general form of the rule that keeps finding new places to apply
+
+Three faults tonight were the same fault at three levels:
+
+1. **A table recomputed beside a line instead of from it.** F8's window figures were per-window refits while its
+   line used the whole-run bar — same units, nearby values, no audit fires.
+2. **Prose typed beside a table instead of read from it.** Forty-eight lookups keyed by literal names, and a
+   claim sentence quoting 2.9 while the table said 2.8.
+3. **A number copied from another strand instead of imported from it.** The rerun floor, measured by the memory
+   strand, about to be typed into ten figure folders and the page.
+
+The rule in its general form: **anywhere one artifact quotes another's number, the quote is computed from the
+source rather than copied — whether the source is a drawn series, a table, or another strand's result.** F8's
+window figures are now means of the drawn series. The figure prose reads its own table by key. The rerun floor
+lives in `tools/rerun_floor.py`, and both the figure folders and the page build their sentences from it, so
+updating the measurement is one edit and drift is not possible.
+
+A fourth instance, one level down in precision rather than in definition: the number audit rendered table values
+to two decimals and so called 0.625 stale while the table held exactly that value. A single flipped answer
+across ten households IS 0.625, which is the size of thing we had just started reporting — an audit that cannot
+see the smallest quantity it is checking is the same failure as a table that cannot see the line it sits under.
+
+## 23 Sept — "the counting methods are deterministic" checked rather than asserted
+
+Having just been wrong about greedy decoding being reproducible, the claim that the counting methods reproduce
+exactly was written into ten figure folders as an argument from their implementation: they are Python with fixed
+seeds and make no model calls. That is the same SHAPE of argument that had just failed, so it was measured.
+
+Household hh_s0's whole classical arm was regenerated from its stored config into a scratch directory: all nine
+beliefs, 4464 rows. Byte-identical to the stored log, and the question bank it was scored on regenerated
+byte-identically too — which is the stronger result, since it means the simulator and the bank generation
+reproduce as well as the beliefs do.
+
+The folders now say the counting methods were re-run and reproduced exactly, with the household and row count,
+instead of appealing to what the code does. Cost: about four minutes of CPU.
