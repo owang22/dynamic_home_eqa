@@ -582,13 +582,14 @@
     "claim": "Being allowed to decline is worth something to every method at the shift, but for the timetables that is not because their confidence knows anything. The value splits in two: what the best all-or-nothing choice gives, which needs no signal at all and pays whenever a method is wrong more often than right, and what the ORDER of the confidences adds on top. At the shift the timetable that never forgets is right 51.3% of the time, so declining is worth 2.07 to it on the level alone \u2014 and its ordering adds 0.37 against a hindsight-on-noise floor of 0.29, which is nothing. The three-day timetable is the same story (0.43 against 0.36). The survival-time model's ordering adds 2.70 against a floor of 0.52, and the whole-log-in-the-prompt memory's 1.33 against 0.30. The honest contrast is not a big effect against a small one. It is a real effect against no measurable effect.",
     "population": "one resident off sick, that resident's own things",
     "households": {
-      "timetable that never forgets": 10,
-      "timetable with a three-day memory": 10,
-      "survival-time model": 10,
-      "whole-log-in-the-prompt memory": 10
+      "timetable that never forgets": "10 (8 in the first days back 24-26)",
+      "timetable with a three-day memory": "10 (8 in the first days back 24-26)",
+      "survival-time model": "10 (8 in the first days back 24-26)",
+      "whole-log-in-the-prompt memory": "10 (8 in the first days back 24-26)"
     },
     "split": "all questions",
     "band": "none: the black line on each bar is a noise floor, not an error bar",
+    "caveat": "The household count is not the same in every window. A household enters a window only if it answered twenty or more questions inside it, and the first-days-back window is three days long, so two households fall out of it. The first-days-back bars therefore rest on eight households and the rest on ten; the claim above argues from the first sick days, where all ten are present.",
     "note": "Threshold chosen PER HOUSEHOLD with hindsight, which is the generous reading and suits a figure whose point is that even given hindsight the timetables gain nothing from their own confidence. The floor is that same quantity computed on shuffled labels.",
     "conservative_variant": "A stricter estimator gives the same ranking. Choosing ONE threshold for all ten households instead of one each, the totals are 0.33 for the timetable that never forgets, 0.40 for the three-day one, 2.83 for the survival-time model and 0.77 for the whole-log memory. Its noise floor sits near 0.01, because a single policy applied to every household has far less freedom to chase noise, so on that estimator every bar clears its floor. The two agree on the ranking and disagree on the floor: that is a fact about the estimators rather than about the methods, and a reviewer who recomputes one of them should expect a different-looking number.",
     "caption": "What the ORDER of a method's confidences is worth at each stage: the score under the best threshold for that window, minus the score from the best all-or-nothing choice, so that only the part needing the confidence to carry information is shown. The black line on each bar is what the same procedure extracts from shuffled labels, and it is drawn per bar because it moves: a method that is right about half the time hands hindsight far more to work with, so the floor rises at the shift for exactly the methods whose bars rise there. A bar that does not clear its own line is not a result.",

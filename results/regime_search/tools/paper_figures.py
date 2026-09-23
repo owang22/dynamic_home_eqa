@@ -997,7 +997,13 @@ def f9(DATA, EXTRA, manifest):
             f = M.get(k, {}).get("null_ordering")
             if f is not None:
                 ax.plot([x - w * 0.46, x + w * 0.46], [f, f], "-", color=INK, lw=1.1, zorder=5)
-        hh[nm(m)] = M.get(order[0], {}).get("n_hh")
+        # The count is NOT the same in every window -- a household needs twenty answered rows inside a window
+        # to enter it, and the three-day return window is short. Reporting the first window's count as if it
+        # held for all five is how a figure comes to claim more households than it has.
+        counts = {k: M[k]["n_hh"] for k in order if k in M}
+        top = max(set(counts.values()), key=list(counts.values()).count)
+        odd = [f"{v} in the {k}" for k, v in counts.items() if v != top]
+        hh[nm(m)] = str(top) if not odd else f"{top} ({', '.join(odd)})"
         # One row per PART of the decomposition, not one per method: the claim argues from the level and the
         # accuracy as well as from the plotted bar, and every number it states has to be in this table.
         for part, field in (("what the ordering adds", "ordering"), ("noise floor for that", "null_ordering"),
@@ -1038,6 +1044,11 @@ def f9(DATA, EXTRA, manifest):
                   "measurable effect."),
         "population": POP_LABEL["person"], "households": hh, "split": "all questions",
         "band": "none: the black line on each bar is a noise floor, not an error bar",
+        "caveat": ("The household count is not the same in every window. A household enters a window only if "
+                   "it answered twenty or more questions inside it, and the first-days-back window is three "
+                   "days long, so two households fall out of it. The first-days-back bars therefore rest on "
+                   "eight households and the rest on ten; the claim above argues from the first sick days, "
+                   "where all ten are present."),
         "note": ("Threshold chosen PER HOUSEHOLD with hindsight, which is the generous reading and suits a "
                  "figure whose point is that even given hindsight the timetables gain nothing from their own "
                  "confidence. The floor is that same quantity computed on shuffled labels."),

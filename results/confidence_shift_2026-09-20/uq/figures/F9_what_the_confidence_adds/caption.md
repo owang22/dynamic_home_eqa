@@ -13,9 +13,10 @@ What the ORDER of a method's confidences is worth at each stage: the score under
 ---
 
 - **Population:** one resident off sick, that resident's own things
-- **Households:** timetable that never forgets 10, timetable with a three-day memory 10, survival-time model 10, whole-log-in-the-prompt memory 10
+- **Households:** timetable that never forgets 10 (8 in the first days back 24-26), timetable with a three-day memory 10 (8 in the first days back 24-26), survival-time model 10 (8 in the first days back 24-26), whole-log-in-the-prompt memory 10 (8 in the first days back 24-26)
 - **Questions:** all questions
 - **Bands:** none: the black line on each bar is a noise floor, not an error bar
 - **Dotted vertical rules:** the stage boundaries — the first sick day and the first day back. Nothing is shaded, so the lines and their bands sit on a plain ground.
 - **About the data:** Threshold chosen PER HOUSEHOLD with hindsight, which is the generous reading and suits a figure whose point is that even given hindsight the timetables gain nothing from their own confidence. The floor is that same quantity computed on shuffled labels.
 - **How much hindsight this figure uses:** The three decision figures use three different amounts of hindsight, and each should be described with the words that match it. F8: ONE threshold per method for the whole run, then scored day by day — oracular in that the constant was chosen knowing the whole run, but it is at least a single policy someone could hold. F9: one threshold per method per WINDOW, chosen knowing that window's outcomes, and one per household. F10: one threshold per method per DAY, chosen knowing that day. None of the three is refitted on held-out data: every threshold in all three is chosen knowing the outcomes it is then scored on, which is what makes them upper bounds on what declining could be worth rather than policies. F8 is the tightest of the three and F10 the loosest.
+- **Read with care:** The household count is not the same in every window. A household enters a window only if it answered twenty or more questions inside it, and the first-days-back window is three days long, so two households fall out of it. The first-days-back bars therefore rest on eight households and the rest on ten; the claim above argues from the first sick days, where all ten are present.
