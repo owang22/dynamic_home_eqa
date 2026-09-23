@@ -30,6 +30,7 @@ WINDOWS = {"settled 9-13": range(9, 14), "sick 14-16": range(14, 17), "spell 17-
            "back 24-26": range(24, 27), "after 27-31": range(27, 32)}
 MIN_CELL = 10          # cells under 10 questions are not reported
 MIN_BIN = 10           # no q(s) estimate from fewer than this many questions
+MIN_BIN_CF = 8         # the same, inside a cross-fitting half (halves are half the size)
 
 
 # ---------------------------------------------------------------- loading
@@ -438,37 +439,40 @@ def main():
                 for _ in range(SPL):
                     idx = list(range(len(pairs)))
                     rnd.shuffle(idx)
-                    A = [pairs[i] for i in idx[:len(idx) // 2]]
-                    B = [pairs[i] for i in idx[len(idx) // 2:]]
-                    if len(A) < 2 * MIN_BIN or len(B) < MIN_BIN:
-                        continue
-                    # bins on A, as confidence cut points, with q on each
-                    bs, cuts, cur, curc = [], [], [], []
-                    groups = collections.OrderedDict()
-                    for c, ok in sorted(A, key=lambda x: x[0]):
-                        groups.setdefault(c, []).append(ok)
-                    target = max(MIN_BIN, math.ceil(len(A) / K))
-                    for c, oks in groups.items():
-                        cur.extend(oks)
-                        curc.append(c)
-                        if len(cur) >= target:
-                            bs.append(cur); cuts.append(curc[-1]); cur, curc = [], []
-                    if cur:
-                        if bs:
-                            bs[-1].extend(cur); cuts[-1] = curc[-1] if curc else cuts[-1]
-                        else:
-                            bs.append(cur); cuts.append(curc[-1])
-                    cuts[-1] = float("inf")
-                    decline = [sum(b) / len(b) < 0.5 for b in bs]
-                    dec_n, dec_reg = 0, 0.0
-                    for c, ok in B:
-                        j = next(i for i, cut in enumerate(cuts) if c <= cut)
-                        if decline[j]:
-                            dec_n += 1
-                            dec_reg += (-1.0 if ok else 1.0)      # avoided regret on this question
-                    vs.append(dec_reg / len(B))
-                    ms.append(dec_n / len(B))
-                    ds.append((dec_reg / dec_n) if dec_n else 0.0)
+                    halves = [(idx[:len(idx) // 2], idx[len(idx) // 2:]),
+                              (idx[len(idx) // 2:], idx[:len(idx) // 2])]
+                    for ia, ib in halves:
+                      A = [pairs[i] for i in ia]
+                      B = [pairs[i] for i in ib]
+                      if len(A) < 2 * MIN_BIN_CF or len(B) < MIN_BIN_CF:
+                          continue
+                      # bins on A, as confidence cut points, with q on each
+                      bs, cuts, cur, curc = [], [], [], []
+                      groups = collections.OrderedDict()
+                      for c, ok in sorted(A, key=lambda x: x[0]):
+                          groups.setdefault(c, []).append(ok)
+                      target = max(MIN_BIN_CF, math.ceil(len(A) / K))
+                      for c, oks in groups.items():
+                          cur.extend(oks)
+                          curc.append(c)
+                          if len(cur) >= target:
+                              bs.append(cur); cuts.append(curc[-1]); cur, curc = [], []
+                      if cur:
+                          if bs:
+                              bs[-1].extend(cur); cuts[-1] = curc[-1] if curc else cuts[-1]
+                          else:
+                              bs.append(cur); cuts.append(curc[-1])
+                      cuts[-1] = float("inf")
+                      decline = [sum(b) / len(b) < 0.5 for b in bs]
+                      dec_n, dec_reg = 0, 0.0
+                      for c, ok in B:
+                          j = next(i for i, cut in enumerate(cuts) if c <= cut)
+                          if decline[j]:
+                              dec_n += 1
+                              dec_reg += (-1.0 if ok else 1.0)      # avoided regret on this question
+                      vs.append(dec_reg / len(B))
+                      ms.append(dec_n / len(B))
+                      ds.append((dec_reg / dec_n) if dec_n else 0.0)
                 if vs:
                     perV.append(st.mean(vs) * Q[h]); perM.append(st.mean(ms)); perD.append(st.mean(ds))
             if not perV:

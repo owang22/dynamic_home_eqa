@@ -475,3 +475,32 @@ That one cannot be fixed by choosing a different red — red against green IS th
 the letter went back to being text on a white box, read against white rather than against the line. Recorded
 because it is the distinction that matters: an annotation glyph and a data series are not held to the same
 test, and a checker that cannot tell them apart will send you looking for a colour that does not exist.
+
+**7. A name split across a string concatenation is invisible to any search of the source.** Renaming every
+method to a plain description, the source came back clean — no occurrence of the old names anywhere in
+`paper_figures.py`. The built folders still carried them. The reason is that the long prose strings are written
+as adjacent literals, so a name lands half on one line and half on the next:
+
+```
+"...falls 40.8 points on day 14 and the never-forgets "
+f"timetable {abs(...):.1f}; by day 23..."
+```
+
+No regular expression over the file can see `never-forgets timetable` there, because as far as the file is
+concerned those are two different strings. A dozen occurrences survived that way, in exactly the sentences a
+reader meets first.
+
+They were found by grepping the **rendered output** — the generated `claims.md` and `caption.md`, where the
+concatenation has already happened and the name is whole.
+
+**The rule: after any rename, sweep the built artifacts, not the script.** This is the same lesson as rendering
+a figure and looking at it, in a different medium. The artifact is the thing that ships and it can differ from
+what the source appears to say — here because the source never contains the string at all. It joins the
+rasterised-glyph entry above: there, an effect changed what the file was; here, concatenation hid what the file
+would contain. Both were invisible upstream and obvious downstream.
+
+A good outcome rode along with it. Forty-eight places looked their own numbers table up by the old literal
+names, so the rename broke them loudly rather than silently producing wrong labels. They now resolve through
+the single name dictionary, which means the next rename cannot leave a lookup pointing at a name that no longer
+exists — a structural fix rather than a repair, and the reason to prefer a lookup that can break over a literal
+that cannot.

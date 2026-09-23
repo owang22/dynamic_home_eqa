@@ -91,7 +91,7 @@ NAME_LEGEND = {
     "retrieval":   "same-hour lookup",
     "reflect":     "nightly self-notes",
     "naive":       "recent sightings",
-    "lastseen":    "follows its last sighting",
+    "lastseen":    "follows its most recent sighting",
 }
 # the literature name, used once per folder in the caption and then dropped
 NAME_TECH = {
