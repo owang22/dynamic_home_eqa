@@ -20,6 +20,14 @@ Memories
   clock time, any earlier moment) repeated at the top under its own heading.
   Same contents, same write policy; only the salience of one line changes.
   It isolates read-time failure: the answer is often already in the buffer.
+* ``debate``  role-assigned debate (Liang et al. 2024 MAD / Du et al. 2024 style, one round): over the
+  naive block, an EVIDENCE advocate argues from the latest sightings and a ROUTINE advocate from the
+  long-run pattern (the two positions our logs show in tension); a judge sees both and answers in the
+  usual format. 3 calls per question. ``debate_oracle``: the same, with the judge alone also shown the
+  residents' messages (run on the banks_f1_return header: sick from day 14, back at work day 24) —
+  an upper bound on how much of the gap is detecting the stage rather than reasoning over the prompt.
+``--days`` answers only the listed days. Exact for memories with no LLM writes (naive, pinned, debate):
+the store's state never depends on the answers.
 """
 from __future__ import annotations
 
@@ -73,11 +81,45 @@ class Pinned(Store):
         return head + [""] + base
 
 
-STORES = {c.kind: c for c in (Naive, Pinned)}
+class Debate(Store):
+    kind, in_house = "debate", "naive"
+    oracle = False
+
+
+class DebateOracle(Debate):
+    kind, oracle = "debate_oracle", True
+
+
+STORES = {c.kind: c for c in (Naive, Pinned, Debate, DebateOracle)}
+
+ADV_SCHEMA: Dict[str, Any] = {
+    "type": "object",
+    "properties": {"location": {"type": "string"}, "argument": {"type": "string", "maxLength": 500},
+                   "confidence": {"type": "number"}},
+    "required": ["location", "argument", "confidence"], "additionalProperties": False}
+ROLE_EVIDENCE = ("You are one side of a two-person debate about this question. Your side: argue from the MOST RECENT "
+                 "evidence. Make the strongest case for where the object is right now based on its latest sightings, "
+                 "especially the most recent ones at about this time of day, even where they break the usual routine.")
+ROLE_ROUTINE = ("You are one side of a two-person debate about this question. Your side: argue from the LONG-RUN "
+                "ROUTINE. Make the strongest case for where the object is right now based on where it has usually been "
+                "at this time of day across all the days so far and on what the residents normally do, even where the "
+                "latest sightings disagree.")
+ADV_REPLY = ('Reply with JSON: {"location": one spot name, "argument": two or three sentences making your side\'s case, '
+             '"confidence": number from 0 to 1}')
+
+
+def _adv(text: Optional[str], allowed: set) -> Tuple[Optional[str], str, Optional[float]]:
+    try:
+        o = json.loads(text) if text else {}
+    except ValueError:
+        o = {}
+    loc = o.get("location") if o.get("location") in allowed else None
+    c = o.get("confidence")
+    return loc, str(o.get("argument") or "")[:500], (float(c) if isinstance(c, (int, float)) else None)
 
 
 def run_arm(bank_path: pathlib.Path, kind: str, told: bool, client: L.LLMClient, out_dir: pathlib.Path,
-            max_days: Optional[int] = None) -> List[dict]:
+            max_days: Optional[int] = None, days: Optional[set] = None) -> List[dict]:
     header = json.loads(bank_path.read_text().splitlines()[0])
     kinds = set((header.get("day_kinds") or {}).values())
     L.FLAT_WEEK = bool(kinds) and kinds == {"weekday"}     # read by header_lines; same for every bank of a regime
@@ -89,8 +131,10 @@ def run_arm(bank_path: pathlib.Path, kind: str, told: bool, client: L.LLMClient,
     cards = header["protocol"]["residents"]
     names = {c["resident_id"]: c["name"] for c in cards}
     patrol_hours = int(header["patrol_hours"])
+    oracle_rows = header.get("hint_messages", [])     # debate_oracle: shown to the judge only
     hint_rows = header.get("hint_messages", []) if told else []
     if L.FLAT_WEEK:
+        oracle_rows = [{**h, "text": f"Day {h['day_index']}: " + h["text"].split(": ", 1)[-1]} for h in oracle_rows]
         hint_rows = [{**h, "text": f"Day {h['day_index']}: " + h["text"].split(": ", 1)[-1]} for h in hint_rows]
     rooms: Dict[str, List[str]] = defaultdict(list)
     for rec, room in sorted(episode.receptacle_rooms.items()):
@@ -141,6 +185,8 @@ def run_arm(bank_path: pathlib.Path, kind: str, told: bool, client: L.LLMClient,
                     grp.append(evidence[cursor]); cursor += 1
                 memory.update_group(t, grp, day_names)
                 store.on_group(t, grp, memory)
+            if days is not None and q.day_index not in days:
+                continue
             hints = [h["text"] for h in hint_rows if h["day_index"] <= q.day_index]
             while noticing_day < q.day_index - 1:      # identical to llm.run_arm: every arm self-reports nightly
                 noticing_day += 1
@@ -159,7 +205,31 @@ def run_arm(bank_path: pathlib.Path, kind: str, told: bool, client: L.LLMClient,
             mem_lines = store.lines(memory, q.object_id, q.t_query)
             msgs = [{"role": "system", "content": L.SYSTEM}, {"role": "user", "content": "\n".join(Lh + mem_lines)}]
             authored = tuple(getattr(store, "authored", lambda: ())())
-            text, usage = ask(msgs, L.CONF_SCHEMA, 260, q.question_id, llm_authored=authored)
+            extra: Dict[str, Any] = {}
+            if isinstance(store, Debate):
+                body = "\n".join(Lh + mem_lines)
+                side = {}
+                for role, instr in (("evidence", ROLE_EVIDENCE), ("routine", ROLE_ROUTINE)):
+                    m = [{"role": "system", "content": L.SYSTEM},
+                         {"role": "user", "content": body + "\n\n" + instr + "\n\n" + ADV_REPLY}]
+                    t_, u_ = ask(m, ADV_SCHEMA, 260, f"{q.question_id} adv_{role}")
+                    side[role] = _adv(t_, allowed)
+                    usage = {"prompt_tokens": int(usage.get("prompt_tokens", 0)) + int(u_.get("prompt_tokens", 0)),
+                             "completion_tokens": int(usage.get("completion_tokens", 0)) + int(u_.get("completion_tokens", 0))} if extra else u_
+                    extra = {**extra, f"adv_{role}": side[role][0], f"adv_{role}_conf": side[role][2]}
+                jh = [h["text"] for h in oracle_rows if h["day_index"] <= q.day_index] if store.oracle else hints
+                Jh = L.header_lines(q.t_query, day_names, cards, rooms, patrol_hours, False, jh, "conf", patrol_times,
+                                    question_moments, feedback_delay_min)
+                Jh += ["", f"Question: where is {q.object_id} (a {q.object_class.replace('_', ' ')}) right now?", ""]
+                Jh += mem_lines + ["", "Two assistants debated this question before you.",
+                                   f"- Arguing from the most recent evidence: {side['evidence'][0] or 'no valid spot'} — {side['evidence'][1]}",
+                                   f"- Arguing from the long-run routine: {side['routine'][0] or 'no valid spot'} — {side['routine'][1]}",
+                                   "You are the judge. Weigh both cases against the sightings above and decide."]
+                msgs = [{"role": "system", "content": L.SYSTEM}, {"role": "user", "content": "\n".join(Jh)}]
+                authored = (side["evidence"][1], side["routine"][1])
+                extra["advocates_agree"] = side["evidence"][0] == side["routine"][0]
+            text, u2 = ask(msgs, L.CONF_SCHEMA, 260, q.question_id, llm_authored=authored)
+            usage = u2 if not extra else {k: int(usage.get(k, 0)) + int(u2.get(k, 0)) for k in ("prompt_tokens", "completion_tokens")}
             loc, conf, why, status = L.parse_conf(text, allowed)
             fallback = loc is None
             answer = loc if loc else (memory.last_spot_real(q.object_id) or sorted(allowed)[0])
@@ -175,7 +245,7 @@ def run_arm(bank_path: pathlib.Path, kind: str, told: bool, client: L.LLMClient,
                             "status": status, "answer": answer, "top_prob": round(top, 3), "fallback": fallback,
                             "on_person_resident": None, "truth": truth, "correct": answer == truth,
                             "correct_before_look": answer == truth, "abstain_direct": False,
-                            "facts_shown": sum(1 for s in mem_lines if s.startswith("- ") and s != "- none")})
+                            "facts_shown": sum(1 for s in mem_lines if s.startswith("- ") and s != "- none"), **extra})
     calls.close()
     n_ok = sum(r["correct"] for r in records)
     print(f"  {tag['household']} {arm:36s} right {n_ok}/{len(records)} fallback {n_fallback} "
@@ -201,13 +271,20 @@ def main(argv=None) -> int:
     ap.add_argument("--max-days", type=int, default=None)
     ap.add_argument("--workers", type=int, default=3, help="parallel ARMS (one stream each)")
     ap.add_argument("--replay-only", action="store_true")
+    ap.add_argument("--days", default=None, help="answer only these days, e.g. 11-17,21-22,24-26")
     a = ap.parse_args(argv)
     client = L.LLMClient(a.cache, replay_only=a.replay_only)
+    days = None
+    if a.days:
+        days = set()
+        for part in a.days.split(","):
+            lo, _, hi = part.partition("-")
+            days |= set(range(int(lo), int(hi or lo) + 1))
     jobs = [(b, m, t == "told") for b in a.bank for m in a.memory for t in a.told]
     from concurrent.futures import ThreadPoolExecutor
     failed = 0
     with ThreadPoolExecutor(max_workers=a.workers) as ex:
-        futs = {ex.submit(run_arm, b, m, t, client, a.out, a.max_days): (b, m, t) for b, m, t in jobs}
+        futs = {ex.submit(run_arm, b, m, t, client, a.out, a.max_days, days): (b, m, t) for b, m, t in jobs}
         for f, job in futs.items():
             try:
                 f.result()

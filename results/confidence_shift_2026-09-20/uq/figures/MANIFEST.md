@@ -10,21 +10,21 @@ A change in the household's hidden routine costs accuracy TWICE: once when it ha
 
 These memories can represent the new regime perfectly well — told about it, they adapt at once. What none of them can do is notice from evidence that the old regime expired, or that an instruction has. Neither a sighting nor a sentence carries a validity window, so language does not fix the problem, it moves it: from failing to notice that sightings went stale to failing to notice that an instruction did. Perpetua* is the exception because how long a thing stays true is precisely what it models. The return break is that defect seen from the other side: what expired was the sick-day routine, and nothing in these memories dates what they learned during it.
 
-*single-column, 3.15 in wide.* Population one resident off sick, that resident's own things; households ttfrozen 10, tt3d 10, perpetua 10, longcontext 6. Renders, caption and claims in `F1_learn_break_relearn/`.
+*single-column, 3.15 in wide.* Population one resident off sick, that resident's own things; households ttfrozen 10, tt3d 10, perpetua 10, longcontext 10. Renders, caption and claims in `F1_learn_break_relearn/`.
 
 ## [F2](F2_relearning_inside_the_spell/) — F2_relearning_inside_the_spell
 
-Given ten days of the new routine the 3-day timetable re-learns it 2.0 to 3.2 times as fast as any language memory: +31 points from the first sick days to the end of the spell, against +15 for reflection, +10 for long-context and +10 for retrieval.
+Given ten days of the new routine the 3-day timetable re-learns it 2.0 to 3.0 times as fast as any language memory: +31 points from the first sick days to the end of the spell, against +15 for reflection, +12 for long-context and +10 for retrieval.
 
-*single-column, 3.15 in wide.* Population one resident off sick, that resident's own things; households tt3d 10, reflect 10, longcontext 6, retrieval 10. Renders, caption and claims in `F2_relearning_inside_the_spell/`.
+*single-column, 3.15 in wide.* Population one resident off sick, that resident's own things; households tt3d 10, reflect 10, longcontext 10, retrieval 10. Renders, caption and claims in `F2_relearning_inside_the_spell/`.
 
 ## [F3](F3_what_one_sentence_buys/) — F3_what_one_sentence_buys
 
-Ten days of living in the new routine, corrected after every single question, do not teach long-context memory the new routine. One sentence does. Its untold arm is still answering from the old pattern at the end of the spell, while the arm told “Yuki is home sick today” on the first morning sits above it from that day on. That is the uncomfortable half of the accuracy story: what repairs the break is being TOLD, not the evidence, so a memory nobody can talk to is a memory that does not recover.
+Ten days of living in the new routine, corrected after every single question, do not teach long-context memory the new routine. One sentence does, and on ten matched households the whole arc of it now clears our bar on this one memory. Told at A it is +10.4 points ahead of the untold run on the first sick days and +9.3 through the rest of the spell. Left standing after the routine reverts, the same sentence COSTS 8.6 points on the first days back and 6.8 a week later. Retracted at B, that cost is gone. The arm told at both ends sits +0.7 against never being told on the first days back and +0.9 a week later, neither of which clears the bar — so any residual difference is smaller than we can measure, which is a bound and not a proof that it is zero. What does clear is the positive form: retracting is worth +9.2 points against telling once, and +7.7 a week later.
 
-These memories can represent the new regime perfectly well — told about it, they adapt at once. What none of them can do is notice from evidence that the old regime expired, or that an instruction has. Neither a sighting nor a sentence carries a validity window, so language does not fix the problem, it moves it: from failing to notice that sightings went stale to failing to notice that an instruction did. Perpetua* is the exception because how long a thing stays true is precisely what it models. This figure is where that is easiest to see, because the message is the counterfactual: it holds the memory fixed and changes only whether the regime was announced.
+These memories can represent the new regime perfectly well — told about it, they adapt at once. What none of them can do is notice from evidence that the old regime expired, or that an instruction has. Neither a sighting nor a sentence carries a validity window, so language does not fix the problem, it moves it: from failing to notice that sightings went stale to failing to notice that an instruction did. Perpetua* is the exception because how long a thing stays true is precisely what it models. This figure is where it is earned end to end on a single memory, because the message is the counterfactual: it holds the memory fixed and changes only whether the regime was announced, and then whether the announcement was taken back.
 
-*single-column, 3.15 in wide.* Population one resident off sick, that resident's own things; households longcontext (matched across all three arms) 3. Renders, caption and claims in `F3_what_one_sentence_buys/`.
+*single-column, 3.15 in wide.* Population one resident off sick, that resident's own things; households longcontext (matched across all three arms) 10. Renders, caption and claims in `F3_what_one_sentence_buys/`.
 
 ## [F4](F4_reacting_is_not_recovering/) — F4_reacting_is_not_recovering
 
@@ -36,7 +36,7 @@ Reacting is not recovering. When the routine changes these gates DO notice — e
 
 The timetables do not move their stated confidence when they break, so the gap between what they claim and what they achieve opens at the shift; last seen states 98% while being right 58% of the time, a confidence number carrying no information at all; Perpetua* is the one whose stated confidence tracks its own accuracy through the change.
 
-*double-column, 5.94 in wide.* Population one resident off sick, that resident's own things; households ttfrozen 10, tt3d 10, perpetua 10, longcontext 6, lastseen 10. Renders, caption and claims in `F5_confidence_against_accuracy/`.
+*double-column, 5.94 in wide.* Population one resident off sick, that resident's own things; households ttfrozen 10, tt3d 10, perpetua 10, longcontext 10, lastseen 10. Renders, caption and claims in `F5_confidence_against_accuracy/`.
 
 ## [F6](F6_the_inversion/) — F6_the_inversion
 
@@ -56,11 +56,11 @@ The conformal set does not widen when the routine changes. On the first sick day
 
 Scored the way a user would feel it — +1 for a right answer, −1 for a wrong one, 0 for declining — the ranking inverts at the moment of change: the methods that are most accurate in the settled world are the ones that collapse, and one goes NEGATIVE. On day 14 the never-forgets timetable scores below zero, meaning it would have done better answering nothing at all. Accuracy in a stable world does not predict value when the world moves.
 
-*single-column, 3.09 in wide.* Population one resident off sick, that resident's own things; households ttfrozen 10, tt3d 10, perpetua 10, longcontext 6. Renders, caption and claims in `F8_decision_score_per_day/`.
+*single-column, 3.09 in wide.* Population one resident off sick, that resident's own things; households ttfrozen 10, tt3d 10, perpetua 10, longcontext 10. Renders, caption and claims in `F8_decision_score_per_day/`.
 
 ## [F9](F9_value_of_declining/) — F9_value_of_declining
 
 At the shift, being allowed to decline is worth almost nothing to the timetables (+0.3 and +0.4) and a great deal to Perpetua* (+2.8). Perpetua* scores BELOW both timetables while the world is stable: it is not the better model, it is the only one whose uncertainty is worth acting on.
 
-*1.5-column, 3.85 in wide.* Population one resident off sick, that resident's own things; households ttfrozen 10, tt3d 10, perpetua 10, longcontext 6. Renders, caption and claims in `F9_value_of_declining/`.
+*1.5-column, 3.85 in wide.* Population one resident off sick, that resident's own things; households ttfrozen 10, tt3d 10, perpetua 10, longcontext 10. Renders, caption and claims in `F9_value_of_declining/`.
 

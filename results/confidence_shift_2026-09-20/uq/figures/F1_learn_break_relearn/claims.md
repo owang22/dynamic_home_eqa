@@ -8,7 +8,7 @@ These memories can represent the new regime perfectly well — told about it, th
 
 ## What in the figure demonstrates it
 
-The two dotted rules and what happens at them. The 3-day timetable falls 40.8 points on day 14 and the never-forgets timetable 47.3; by day 23 the 3-day timetable is above where it started the spell. At day 24 both fall again (-24.0 and +2.6), and the never-forgets timetable is the one that recovers immediately, because the old routine is the one it never stopped believing. Long-context's day-14 fall is 17.9 points, the smallest of the four.
+The two dotted rules and what happens at them. The 3-day timetable falls 40.8 points on day 14 and the never-forgets timetable 47.3; by day 23 the 3-day timetable is above where it started the spell. At day 24 both fall again (-24.0 and +2.6), and the never-forgets timetable is the one that recovers immediately, because the old routine is the one it never stopped believing. Long-context's day-14 fall is 19.1 points, the smallest of the four.
 
 ## What it does NOT show
 
@@ -23,4 +23,4 @@ Measured on the DAILY values, not read off the plotted line.
 | never-forgets timetable | 87.3 | 40.0 | -47.3 | 76.9 | 79.5 | 2.6 |
 | 3-day timetable | 83.3 | 42.5 | -40.8 | 87.5 | 63.5 | -24.0 |
 | Perpetua* | 69.3 | 44.4 | -25.0 | 81.9 | 48.3 | -33.6 |
-| long-context | 79.4 | 61.5 | -17.9 | 79.2 | 62.8 | -16.3 |
+| long-context | 78.5 | 59.4 | -19.1 | 78.1 | 63.6 | -14.5 |

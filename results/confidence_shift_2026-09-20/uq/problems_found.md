@@ -452,3 +452,26 @@ while the paragraph explaining it did not, so the two disagreed the moment a hou
 contradicting itself in adjacent lines. `tools/paper_figures.py` now audits every number in every figure's prose
 against that figure's own numbers table on each run, and a literal that is a parameter rather than a measurement
 must be declared one at a time with a reason. An unexplained exemption is how a stale number hides.
+
+**6. An effect applied for legibility changed what the artifact WAS, not how it looked.** The A and B markers on
+the stage boundaries were drawn with a matplotlib path effect, to give each letter a white halo so it stays
+readable wherever a line passes behind it. Matplotlib rasterises a glyph to vector paths when a path effect is
+applied to it. The result: in every SVG, the two characters the paper refers to by name — A and B, the whole
+point of the notation — were the only text in the set that was **not text**. Everything else was `<text>`, as the
+figure contract requires; those two were outlines.
+
+Nothing errored, the PNGs were identical, and the halo worked exactly as intended. The fault is invisible in the
+rendered image and visible only in the file: a check that greps the SVG for `>A<` finds nothing while the figure
+plainly shows an A. A white bbox behind the letter does the same job and keeps it as text.
+
+**The general form is worth more than the instance.** An effect chosen for how something LOOKS can silently
+change what the file IS — its format, its structure, whether its text is selectable, searchable, or
+reproducible. The image is not the artifact; the file is. Whenever a visual effect is added, check the produced
+file for the property the effect might have traded away, not just the picture for the effect you wanted.
+
+A second-order fault rode along with it: because the halo was drawn as stroked paths, the letters registered as
+a *data colour* in the palette checker, which then failed the pair red-against-green at 7.6 under protanopia.
+That one cannot be fixed by choosing a different red — red against green IS the deficiency. It became moot when
+the letter went back to being text on a white box, read against white rather than against the line. Recorded
+because it is the distinction that matters: an annotation glyph and a data series are not held to the same
+test, and a checker that cannot tell them apart will send you looking for a colour that does not exist.

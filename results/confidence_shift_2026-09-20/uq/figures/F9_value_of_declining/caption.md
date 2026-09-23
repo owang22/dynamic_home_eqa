@@ -13,7 +13,7 @@ What being allowed to decline is worth, by window: the decision score under the 
 ---
 
 - **Population:** one resident off sick, that resident's own things
-- **Households:** ttfrozen 10, tt3d 10, perpetua 10, longcontext 6
+- **Households:** ttfrozen 10, tt3d 10, perpetua 10, longcontext 10
 - **Questions:** all questions
 - **Bands:** none: bars are a difference of two scores
 - **Dotted vertical rules:** the stage boundaries — the first sick day and the first day back. Nothing is shaded, so the lines and their bands sit on a plain ground.

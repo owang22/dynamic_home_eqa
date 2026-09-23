@@ -215,9 +215,10 @@ reuse minus the buffer's — is +9.7 ± 6.7 and does clear, but it was not pre-r
 "clears" is weak by the standard set out at the top of this file.)
 
 **What ran.** One-person-sick regime, 10 households, 32 days: buffer, retrieval and a nightly routine table on all 10
-across all three message conditions; reflection on 10 with no message and 5 with each message; long-context on 3
-across all three (it costs ~10x the compute per question, and the other 7 no-message households were abandoned rather
-than finished because they could not improve any comparison). MCQ token-probability channel and honest sets on 3
+across all three message conditions; reflection on 10 with no message and 5 with each message; long-context on 10
+across all three (it costs ~10x the compute per question, so it ran on 3 for most of 22 September; the extension
+finished its remaining households at 23:17 that night, and all three of its arms now cover the same 10 households
+and the same questions). MCQ token-probability channel and honest sets on 3
 households over a bounded day list. Partial-shift arms (one person sick, everyone's things asked): 6 households,
 buffer and routine table, no message and start message. Two-spells regime: classical learners on 10 households,
 buffer and retrieval on 3.

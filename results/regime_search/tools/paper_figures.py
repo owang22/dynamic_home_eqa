@@ -300,6 +300,16 @@ def legend_below(ax, note=None, ncol=2, order=None, inside=None, gap=0.17):
     h, l = ax.get_legend_handles_labels()
     if order == "reverse":
         h, l = h[::-1], l[::-1]
+    # No dashed swatches. A marker sitting on a short legend handle with a white edge reads as a dashed line,
+    # and on this page a dash means annotation -- a boundary or a target -- never data. The handles are rebuilt
+    # as solid strokes whose marker takes the line's own colour, so nothing in a legend can look dashed. The
+    # white marker edge stays ON THE PLOT, where it is doing real work separating overlapping lines.
+    import matplotlib.lines as mlines
+    h = [mlines.Line2D([], [], color=x.get_color(), lw=x.get_linewidth(), linestyle="-",
+                       marker=x.get_marker(), markersize=x.get_markersize(),
+                       markerfacecolor=x.get_color(), markeredgecolor=x.get_color())
+         if getattr(x, "get_marker", lambda: "None")() not in ("None", None, "") else x
+         for x in h]
     if inside:
         # The empty strip runs along the BOTTOM of the plot, under every line, not in a corner -- a corner box
         # sat on the day-14 dip, which is the one part of this figure nobody may cover.
@@ -660,6 +670,45 @@ def f2(DATA, EXTRA, manifest):
         "numbers": nums})
 
 
+def arm_contrasts(DATA, EXTRA, matched):
+    """Per-household told-vs-untold differences on the matched set, with the 2-standard-error verdict.
+
+    Computed here so the claim sentence and the numbers table are the same arithmetic. Below six households
+    the bar falls back to the one-sd floor, as everywhere else."""
+    import math
+    A = DATA["person"]["agents"]
+    arms = {"no message": "person:llm_longcontext_nomsg", "A only": "person:llm_longcontext_startmsg",
+            "A & B": "person:llm_longcontext_startend"}
+    WINS = {"first sick days 14-16": range(14, 17), "rest of spell 17-23": range(17, 24),
+            "first days back 24-26": range(24, 27), "a week later 27-31": range(27, 32)}
+
+    def acc(key, hh, days):
+        n = ok = 0
+        for d in days:
+            c = A[key][hh]["all"][d]
+            if c and c[0]:
+                n += c[0]; ok += c[1]
+        return 100.0 * ok / n if n else None
+
+    rows, got = {}, {}
+    for label, (x, y) in {"A only - no message": ("no message", "A only"),
+                          "A & B - no message": ("no message", "A & B"),
+                          "A & B - A only": ("A only", "A & B")}.items():
+        row = {}
+        for wn, days in WINS.items():
+            diffs = [acc(arms[y], hh, days) - acc(arms[x], hh, days) for hh in matched
+                     if acc(arms[x], hh, days) is not None and acc(arms[y], hh, days) is not None]
+            if len(diffs) < 2:
+                continue
+            m = sum(diffs) / len(diffs)
+            sd = math.sqrt(sum((v - m) ** 2 for v in diffs) / (len(diffs) - 1))
+            bar = sd if len(diffs) < 6 else 2 * sd / math.sqrt(len(diffs))
+            row[wn] = round(m, 1)
+            got[(label, wn)] = (m, sd, len(diffs), abs(m) >= bar)
+        rows[label] = row
+    return {"rows": rows, "get": lambda lab, wn: f"{got[(lab, wn)][0]:+.1f}" if (lab, wn) in got else "?"}
+
+
 def f3(DATA, EXTRA, manifest):
     """What one sentence buys and costs, with the measured clip days."""
     grow = growing()
@@ -702,40 +751,58 @@ def f3(DATA, EXTRA, manifest):
         nums[lab] = {"days 14-16": r2(avg([S[k]["mean"][d - 1] for d in range(14, 17) if S[k]["mean"][d - 1] is not None])),
                      "days 24-26": r2(avg([S[k]["mean"][d - 1] for d in range(24, 27) if S[k]["mean"][d - 1] is not None])),
                      "drawn from day": clip.get(k, 1)}
+    # the paired contrasts this figure's claim rests on, computed per household on the matched set so the
+    # claim's numbers and the table's cannot disagree
+    con = arm_contrasts(DATA, EXTRA, matched)
+    nums.update(con["rows"])
     save(fig, "F3_what_one_sentence_buys", manifest, {
         "figure": "F3",
-        "claim": "Ten days of living in the new routine, corrected after every single question, do not teach "
-                 "long-context memory the new routine. One sentence does. Its untold arm is still answering "
-                 "from the "
-                 "old pattern at the end of the spell, while the arm told \u201cYuki is home sick today\u201d "
-                 "on the first morning sits above it from that day on. That is the uncomfortable half of the "
-                 "accuracy story: what repairs the break is being TOLD, not the evidence, so a memory nobody "
-                 "can talk to is a memory that does not recover.\n\n" + SPINE + " This figure is where that "
-                 "is easiest to see, because the message is the counterfactual: it holds the memory fixed and "
-                 "changes only whether the regime was announced.",
+        "claim": (lambda c: "Ten days of living in the new routine, corrected after every single question, do "
+                            "not teach long-context memory the new routine. One sentence does, and on ten "
+                            "matched households the whole arc of it now clears our bar on this one memory. "
+                            f"Told at A it is {c('A only - no message','first sick days 14-16')} points ahead "
+                            "of the untold run on the first sick days and "
+                            f"{c('A only - no message','rest of spell 17-23')} through the rest of the spell. "
+                            "Left standing after the routine reverts, the same sentence COSTS "
+                            f"{abs(float(c('A only - no message','first days back 24-26'))):.1f} points on the "
+                            "first days back and "
+                            f"{abs(float(c('A only - no message','a week later 27-31'))):.1f} a week later. "
+                            "Retracted at B, that cost is gone. The arm told at both ends sits "
+                            f"{c('A & B - no message','first days back 24-26')} against never being told on "
+                            f"the first days back and {c('A & B - no message','a week later 27-31')} a week "
+                            "later, neither of which clears the bar \u2014 so any residual difference is "
+                            "smaller than we can measure, which is a bound and not a proof that it is zero. "
+                            "What does clear is the positive form: retracting is worth "
+                            f"{c('A & B - A only','first days back 24-26')} points against telling once, and "
+                            f"{c('A & B - A only','a week later 27-31')} a week later.\n\n"
+                            + SPINE + " This figure is where it is earned end to end on a single memory, "
+                            "because the message is the counterfactual: it holds the memory fixed and changes "
+                            "only whether the regime was announced, and then whether the announcement was "
+                            "taken back.")(con["get"]),
         "population": POP_LABEL[pop], "households": {"longcontext (matched across all three arms)": len(matched)},
         "split": "all questions", "band": "±1 standard error across households",
-        "caveat": "THREE HOUSEHOLDS. At this count almost nothing in this figure clears our claim bar and the "
-                  "bands overlap heavily; the gaps are indicative, not established. A larger run is adding "
-                  "households and the matched count in this caption will rise.",
         "note": "Each told arm is drawn from the day it measurably departs from the arm above it, computed from "
                 "the data rather than from the calendar. Departure days are in the numbers below. "
                 "Each told arm is the same run as the one above it until that day.",
-        "caption": "One long-context memory, told three different things, on the same households. The "
-                   "darkest line is never told; the middle line is told \"Yuki is home sick today\" on the "
-                   "first sick day; the lightest is told again that the resident is back on the first day of "
-                   "the return. Each told arm is the same run as the one above it until the day it is told, so "
-                   "it is drawn only from the day it measurably departs.",
-        "look_for": "Where each line begins. The told-once line emerges at day 14 and runs above the untold "
-                    "line for the rest of the spell — that gap is what one sentence buys. The told-twice line "
-                    "emerges before the return day, which is a genuine early difference in the runs and not a "
-                    "drawing choice; the departure days are in the numbers.",
-        "not_shown": "At this household count almost nothing here clears our claim bar, and the bands overlap "
-                     "heavily — treat the gaps as indicative, not established. It also does not show a cost of "
-                     "the message on the way out for long-context; the recency buffer and retrieval show that more "
-                     "clearly and on more households.",
+        "caption": "One long-context memory told three different things, on the same ten households. The "
+                   "darkest line is never told; the middle line is told \u201cYuki is home sick today\u201d on "
+                   "the first sick day (A); the lightest is told that again and then told on the first day of "
+                   "the return that the resident is back (A & B). Each told arm is the same run as the one "
+                   "above it until the day it is told, so it is drawn only from the day it measurably departs.",
+        "look_for": (lambda c: "The two rules. At A the told line lifts away from the untold one and stays "
+                               "above it for the whole spell. At B the arm that was told only at A falls "
+                               "BELOW the untold run and stays there — that gap is the cost of an instruction "
+                               "nobody took back — while the arm told at both ends returns to the untold "
+                               "line. Every one of those four differences clears the bar on ten households; "
+                               "the per-household figures are in the table.")(con["get"]),
+        "not_shown": ("It does not show that the other language memories behave this way, though all three do "
+                      "move the same direction on the return, which is what made this claim survivable before "
+                      "this run existed. It does not separate what the message teaches from what it merely "
+                      "asserts: a sentence that happens to be true is not evidence the memory could have "
+                      "learned the same thing. And the equivalence at B is a NULL with a bound, not a "
+                      "demonstration that retracting restores things exactly — it means any residual "
+                      "difference is smaller than the bar, not that it is zero."),
         "drawing": NOTE_LONG_ACC,
-        "provisional": grow and "household count will rise: a larger run is in progress",
         "numbers": nums})
 
 

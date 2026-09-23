@@ -7,4 +7,4 @@ Regenerated with the figure from the same data. Never read a value off the pictu
 | never-forgets timetable | 0.272 | 3.6 | 7.74 | 0.733 | 6.614 | 6.667 | 7.72 | -3.0 |
 | 3-day timetable | 0.092 | 1.7 | 7.56 | 2.933 | 11.486 | 2.467 | 6.74 | -2.1 |
 | Perpetua* | 0.542 | 28.4 | 4.58 | 4.567 | 7.914 | 2.467 | 4.14 | -0.6 |
-| long-context | 0.65 | 8.8 | 4.567 | 5.111 | 7.69 | 3.778 | 5.6 | 0.2 |
+| long-context | 0.65 | 9.5 | 5.4 | 4.5 | 7.1 | 4.467 | 5.72 | 0.9 |

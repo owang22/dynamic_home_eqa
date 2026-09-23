@@ -7,11 +7,11 @@
       "ttfrozen": 10,
       "tt3d": 10,
       "perpetua": 10,
-      "longcontext": 6
+      "longcontext": 10
     },
     "split": "all questions",
     "caption": "Accuracy per day for four methods through a routine that changes twice. Every method climbs through the settled fortnight, falls sharply on the first sick day (dotted rule), re-learns the new routine over the following week, and falls again when the old routine returns (second dotted rule). The two timetables break hardest and recover furthest; long-context breaks least and recovers least.",
-    "look_for": "The two dotted rules and what happens at them. The 3-day timetable falls 40.8 points on day 14 and the never-forgets timetable 47.3; by day 23 the 3-day timetable is above where it started the spell. At day 24 both fall again (-24.0 and +2.6), and the never-forgets timetable is the one that recovers immediately, because the old routine is the one it never stopped believing. Long-context's day-14 fall is 17.9 points, the smallest of the four.",
+    "look_for": "The two dotted rules and what happens at them. The 3-day timetable falls 40.8 points on day 14 and the never-forgets timetable 47.3; by day 23 the 3-day timetable is above where it started the spell. At day 24 both fall again (-24.0 and +2.6), and the never-forgets timetable is the one that recovers immediately, because the old routine is the one it never stopped believing. Long-context's day-14 fall is 19.1 points, the smallest of the four.",
     "not_shown": "This is accuracy only \u2014 nothing here says whether a method KNOWS it has broken, which is the subject of F8 and F9. Long-context rests on fewer households than the counters (see the count above) and its band is correspondingly wider; do not read a gap between it and a counter as an effect without checking the band. The plotted line is a three-day average, so the visible fall is shallower than the real one: quote the numbers, not the picture.",
     "band": "\u00b11 standard error across households",
     "drawing": "The line is a centred three-day average, computed WITHIN each stage so that it never averages across a stage boundary \u2014 a window straddling the boundary borrows the level from the other side and flattens the very change the figure is about. The band, where a figure draws one, is \u00b11 standard error across households computed on the daily values. On this figure's axis the effect of getting that wrong is concrete: an unbounded window renders the 3-day timetable's 40.8-point fall at day 14 as 6.8.",
@@ -42,12 +42,12 @@
         "break at 24": -33.6
       },
       "long-context": {
-        "day 13": 79.4,
-        "day 14": 61.5,
-        "break at 14": -17.9,
-        "day 23": 79.2,
-        "day 24": 62.8,
-        "break at 24": -16.3
+        "day 13": 78.5,
+        "day 14": 59.4,
+        "break at 14": -19.1,
+        "day 23": 78.1,
+        "day 24": 63.6,
+        "break at 24": -14.5
       }
     },
     "width_inches": 3.15,
@@ -62,18 +62,18 @@
   {
     "figure": "F2",
     "claim_head": "The language memories do not behave as one class, and the one that behaves most like a COUNTER is the one built like one. Retrieval answers by pulling sightings from the same time of day across the whole history, capped but never aged out \u2014 which is the never-forgets timetable's index, plus a recency window. Behaviourally it tracks the never-forgets timetable at a correlation of +0.90 with a mean gap of 4.1 points, where the other language memories track it at +0.55 and 8\u20139 points, and at the return it RISES as the never-forgets timetable does while every adapting method falls. A language memory inherits the failure mode of whatever it is indexed by: choosing the retrieval key is choosing which disruption the memory will fail on.\n\nThese memories can represent the new regime perfectly well \u2014 told about it, they adapt at once. What none of them can do is notice from evidence that the old regime expired, or that an instruction has. Neither a sighting nor a sentence carries a validity window, so language does not fix the problem, it moves it: from failing to notice that sightings went stale to failing to notice that an instruction did. Perpetua* is the exception because how long a thing stays true is precisely what it models. Retrieval's index is the clearest case: same time of day, whole history, no notion of when a sighting stopped being informative.\n\n",
-    "claim": "Given ten days of the new routine the 3-day timetable re-learns it 2.0 to 3.2 times as fast as any language memory: +31 points from the first sick days to the end of the spell, against +15 for reflection, +10 for long-context and +10 for retrieval.",
+    "claim": "Given ten days of the new routine the 3-day timetable re-learns it 2.0 to 3.0 times as fast as any language memory: +31 points from the first sick days to the end of the spell, against +15 for reflection, +12 for long-context and +10 for retrieval.",
     "population": "one resident off sick, that resident's own things",
     "households": {
       "tt3d": 10,
       "reflect": 10,
-      "longcontext": 6,
+      "longcontext": 10,
       "retrieval": 10
     },
     "split": "all questions",
     "band": "\u00b11 standard error across households, on the 3-day timetable only",
     "caption": "Accuracy per day for the 3-day timetable and three language memories. All four break on the first sick day. Over the following ten days, during which every method is living in the new routine and is told the right answer after every question, the 3-day timetable re-learns the routine and the language memories recover far less.",
-    "look_for": "The slope between the first sick days and the end of the spell. The 3-day timetable goes from 57.9 to 88.8, a gain of 30.8 points. Reflection gains 15.2, retrieval 10.4 and long-context 9.7.",
+    "look_for": "The slope between the first sick days and the end of the spell. The 3-day timetable goes from 57.9 to 88.8, a gain of 30.8 points. Reflection gains 15.2, retrieval 10.4 and long-context 11.5.",
     "not_shown": "It does not show that the language memories learn NOTHING: reflection's +15.2 is a real gain, about 49% of the 3-day timetable's. It also does not separate re-learning from same-day feedback, since these are all questions rather than cold ones. Long-context is on fewer households than the rest.",
     "history": "This figure asserted until 22 Sept that the language memories \"barely move\". Its own numbers contradicted that \u2014 reflection re-learns half as much as the 3-day timetable, which is not \"barely\" \u2014 so the claim was changed to the ratio it can actually support and the file was renamed off `F2_counters_relearn_language_does_not`, which had encoded the overclaim in its name.",
     "note": "The counts are per method above; long-context ran on fewer households than the counters. The shaded envelope behind the three language memories spans the highest and lowest of THEIR OWN three estimates on each day \u2014 it is the spread between those methods, not a pooled standard error, and it is there so the three read as one class against the 3-day timetable.",
@@ -95,11 +95,11 @@
         "counter re-learns this many times faster": 2.0
       },
       "long-context": {
-        "days 14-16": 64.2,
-        "days 20-23": 74.0,
-        "re-learning inside the spell": 9.7,
-        "spell mean": 70.4,
-        "counter re-learns this many times faster": 3.2
+        "days 14-16": 61.7,
+        "days 20-23": 73.1,
+        "re-learning inside the spell": 11.5,
+        "spell mean": 68.4,
+        "counter re-learns this many times faster": 2.7
       },
       "retrieval": {
         "days 14-16": 55.8,
@@ -120,35 +120,51 @@
   },
   {
     "figure": "F3",
-    "claim": "Ten days of living in the new routine, corrected after every single question, do not teach long-context memory the new routine. One sentence does. Its untold arm is still answering from the old pattern at the end of the spell, while the arm told \u201cYuki is home sick today\u201d on the first morning sits above it from that day on. That is the uncomfortable half of the accuracy story: what repairs the break is being TOLD, not the evidence, so a memory nobody can talk to is a memory that does not recover.\n\nThese memories can represent the new regime perfectly well \u2014 told about it, they adapt at once. What none of them can do is notice from evidence that the old regime expired, or that an instruction has. Neither a sighting nor a sentence carries a validity window, so language does not fix the problem, it moves it: from failing to notice that sightings went stale to failing to notice that an instruction did. Perpetua* is the exception because how long a thing stays true is precisely what it models. This figure is where that is easiest to see, because the message is the counterfactual: it holds the memory fixed and changes only whether the regime was announced.",
+    "claim": "Ten days of living in the new routine, corrected after every single question, do not teach long-context memory the new routine. One sentence does, and on ten matched households the whole arc of it now clears our bar on this one memory. Told at A it is +10.4 points ahead of the untold run on the first sick days and +9.3 through the rest of the spell. Left standing after the routine reverts, the same sentence COSTS 8.6 points on the first days back and 6.8 a week later. Retracted at B, that cost is gone. The arm told at both ends sits +0.7 against never being told on the first days back and +0.9 a week later, neither of which clears the bar \u2014 so any residual difference is smaller than we can measure, which is a bound and not a proof that it is zero. What does clear is the positive form: retracting is worth +9.2 points against telling once, and +7.7 a week later.\n\nThese memories can represent the new regime perfectly well \u2014 told about it, they adapt at once. What none of them can do is notice from evidence that the old regime expired, or that an instruction has. Neither a sighting nor a sentence carries a validity window, so language does not fix the problem, it moves it: from failing to notice that sightings went stale to failing to notice that an instruction did. Perpetua* is the exception because how long a thing stays true is precisely what it models. This figure is where it is earned end to end on a single memory, because the message is the counterfactual: it holds the memory fixed and changes only whether the regime was announced, and then whether the announcement was taken back.",
     "population": "one resident off sick, that resident's own things",
     "households": {
-      "longcontext (matched across all three arms)": 3
+      "longcontext (matched across all three arms)": 10
     },
     "split": "all questions",
     "band": "\u00b11 standard error across households",
-    "caveat": "THREE HOUSEHOLDS. At this count almost nothing in this figure clears our claim bar and the bands overlap heavily; the gaps are indicative, not established. A larger run is adding households and the matched count in this caption will rise.",
     "note": "Each told arm is drawn from the day it measurably departs from the arm above it, computed from the data rather than from the calendar. Departure days are in the numbers below. Each told arm is the same run as the one above it until that day.",
-    "caption": "One long-context memory, told three different things, on the same households. The darkest line is never told; the middle line is told \"Yuki is home sick today\" on the first sick day; the lightest is told again that the resident is back on the first day of the return. Each told arm is the same run as the one above it until the day it is told, so it is drawn only from the day it measurably departs.",
-    "look_for": "Where each line begins. The told-once line emerges at day 14 and runs above the untold line for the rest of the spell \u2014 that gap is what one sentence buys. The told-twice line emerges before the return day, which is a genuine early difference in the runs and not a drawing choice; the departure days are in the numbers.",
-    "not_shown": "At this household count almost nothing here clears our claim bar, and the bands overlap heavily \u2014 treat the gaps as indicative, not established. It also does not show a cost of the message on the way out for long-context; the recency buffer and retrieval show that more clearly and on more households.",
+    "caption": "One long-context memory told three different things, on the same ten households. The darkest line is never told; the middle line is told \u201cYuki is home sick today\u201d on the first sick day (A); the lightest is told that again and then told on the first day of the return that the resident is back (A & B). Each told arm is the same run as the one above it until the day it is told, so it is drawn only from the day it measurably departs.",
+    "look_for": "The two rules. At A the told line lifts away from the untold one and stays above it for the whole spell. At B the arm that was told only at A falls BELOW the untold run and stays there \u2014 that gap is the cost of an instruction nobody took back \u2014 while the arm told at both ends returns to the untold line. Every one of those four differences clears the bar on ten households; the per-household figures are in the table.",
+    "not_shown": "It does not show that the other language memories behave this way, though all three do move the same direction on the return, which is what made this claim survivable before this run existed. It does not separate what the message teaches from what it merely asserts: a sentence that happens to be true is not evidence the memory could have learned the same thing. And the equivalence at B is a NULL with a bound, not a demonstration that retracting restores things exactly \u2014 it means any residual difference is smaller than the bar, not that it is zero.",
     "drawing": "The line is a centred three-day average, computed WITHIN each stage so that it never averages across a stage boundary \u2014 a window straddling the boundary borrows the level from the other side and flattens the very change the figure is about. The band, where a figure draws one, is \u00b11 standard error across households computed on the daily values. On this figure's axis the effect of getting that wrong is concrete: an unbounded window renders the 3-day timetable's 40.8-point fall at day 14 as 6.8.",
-    "provisional": false,
     "numbers": {
       "no message": {
-        "days 14-16": 61.1,
-        "days 24-26": 68.8,
+        "days 14-16": 61.7,
+        "days 24-26": 64.6,
         "drawn from day": 1
       },
       "A only": {
-        "days 14-16": 72.2,
-        "days 24-26": 59.4,
+        "days 14-16": 72.1,
+        "days 24-26": 56.2,
         "drawn from day": 14
       },
       "A & B": {
-        "days 14-16": 72.2,
-        "days 24-26": 70.8,
+        "days 14-16": 72.1,
+        "days 24-26": 65.5,
         "drawn from day": 21
+      },
+      "A only - no message": {
+        "first sick days 14-16": 10.4,
+        "rest of spell 17-23": 9.3,
+        "first days back 24-26": -8.6,
+        "a week later 27-31": -6.8
+      },
+      "A & B - no message": {
+        "first sick days 14-16": 10.4,
+        "rest of spell 17-23": 9.3,
+        "first days back 24-26": 0.7,
+        "a week later 27-31": 0.9
+      },
+      "A & B - A only": {
+        "first sick days 14-16": 0.0,
+        "rest of spell 17-23": 0.0,
+        "first days back 24-26": 9.2,
+        "a week later 27-31": 7.7
       }
     },
     "width_inches": 3.15,
@@ -232,7 +248,7 @@
       "ttfrozen": 10,
       "tt3d": 10,
       "perpetua": 10,
-      "longcontext": 6,
+      "longcontext": 10,
       "lastseen": 10
     },
     "split": "all questions",
@@ -264,11 +280,11 @@
         "gap at day 14": 24.8
       },
       "long-context": {
-        "accuracy day 13": 79.4,
-        "confidence day 13": 88.1,
-        "accuracy day 14": 61.5,
-        "confidence day 14": 91.3,
-        "gap at day 14": 29.8
+        "accuracy day 13": 78.5,
+        "confidence day 13": 88.8,
+        "accuracy day 14": 59.4,
+        "confidence day 14": 90.9,
+        "gap at day 14": 31.5
       },
       "last seen": {
         "accuracy day 13": 46.5,
@@ -376,7 +392,7 @@
       "ttfrozen": 10,
       "tt3d": 10,
       "perpetua": 10,
-      "longcontext": 6
+      "longcontext": 10
     },
     "split": "all questions",
     "band": "none: this is a score, not an average with a spread",
@@ -391,7 +407,7 @@
       -3.0,
       "never-forgets timetable"
     ],
-    "look_for": "The first dotted rule. The never-forgets timetable falls from 7.7 in the settled week to 0.7 on the first sick days and the 3-day timetable from 7.6 to 2.9, while Perpetua* goes 4.6 to 4.6 and long-context 4.6 to 5.1. Note also that Perpetua* sits BELOW both timetables while the world is stable. And on day 14 the never-forgets timetable's daily score is -3.0 \u2014 below zero, meaning it would have scored better answering nothing at all that day. That single day is the sharpest form of this figure's point and the window averages above do not show it.",
+    "look_for": "The first dotted rule. The never-forgets timetable falls from 7.7 in the settled week to 0.7 on the first sick days and the 3-day timetable from 7.6 to 2.9, while Perpetua* goes 4.6 to 4.6 and long-context 5.4 to 4.5. Note also that Perpetua* sits BELOW both timetables while the world is stable. And on day 14 the never-forgets timetable's daily score is -3.0 \u2014 below zero, meaning it would have scored better answering nothing at all that day. That single day is the sharpest form of this figure's point and the window averages above do not show it.",
     "not_shown": "The thresholds are chosen with hindsight for the window being scored, so these are upper bounds, not a policy anyone could run. Each method uses a different threshold, so the lines are not a like-for-like confidence comparison \u2014 that is deliberate, since the confidence scales differ wildly, but it means a reader cannot infer anything about the thresholds themselves from this figure.",
     "caveat": "thresholds chosen with hindsight, so these are upper bounds, not a deployable policy, which makes the negative result stronger: even handed the answers in advance, declining buys the counters almost nothing exactly when it would matter",
     "drawing": "The line is a centred three-day average computed within each stage, never across a boundary. These are rates rather than averages over households, so no band is drawn.",
@@ -428,13 +444,13 @@
       },
       "long-context": {
         "its own best threshold": 0.65,
-        "% of questions declined at it": 8.8,
-        "settled week 9-13": 4.567,
-        "first sick days 14-16": 5.111,
-        "rest of the spell 17-23": 7.69,
-        "first days back 24-26": 3.778,
-        "a week later 27-31": 5.6,
-        "worst single day": 0.2
+        "% of questions declined at it": 9.5,
+        "settled week 9-13": 5.4,
+        "first sick days 14-16": 4.5,
+        "rest of the spell 17-23": 7.1,
+        "first days back 24-26": 4.467,
+        "a week later 27-31": 5.72,
+        "worst single day": 0.9
       }
     },
     "width_inches": 3.09,
@@ -454,19 +470,20 @@
       "ttfrozen": 10,
       "tt3d": 10,
       "perpetua": 10,
-      "longcontext": 6
+      "longcontext": 10
     },
     "split": "all questions",
     "band": "none: bars are a difference of two scores",
     "note": "Score under the best threshold for that window, minus the score when forced to answer every question. Settled figures for context are in F8's numbers: Perpetua* 4.6 against the timetables' 7.7 and 7.6.",
     "caption": "What being allowed to decline is worth, by window: the decision score under the best threshold for that window, minus the score when the method is forced to answer every question. Higher bars mean the method's own confidence carries information worth acting on. At the moment the routine changes, only Perpetua* gains materially.",
-    "look_for": "The first-sick-days group. Perpetua* gains 2.8 points from being allowed to decline, against 0.3 for the never-forgets timetable, 0.4 for the 3-day timetable and 0.6 for long-context. On the first days back the pattern repeats: Perpetua* 1.4, everything else at or below 0.2.",
+    "look_for": "The first-sick-days group. Perpetua* gains 2.8 points from being allowed to decline, against 0.3 for the never-forgets timetable, 0.4 for the 3-day timetable and 0.8 for long-context. On the first days back the pattern repeats: Perpetua* 1.4, everything else at or below 0.4.",
     "not_shown": "This is not a claim that Perpetua* is the better model \u2014 F8's settled-week numbers show it scoring 4.6 against the timetables' 7.7 and 7.6. The claim is narrower and stranger: it is the worst forecaster of the four and the only one whose uncertainty is worth acting on. The thresholds are also chosen with hindsight, which strengthens the negative half \u2014 even given the answers in advance, declining buys the counters almost nothing exactly when it would matter.",
     "caveat": "thresholds chosen with hindsight, so these are upper bounds, not a deployable policy, which makes the negative result stronger: even handed the answers in advance, declining buys the counters nothing at the moment it would matter",
     "prose_numbers_ok": {
       "7.7": "live settled-week score from the same extractor, shown in F8's table",
       "7.6": "live settled-week score from the same extractor, shown in F8's table",
-      "4.6": "live settled-week score from the same extractor, shown in F8's table"
+      "4.6": "live settled-week score from the same extractor, shown in F8's table",
+      "5.4": "live settled-week score from the same extractor, shown in F8's table"
     },
     "numbers": {
       "never-forgets timetable": {
@@ -491,11 +508,11 @@
         "a week later 27-31": 1.5
       },
       "long-context": {
-        "settled week 9-13": 0.133,
-        "first sick days 14-16": 0.556,
-        "rest of the spell 17-23": 0.31,
-        "first days back 24-26": 0.111,
-        "a week later 27-31": 0.667
+        "settled week 9-13": 0.3,
+        "first sick days 14-16": 0.767,
+        "rest of the spell 17-23": 0.3,
+        "first days back 24-26": 0.433,
+        "a week later 27-31": 0.6
       }
     },
     "width_inches": 3.85,

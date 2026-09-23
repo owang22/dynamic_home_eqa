@@ -6,11 +6,11 @@
 
 These memories can represent the new regime perfectly well — told about it, they adapt at once. What none of them can do is notice from evidence that the old regime expired, or that an instruction has. Neither a sighting nor a sentence carries a validity window, so language does not fix the problem, it moves it: from failing to notice that sightings went stale to failing to notice that an instruction did. Perpetua* is the exception because how long a thing stays true is precisely what it models. Retrieval's index is the clearest case: same time of day, whole history, no notion of when a sighting stopped being informative.
 
-Given ten days of the new routine the 3-day timetable re-learns it 2.0 to 3.2 times as fast as any language memory: +31 points from the first sick days to the end of the spell, against +15 for reflection, +10 for long-context and +10 for retrieval.
+Given ten days of the new routine the 3-day timetable re-learns it 2.0 to 3.0 times as fast as any language memory: +31 points from the first sick days to the end of the spell, against +15 for reflection, +12 for long-context and +10 for retrieval.
 
 ## What in the figure demonstrates it
 
-The slope between the first sick days and the end of the spell. The 3-day timetable goes from 57.9 to 88.8, a gain of 30.8 points. Reflection gains 15.2, retrieval 10.4 and long-context 9.7.
+The slope between the first sick days and the end of the spell. The 3-day timetable goes from 57.9 to 88.8, a gain of 30.8 points. Reflection gains 15.2, retrieval 10.4 and long-context 11.5.
 
 ## What it does NOT show
 
@@ -28,5 +28,5 @@ Measured on the DAILY values, not read off the plotted line.
 |---|---|---|---|---|---|
 | 3-day timetable | 57.9 | 88.8 | 30.8 | 77.4 | 1.0 |
 | reflection | 66.0 | 81.2 | 15.2 | 74.7 | 2.0 |
-| long-context | 64.2 | 74.0 | 9.7 | 70.4 | 3.2 |
+| long-context | 61.7 | 73.1 | 11.5 | 68.4 | 2.7 |
 | retrieval | 55.8 | 66.2 | 10.4 | 61.6 | 3.0 |

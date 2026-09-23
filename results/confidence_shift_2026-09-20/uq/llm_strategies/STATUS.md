@@ -13,7 +13,7 @@ One-person-sick regime (sick10_owner), 32 days, three message conditions each â€
 | retrieval (same time of day) | 10 | |
 | nightly routine table | 10 | |
 | reflection (nightly mistake notes) | 10 no-message, 5 told | told arms were capped at 5 by server time |
-| long-context (whole log each prompt) | 3 | ~10x the compute per question; the other 7 no-message households were abandoned, not finished, because they could not have improved any comparison |
+| long-context (whole log each prompt) | 10 | ~10x the compute per question. Ran on 3 for most of 22 Sept; the extension finished all three message arms on all 10 households at 23:17 that night, so it is now a matched ten-household comparison |
 
 Also finished: the two-spells regime (sick2x_owner, classical + UQ roster on 10 households, buffer and retrieval on
 3); the MCQ/token-probability and KnowNo-set channels on a bounded day list, 3 households; the partial-shift arms

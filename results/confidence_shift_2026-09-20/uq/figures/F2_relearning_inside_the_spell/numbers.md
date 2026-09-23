@@ -6,5 +6,5 @@ Regenerated with the figure from the same data. Never read a value off the pictu
 |---|---|---|---|---|---|
 | 3-day timetable | 57.9 | 88.8 | 30.8 | 77.4 | 1.0 |
 | reflection | 66.0 | 81.2 | 15.2 | 74.7 | 2.0 |
-| long-context | 64.2 | 74.0 | 9.7 | 70.4 | 3.2 |
+| long-context | 61.7 | 73.1 | 11.5 | 68.4 | 2.7 |
 | retrieval | 55.8 | 66.2 | 10.4 | 61.6 | 3.0 |

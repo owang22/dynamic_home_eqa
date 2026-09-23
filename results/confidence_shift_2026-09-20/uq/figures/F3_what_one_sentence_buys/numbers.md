@@ -4,6 +4,9 @@ Regenerated with the figure from the same data. Never read a value off the pictu
 
 | series | days 14-16 | days 24-26 | drawn from day |
 |---|---|---|---|
-| no message | 61.1 | 68.8 | 1 |
-| A only | 72.2 | 59.4 | 14 |
-| A & B | 72.2 | 70.8 | 21 |
+| no message | 61.7 | 64.6 | 1 |
+| A only | 72.1 | 56.2 | 14 |
+| A & B | 72.1 | 65.5 | 21 |
+| A only - no message | – | – | – |
+| A & B - no message | – | – | – |
+| A & B - A only | – | – | – |

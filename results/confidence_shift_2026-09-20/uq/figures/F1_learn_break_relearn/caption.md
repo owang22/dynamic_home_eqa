@@ -13,7 +13,7 @@ Accuracy per day for four methods through a routine that changes twice. Every me
 ---
 
 - **Population:** one resident off sick, that resident's own things
-- **Households:** ttfrozen 10, tt3d 10, perpetua 10, longcontext 6
+- **Households:** ttfrozen 10, tt3d 10, perpetua 10, longcontext 10
 - **Questions:** all questions
 - **Bands:** ±1 standard error across households
 - **Dotted vertical rules:** the stage boundaries — the first sick day and the first day back. Nothing is shaded, so the lines and their bands sit on a plain ground.

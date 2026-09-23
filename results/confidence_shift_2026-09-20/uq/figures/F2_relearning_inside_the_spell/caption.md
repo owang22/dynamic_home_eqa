@@ -13,7 +13,7 @@ Accuracy per day for the 3-day timetable and three language memories. All four b
 ---
 
 - **Population:** one resident off sick, that resident's own things
-- **Households:** tt3d 10, reflect 10, longcontext 6, retrieval 10
+- **Households:** tt3d 10, reflect 10, longcontext 10, retrieval 10
 - **Questions:** all questions
 - **Bands:** ±1 standard error across households, on the 3-day timetable only
 - **Dotted vertical rules:** the stage boundaries — the first sick day and the first day back. Nothing is shaded, so the lines and their bands sit on a plain ground.
