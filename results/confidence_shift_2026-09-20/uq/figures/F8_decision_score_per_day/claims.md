@@ -1,8 +1,12 @@
 # What F8 does and does not support
 
+## Its job in the argument
+
+CARRIES THE THESIS, and it is the figure to open on. Scored the way a user feels it, the ranking inverts: the methods most accurate in the settled world collapse hardest and one goes negative, while the survival-time model sits BELOW both timetables when things are stable and wins at the shift. A separate axis can only be demonstrated by a method that loses on one and wins on the other, and this is that method.
+
 ## The claim
 
-> Scored the way a user would feel it — +1 for a right answer, −1 for a wrong one, 0 for declining — the ranking inverts at the moment of change: the methods that are most accurate in the settled world are the ones that collapse, and one goes NEGATIVE. On day 14 the timetable that never forgets scores below zero, meaning it would have done better answering nothing at all. Accuracy in a stable world does not predict value when the world moves.
+> Accuracy and uncertainty are separate axes, and the cleanest proof is a method that loses on one and wins on the other. Scored the way a user would feel it — +1 for a right answer, −1 for a wrong one, 0 for declining — the ranking inverts at the moment of change: the methods that are most accurate in the settled world are the ones that collapse, and one goes NEGATIVE. On day 14 the timetable that never forgets scores below zero, meaning it would have done better answering nothing at all. Accuracy in a stable world does not predict value when the world moves.
 
 ## What in the figure demonstrates it
 

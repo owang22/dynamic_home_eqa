@@ -1,8 +1,12 @@
 # What F1 does and does not support
 
+## Its job in the argument
+
+SETUP, not a finding. Establishes that there is a disruption and that it costs accuracy, so that everything afterwards has a shift to be exacerbated at. The behaviour of a stale-window estimator meeting a change in the distribution it estimates is standard, and this figure is not claiming otherwise; it is here to define A and B and to show the size of the thing the rest of the paper is about. One panel in the paper, not a section.
+
 ## The claim
 
-> A change in the household's hidden routine costs accuracy TWICE: once when it happens and again when the world goes back to how it was. The second break is the half that is not obvious and it is not the smaller one — the timetable with a three-day memory loses 41 points at the change and 24 at the return. And the method that survives the return is the one that cannot adapt: the timetable that never forgets gains 3 points on the day every adaptive method breaks, because the routine that returned is the one it never stopped believing. Adaptation is not free; it is paid for at every reversal.
+> The disruption this paper is about, and its size. Accuracy only — nothing here says whether a method KNOWS it has broken, which is the question the rest of the figures ask. A change in the household's hidden routine costs accuracy TWICE: once when it happens and again when the world goes back to how it was. The second break is the half that is not obvious and it is not the smaller one — the timetable with a three-day memory loses 41 points at the change and 24 at the return. And the method that survives the return is the one that cannot adapt: the timetable that never forgets gains 3 points on the day every adaptive method breaks, because the routine that returned is the one it never stopped believing. Adaptation is not free; it is paid for at every reversal.
 
 These memories can represent the new regime perfectly well — told about it, they adapt at once. What none of them can do is notice from evidence that the old regime expired, or that an instruction has. Neither a sighting nor a sentence carries a validity window, so language does not fix the problem, it moves it: from failing to notice that sightings went stale to failing to notice that an instruction did. the survival-time model is the exception because how long a thing stays true is precisely what it models. The return break is that defect seen from the other side: what expired was the sick-day routine, and nothing in these memories dates what they learned during it.
 

@@ -1,5 +1,9 @@
 # What F3 does and does not support
 
+## Its job in the argument
+
+OFF-THESIS AS IT STANDS, and the strongest number in the project. It is an accuracy result: what a sentence buys, and what a sentence nobody retracted costs. It joins the argument only if the confidence half is measured \u2014 does an arm told something that has since lapsed stay confident while getting worse? That check has not been run. Until it is, this is a guest from another paper.
+
 ## The claim
 
 > Ten days of living in the new routine, corrected after every single question, do not teach the whole-log-in-the-prompt memory the new routine. One sentence does, and on ten matched households the whole arc of it now clears our bar on this one memory. Told at A it is +10.4 points ahead of the untold run on the first sick days and +9.3 through the rest of the spell. Left standing after the routine reverts, the same sentence COSTS 8.6 points on the first days back and 6.8 a week later. Retracted at B, that cost is gone. The arm told at both ends sits +0.7 against never being told on the first days back and +0.9 a week later, neither of which clears the bar — so any residual difference is smaller than we can measure, which is a bound and not a proof that it is zero. What does clear is the positive form: retracting is worth +9.2 points against telling once, and +7.7 a week later.

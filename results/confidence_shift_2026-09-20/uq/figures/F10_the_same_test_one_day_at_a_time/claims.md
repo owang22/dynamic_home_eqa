@@ -1,8 +1,12 @@
 # What F10 does and does not support
 
+## Its job in the argument
+
+CARRIES THE THESIS, and it is the specific contribution: the failure is localised to the disruption. The never-forgets timetable's confidence beats chance in every window of the month EXCEPT the days the routine changes, and again a week later. 'Exacerbated at regime shifts' measured rather than asserted.
+
 ## The claim
 
-> Refitting the threshold every single day — the most generous reading there is — does not rescue either timetable at the shift, and it separates them into two findings that the window version ran together.
+> The failure is not general. It is localised to the days the routine changes, which is what makes it a claim about regime shifts rather than about these methods. Refitting the threshold every single day — the most generous reading there is — does not rescue either timetable at the shift, and it separates them into two findings that the window version ran together.
 
 FIRST, and this is the paper's thesis stated by a method rather than about one: the timetable that never forgets has a confidence signal that works, and it fails at the one moment it is needed. It beats hindsight-on-shuffled-labels in every window of the run except one — 0.20 against a bar of 0.10 in the settled week, 0.35 against 0.21 on the first days back, 0.53 against 0.16 a week after that — and at the first sick days 0.07 against a bar of 0.33, which is nothing. Not a weak signal that the shift weakens further: a working one that stops working on the day the routine changes and works again a week later.
 

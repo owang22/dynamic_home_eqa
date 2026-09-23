@@ -1,5 +1,9 @@
 # What F9 does and does not support
 
+## Its job in the argument
+
+SUPPORTING, and technical. Establishes that the timetables' apparent gain from being allowed to decline is not coming from their confidence at all. It is the rigour behind F10 rather than a figure a reader needs to see.
+
 ## The claim
 
 > Being allowed to decline is worth something to every method at the shift, but for the timetables that is not because their confidence knows anything. The value splits in two: what the best all-or-nothing choice gives, which needs no signal at all and pays whenever a method is wrong more often than right, and what the ORDER of the confidences adds on top. At the shift the timetable that never forgets is right 51.3% of the time, so declining is worth 2.07 to it on the level alone — and its ordering adds 0.37 against a hindsight-on-noise floor of 0.29, which is nothing. The three-day timetable is the same story (0.43 against 0.36). The survival-time model's ordering adds 2.70 against a floor of 0.52, and the whole-log-in-the-prompt memory's 1.33 against 0.30. The honest contrast is not a big effect against a small one. It is a real effect against no measurable effect.

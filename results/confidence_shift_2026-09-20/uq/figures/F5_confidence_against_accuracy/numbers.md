@@ -8,4 +8,3 @@ Regenerated with the figure from the same data. Never read a value off the pictu
 | timetable with a three-day memory | 83.3 | 47.5 | 42.5 | 38.9 | -3.6 |
 | survival-time model | 69.3 | 71.1 | 44.4 | 69.1 | 24.8 |
 | whole-log-in-the-prompt memory | 78.5 | 88.8 | 59.4 | 90.9 | 31.5 |
-| follows its own most recent sighting | 46.5 | 98.1 | 57.5 | 98.1 | 40.6 |

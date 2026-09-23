@@ -24,6 +24,16 @@ The survival-time model moves the other way, from 0.51 settled to 2.25 at the sh
 
 *1.5-column, 3.7 in wide.* Population one resident off sick, that resident's own things; households ttfrozen 10, tt3d 10, perpetua 10, longcontext 10. Renders, caption and claims in `F10_the_same_test_one_day_at_a_time/`.
 
+## [F11](F11_whose_confidence_survives/) — F11_whose_confidence_survives
+
+In a settled household all four methods' stated confidence predicts being right, and by similar amounts: 0.35 for the timetable that never forgets, 0.28 for the three-day one, 0.37 for the survival-time model and 0.29 for the whole log in the prompt. On the first days of the new routine the two timetables fall to nothing (-0.12 and -0.00; the falls of 0.47 and 0.28 both clear our bar). The survival-time model does not move (0.43, a change of +0.07 that does not clear), and the whole log in the prompt degrades without breaking (0.22).
+
+The reason is in the arithmetic of the two confidence numbers rather than in their quality. A timetable's confidence is the share of its sightings in the matching hour bin that fell at the answer it is giving — a ratio of counts. Scale every count down and the ratio is unchanged, so the number is very nearly blind to how old the evidence is. The survival-time model's confidence is a probability advanced from the last sighting by an exponential decay toward that object's long-run base rate, at a speed fitted per object: it IS a measure of how stale the evidence is, and it is least confident about exactly the objects that move most.
+
+A change in routine is an event that makes old evidence wrong WITHOUT changing the historical frequencies. So it is invisible to one confidence number by construction, and visible to the other by construction. That is a design prescription and not a league table: put the age of the evidence in the state, not only its frequency.
+
+*1.5-column, 3.79 in wide.* Population one resident off sick, that resident's own things; households ttfrozen 10, tt3d 10, perpetua 10, longcontext 10. Renders, caption and claims in `F11_whose_confidence_survives/`.
+
 ## [F2](F2_relearning_inside_the_spell/) — F2_relearning_inside_the_spell
 
 Given ten days of the new routine the timetable with a three-day memory re-learns it 2.0 to 3.0 times as fast as any language memory: +31 points from the first sick days to the end of the spell, against +15 for reflection, +12 for the whole-log-in-the-prompt memory and +10 for retrieval.
@@ -50,9 +60,9 @@ Reacting is not recovering. When the routine changes these rules that decide whe
 
 ## [F5](F5_confidence_against_accuracy/) — F5_confidence_against_accuracy
 
-The timetables do not move their stated confidence when they break, so the gap between what they claim and what they achieve opens at the shift; the memory that follows its last sighting states 98% while being right 58% of the time, a confidence number carrying no information at all; the survival-time model is the one whose stated confidence tracks its own accuracy through the change.
+At the shift the timetables' accuracy collapses while the confidence they state in their own answers barely moves, so the gap between what they claim and what they deliver opens by 10 points in a single day for the timetable that never forgets. The survival-time model is the one whose stated confidence moves with its own accuracy through the change, its gap at day 14 being +24.8 points against that timetable's +10.3. It is also the least accurate method on this chart while the household is stable, which is the point rather than an inconsistency: whatever makes a method accurate in a settled world is not what makes its uncertainty survive a change to that world.
 
-*double-column, 6.42 in wide.* Population one resident off sick, that resident's own things; households ttfrozen 10, tt3d 10, perpetua 10, longcontext 10, lastseen 10. Renders, caption and claims in `F5_confidence_against_accuracy/`.
+*double-column, 6.34 in wide.* Population one resident off sick, that resident's own things; households ttfrozen 10, tt3d 10, perpetua 10, longcontext 10. Renders, caption and claims in `F5_confidence_against_accuracy/`.
 
 ## [F6](F6_the_inversion/) — F6_the_inversion
 

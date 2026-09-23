@@ -517,7 +517,10 @@ def save(fig, name, manifest, entry):
 
     with open(os.path.join(folder, "claims.md"), "w") as f:
         head = entry.get("claim_head") or ""
-        f.write(f"# What {entry['figure']} does and does not support\n\n## The claim\n\n> {head}{entry['claim']}\n\n")
+        f.write(f"# What {entry['figure']} does and does not support\n\n")
+        if entry.get("role"):
+            f.write("## Its job in the argument\n\n" + entry["role"] + "\n\n")
+        f.write(f"## The claim\n\n> {head}{entry['claim']}\n\n")
         f.write("## What in the figure demonstrates it\n\n" + entry.get("look_for", "_not written_") + "\n\n")
         if entry.get("mechanism"):
             f.write("## Why this happens\n\n" + entry["mechanism"] + "\n\n")
@@ -584,6 +587,8 @@ def f1(DATA, EXTRA, manifest):
     legend_below(ax, ncol=1)
     save(fig, "F1_learn_break_relearn", manifest, {
         "figure": "F1",
+        "claim_head": ('The disruption this paper is about, and its size. Accuracy only — nothing here says whether a method KNOWS it has broken, which is the question the rest of the figures ask. '),
+        "role": ('SETUP, not a finding. Establishes that there is a disruption and that it costs accuracy, so that everything afterwards has a shift to be exacerbated at. The behaviour of a stale-window estimator meeting a change in the distribution it estimates is standard, and this figure is not claiming otherwise; it is here to define A and B and to show the size of the thing the rest of the paper is about. One panel in the paper, not a section.'),
         "rerun_floor": RERUN_FLOOR,
         "claim": (lambda n: "A change in the household's hidden routine costs accuracy TWICE: once when it "
                             "happens and again when the world goes back to how it was. The second break is the "
@@ -676,6 +681,7 @@ def f2(DATA, EXTRA, manifest):
     legend_below(ax, ncol=1)
     save(fig, "F2_relearning_inside_the_spell", manifest, {
         "figure": "F2",
+        "role": ("BACKGROUND. An accuracy result about how fast each memory re-learns, which is a different question from the paper's. Keep it for the appendix or for a different paper; it earns space here only if a reviewer asks whether the methods ever recover."),
         "rerun_floor": RERUN_FLOOR,
         "claim_head": ("The language memories do not behave as one class, and the one that behaves most like "
                        "a COUNTER is the one built like one. Retrieval answers by pulling sightings from "
@@ -838,6 +844,7 @@ def f3(DATA, EXTRA, manifest):
     nums.update(con["rows"])
     save(fig, "F3_what_one_sentence_buys", manifest, {
         "figure": "F3",
+        "role": ('OFF-THESIS AS IT STANDS, and the strongest number in the project. It is an accuracy result: what a sentence buys, and what a sentence nobody retracted costs. It joins the argument only if the confidence half is measured \\u2014 does an arm told something that has since lapsed stay confident while getting worse? That check has not been run. Until it is, this is a guest from another paper.'),
         "rerun_floor": RERUN_FLOOR,
         "claim": (lambda c: "Ten days of living in the new routine, corrected after every single question, do "
                             "not teach the whole-log-in-the-prompt memory the new routine. One sentence does, and on ten "
@@ -1011,6 +1018,8 @@ def f8(DATA, EXTRA, manifest):
     legend_below(ax, ncol=1)
     save(fig, "F8_decision_score_per_day", manifest, {
         "figure": "F8",
+        "claim_head": ('Accuracy and uncertainty are separate axes, and the cleanest proof is a method that loses on one and wins on the other. '),
+        "role": ('CARRIES THE THESIS, and it is the figure to open on. Scored the way a user feels it, the ranking inverts: the methods most accurate in the settled world collapse hardest and one goes negative, while the survival-time model sits BELOW both timetables when things are stable and wins at the shift. A separate axis can only be demonstrated by a method that loses on one and wins on the other, and this is that method.'),
         "rerun_floor": RERUN_FLOOR,
         "bound_wording": BOUND_WORDING,
         "claim": "Scored the way a user would feel it — +1 for a right answer, \u22121 for a wrong one, 0 for "
@@ -1110,6 +1119,7 @@ def f9(DATA, EXTRA, manifest):
     g = lambda m, f: DD[m][sick][f]
     save(fig, "F9_what_the_confidence_adds", manifest, {
         "figure": "F9",
+        "role": ("SUPPORTING, and technical. Establishes that the timetables' apparent gain from being allowed to decline is not coming from their confidence at all. It is the rigour behind F10 rather than a figure a reader needs to see."),
         "rerun_floor": RERUN_FLOOR,
         "bound_wording": BOUND_WORDING,
         "claim": ("Being allowed to decline is worth something to every method at the shift, but for the "
@@ -1263,6 +1273,7 @@ def f4(DATA, EXTRA, manifest):
     legend_below(ax[1], ncol=1, gap=0.30)
     save(fig, "F4_reacting_is_not_recovering", manifest, {
         "figure": "F4",
+        "role": ('SUPPORTING. Rules out the obvious objection to the whole argument: that a method could simply notice it is in trouble and decline more. They do notice, and the answers they keep are still wrong far more often than they promised. Noticing is not being calibrated.'),
         "rerun_floor": RERUN_FLOOR,
         "claim": (lambda n: "Reacting is not recovering. When the routine changes these rules that decide whether to answer DO notice \u2014 "
                             "every one of them roughly doubles or triples how often it declines to answer "
@@ -1307,13 +1318,11 @@ def f4(DATA, EXTRA, manifest):
 def f5(DATA, EXTRA, manifest):
     """Confidence beside accuracy, per day, for the four."""
     pop = "person"
-    # The memory that follows its last sighting is back. It was dropped when its grey separated from the survival-time model's OLD green by only dE 5.0;
-    # against the current green the same grey clears at 9.6 under every deficiency, so the figure keeps the
-    # case it exists for -- a method stating near-total confidence while right about half the time is the
-    # sharpest demonstration that a confidence number can carry no information, and the other four cannot
-    # make it.
+    # Four methods, not five. The memory that follows its last sighting was here as a reductio -- a method
+    # stating near-total confidence while right about half the time -- but it appears in no other figure and
+    # in no claim the paper makes, so a reader meets a grey line once and never again. Cut.
     keys = [("ttfrozen", "ttfrozen"), ("tt3d", "tt3d"), ("perpetua", "perpetua"),
-            ("person:llm_longcontext_nomsg", "longcontext"), ("lastseen", "lastseen")]
+            ("person:llm_longcontext_nomsg", "longcontext")]
     fig, ax = plt.subplots(1, 2, figsize=(FULL, 2.6), sharey=True, gridspec_kw={"wspace": 0.06})
     nums, hh = {}, {}
     st = stage_lookup(DATA, pop)
@@ -1335,38 +1344,42 @@ def f5(DATA, EXTRA, manifest):
     legend_below(ax[0], ncol=2, gap=0.22)
     save(fig, "F5_confidence_against_accuracy", manifest, {
         "figure": "F5",
+        "role": ("States the paper's claim in its simplest form: accuracy and uncertainty are separate "
+                 "axes, and a regime shift moves one and not the other. Everything after this figure is "
+                 "about why, and what it costs."),
         "rerun_floor": RERUN_FLOOR,
-        "claim_head": ("A confidence number can be perfectly stable and mean nothing at all. The memory that follows its last sighting states "
-                       "near-total confidence every day of the month while being right about half the time, "
-                       "and the timetables hold theirs steady through a 40-point collapse in their own "
-                       "accuracy. Stability in a confidence signal is not evidence it is tracking anything "
-                       "\u2014 it is what a signal looks like when it is ignoring the world. "),
-        "claim": (lambda n: "The timetables do not move their stated confidence when they break, so the gap "
-                            "between what they claim and what they achieve opens at the shift; the memory that follows its last sighting "
-                            f"states {n[nm("lastseen")]['confidence day 14']:.0f}% while being right "
-                            f"{n[nm("lastseen")]['accuracy day 14']:.0f}% of the time, a confidence number "
-                            "carrying no information at all; the survival-time model is the one whose stated confidence "
-                            "tracks its own accuracy through the change.")(nums),
+        "claim_head": ("Accuracy and the confidence a method states in its own answer are separate "
+                       "quantities, and a change in the household's routine moves one of them and not the "
+                       "other. "),
+        "claim": (lambda n: "At the shift the timetables' accuracy collapses while the confidence they state "
+                            "in their own answers barely moves, so the gap between what they claim and what "
+                            f"they deliver opens by {abs(n[nm('ttfrozen')]['gap at day 14']):.0f} points in a "
+                            "single day for the timetable that never forgets. The survival-time model is the "
+                            "one whose stated confidence moves with its own accuracy through the change, its "
+                            f"gap at day 14 being {n[nm('perpetua')]['gap at day 14']:+.1f} points against "
+                            f"that timetable's {n[nm('ttfrozen')]['gap at day 14']:+.1f}. It is also the "
+                            "least accurate method on this chart while the household is stable, which is the "
+                            "point rather than an inconsistency: whatever makes a method accurate in a "
+                            "settled world is not what makes its uncertainty survive a change to that "
+                            "world.")(nums),
         "population": POP_LABEL[pop], "households": hh, "split": "all questions",
-        "band": "±1 standard error across households",
-        "caption": "The same five methods twice: accuracy per day on the left, the confidence each states in "
+        "band": "\u00b11 standard error across households",
+        "caption": "The same four methods twice: accuracy per day on the left, the confidence each states in "
                    "its own answer on the right, on one shared scale. A method whose right-hand line moves "
-                   "with its left-hand one knows when it is in trouble; the memory that follows its last sighting's, which never moves at "
-                   "all, is the case where the number means nothing.",
-        "look_for": (lambda n: "Compare each method's two lines at the first dotted rule. The timetable that never "
-                               f"timetable's accuracy falls {abs(n[nm("ttfrozen")]['accuracy day 14'] - n[nm("ttfrozen")]['accuracy day 13']):.0f} "
-                               "points between day 13 and day 14 while the confidence it states moves "
-                               f"{abs(n[nm("ttfrozen")]['confidence day 14'] - n[nm("ttfrozen")]['confidence day 13']):.0f}. "
-                               "survival-time model's two lines move together: its stated-versus-actual gap at day 14 is "
-                               f"{n[nm("perpetua")]['gap at day 14']:+.1f} points against the timetable that never "
-                               f"timetable's {n[nm("ttfrozen")]['gap at day 14']:+.1f}. Last "
-                               "follows its last sighting is the reductio: its right-hand line sits near the top of the scale all "
-                               f"month at about {n[nm("lastseen")]['confidence day 13']:.0f}% while its left-hand "
-                               f"line sits near {n[nm("lastseen")]['accuracy day 13']:.0f}%.")(nums),
-        "not_shown": "Being well-tracked is not being accurate: the survival-time model is the least accurate of the "
-                     "counters here, which is the point of the pairing rather than an inconsistency. The right "
-                     "panel is each method's own number on its own scale, so heights are not comparable "
-                     "between methods — only each line against its own left-hand partner.",
+                   "with its left-hand one knows when it is in trouble. Read each method against itself, "
+                   "not against the others.",
+        "look_for": (lambda n: "The first dotted rule, and each method's two lines at it. The timetable that "
+                               "never forgets loses "
+                               f"{abs(n[nm('ttfrozen')]['accuracy day 14'] - n[nm('ttfrozen')]['accuracy day 13']):.0f} "
+                               "points of accuracy between day 13 and day 14 while the confidence it states "
+                               f"moves {abs(n[nm('ttfrozen')]['confidence day 14'] - n[nm('ttfrozen')]['confidence day 13']):.0f}. "
+                               "The survival-time model's two lines move together. That contrast, on one "
+                               "pair of panels, is the paper.")(nums),
+        "not_shown": "It does not show WHY the two behave differently \u2014 that is the next figure, and it "
+                     "is a property of how each one computes a confidence number rather than of how good "
+                     "each one is. The right-hand panel is each method's own number on its own scale, so "
+                     "heights are not comparable between methods; only each line against its own left-hand "
+                     "partner is.",
         "drawing": NOTE_LONG, "numbers": nums})
 
 
@@ -1405,6 +1418,8 @@ def f6(DATA, EXTRA, manifest):
     legend_below(ax[0], ncol=1)
     save(fig, "F6_the_inversion", manifest, {
         "figure": "F6",
+        "claim_head": ('Being badly calibrated is not a neutral property. At the shift it inverts the one decision the uncertainty exists to make. '),
+        "role": ('CARRIES THE THESIS. Miscalibration in the direction that costs you: at the shift the rule runs backwards, answering what it gets wrong and handing over what it would have got right. This is why a separate uncertainty axis is a practical problem and not a measurement curiosity.'),
         "rerun_floor": RERUN_FLOOR,
         "claim": "At the moment the routine changes, the timetable that never forgets's rule for deciding whether to answer runs BACKWARDS: it "
                  "answers the questions it gets wrong and hands over the ones it would have got right. That is "
@@ -1466,6 +1481,8 @@ def f7(DATA, EXTRA, manifest):
     legend_below(ax[1], ncol=1, gap=0.34)
     save(fig, "F7_sets_break_rather_than_widen", manifest, {
         "figure": "F7",
+        "claim_head": ('The machinery that is supposed to express uncertainty keeps its shape exactly while the promise it makes stops holding. '),
+        "role": ('CARRIES THE THESIS, and on pure fit it is the best figure in the set: the uncertainty apparatus keeps its shape while its promise fails. The set does not widen when the world changes \\u2014 it gets SMALLER while the truth falls out of it. Weakest-powered figure here at three households, so it is the one to strengthen if any compute is available.'),
         "rerun_floor": RERUN_FLOOR,
         # The claim used to quote the spell-average set size against the settled average, which describes a
         # different window from the day the claim is about -- and in doing so undersold it. On the day the
@@ -1537,6 +1554,8 @@ def f10(DATA, EXTRA, manifest):
     sick = "first sick days 14-16"
     save(fig, "F10_the_same_test_one_day_at_a_time", manifest, {
         "figure": "F10",
+        "claim_head": ('The failure is not general. It is localised to the days the routine changes, which is what makes it a claim about regime shifts rather than about these methods. '),
+        "role": ("CARRIES THE THESIS, and it is the specific contribution: the failure is localised to the disruption. The never-forgets timetable's confidence beats chance in every window of the month EXCEPT the days the routine changes, and again a week later. 'Exacerbated at regime shifts' measured rather than asserted."),
         "rerun_floor": RERUN_FLOOR,
         "claim": ("Refitting the threshold every single day \u2014 the most generous reading there is \u2014 "
                   "does not rescue either timetable at the shift, and it separates them into two findings "
@@ -1600,7 +1619,109 @@ def f10(DATA, EXTRA, manifest):
         "numbers": nums})
 
 
-FIGS = {"F1": f1, "F2": f2, "F3": f3, "F4": f4, "F5": f5, "F6": f6, "F7": f7, "F8": f8, "F9": f9, "F10": f10}
+def f11(DATA, EXTRA, manifest):
+    """The positive result: whose confidence still predicts being right once the routine changes."""
+    T = EXTRA["decision_live"]["confidence_tracks_correctness"]
+    meths = [m for m in DEC_ORDER if m in T]
+    order = [w for w in ("settled 1-13", "first sick days 14-16", "rest of spell 17-23",
+                         "first days back 24-26", "a week later 27-31") if w in T[meths[0]]]
+    SHORT = {"settled 1-13": "settled\n1\u201313", "first sick days 14-16": "sick\n14\u201316",
+             "rest of spell 17-23": "spell\n17\u201323", "first days back 24-26": "back\n24\u201326",
+             "a week later 27-31": "later\n27\u201331"}
+    fig, ax = plt.subplots(figsize=(SINGLE, 2.6))
+    nums, hh = {}, {}
+    xs = list(range(len(order)))
+    for m in meths:
+        W = T[m]
+        ys = [W[k]["r"] for k in order]
+        es = [W[k]["se"] for k in order]
+        ax.errorbar(xs, ys, yerr=es, fmt="-o", color=COL[m], lw=1.6, ms=3.6, capsize=2.2,
+                    elinewidth=0.9, label=nm_legend(m), zorder=4)
+        hh[m] = W[order[0]]["n_hh"]
+        row = {SHORT[k].replace("\n", " "): W[k]["r"] for k in order}
+        row["change at the shift"] = W["first sick days 14-16"].get("change_from_settled")
+        row["is that change real"] = ("yes" if W["first sick days 14-16"].get("change_clears") else "no")
+        nums[nm(m)] = row
+    # Zero is the whole reading of this figure: at zero a method's stated confidence tells you nothing about
+    # whether it is right. It is annotation ink, not a series, so it carries no hue.
+    ax.axhline(0, color=INK, lw=1.0, zorder=3)
+    # Sits ON the line it names, at the left edge where no series passes, rather than floating in the middle
+    # of the plot where it landed across the three-day timetable.
+    # BELOW the line and at the right, the one region of this plot no series enters: every method crosses
+    # near zero somewhere in the middle, so anything sitting on the line there is struck through by a curve.
+    ax.annotate("at this line the confidence\ncarries no information",
+                xy=(len(order) - 0.65, -0.025), fontsize=6.0, color=INK, ha="right", va="top")
+    # The shift is a column here rather than a rule, because the x axis is stages and not days.
+    ax.axvspan(0.5, 1.5, color=INK, alpha=0.055, lw=0, zorder=0)
+    ax.set_xticks(xs)
+    ax.set_xticklabels([SHORT[k] for k in order], fontsize=6.6)
+    ax.set_xlim(-0.4, len(order) - 0.6)
+    finish(ax, "Does its confidence predict\nbeing right?", xlab="", ylim=None)
+    ax.grid(True, axis="y", alpha=0.5)
+    ax.grid(False, axis="x")
+    legend_below(ax, ncol=2)
+    g = lambda m, k: T[m]["first sick days 14-16"][k]
+    save(fig, "F11_whose_confidence_survives", manifest, {
+        "figure": "F11",
+        "role": ("The paper's positive result and the one a model designer can act on. Every other figure "
+                 "says something is broken; this one says which design choice is not broken, and the "
+                 "mechanism section attaches here."),
+        "rerun_floor": RERUN_FLOOR,
+        "claim_head": ("Whether a method's confidence survives a change in the routine is not a matter of "
+                       "how good the method is. It follows from what its confidence is a function of. "),
+        "claim": ("In a settled household all four methods' stated confidence predicts being right, and by "
+                  f"similar amounts: {T['ttfrozen']['settled 1-13']['r']:.2f} for the timetable that never "
+                  f"forgets, {T['tt3d']['settled 1-13']['r']:.2f} for the three-day one, "
+                  f"{T['perpetua']['settled 1-13']['r']:.2f} for the survival-time model and "
+                  f"{T['longcontext']['settled 1-13']['r']:.2f} for the whole log in the prompt. On the "
+                  "first days of the new routine the two timetables fall to nothing "
+                  f"({g('ttfrozen','r'):.2f} and {g('tt3d','r'):.2f}; the falls of "
+                  f"{abs(g('ttfrozen','change_from_settled')):.2f} and "
+                  f"{abs(g('tt3d','change_from_settled')):.2f} both clear our bar). The survival-time "
+                  f"model does not move ({g('perpetua','r'):.2f}, a change of "
+                  f"{g('perpetua','change_from_settled'):+.2f} that does not clear), and the whole log in "
+                  f"the prompt degrades without breaking ({g('longcontext','r'):.2f}).\n\n"
+                  "The reason is in the arithmetic of the two confidence numbers rather than in their "
+                  "quality. A timetable's confidence is the share of its sightings in the matching hour bin "
+                  "that fell at the answer it is giving \u2014 a ratio of counts. Scale every count down "
+                  "and the ratio is unchanged, so the number is very nearly blind to how old the evidence "
+                  "is. The survival-time model's confidence is a probability advanced from the last "
+                  "sighting by an exponential decay toward that object's long-run base rate, at a speed "
+                  "fitted per object: it IS a measure of how stale the evidence is, and it is least "
+                  "confident about exactly the objects that move most.\n\n"
+                  "A change in routine is an event that makes old evidence wrong WITHOUT changing the "
+                  "historical frequencies. So it is invisible to one confidence number by construction, and "
+                  "visible to the other by construction. That is a design prescription and not a league "
+                  "table: put the age of the evidence in the state, not only its frequency."),
+        "population": POP_LABEL["person"], "households": hh, "split": "all questions",
+        "band": "\u00b11 standard error across households, computed on the per-household correlations",
+        "note": ("Correlation between the confidence a method stated and whether that answer turned out "
+                 "right, computed INSIDE each household and then averaged, so a household that is simply "
+                 "harder than another cannot create or hide an effect. Zero means the stated confidence "
+                 "carries no information about correctness."),
+        "caption": ("Does a method's stated confidence predict whether it is actually right? One line per "
+                    "method across the month; the shaded column is the first days of the new routine. At "
+                    "the black line the confidence carries no information. The two timetables reach it "
+                    "there and nowhere else; the survival-time model does not move."),
+        "look_for": ("The shaded column. Four lines arrive at it together, from much the same height, and "
+                     "two of them drop to the zero line while two carry on. Then look to the right of it: "
+                     "the timetables come back. Nothing about these methods is permanently broken \u2014 "
+                     "their confidence stops meaning anything for the days the routine is changing, which "
+                     "is when a robot would be relying on it."),
+        "not_shown": ("A correlation is not calibration: a method can order its answers correctly and still "
+                      "state numbers that are far too high, which is F5. It does not show the survival-time "
+                      "model is accurate \u2014 it is the least accurate method here while the household "
+                      "is stable. And it is measured on this one kind of disruption; the claim that the "
+                      "mechanism generalises rests on the arithmetic above rather than on a second regime."),
+        "mechanism": ("Two independent statistics agree on which methods have a real signal at the shift. "
+                      "This figure measures association directly. F9 and F10 instead ask what the ordering "
+                      "of the confidences is worth once a hindsight-on-shuffled-labels floor is subtracted, "
+                      "and reach the same ranking and the same pair of failures. They are not two readings "
+                      "of one test."),
+        "numbers": nums})
+
+
+FIGS = {"F1": f1, "F2": f2, "F3": f3, "F4": f4, "F5": f5, "F6": f6, "F7": f7, "F8": f8, "F9": f9, "F10": f10, "F11": f11}
 
 
 def main():

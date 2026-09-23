@@ -1,5 +1,9 @@
 # What F4 does and does not support
 
+## Its job in the argument
+
+SUPPORTING. Rules out the obvious objection to the whole argument: that a method could simply notice it is in trouble and decline more. They do notice, and the answers they keep are still wrong far more often than they promised. Noticing is not being calibrated.
+
 ## The claim
 
 > Reacting is not recovering. When the routine changes these rules that decide whether to answer DO notice — every one of them roughly doubles or triples how often it declines to answer — and the answers they keep are still wrong 2.4 to 6.3 times more often than the rate they promised. Noticing that something is wrong is not the same as knowing WHICH answers are wrong, and only the second one protects a user.

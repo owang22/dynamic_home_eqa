@@ -1,8 +1,12 @@
 # What F7 does and does not support
 
+## Its job in the argument
+
+CARRIES THE THESIS, and on pure fit it is the best figure in the set: the uncertainty apparatus keeps its shape while its promise fails. The set does not widen when the world changes \u2014 it gets SMALLER while the truth falls out of it. Weakest-powered figure here at three households, so it is the one to strengthen if any compute is available.
+
 ## The claim
 
-> The list of places the rule offers does not widen when the routine changes. On the first sick day its how often the truth is in its list falls from 92% in the settled week to 69% — far below the 90% it promises — while the set it offers gets SMALLER, 1.42 places against 1.59 before. Over the whole spell it averages 1.64, so nothing about its width registers the change.
+> The machinery that is supposed to express uncertainty keeps its shape exactly while the promise it makes stops holding. The list of places the rule offers does not widen when the routine changes. On the first sick day its how often the truth is in its list falls from 92% in the settled week to 69% — far below the 90% it promises — while the set it offers gets SMALLER, 1.42 places against 1.59 before. Over the whole spell it averages 1.64, so nothing about its width registers the change.
 
 ## What in the figure demonstrates it
 
