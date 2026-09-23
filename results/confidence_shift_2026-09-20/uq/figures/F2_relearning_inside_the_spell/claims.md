@@ -6,11 +6,11 @@
 
 ## What in the figure demonstrates it
 
-The slope between the first sick days and the end of the spell. The 3-day timetable goes from 57.9 to 88.8, a gain of 30.8 points. Reflection gains 15.2, retrieval 10.4 and long-context 9.7 — between a third and a half of the counter's.
+The slope between the first sick days and the end of the spell. The 3-day timetable goes from 57.9 to 88.8, a gain of 30.8 points. Reflection gains 15.2, retrieval 10.4 and long-context 9.7.
 
 ## What it does NOT show
 
-It does not show that the language memories learn NOTHING: reflection's +15.2 is a real gain, about half the counter's. It also does not separate re-learning from same-day feedback, since these are all questions rather than cold ones. Long-context is on fewer households than the rest.
+It does not show that the language memories learn NOTHING: reflection's +15.2 is a real gain, about 49% of the counter's. It also does not separate re-learning from same-day feedback, since these are all questions rather than cold ones. Long-context is on fewer households than the rest.
 
 ## How this claim changed
 
@@ -20,9 +20,9 @@ This figure asserted until 22 Sept that the language memories "barely move". Its
 
 Measured on the DAILY values, not read off the plotted line.
 
-| series | days 14-16 | days 20-23 | re-learning inside the spell | spell mean |
-|---|---|---|---|---|
-| 3-day timetable | 57.9 | 88.8 | 30.8 | 77.4 |
-| long-context | 64.2 | 74.0 | 9.7 | 70.4 |
-| retrieval | 55.8 | 66.2 | 10.4 | 61.6 |
-| reflection | 66.0 | 81.2 | 15.2 | 74.7 |
+| series | days 14-16 | days 20-23 | re-learning inside the spell | spell mean | counter re-learns this many times faster |
+|---|---|---|---|---|---|
+| 3-day timetable | 57.9 | 88.8 | 30.8 | 77.4 | 1.0 |
+| long-context | 64.2 | 74.0 | 9.7 | 70.4 | 3.2 |
+| retrieval | 55.8 | 66.2 | 10.4 | 61.6 | 3.0 |
+| reflection | 66.0 | 81.2 | 15.2 | 74.7 | 2.0 |

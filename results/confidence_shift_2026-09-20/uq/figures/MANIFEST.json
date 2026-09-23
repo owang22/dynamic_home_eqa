@@ -11,7 +11,7 @@
     },
     "split": "all questions",
     "caption": "Accuracy per day for four methods through a routine that changes twice. Every method climbs through the settled fortnight, falls sharply on the first sick day (dotted rule), re-learns the new routine over the following week, and falls again when the old routine returns (second dotted rule). The two timetables break hardest and recover furthest; long-context breaks least and recovers least.",
-    "look_for": "The two dotted rules and what happens at them. The 3-day timetable falls 40.8 points on day 14 and the never-forgets timetable 40.5; by day 23 the 3-day timetable is above where it started the spell. At day 24 both fall again, and the never-forgets timetable is the one that recovers immediately, because the old routine is the one it never stopped believing. Long-context's day-14 fall is the smallest of the four.",
+    "look_for": "The two dotted rules and what happens at them. The 3-day timetable falls 40.8 points on day 14 and the never-forgets timetable 47.3; by day 23 the 3-day timetable is above where it started the spell. At day 24 both fall again (-24.0 and +2.6), and the never-forgets timetable is the one that recovers immediately, because the old routine is the one it never stopped believing. Long-context's day-14 fall is 17.9 points, the smallest of the four.",
     "not_shown": "This is accuracy only \u2014 nothing here says whether a method KNOWS it has broken, which is the subject of F8 and F9. Long-context rests on fewer households than the counters (see the count above) and its band is correspondingly wider; do not read a gap between it and a counter as an effect without checking the band. The plotted line is a three-day average, so the visible fall is shallower than the real one: quote the numbers, not the picture.",
     "band": "\u00b11 standard error across households",
     "drawing": "The line is a centred three-day average, computed WITHIN each stage so it never averages across a boundary: a window straddling day 14 renders the 3-day timetable's 40.8-point fall as 6.8. The band is \u00b11 standard error across households, computed on the daily values.",
@@ -70,8 +70,8 @@
     "split": "all questions",
     "band": "\u00b11 standard error across households",
     "caption": "Accuracy per day for the 3-day timetable and three language memories. All four break on the first sick day. Over the following ten days, during which every method is living in the new routine and is told the right answer after every question, the counter re-learns the routine and the language memories recover far less.",
-    "look_for": "The slope between the first sick days and the end of the spell. The 3-day timetable goes from 57.9 to 88.8, a gain of 30.8 points. Reflection gains 15.2, retrieval 10.4 and long-context 9.7 \u2014 between a third and a half of the counter's.",
-    "not_shown": "It does not show that the language memories learn NOTHING: reflection's +15.2 is a real gain, about half the counter's. It also does not separate re-learning from same-day feedback, since these are all questions rather than cold ones. Long-context is on fewer households than the rest.",
+    "look_for": "The slope between the first sick days and the end of the spell. The 3-day timetable goes from 57.9 to 88.8, a gain of 30.8 points. Reflection gains 15.2, retrieval 10.4 and long-context 9.7.",
+    "not_shown": "It does not show that the language memories learn NOTHING: reflection's +15.2 is a real gain, about 49% of the counter's. It also does not separate re-learning from same-day feedback, since these are all questions rather than cold ones. Long-context is on fewer households than the rest.",
     "history": "This figure asserted until 22 Sept that the language memories \"barely move\". Its own numbers contradicted that \u2014 reflection re-learns half as much as the counter, which is not \"barely\" \u2014 so the claim was changed to the ratio it can actually support and the file was renamed off `F2_counters_relearn_language_does_not`, which had encoded the overclaim in its name.",
     "note": "The counts are per method above; long-context ran on fewer households than the counters.",
     "drawing": "The line is a centred three-day average, computed WITHIN each stage so it never averages across a boundary: a window straddling day 14 renders the 3-day timetable's 40.8-point fall as 6.8. The band is \u00b11 standard error across households, computed on the daily values.",
@@ -81,25 +81,29 @@
         "days 14-16": 57.9,
         "days 20-23": 88.8,
         "re-learning inside the spell": 30.8,
-        "spell mean": 77.4
+        "spell mean": 77.4,
+        "counter re-learns this many times faster": 1.0
       },
       "long-context": {
         "days 14-16": 64.2,
         "days 20-23": 74.0,
         "re-learning inside the spell": 9.7,
-        "spell mean": 70.4
+        "spell mean": 70.4,
+        "counter re-learns this many times faster": 3.2
       },
       "retrieval": {
         "days 14-16": 55.8,
         "days 20-23": 66.2,
         "re-learning inside the spell": 10.4,
-        "spell mean": 61.6
+        "spell mean": 61.6,
+        "counter re-learns this many times faster": 3.0
       },
       "reflection": {
         "days 14-16": 66.0,
         "days 20-23": 81.2,
         "re-learning inside the spell": 15.2,
-        "spell mean": 74.7
+        "spell mean": 74.7,
+        "counter re-learns this many times faster": 2.0
       }
     },
     "files": [
@@ -160,6 +164,9 @@
     },
     "split": "all questions",
     "band": "none: these are rates, drawn as a three-day average within each stage",
+    "prose_numbers_ok": {
+      "0.1": "alpha, the gate's target error rate \u2014 a setting, not a measurement"
+    },
     "note": "The dashed line is the one-in-ten error rate the gate was set to hold (alpha=0.1).",
     "caption": "Top: how often each method declines to answer. Bottom: how often it is nonetheless wrong on the questions it did answer, against the one-in-ten rate it was set to hold (dashed). A gate that worked would keep the lower line flat across the dotted boundary by giving up more questions; these do not.",
     "look_for": "The bottom panel at the first dotted rule. The promise is held comfortably through the settled fortnight and broken immediately at the shift, and the top panel shows the gate reacting by handing over more \u2014 but a day late and not by enough.",
@@ -304,6 +311,9 @@
     },
     "split": "all questions",
     "band": "none: single-day rates pooled over households",
+    "prose_numbers_ok": {
+      "0.7": "the sampling temperature \u2014 a setting, not a measurement"
+    },
     "note": "Each question was put to the model ten times at temperature 0.7 and the conformal set built from how often each place came back. Each household's first 20 questions are excluded while the threshold warms up, and a day is shown only once all households have finished it.",
     "caption": "Top: how often the truth was inside the conformal set, against the 90% the method promises (dashed). Bottom: how many places the set contained. At the first sick day the guarantee breaks while the set stays the same width \u2014 the method's uncertainty does not notice the change, it simply becomes wrong about it.",
     "look_for": "Day 14 in both panels, marked: coverage 69% against a 90% promise, with a set of 1.42 places \u2014 NARROWER than the settled-week average of 1.59. A method reacting to the change would have widened it.",
@@ -340,6 +350,10 @@
     },
     "split": "all questions",
     "band": "none: this is a score, not an average with a spread",
+    "prose_numbers_ok": {
+      "0.95": "an illustrative confidence value, not a measured one",
+      "0.5": "the half-way bar the +1/\u22121/0 scoring implies \u2014 a setting"
+    },
     "note": "Each method uses its OWN best fixed threshold, because the comparison would otherwise measure their confidence scales rather than their judgement \u2014 the timetables spread mass over dozens of places and rarely exceed 0.5, long-context says 0.95 to almost everything.",
     "caption": "Daily decision score under a rule that needs no coverage target to explain: +1 for a right answer, \u22121 for a wrong one, 0 for declining to answer. Each method uses its own best fixed confidence threshold. Both timetables collapse on the first sick day; Perpetua* and long-context do not.",
     "look_for": "The first dotted rule. The never-forgets timetable falls from 7.7 in the settled week to 0.7 on the first sick days and the 3-day timetable from 7.6 to 2.9, while Perpetua* goes 4.6 to 4.6 and long-context 4.6 to 5.1. Note also that Perpetua* sits BELOW both timetables while the world is stable.",
@@ -405,9 +419,14 @@
     "band": "none: bars are a difference of two scores",
     "note": "Score under the best threshold for that window, minus the score when forced to answer every question. Settled figures for context are in F8's numbers: Perpetua* 4.6 against the timetables' 7.7 and 7.6.",
     "caption": "What being allowed to decline is worth, by window: the decision score under the best threshold for that window, minus the score when the method is forced to answer every question. Higher bars mean the method's own confidence carries information worth acting on. At the moment the routine changes, only Perpetua* gains materially.",
-    "look_for": "The first-sick-days group. Perpetua* gains 2.9 points from being allowed to decline, against 0.3 for the never-forgets timetable, 0.4 for the 3-day timetable and 0.6 for long-context. On the first days back the pattern repeats: Perpetua* 1.4, everything else at or below 0.2.",
+    "look_for": "The first-sick-days group. Perpetua* gains 2.8 points from being allowed to decline, against 0.3 for the never-forgets timetable, 0.4 for the 3-day timetable and 0.6 for long-context. On the first days back the pattern repeats: Perpetua* 1.4, everything else at or below 0.2.",
     "not_shown": "This is not a claim that Perpetua* is the better model \u2014 F8's settled-week numbers show it scoring 4.6 against the timetables' 7.7 and 7.6. The claim is narrower and stranger: it is the worst forecaster of the four and the only one whose uncertainty is worth acting on. The thresholds are also chosen with hindsight, which strengthens the negative half \u2014 even given the answers in advance, declining buys the counters almost nothing exactly when it would matter.",
     "caveat": "thresholds chosen with hindsight, so these are upper bounds, not a deployable policy, which makes the negative result stronger: even handed the answers in advance, declining buys the counters nothing at the moment it would matter",
+    "prose_numbers_ok": {
+      "7.7": "live settled-week score from the same extractor, shown in F8's table",
+      "7.6": "live settled-week score from the same extractor, shown in F8's table",
+      "4.6": "live settled-week score from the same extractor, shown in F8's table"
+    },
     "numbers": {
       "never-forgets timetable": {
         "settled week 9-13": 0.04,

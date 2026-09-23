@@ -422,3 +422,33 @@ the told-vs-untold figure would have drawn three different household sets on one
 them to be read as the effect of the message. The figure now matches all three arms to the households all three
 ran. The lesson is that a fix which enlarges one arm of a paired comparison silently unbalances the pair: after
 lifting any restriction, re-check every comparison built on it.
+
+**5. An axis default made a false claim, in the figure whose whole purpose was that claim.** The paper-figure
+helper set `ylim=(30, 100)` as its default, chosen because the accuracy figures all live in that range and the
+empty lower third was wasted space. F4 plots two rates that live near and below 30 — how often a method hands a
+question over, and how often it is nonetheless wrong on what it kept. Every value below 30 was silently clipped
+out of the frame. The bottom panel came back nearly empty, and what it showed was a picture asserting **"no
+method is ever wrong on less than 30% of what it answers"** — the opposite of the figure's point, which is that
+the promised one-in-ten is held comfortably in the settled fortnight and broken at the shift.
+
+Nothing errored. The default was sensible for the figures it was written for and wrong for the first figure
+that did not share their range.
+
+**The category, now that there are three.** Today produced three faults with one shape, and it is worth naming
+because it will happen again:
+
+- an average over questions concealing that a quarter of the conformal sets were empty;
+- an average over days rendering a 41-point cliff as a 6.8-point slope;
+- an axis default clipping away every value the figure existed to show.
+
+None is a calculation error. In each case the arithmetic is correct and something else — a summary statistic, a
+smoothing window, a drawing default — quietly changed what the artifact asserts, and each was most misleading
+exactly where the effect was strongest. **The check that catches all three is the same: compute the thing a
+reader will try to take away from the artifact, and compare it against the raw number.** Reading the code finds
+none of them; rendering the output and looking at it finds all three.
+
+A fourth, related, from the same evening: a figure folder whose claim sentence computed itself from the data
+while the paragraph explaining it did not, so the two disagreed the moment a household landed — the folder
+contradicting itself in adjacent lines. `tools/paper_figures.py` now audits every number in every figure's prose
+against that figure's own numbers table on each run, and a literal that is a parameter rather than a measurement
+must be declared one at a time with a reason. An unexplained exemption is how a stale number hides.

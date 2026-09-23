@@ -6,7 +6,7 @@
 
 ## What in the figure demonstrates it
 
-The first-sick-days group. Perpetua* gains 2.9 points from being allowed to decline, against 0.3 for the never-forgets timetable, 0.4 for the 3-day timetable and 0.6 for long-context. On the first days back the pattern repeats: Perpetua* 1.4, everything else at or below 0.2.
+The first-sick-days group. Perpetua* gains 2.8 points from being allowed to decline, against 0.3 for the never-forgets timetable, 0.4 for the 3-day timetable and 0.6 for long-context. On the first days back the pattern repeats: Perpetua* 1.4, everything else at or below 0.2.
 
 ## What it does NOT show
 

@@ -17,6 +17,7 @@ No titles inside the figures; the paper supplies captions.
 import json
 import math
 import os
+import re
 import sys
 import textwrap
 
@@ -275,6 +276,36 @@ def numbers_table(entry):
     return "\n".join(out) + "\n"
 
 
+def audit_prose(entry):
+    """Every number in a figure's prose must be one the figure's own table produces.
+
+    This exists because the failure it catches already happened twice. F9's claim sentence was made to compute
+    itself from the table, and the explanatory paragraph one line below it went on saying 2.9 while the
+    sentence said 2.8 -- the folder contradicting itself because half of it was live and half was typed. Any
+    hand-written figure in prose is a promise that will be broken the next time a household lands, which for
+    the told-arm figures is within the hour.
+
+    Returns a list of complaints; the run prints them and keeps going, because a stale number is a thing to
+    fix rather than a reason to produce no figures at all."""
+    table = set()
+    for row in (entry.get("numbers") or {}).values():
+        for v in row.values():
+            if isinstance(v, (int, float)):
+                for q in (f"{v:.0f}", f"{v:.1f}", f"{v:.2f}", f"{abs(v):.0f}", f"{abs(v):.1f}", f"{abs(v):.2f}"):
+                    table.add(q)
+    # A literal may also be a PARAMETER of the experiment (a temperature, an alpha) or a live value borrowed
+    # from another figure's extractor. Those are declared one at a time with a reason, never suppressed
+    # wholesale: an unexplained exemption is how a stale number hides.
+    allowed = dict(entry.get("prose_numbers_ok") or {})
+    bad = []
+    for field in ("caption", "look_for", "not_shown", "claim", "note", "history"):
+        text = entry.get(field) or ""
+        for lit in re.findall(r"(?<![\w.])\d+\.\d+(?![\w])", text):
+            if lit not in table and lit not in allowed:
+                bad.append(f"{entry['figure']}/{field}: '{lit}' is not in this figure's numbers table")
+    return bad
+
+
 def save(fig, name, manifest, entry):
     """One self-contained folder per figure: the three renders, a paste-ready caption, an honest claims file,
     and the numbers, so any one folder can be handed to someone with nothing else explained."""
@@ -321,6 +352,8 @@ def save(fig, name, manifest, entry):
     entry["folder"] = name
     manifest.append(entry)
     print(f"  {name}/  ({', '.join(paths)} + caption.md, claims.md, numbers.md)")
+    for complaint in audit_prose(entry):
+        print(f"    STALE NUMBER IN PROSE -> {complaint}")
 
 
 POP_LABEL = {"person": "one resident off sick, that resident's own things",
@@ -360,11 +393,15 @@ def f1(DATA, EXTRA, manifest):
                    "re-learns the new routine over the following week, and falls again when the old routine "
                    "returns (second dotted rule). The two timetables break hardest and recover furthest; "
                    "long-context breaks least and recovers least.",
-        "look_for": "The two dotted rules and what happens at them. The 3-day timetable falls 40.8 points on "
-                    "day 14 and the never-forgets timetable 40.5; by day 23 the 3-day timetable is above where "
-                    "it started the spell. At day 24 both fall again, and the never-forgets timetable is the "
-                    "one that recovers immediately, because the old routine is the one it never stopped "
-                    "believing. Long-context's day-14 fall is the smallest of the four.",
+        "look_for": ("The two dotted rules and what happens at them. The 3-day timetable falls "
+                     f"{abs(nums['3-day timetable']['break at 14']):.1f} points on day 14 and the never-forgets "
+                     f"timetable {abs(nums['never-forgets timetable']['break at 14']):.1f}; by day 23 the 3-day "
+                     "timetable is above where it started the spell. At day 24 both fall again "
+                     f"({nums['3-day timetable']['break at 24']:+.1f} and "
+                     f"{nums['never-forgets timetable']['break at 24']:+.1f}), and the never-forgets timetable "
+                     "is the one that recovers immediately, because the old routine is the one it never "
+                     "stopped believing. Long-context's day-14 fall is "
+                     f"{abs(nums['long-context']['break at 14']):.1f} points, the smallest of the four."),
         "not_shown": "This is accuracy only — nothing here says whether a method KNOWS it has broken, which is "
                      "the subject of F8 and F9. Long-context rests on fewer households than the counters (see "
                      "the count above) and its band is correspondingly wider; do not read a gap between it and "
@@ -393,6 +430,10 @@ def f2(DATA, EXTRA, manifest):
         nums[NAME[m]] = {"days 14-16": r2(avg(early)), "days 20-23": r2(avg(late)),
                          "re-learning inside the spell": r2(None if not (early and late) else avg(late) - avg(early)),
                          "spell mean": r2(avg(got))}
+    base = nums[NAME["tt3d"]]["re-learning inside the spell"] or 1.0
+    for k in nums:                       # the ratio the claim quotes, so the table backs it like everything else
+        g = nums[k]["re-learning inside the spell"]
+        nums[k]["counter re-learns this many times faster"] = None if not g else round(base / g, 1)
     boundaries([ax], DATA, pop)
     finish(ax, "% of questions answered correctly")
     legend_below(ax, f"{POP_LABEL[pop]}, all questions · long-context on {hh.get('longcontext', '?')} households"
@@ -414,13 +455,19 @@ def f2(DATA, EXTRA, manifest):
                    "the first sick day. Over the following ten days, during which every method is living in "
                    "the new routine and is told the right answer after every question, the counter re-learns "
                    "the routine and the language memories recover far less.",
-        "look_for": "The slope between the first sick days and the end of the spell. The 3-day timetable goes "
-                    "from 57.9 to 88.8, a gain of 30.8 points. Reflection gains 15.2, retrieval 10.4 and "
-                    "long-context 9.7 — between a third and a half of the counter's.",
-        "not_shown": "It does not show that the language memories learn NOTHING: reflection's +15.2 is a real "
-                     "gain, about half the counter's. It also does not separate re-learning from same-day "
-                     "feedback, since these are all questions rather than cold ones. Long-context is on fewer "
-                     "households than the rest.",
+        "look_for": ("The slope between the first sick days and the end of the spell. The 3-day timetable "
+                     f"goes from {nums['3-day timetable']['days 14-16']:.1f} to "
+                     f"{nums['3-day timetable']['days 20-23']:.1f}, a gain of "
+                     f"{nums['3-day timetable']['re-learning inside the spell']:.1f} points. Reflection gains "
+                     f"{nums['reflection']['re-learning inside the spell']:.1f}, retrieval "
+                     f"{nums['retrieval']['re-learning inside the spell']:.1f} and long-context "
+                     f"{nums['long-context']['re-learning inside the spell']:.1f}."),
+        "not_shown": ("It does not show that the language memories learn NOTHING: reflection's "
+                      f"+{nums['reflection']['re-learning inside the spell']:.1f} is a real gain, about "
+                      f"{nums['reflection']['re-learning inside the spell'] / max(nums['3-day timetable']['re-learning inside the spell'], 0.1):.0%} "
+                      "of the counter's. It also does not separate re-learning from same-day "
+                      "feedback, since these are all questions rather than cold ones. Long-context is on "
+                      "fewer households than the rest."),
         "history": "This figure asserted until 22 Sept that the language memories \"barely move\". Its own "
                    "numbers contradicted that — reflection re-learns half as much as the counter, which is not "
                    "\"barely\" — so the claim was changed to the ratio it can actually support and the file "
@@ -543,6 +590,8 @@ def f8(DATA, EXTRA, manifest):
                  "collapse at the shift while Perpetua* and long-context do not.",
         "population": POP_LABEL["person"], "households": hh, "split": "all questions",
         "band": "none: this is a score, not an average with a spread",
+        "prose_numbers_ok": {"0.95": "an illustrative confidence value, not a measured one",
+                             "0.5": "the half-way bar the +1/\u22121/0 scoring implies \u2014 a setting"},
         "note": "Each method uses its OWN best fixed threshold, because the comparison would otherwise measure "
                 "their confidence scales rather than their judgement \u2014 the timetables spread mass over "
                 "dozens of places and rarely exceed 0.5, long-context says 0.95 to almost everything.",
@@ -550,10 +599,14 @@ def f8(DATA, EXTRA, manifest):
                    "right answer, −1 for a wrong one, 0 for declining to answer. Each method uses its own best "
                    "fixed confidence threshold. Both timetables collapse on the first sick day; Perpetua* and "
                    "long-context do not.",
-        "look_for": "The first dotted rule. The never-forgets timetable falls from 7.7 in the settled week to "
-                    "0.7 on the first sick days and the 3-day timetable from 7.6 to 2.9, while Perpetua* goes "
-                    "4.6 to 4.6 and long-context 4.6 to 5.1. Note also that Perpetua* sits BELOW both "
-                    "timetables while the world is stable.",
+        "look_for": (lambda w: "The first dotted rule. The never-forgets timetable falls from "
+                               f"{w('never-forgets timetable', 0):.1f} in the settled week to "
+                               f"{w('never-forgets timetable', 1):.1f} on the first sick days and the 3-day "
+                               f"timetable from {w('3-day timetable', 0):.1f} to {w('3-day timetable', 1):.1f}, "
+                               f"while Perpetua* goes {w('Perpetua*', 0):.1f} to {w('Perpetua*', 1):.1f} and "
+                               f"long-context {w('long-context', 0):.1f} to {w('long-context', 1):.1f}. Note "
+                               "also that Perpetua* sits BELOW both timetables while the world is stable."
+                     )(lambda m, i: nums[m][list(nums[m])[2 + i]]),
         "not_shown": "The thresholds are chosen with hindsight for the window being scored, so these are upper "
                      "bounds, not a policy anyone could run. Each method uses a different threshold, so the "
                      "lines are not a like-for-like confidence comparison — that is deliberate, since the "
@@ -609,18 +662,28 @@ def f9(DATA, EXTRA, manifest):
                    "threshold for that window, minus the score when the method is forced to answer every "
                    "question. Higher bars mean the method's own confidence carries information worth acting "
                    "on. At the moment the routine changes, only Perpetua* gains materially.",
-        "look_for": "The first-sick-days group. Perpetua* gains 2.9 points from being allowed to decline, "
-                    "against 0.3 for the never-forgets timetable, 0.4 for the 3-day timetable and 0.6 for "
-                    "long-context. On the first days back the pattern repeats: Perpetua* 1.4, everything else "
-                    "at or below 0.2.",
-        "not_shown": "This is not a claim that Perpetua* is the better model — F8's settled-week numbers show "
-                     "it scoring 4.6 against the timetables' 7.7 and 7.6. The claim is narrower and stranger: "
-                     "it is the worst forecaster of the four and the only one whose uncertainty is worth "
-                     "acting on. The thresholds are also chosen with hindsight, which strengthens the negative "
-                     "half — even given the answers in advance, declining buys the counters almost nothing "
-                     "exactly when it would matter.",
+        "look_for": (lambda sick, back: "The first-sick-days group. Perpetua* gains "
+                                        f"{sick['Perpetua*']:.1f} points from being allowed to decline, "
+                                        f"against {sick['never-forgets timetable']:.1f} for the never-forgets "
+                                        f"timetable, {sick['3-day timetable']:.1f} for the 3-day timetable and "
+                                        f"{sick['long-context']:.1f} for long-context. On the first days back "
+                                        f"the pattern repeats: Perpetua* {back['Perpetua*']:.1f}, everything "
+                                        f"else at or below {max(v for k, v in back.items() if k != 'Perpetua*'):.1f}."
+                     )({k: v["first sick days 14-16"] or 0 for k, v in nums.items()},
+                       {k: v["first days back 24-26"] or 0 for k, v in nums.items()}),
+        "not_shown": (lambda st: "This is not a claim that Perpetua* is the better model — F8's settled-week "
+                                 f"numbers show it scoring {st['perpetua']:.1f} against the timetables' "
+                                 f"{st['ttfrozen']:.1f} and {st['tt3d']:.1f}. The claim is narrower and stranger: "
+                                 "it is the worst forecaster of the four and the only one whose uncertainty "
+                                 "is worth acting on. The thresholds are also chosen with hindsight, which "
+                                 "strengthens the negative half — even given the answers in advance, declining "
+                                 "buys the counters almost nothing exactly when it would matter."
+                     )({m: D[m]["windows"]["settled week 9-13"]["best"] for m in DEC_ORDER if m in D}),
                 "caveat": HINDSIGHT + ", which makes the negative result stronger: even handed the answers in advance, "
                   "declining buys the counters nothing at the moment it would matter",
+        "prose_numbers_ok": {f"{D[m]['windows']['settled week 9-13']['best']:.1f}":
+                             "live settled-week score from the same extractor, shown in F8's table"
+                             for m in DEC_ORDER if m in D},
         "numbers": nums})
 
 
@@ -673,6 +736,7 @@ def f4(DATA, EXTRA, manifest):
                  "share of the rest.",
         "population": POP_LABEL["person"], "households": hh, "split": "all questions",
         "band": "none: these are rates, drawn as a three-day average within each stage",
+        "prose_numbers_ok": {"0.1": "alpha, the gate's target error rate \u2014 a setting, not a measurement"},
         "note": f"The dashed line is the one-in-ten error rate the gate was set to hold (alpha={alpha}).",
         "caption": "Top: how often each method declines to answer. Bottom: how often it is nonetheless wrong on "
                    "the questions it did answer, against the one-in-ten rate it was set to hold (dashed). A "
@@ -830,6 +894,7 @@ def f7(DATA, EXTRA, manifest):
         "population": POP_LABEL["person"], "households": {"long-context, sampled": n_hh},
         "split": "all questions",
         "band": "none: single-day rates pooled over households",
+        "prose_numbers_ok": {"0.7": "the sampling temperature \u2014 a setting, not a measurement"},
         "note": "Each question was put to the model ten times at temperature 0.7 and the conformal set built "
                 "from how often each place came back. Each household's first 20 questions are excluded while "
                 "the threshold warms up, and a day is shown only once all households have finished it.",

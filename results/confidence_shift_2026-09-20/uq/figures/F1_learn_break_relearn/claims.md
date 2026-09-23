@@ -6,7 +6,7 @@
 
 ## What in the figure demonstrates it
 
-The two dotted rules and what happens at them. The 3-day timetable falls 40.8 points on day 14 and the never-forgets timetable 40.5; by day 23 the 3-day timetable is above where it started the spell. At day 24 both fall again, and the never-forgets timetable is the one that recovers immediately, because the old routine is the one it never stopped believing. Long-context's day-14 fall is the smallest of the four.
+The two dotted rules and what happens at them. The 3-day timetable falls 40.8 points on day 14 and the never-forgets timetable 47.3; by day 23 the 3-day timetable is above where it started the spell. At day 24 both fall again (-24.0 and +2.6), and the never-forgets timetable is the one that recovers immediately, because the old routine is the one it never stopped believing. Long-context's day-14 fall is 17.9 points, the smallest of the four.
 
 ## What it does NOT show
 
