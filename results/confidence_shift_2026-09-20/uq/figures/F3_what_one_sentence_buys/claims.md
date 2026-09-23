@@ -20,6 +20,6 @@ Measured on the DAILY values, not read off the plotted line.
 
 | series | days 14-16 | days 24-26 | drawn from day |
 |---|---|---|---|
-| never told | 61.1 | 68.8 | 1 |
-| told on the first sick day | 72.2 | 59.4 | 14 |
-| told again on the first day back | 72.2 | 70.8 | 21 |
+| no message | 61.1 | 68.8 | 1 |
+| A only | 72.2 | 59.4 | 14 |
+| A & B | 72.2 | 70.8 | 21 |

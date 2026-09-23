@@ -72,7 +72,13 @@ NAME = {
     "longcontext": "long-context", "retrieval": "retrieval", "reflect": "reflection",
     "naive": "recency buffer", "lastseen": "last seen",
 }
-EDGE = {"sick": "sick", "return": "back to normal", "sick2": "sick again", "return2": "back again"}
+# The stages as a reader meets them, written above the plot, and a letter on each boundary rule. A is the day
+# the routine changes, B the day it changes back. Oliver defines A and B once in the paper and reuses them, so
+# these strings are identical in every figure and every caption: they are an interface, not decoration.
+EDGE = {"sick": "A", "return": "B", "sick2": "A2", "return2": "B2"}
+STAGE_NAME = {"lead": "normal", "sick": "sick", "return": "normal", "sick2": "sick", "return2": "normal"}
+EDGE_RED = "#cc1f1f"
+ARM_LABEL = {"nomsg": "no message", "startmsg": "A only", "startend": "A & B"}
 
 # The argument these figures are parts of. Stated once here and attached to the claims it actually bears on,
 # with the measurements that support each half, because it is a framing and framings are where overclaiming
@@ -217,16 +223,30 @@ def stage_lookup(DATA, pop):
 
 
 def boundaries(ax_list, DATA, pop, label_on=None, pad_frac=1.012):
-    """Dotted vertical rules at each stage boundary, labelled above the top plot. Nothing is drawn OVER the
-    data: a wash behind a one-standard-error band is what made those bands unreadable on the page."""
-    st = [s for s in stages_of(DATA, pop) if s["name"] in EDGE]
+    """Dotted rules at each stage boundary, a red letter ON each rule, and the stage names above the plot.
+
+    Nothing is drawn OVER the data: a wash behind a one-standard-error band is what made those bands
+    unreadable. The letters sit inside the plot on their own rules and carry a white outline, so they stay
+    legible wherever a line happens to pass behind them -- which is why their colour does not have to clear
+    every series the way a data colour does."""
+    all_st = stages_of(DATA, pop)
+    st = [x for x in all_st if x["name"] in EDGE]
     for ax in ax_list:
-        for s in st:
-            ax.axvline(s["a"], color=INK, lw=0.9, ls=":", alpha=0.75, zorder=1)
+        for x in st:
+            ax.axvline(x["a"], color=INK, lw=0.9, ls=":", alpha=0.75, zorder=1)
     top = label_on if label_on is not None else ax_list[0]
-    for s in st:
-        top.annotate(EDGE[s["name"]], xy=(s["a"], pad_frac), xycoords=("data", "axes fraction"),
-                     ha="center", va="bottom", fontsize=7, color=INK)
+    # the letters, on the rules, inside the top plot
+    for x in st:
+        top.annotate(EDGE[x["name"]], xy=(x["a"], 0.965), xycoords=("data", "axes fraction"),
+                     ha="center", va="top", fontsize=8.5, color=EDGE_RED, fontweight="bold", zorder=7,
+                     bbox=dict(boxstyle="square,pad=0.15", fc="white", ec="none", alpha=0.9))
+    # the stages, above the plot, centred on each span
+    for x in all_st:
+        nm = STAGE_NAME.get(x["name"])
+        if not nm:
+            continue
+        top.annotate(nm, xy=((x["a"] + x["b"]) / 2.0, pad_frac), xycoords=("data", "axes fraction"),
+                     ha="center", va="bottom", fontsize=6.6, color="#555555")
     return st
 
 
@@ -253,7 +273,7 @@ def roll3(xs, ys, stage_of=None):
     return out
 
 
-def line(ax, S, colour, label, clip_from=1, lw=1.6, band=True, smooth=True, stage_of=None):
+def line(ax, S, colour, label, clip_from=1, lw=1.6, band=True, smooth=True, stage_of=None, marker=None):
     """One line per series: a centred three-day mean, bounded by stage, with its standard-error band.
 
     The band is computed on the DAILY values across households, which is the uncertainty we actually have; only
@@ -267,7 +287,8 @@ def line(ax, S, colour, label, clip_from=1, lw=1.6, band=True, smooth=True, stag
         ax.fill_between(xs, lo, hi, color=colour, alpha=0.13, lw=0, zorder=2)
     if smooth:
         ax.plot(xs, roll3(xs, ys, stage_of), "-", color=colour, lw=lw, label=label, zorder=4,
-                solid_joinstyle="round")
+                solid_joinstyle="round", marker=marker, markersize=3.4, markevery=3,
+                markerfacecolor=colour, markeredgecolor="white", markeredgewidth=0.5)
     else:
         ax.plot(xs, ys, "-", color=colour, lw=lw, label=label, zorder=4, solid_joinstyle="round")
 
@@ -542,15 +563,17 @@ def f2(DATA, EXTRA, manifest):
     # four same-weight lines in four hues encode no such thing. A cold reader takes away "some methods recover
     # faster". So the counter is drawn at full weight in its own colour and the three language memories share
     # one hue at three lightnesses, with a shaded envelope across them: the class reads as a class.
-    keys = [("tt3d", "tt3d", COL["tt3d"]),
-            ("person:llm_reflect_nomsg", "reflect", LANG_FAMILY[0]),
-            ("person:llm_longcontext_nomsg", "longcontext", LANG_FAMILY[1]),
-            ("person:llm_retrieval_nomsg", "retrieval", LANG_FAMILY[2])]
+    # marker as well as lightness: within one hue family the separation tops out near dE 22, which clears the
+    # threshold but is not what a reader picks up at a glance where two lines run close together. A shape is.
+    keys = [("tt3d", "tt3d", COL["tt3d"], None),
+            ("person:llm_reflect_nomsg", "reflect", LANG_FAMILY[0], "o"),
+            ("person:llm_longcontext_nomsg", "longcontext", LANG_FAMILY[1], "s"),
+            ("person:llm_retrieval_nomsg", "retrieval", LANG_FAMILY[2], "^")]
     fig, ax = plt.subplots(figsize=(SINGLE, 2.5))
     nums, hh = {}, {}
     st = stage_lookup(DATA, pop)
     lang = []
-    for key, m, colour in keys:
+    for key, m, colour, mk in keys:
         S = series(DATA, pop, key, only_hh=complete_hh(DATA, pop, key))
         if m != "tt3d":
             lang.append(S)
@@ -558,7 +581,7 @@ def f2(DATA, EXTRA, manifest):
         got = [S["mean"][d - 1] for d in range(14, 24) if S["mean"][d - 1] is not None]
         early = [S["mean"][d - 1] for d in range(14, 17) if S["mean"][d - 1] is not None]
         late = [S["mean"][d - 1] for d in range(20, 24) if S["mean"][d - 1] is not None]
-        _ = colour
+        _ = (colour, mk)
         nums[NAME[m]] = {"days 14-16": r2(avg(early)), "days 20-23": r2(avg(late)),
                          "re-learning inside the spell": r2(None if not (early and late) else avg(late) - avg(early)),
                          "spell mean": r2(avg(got))}
@@ -576,10 +599,10 @@ def f2(DATA, EXTRA, manifest):
         # region against one bold line in another colour is the grouping, and what the region means is caption
         # text.
         ax.fill_between(days_env, lo, hi, color=LANG_FAMILY[1], alpha=0.13, lw=0, zorder=1)
-    for key, m, colour in keys:
+    for key, m, colour, mk in keys:
         S = series(DATA, pop, key, only_hh=complete_hh(DATA, pop, key))
         line(ax, S, colour, NAME[m], band=(m == "tt3d"), stage_of=st,
-             lw=1.9 if m == "tt3d" else 1.2)
+             lw=1.9 if m == "tt3d" else 1.3, marker=mk)
     boundaries([ax], DATA, pop)
     finish(ax, "Accuracy")
     legend_below(ax, ncol=2)
@@ -641,20 +664,23 @@ def f3(DATA, EXTRA, manifest):
     """What one sentence buys and costs, with the measured clip days."""
     grow = growing()
     pop = "person"
-    arms = [("person:llm_longcontext_nomsg", "never told", ARM_STEPS[0]),
-            ("person:llm_longcontext_startmsg", "told on the first sick day", ARM_STEPS[1]),
-            ("person:llm_longcontext_startend", "told again on the first day back", ARM_STEPS[2])]
+    # Named by WHICH messages each arm received, in the A/B vocabulary the paper uses throughout, and given
+    # markers: two of the three exist over only part of the axis, so a shape is read instantly where a
+    # lightness step is not.
+    arms = [("person:llm_longcontext_nomsg", ARM_LABEL["nomsg"], ARM_STEPS[0], None),
+            ("person:llm_longcontext_startmsg", ARM_LABEL["startmsg"], ARM_STEPS[1], "s"),
+            ("person:llm_longcontext_startend", ARM_LABEL["startend"], ARM_STEPS[2], "^")]
     # A told-vs-untold figure must be drawn on the households all three arms ran, not on each arm's own set.
     # With the extension running, the untold arm has ten households, told-once six and told-twice three; drawing
     # each on its own set would put three different populations on one chart and call the gaps between them an
     # effect. Matched here, and the matched count is what the figure states.
-    matched = sorted(set.intersection(*(set(complete_hh(DATA, pop, k)) for k, _, _ in arms)))
-    S = {k: series(DATA, pop, k, only_hh=matched) for k, _, _ in arms}
+    matched = sorted(set.intersection(*(set(complete_hh(DATA, pop, k)) for k, _, _, _ in arms)))
+    S = {k: series(DATA, pop, k, only_hh=matched) for k, _, _, _ in arms}
     # Each told arm is the SAME run as the one above it until the day it is told, so it is drawn only from the
     # day it measurably departs. Measured here, not taken from the calendar -- on this memory one arm departs
     # three days before its message, and a calendar clip would have hidden that.
     clip, prev = {}, None
-    for k, _, _ in arms:
+    for k, _, _, _ in arms:
         if prev is not None:
             first = 1
             for i, d in enumerate(S[k]["days"]):
@@ -666,13 +692,13 @@ def f3(DATA, EXTRA, manifest):
             clip[k] = first
         prev = k
     fig, ax = plt.subplots(figsize=(SINGLE, 2.5))
-    for k, lab, c in reversed(arms):             # most-told at the bottom, never-told on top
-        line(ax, S[k], c, lab, clip_from=clip.get(k, 1), stage_of=stage_lookup(DATA, pop))
+    for k, lab, c, mk in reversed(arms):        # most-told at the bottom, never-told on top
+        line(ax, S[k], c, lab, clip_from=clip.get(k, 1), stage_of=stage_lookup(DATA, pop), marker=mk)
     boundaries([ax], DATA, pop)
     finish(ax, "Accuracy")
     legend_below(ax, ncol=1, order="reverse")
     nums = {}
-    for k, lab, _ in arms:
+    for k, lab, _, _ in arms:
         nums[lab] = {"days 14-16": r2(avg([S[k]["mean"][d - 1] for d in range(14, 17) if S[k]["mean"][d - 1] is not None])),
                      "days 24-26": r2(avg([S[k]["mean"][d - 1] for d in range(24, 27) if S[k]["mean"][d - 1] is not None])),
                      "drawn from day": clip.get(k, 1)}
