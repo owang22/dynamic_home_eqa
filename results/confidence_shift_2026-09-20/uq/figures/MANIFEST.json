@@ -1,7 +1,7 @@
 [
   {
     "figure": "F1",
-    "claim": "Every learner climbs through the settled fortnight, breaks on the first sick day, re-learns inside the spell, and breaks again on the return.",
+    "claim": "A change in the household's hidden routine costs accuracy TWICE: once when it happens and again when the world goes back to how it was. The second break is the half that is not obvious and it is not the smaller one \u2014 the 3-day timetable loses 41 points at the change and 24 at the return. And the method that survives the return is the one that cannot adapt: the never-forgets timetable gains 3 points on the day every adaptive method breaks, because the routine that returned is the one it never stopped believing. Adaptation is not free; it is paid for at every reversal.",
     "population": "one resident off sick, that resident's own things",
     "households": {
       "ttfrozen": 10,
@@ -50,7 +50,7 @@
         "break at 24": -16.3
       }
     },
-    "width_inches": 3.09,
+    "width_inches": 3.13,
     "column": "single",
     "files": [
       "F1_learn_break_relearn.png",
@@ -61,6 +61,7 @@
   },
   {
     "figure": "F2",
+    "claim_head": "The language memories do not behave as one class, and the one that behaves most like a COUNTER is the one built like a counter. Retrieval answers by pulling sightings from the same time of day across the whole history, capped but never aged out \u2014 which is the never-forgets timetable's index, plus a recency window. Behaviourally it tracks that counter at a correlation of +0.90 with a mean gap of 4.1 points, where the other language memories track it at +0.55 and 8\u20139 points, and at the return it RISES as that counter does while every adapting method falls. A language memory inherits the failure mode of whatever it is indexed by: choosing the retrieval key is choosing which disruption the memory will fail on. ",
     "claim": "Given ten days of the new routine the counter re-learns it 2.0 to 3.2 times as fast as any language memory: +31 points from the first sick days to the end of the spell, against +15 for reflection, +10 for long-context and +10 for retrieval.",
     "population": "one resident off sick, that resident's own things",
     "households": {
@@ -108,7 +109,7 @@
         "counter re-learns this many times faster": 3.0
       }
     },
-    "width_inches": 3.12,
+    "width_inches": 3.13,
     "column": "single",
     "files": [
       "F2_relearning_inside_the_spell.png",
@@ -119,13 +120,14 @@
   },
   {
     "figure": "F3",
-    "claim": "One sentence buys back much of the break and costs on the return; each told arm is identical to the untold run until the day it is told.",
+    "claim": "Ten days of living in the new routine, corrected after every single question, do not teach this memory the new routine. One sentence does. The untold arm is still answering from the old pattern at the end of the spell, while the arm told \u201cYuki is home sick today\u201d on the first morning sits above it from that day on. That is the uncomfortable half of the accuracy story: what repairs the break is being TOLD, not the evidence, so a memory nobody can talk to is a memory that does not recover.",
     "population": "one resident off sick, that resident's own things",
     "households": {
       "longcontext (matched across all three arms)": 3
     },
     "split": "all questions",
     "band": "\u00b11 standard error across households",
+    "caveat": "THREE HOUSEHOLDS. At this count almost nothing in this figure clears our claim bar and the bands overlap heavily; the gaps are indicative, not established. A larger run is adding households and the matched count in this caption will rise.",
     "note": "Each told arm is drawn from the day it measurably departs from the arm above it, computed from the data rather than from the calendar. Departure days are in the numbers below. Each told arm is the same run as the one above it until that day.",
     "caption": "One long-context memory, told three different things, on the same households. The darkest line is never told; the middle line is told \"Yuki is home sick today\" on the first sick day; the lightest is told again that the resident is back on the first day of the return. Each told arm is the same run as the one above it until the day it is told, so it is drawn only from the day it measurably departs.",
     "look_for": "Where each line begins. The told-once line emerges at day 14 and runs above the untold line for the rest of the spell \u2014 that gap is what one sentence buys. The told-twice line emerges before the return day, which is a genuine early difference in the runs and not a drawing choice; the departure days are in the numbers.",
@@ -149,7 +151,7 @@
         "drawn from day": 21
       }
     },
-    "width_inches": 3.09,
+    "width_inches": 3.13,
     "column": "single",
     "files": [
       "F3_what_one_sentence_buys.png",
@@ -160,7 +162,7 @@
   },
   {
     "figure": "F4",
-    "claim": "A method that hands a question over when unsure should be right about what it keeps. At the shift the timetables hand over most of the day's questions and are still wrong on a large share of the rest.",
+    "claim": "Letting a method decline the questions it is unsure of does not protect it when the world changes. At the shift the timetables give up most of the day's questions AND break their error promise on the ones they keep: they pay the cost of refusing to answer without buying the accuracy that was supposed to purchase. The gate reacts a day late and by too little, because it is driven by the same confidence that has not noticed anything yet.",
     "population": "one resident off sick, that resident's own things",
     "households": {
       "long-context": 10,
@@ -204,7 +206,7 @@
         "wrong on what it keeps, 14-16": 23.9
       }
     },
-    "width_inches": 3.09,
+    "width_inches": 3.13,
     "column": "single",
     "files": [
       "F4_handing_the_question_over.png",
@@ -215,6 +217,7 @@
   },
   {
     "figure": "F5",
+    "claim_head": "A confidence number can be perfectly stable and mean nothing at all. Last seen states near-total confidence every day of the month while being right about half the time, and the timetables hold theirs steady through a 40-point collapse in their own accuracy. Stability in a confidence signal is not evidence it is tracking anything \u2014 it is what a signal looks like when it is ignoring the world. ",
     "claim": "The timetables do not move their stated confidence when they break, so the gap between what they claim and what they achieve opens at the shift; last seen states 98% while being right 58% of the time, a confidence number carrying no information at all; Perpetua* is the one whose stated confidence tracks its own accuracy through the change.",
     "population": "one resident off sick, that resident's own things",
     "households": {
@@ -267,7 +270,7 @@
         "gap at day 14": 40.6
       }
     },
-    "width_inches": 5.88,
+    "width_inches": 5.92,
     "column": "double",
     "files": [
       "F5_confidence_against_accuracy.png",
@@ -278,7 +281,7 @@
   },
   {
     "figure": "F6",
-    "claim": "At the shift the never-forgets timetable answers the questions it gets wrong and hands over the ones it would have got right \u2014 its gate runs backwards. Perpetua* keeps the sign the right way round in every window.",
+    "claim": "At the moment the routine changes, the never-forgets timetable's gate runs BACKWARDS: it answers the questions it gets wrong and hands over the ones it would have got right. That is worse than a gate that does nothing at all. Perpetua* keeps the sign the right way round in every window, which is what shows the failure to be a property of the confidence signal rather than of gating as an idea.",
     "population": "one resident off sick, that resident's own things",
     "households": {
       "never-forgets timetable": 10,
@@ -286,8 +289,13 @@
     },
     "split": "all questions",
     "band": "none: these are window accuracies",
-    "caption": "For two methods, the accuracy of the questions the gate chose to answer (solid) against the accuracy of the questions it handed over (pale), by window. A gate that is working keeps the solid bar above the pale one. Where it does not, the figure says so.",
-    "look_for": "The never-forgets timetable's first-sick-days pair, where the pale bar overtakes the solid one, against Perpetua*'s, where it does not. The per-window edge \u2014 kept minus handed over \u2014 is in the numbers.",
+    "encoding_words": {
+      "pale": "the handed-over bars are hatched, not tinted",
+      "tint": "the handed-over bars are hatched, not tinted",
+      "faded": "the handed-over bars are hatched, not tinted"
+    },
+    "caption": "For two methods, the accuracy of the questions the gate chose to answer (solid) against the accuracy of the questions it handed over (hatched), by window. A gate that is working keeps the solid bar above the hatched one. Where it does not, the figure says so.",
+    "look_for": "The never-forgets timetable's first-sick-days pair, where the hatched bar overtakes the solid one, against Perpetua*'s, where it does not. The per-window edge \u2014 kept minus handed over \u2014 is in the numbers.",
     "not_shown": "Two methods only; the 3-day timetable is close to a wash and long-context never inverts, so neither adds to the contrast. It also does not show how MANY questions each bar rests on, which differs a great deal between the kept and handed-over halves.",
     "numbers": {
       "never-forgets timetable": {
@@ -305,7 +313,7 @@
         "a week later": 37.4
       }
     },
-    "width_inches": 4.37,
+    "width_inches": 4.41,
     "column": "1.5",
     "files": [
       "F6_the_inversion.png",
@@ -343,7 +351,7 @@
         "spell 14-23": 1.64
       }
     },
-    "width_inches": 3.22,
+    "width_inches": 3.26,
     "column": "single",
     "files": [
       "F7_sets_break_rather_than_widen.png",
@@ -354,7 +362,7 @@
   },
   {
     "figure": "F8",
-    "claim": "Scored +1 for a right answer, \u22121 for a wrong one and 0 for declining, the timetables collapse at the shift while Perpetua* and long-context do not.",
+    "claim": "Scored the way a user would feel it \u2014 +1 for a right answer, \u22121 for a wrong one, 0 for declining \u2014 the ranking inverts at the moment of change: the methods that are most accurate in the settled world are the ones that collapse, and one goes NEGATIVE. On day 14 the never-forgets timetable scores below zero, meaning it would have done better answering nothing at all. Accuracy in a stable world does not predict value when the world moves.",
     "population": "one resident off sick, that resident's own things",
     "households": {
       "ttfrozen": 10,
@@ -377,7 +385,7 @@
     ],
     "look_for": "The first dotted rule. The never-forgets timetable falls from 7.7 in the settled week to 0.7 on the first sick days and the 3-day timetable from 7.6 to 2.9, while Perpetua* goes 4.6 to 4.6 and long-context 4.6 to 5.1. Note also that Perpetua* sits BELOW both timetables while the world is stable. And on day 14 the never-forgets timetable's daily score is -3.0 \u2014 below zero, meaning it would have scored better answering nothing at all that day. That single day is the sharpest form of this figure's point and the window averages above do not show it.",
     "not_shown": "The thresholds are chosen with hindsight for the window being scored, so these are upper bounds, not a policy anyone could run. Each method uses a different threshold, so the lines are not a like-for-like confidence comparison \u2014 that is deliberate, since the confidence scales differ wildly, but it means a reader cannot infer anything about the thresholds themselves from this figure.",
-    "caveat": "thresholds chosen with hindsight, so these are upper bounds, not a deployable policy; this is not a deployable policy",
+    "caveat": "thresholds chosen with hindsight, so these are upper bounds, not a deployable policy, which makes the negative result stronger: even handed the answers in advance, declining buys the counters almost nothing exactly when it would matter",
     "drawing": "The line is a centred three-day average computed within each stage, never across a boundary. These are rates rather than averages over households, so no band is drawn.",
     "numbers": {
       "never-forgets timetable": {
@@ -421,7 +429,7 @@
         "worst single day": 0.2
       }
     },
-    "width_inches": 3.21,
+    "width_inches": 3.25,
     "column": "single",
     "files": [
       "F8_decision_score_per_day.png",
@@ -482,7 +490,7 @@
         "a week later 27-31": 0.667
       }
     },
-    "width_inches": 3.79,
+    "width_inches": 3.83,
     "column": "1.5",
     "files": [
       "F9_value_of_declining.png",

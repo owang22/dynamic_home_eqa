@@ -1,6 +1,6 @@
 # Caption for F2
 
-**Single-column figure** — reproduce at 3.12 in, its rendered width.
+**Single-column figure** — reproduce at 3.13 in, its rendered width.
 
 **Title line:** _none needed — this figure does not carry its own title; the paper caption is enough._
 

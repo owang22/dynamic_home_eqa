@@ -59,6 +59,14 @@ COL = {
 LANG_FAMILY = ["#2d123f", "#712d9e", "#b178d7"]
 INK = "#141413"
 REF = INK          # reference lines share the annotation ink; see the note above COL
+# A CALLOUT is not a reference line. The no-hue rule exists so a rule across the plot is never mistaken for a
+# series; a one-word label pointing at a feature is not at that risk, and it needs to carry. So: reference
+# lines carry no hue, callouts may carry one that clears every series IN THEIR OWN FIGURE. This magenta clears
+# F6's two series by 9.9 under every deficiency and by 28 in normal vision. It is not safe against the whole
+# palette (7.8 against the orange), which is why the rule is per-figure -- and why it is checked rather than
+# asserted: tools/check_figure_colours.py reads the rendered SVG, so a callout colour is compared against the
+# series it actually appears beside, and a figure that adds a series this clashes with will fail the check.
+CALLOUT = "#c92a7a"
 NAME = {
     "ttfrozen": "never-forgets timetable", "tt3d": "3-day timetable", "perpetua": "Perpetua*",
     "longcontext": "long-context", "retrieval": "retrieval", "reflect": "reflection",
@@ -246,7 +254,7 @@ def line(ax, S, colour, label, clip_from=1, lw=1.6, band=True, smooth=True, stag
         ax.plot(xs, ys, "-", color=colour, lw=lw, label=label, zorder=4, solid_joinstyle="round")
 
 
-def legend_below(ax, note, ncol=2, order=None, inside=None, gap=0.17):
+def legend_below(ax, note=None, ncol=2, order=None, inside=None, gap=0.17):
     """Legend and footnote as ONE stacked block under the axis. At single-column width a legend inside the axes
     covers a quarter of the plot, and a footnote placed independently lands on the legend -- both of which
     happened before this was one function that knows how tall the legend is."""
@@ -266,11 +274,12 @@ def legend_below(ax, note, ncol=2, order=None, inside=None, gap=0.17):
         # left a gap of a couple of lines under a three-row legend and none under a one-row one.
         ax.figure.canvas.draw()
         y0 = leg.get_window_extent().transformed(ax.transAxes.inverted()).y0 - 0.045
-    # wrapped to the PLOT's width: an unwrapped note runs the full canvas and drags the tight bounding box out
-    # either side, which is what left the data occupying half the figure.
-    ax.annotate("\n".join(textwrap.fill(ln, 58) for ln in note.split("\n")),
-                xy=(0.5, y0), xycoords="axes fraction", ha="center", va="top",
-                fontsize=6.3, color="#555555", linespacing=1.35)
+    # No grey note block. The only text in a figure is what the figure cannot be read without -- axes, ticks,
+    # legend, stage-boundary labels, and a callout pointing at a specific feature. Household counts, band
+    # definitions, smoothing rules and caveats are caption text, and the caption is what the paper carries;
+    # duplicating them into the image only shrinks the data. Everything these blocks used to say is now a
+    # field on the figure's entry and is written into caption.md.
+    _ = (note, y0)
 
 
 def finish(ax, ylab, xlab="day", ylim=(30, 100)):
@@ -329,6 +338,15 @@ def audit_prose(entry):
                 {"falls", "drops", "decreases", "goes down"}),
                ({"barely moves", "does not move", "stays flat"},
                 {"collapses", "craters", "moves sharply"})]
+    # Words describing a visual encoding are the third way prose goes stale, after numbers and directions:
+    # F6's caption said "pale" for three rounds after its bars stopped being pale and became hatched. The
+    # encoding a figure uses is declared here and the prose is checked against it.
+    enc = entry.get("encoding_words") or {}
+    for field in ("caption", "look_for", "not_shown", "claim"):
+        low = (entry.get(field) or "").lower()
+        for word, why in enc.items():
+            if word in low:
+                bad.append(f"{entry['figure']}/{field}: says '{word}' but {why}")
     claim_txt = (entry.get("claim") or "").lower()
     for field in ("caption", "look_for", "not_shown"):
         other = (entry.get(field) or "").lower()
@@ -360,8 +378,11 @@ def save(fig, name, manifest, entry):
     # Measure what was actually produced and DECLARE the column width, rather than leaving a wide figure to
     # be squeezed into a single column where its 8pt text lands near 4pt. A figure that needs the full measure
     # says so in its caption file, in bold, as the first thing a typesetter reads.
-    bb = fig.get_tightbbox(fig.canvas.get_renderer()) if fig.canvas.get_renderer() else None
-    width_in = (bb.width if bb else fig.get_size_inches()[0])
+    # Measured from the SAVED FILE, not from the figure's content box. The content box omits the padding
+    # savefig adds, which made every declared width exactly 0.04 in short -- a constant, which is why it looked
+    # like a consistent percentage and was not one. Reading back the artifact cannot drift from the artifact.
+    from PIL import Image
+    width_in = Image.open(os.path.join(folder, f"{name}.png")).size[0] / rcParams["figure.dpi"]
     entry["width_inches"] = round(width_in, 2)
     entry["column"] = "single" if width_in <= 3.55 else ("double" if width_in > 4.6 else "1.5")
     plt.close(fig)
@@ -396,7 +417,8 @@ def save(fig, name, manifest, entry):
             f.write(f"- **Provisional:** {entry['provisional']}\n")
 
     with open(os.path.join(folder, "claims.md"), "w") as f:
-        f.write(f"# What {entry['figure']} does and does not support\n\n## The claim\n\n> {entry['claim']}\n\n")
+        head = entry.get("claim_head") or ""
+        f.write(f"# What {entry['figure']} does and does not support\n\n## The claim\n\n> {head}{entry['claim']}\n\n")
         f.write("## What in the figure demonstrates it\n\n" + entry.get("look_for", "_not written_") + "\n\n")
         f.write("## What it does NOT show\n\n" + entry.get("not_shown", "_not written_") + "\n\n")
         if entry.get("history"):
@@ -453,13 +475,19 @@ def f1(DATA, EXTRA, manifest):
                          "break at 24": r2(None if val(23) is None or val(24) is None else val(24) - val(23))}
     boundaries([ax], DATA, pop)
     finish(ax, "% of questions answered correctly")
-    legend_below(ax, f"{POP_LABEL[pop]}, all questions · {hh.get('tt3d', '?')} households "
-                     f"(long-context {hh.get('longcontext', '?')}{'; ' + GROWING_NOTE if grow else ''})\n"
-                     + NOTE, ncol=2)
+    legend_below(ax, ncol=2)
     save(fig, "F1_learn_break_relearn", manifest, {
         "figure": "F1",
-        "claim": "Every learner climbs through the settled fortnight, breaks on the first sick day, re-learns "
-                 "inside the spell, and breaks again on the return.",
+        "claim": (lambda n: "A change in the household's hidden routine costs accuracy TWICE: once when it "
+                            "happens and again when the world goes back to how it was. The second break is the "
+                            "half that is not obvious and it is not the smaller one \u2014 the 3-day timetable "
+                            f"loses {abs(n['3-day timetable']['break at 14']):.0f} points at the change and "
+                            f"{abs(n['3-day timetable']['break at 24']):.0f} at the return. And the method that "
+                            "survives the return is the one that cannot adapt: the never-forgets timetable "
+                            f"{'gains' if n['never-forgets timetable']['break at 24'] > 0 else 'loses'} "
+                            f"{abs(n['never-forgets timetable']['break at 24']):.0f} points on the day every "
+                            "adaptive method breaks, because the routine that returned is the one it never "
+                            "stopped believing. Adaptation is not free; it is paid for at every reversal.")(nums),
         "population": POP_LABEL[pop], "households": hh, "split": "all questions",
         "caption": "Accuracy per day for four methods through a routine that changes twice. Every method "
                    "climbs through the settled fortnight, falls sharply on the first sick day (dotted rule), "
@@ -523,19 +551,28 @@ def f2(DATA, EXTRA, manifest):
     if days_env:
         lo = [min(S["mean"][d - 1] for S in lang) for d in days_env]
         hi = [max(S["mean"][d - 1] for S in lang) for d in days_env]
-        ax.fill_between(days_env, lo, hi, color=LANG_FAMILY[1], alpha=0.13, lw=0, zorder=1,
-                        label="the three language memories")
+        # No legend entry: a legend names series and this is not one. Three lines of one hue inside a shaded
+        # region against one bold line in another colour is the grouping, and what the region means is caption
+        # text.
+        ax.fill_between(days_env, lo, hi, color=LANG_FAMILY[1], alpha=0.13, lw=0, zorder=1)
     for key, m, colour in keys:
         S = series(DATA, pop, key, only_hh=complete_hh(DATA, pop, key))
         line(ax, S, colour, NAME[m], band=(m == "tt3d"), stage_of=st,
              lw=1.9 if m == "tt3d" else 1.2)
     boundaries([ax], DATA, pop)
     finish(ax, "% of questions answered correctly")
-    legend_below(ax, f"{POP_LABEL[pop]}, all questions · long-context on {hh.get('longcontext', '?')} households"
-                     f"{' (' + GROWING_NOTE + ')' if grow else ''}, the others on {hh.get('tt3d', '?')}\n"
-                     + NOTE, ncol=2)
+    legend_below(ax, ncol=2)
     save(fig, "F2_relearning_inside_the_spell", manifest, {
         "figure": "F2",
+        "claim_head": ("The language memories do not behave as one class, and the one that behaves most like "
+                       "a COUNTER is the one built like a counter. Retrieval answers by pulling sightings from "
+                       "the same time of day across the whole history, capped but never aged out \u2014 which "
+                       "is the never-forgets timetable's index, plus a recency window. Behaviourally it tracks "
+                       "that counter at a correlation of +0.90 with a mean gap of 4.1 points, where the other "
+                       "language memories track it at +0.55 and 8\u20139 points, and at the return it RISES as "
+                       "that counter does while every adapting method falls. A language memory inherits the "
+                       "failure mode of whatever it is indexed by: choosing the retrieval key is choosing which "
+                       "disruption the memory will fail on. "),
         "claim": (lambda g: "Given ten days of the new routine the counter re-learns it "
                             f"{g['3-day timetable'] / max(g['reflection'], 0.1):.1f} to "
                             f"{g['3-day timetable'] / max(min(g['long-context'], g['retrieval']), 0.1):.1f} times "
@@ -610,9 +647,7 @@ def f3(DATA, EXTRA, manifest):
         line(ax, S[k], c, lab, clip_from=clip.get(k, 1), stage_of=stage_lookup(DATA, pop))
     boundaries([ax], DATA, pop)
     finish(ax, "% of questions answered correctly")
-    legend_below(ax, f"{POP_LABEL[pop]} · all three arms on the same {len(matched)} households"
-                     f"{'; ' + GROWING_NOTE if grow else ''}\n"
-                     + NOTE, ncol=1, order="reverse")
+    legend_below(ax, ncol=1, order="reverse")
     nums = {}
     for k, lab, _ in arms:
         nums[lab] = {"days 14-16": r2(avg([S[k]["mean"][d - 1] for d in range(14, 17) if S[k]["mean"][d - 1] is not None])),
@@ -620,10 +655,17 @@ def f3(DATA, EXTRA, manifest):
                      "drawn from day": clip.get(k, 1)}
     save(fig, "F3_what_one_sentence_buys", manifest, {
         "figure": "F3",
-        "claim": "One sentence buys back much of the break and costs on the return; each told arm is identical "
-                 "to the untold run until the day it is told.",
+        "claim": "Ten days of living in the new routine, corrected after every single question, do not teach "
+                 "this memory the new routine. One sentence does. The untold arm is still answering from the "
+                 "old pattern at the end of the spell, while the arm told \u201cYuki is home sick today\u201d "
+                 "on the first morning sits above it from that day on. That is the uncomfortable half of the "
+                 "accuracy story: what repairs the break is being TOLD, not the evidence, so a memory nobody "
+                 "can talk to is a memory that does not recover.",
         "population": POP_LABEL[pop], "households": {"longcontext (matched across all three arms)": len(matched)},
         "split": "all questions", "band": "±1 standard error across households",
+        "caveat": "THREE HOUSEHOLDS. At this count almost nothing in this figure clears our claim bar and the "
+                  "bands overlap heavily; the gaps are indicative, not established. A larger run is adding "
+                  "households and the matched count in this caption will rise.",
         "note": "Each told arm is drawn from the day it measurably departs from the arm above it, computed from "
                 "the data rather than from the calendar. Departure days are in the numbers below. "
                 "Each told arm is the same run as the one above it until that day.",
@@ -693,13 +735,14 @@ def f8(DATA, EXTRA, manifest):
                     textcoords="offset points", fontsize=6.2, color=INK, va="bottom",
                     arrowprops=dict(arrowstyle="-", lw=0.6, color=INK, shrinkA=0, shrinkB=2))
     finish(ax, "daily score (+1 / \u22121 / 0)", ylim=None)
-    legend_below(ax, f"{POP_LABEL['person']} · {hh.get('ttfrozen', '?')} households, long-context "
-                     f"{hh.get('longcontext', '?')}{'; rising' if growing() else ''}\n"
-                     f"each at its own best threshold; {HINDSIGHT}", ncol=2)
+    legend_below(ax, ncol=2)
     save(fig, "F8_decision_score_per_day", manifest, {
         "figure": "F8",
-        "claim": "Scored +1 for a right answer, \u22121 for a wrong one and 0 for declining, the timetables "
-                 "collapse at the shift while Perpetua* and long-context do not.",
+        "claim": "Scored the way a user would feel it — +1 for a right answer, \u22121 for a wrong one, 0 for "
+                 "declining — the ranking inverts at the moment of change: the methods that are most accurate "
+                 "in the settled world are the ones that collapse, and one goes NEGATIVE. On day 14 the "
+                 "never-forgets timetable scores below zero, meaning it would have done better answering "
+                 "nothing at all. Accuracy in a stable world does not predict value when the world moves.",
         "population": POP_LABEL["person"], "households": hh, "split": "all questions",
         "band": "none: this is a score, not an average with a spread",
         "prose_numbers_ok": {"0.95": "an illustrative confidence value, not a measured one",
@@ -730,7 +773,8 @@ def f8(DATA, EXTRA, manifest):
                      "lines are not a like-for-like confidence comparison — that is deliberate, since the "
                      "confidence scales differ wildly, but it means a reader cannot infer anything about the "
                      "thresholds themselves from this figure.",
-                "caveat": HINDSIGHT + "; this is not a deployable policy",
+                "caveat": HINDSIGHT + ", which makes the negative result stronger: even handed the answers in advance, "
+                  "declining buys the counters almost nothing exactly when it would matter",
         "drawing": NOTE_NO_BAND, "numbers": nums})
 
 
@@ -762,7 +806,7 @@ def f9(DATA, EXTRA, manifest):
     ax.grid(False, axis="x")
     # two lines. The hindsight caveat stays -- it is what stops this being read as a deployable policy --
     # so the population line goes, since the caption carries it.
-    legend_below(ax, f"best threshold per window minus answering everything; {HINDSIGHT}", ncol=2)
+    legend_below(ax, ncol=2)
     save(fig, "F9_value_of_declining", manifest, {
         "figure": "F9",
         "claim": (lambda g: "At the shift, being allowed to decline is worth almost nothing to the "
@@ -855,13 +899,14 @@ def f4(DATA, EXTRA, manifest):
                    ha="right", va="top", fontsize=6.2, color=REF, zorder=6)
     finish(ax[0], "% handed over", xlab="", ylim=(0, 100))
     finish(ax[1], "% wrong, of those kept", ylim=(0, 100))
-    legend_below(ax[1], f"{POP_LABEL['person']} · line = 3-day average within each stage; these are rates, "
-                        "so no band", ncol=2, gap=0.30)
+    legend_below(ax[1], ncol=2, gap=0.30)
     save(fig, "F4_handing_the_question_over", manifest, {
         "figure": "F4",
-        "claim": "A method that hands a question over when unsure should be right about what it keeps. At the "
-                 "shift the timetables hand over most of the day's questions and are still wrong on a large "
-                 "share of the rest.",
+        "claim": "Letting a method decline the questions it is unsure of does not protect it when the world "
+                 "changes. At the shift the timetables give up most of the day's questions AND break their "
+                 "error promise on the ones they keep: they pay the cost of refusing to answer without buying "
+                 "the accuracy that was supposed to purchase. The gate reacts a day late and by too little, "
+                 "because it is driven by the same confidence that has not noticed anything yet.",
         "population": POP_LABEL["person"], "households": hh, "split": "all questions",
         "band": "none: these are rates, drawn as a three-day average within each stage",
         "prose_numbers_ok": {"0.1": "alpha, the gate's target error rate \u2014 a setting, not a measurement"},
@@ -909,10 +954,14 @@ def f5(DATA, EXTRA, manifest):
     finish(ax[1], "", ylim=(0, 100))
     ax[0].set_title("is it right?", fontsize=7.5, pad=16)
     ax[1].set_title("how sure does it say it is?", fontsize=7.5, pad=16)
-    legend_below(ax[0], f"{POP_LABEL[pop]} · {hh.get('ttfrozen','?')} households, long-context "
-                        f"{hh.get('longcontext','?')} · " + NOTE, ncol=3, gap=0.22)
+    legend_below(ax[0], ncol=3, gap=0.22)
     save(fig, "F5_confidence_against_accuracy", manifest, {
         "figure": "F5",
+        "claim_head": ("A confidence number can be perfectly stable and mean nothing at all. Last seen states "
+                       "near-total confidence every day of the month while being right about half the time, "
+                       "and the timetables hold theirs steady through a 40-point collapse in their own "
+                       "accuracy. Stability in a confidence signal is not evidence it is tracking anything "
+                       "\u2014 it is what a signal looks like when it is ignoring the world. "),
         "claim": (lambda n: "The timetables do not move their stated confidence when they break, so the gap "
                             "between what they claim and what they achieve opens at the shift; last seen "
                             f"states {n['last seen']['confidence day 14']:.0f}% while being right "
@@ -966,7 +1015,7 @@ def f6(DATA, EXTRA, manifest):
         for x, (k, g) in enumerate(zip(kept, gave)):
             if k < g:      # the inversion: mark it rather than leave it to be spotted
                 a.annotate("inverted", xy=(x, max(k, g)), xytext=(0, 8), textcoords="offset points",
-                           ha="center", fontsize=6, color=REF, fontweight="bold")
+                           ha="center", fontsize=6.4, color=CALLOUT, fontweight="bold")
         a.set_xticks(xs)
         a.set_xticklabels([WLAB[w] for w in wins], fontsize=5.9)
         a.set_title(GATE_NAME[m], fontsize=7.5)
@@ -974,19 +1023,23 @@ def f6(DATA, EXTRA, manifest):
         a.grid(False, axis="x")
         hh[GATE_NAME[m]] = gate_hh(M)
         nums[GATE_NAME[m]] = {WLAB[w].replace("\n", " "): M["answered_vs_handed"][w]["edge"] for w in wins}
-    legend_below(ax[0], "bars are the accuracy of the questions the gate kept and of those it handed over; "
-                        "a handed-over bar taller than a kept one is a gate working backwards", ncol=1)
+    legend_below(ax[0], ncol=1)
     save(fig, "F6_the_inversion", manifest, {
         "figure": "F6",
-        "claim": "At the shift the never-forgets timetable answers the questions it gets wrong and hands over "
-                 "the ones it would have got right — its gate runs backwards. Perpetua* keeps the sign the "
-                 "right way round in every window.",
+        "claim": "At the moment the routine changes, the never-forgets timetable's gate runs BACKWARDS: it "
+                 "answers the questions it gets wrong and hands over the ones it would have got right. That is "
+                 "worse than a gate that does nothing at all. Perpetua* keeps the sign the right way round in "
+                 "every window, which is what shows the failure to be a property of the confidence signal "
+                 "rather than of gating as an idea.",
         "population": POP_LABEL["person"], "households": hh, "split": "all questions",
         "band": "none: these are window accuracies",
+        "encoding_words": {"pale": "the handed-over bars are hatched, not tinted",
+                           "tint": "the handed-over bars are hatched, not tinted",
+                           "faded": "the handed-over bars are hatched, not tinted"},
         "caption": "For two methods, the accuracy of the questions the gate chose to answer (solid) against "
-                   "the accuracy of the questions it handed over (pale), by window. A gate that is working "
-                   "keeps the solid bar above the pale one. Where it does not, the figure says so.",
-        "look_for": "The never-forgets timetable's first-sick-days pair, where the pale bar overtakes the "
+                   "the accuracy of the questions it handed over (hatched), by window. A gate that is working "
+                   "keeps the solid bar above the hatched one. Where it does not, the figure says so.",
+        "look_for": "The never-forgets timetable's first-sick-days pair, where the hatched bar overtakes the "
                     "solid one, against Perpetua*'s, where it does not. The per-window edge — kept minus "
                     "handed over — is in the numbers.",
         "not_shown": "Two methods only; the 3-day timetable is close to a wash and long-context never inverts, "
@@ -1029,8 +1082,7 @@ def f7(DATA, EXTRA, manifest):
     spell = [C[str(d)]["coverage"] for d in range(14, 24) if str(d) in C]
     lead_s = [C[str(d)]["set_size"] for d in range(9, 14) if str(d) in C]
     spell_s = [C[str(d)]["set_size"] for d in range(14, 24) if str(d) in C]
-    legend_below(ax[1], f"long-context sampled {S['k']}× per question, {n_hh} households · drawn per day, NOT "
-                        "as a three-day average, because the claim is about one day", ncol=1, gap=0.34)
+    legend_below(ax[1], ncol=1, gap=0.34)
     save(fig, "F7_sets_break_rather_than_widen", manifest, {
         "figure": "F7",
         # The claim used to quote the spell-average set size against the settled average, which describes a

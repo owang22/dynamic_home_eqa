@@ -2,7 +2,7 @@
 
 ## The claim
 
-> A method that hands a question over when unsure should be right about what it keeps. At the shift the timetables hand over most of the day's questions and are still wrong on a large share of the rest.
+> Letting a method decline the questions it is unsure of does not protect it when the world changes. At the shift the timetables give up most of the day's questions AND break their error promise on the ones they keep: they pay the cost of refusing to answer without buying the accuracy that was supposed to purchase. The gate reacts a day late and by too little, because it is driven by the same confidence that has not noticed anything yet.
 
 ## What in the figure demonstrates it
 

@@ -8,7 +8,7 @@ Paste and edit; written as a caption, not a summary.
 
 ---
 
-For two methods, the accuracy of the questions the gate chose to answer (solid) against the accuracy of the questions it handed over (pale), by window. A gate that is working keeps the solid bar above the pale one. Where it does not, the figure says so.
+For two methods, the accuracy of the questions the gate chose to answer (solid) against the accuracy of the questions it handed over (hatched), by window. A gate that is working keeps the solid bar above the hatched one. Where it does not, the figure says so.
 
 ---
 

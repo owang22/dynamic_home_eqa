@@ -2,7 +2,7 @@
 
 ## The claim
 
-> One sentence buys back much of the break and costs on the return; each told arm is identical to the untold run until the day it is told.
+> Ten days of living in the new routine, corrected after every single question, do not teach this memory the new routine. One sentence does. The untold arm is still answering from the old pattern at the end of the spell, while the arm told “Yuki is home sick today” on the first morning sits above it from that day on. That is the uncomfortable half of the accuracy story: what repairs the break is being TOLD, not the evidence, so a memory nobody can talk to is a memory that does not recover.
 
 ## What in the figure demonstrates it
 

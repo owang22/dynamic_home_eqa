@@ -2,7 +2,7 @@
 
 ## The claim
 
-> The timetables do not move their stated confidence when they break, so the gap between what they claim and what they achieve opens at the shift; last seen states 98% while being right 58% of the time, a confidence number carrying no information at all; Perpetua* is the one whose stated confidence tracks its own accuracy through the change.
+> A confidence number can be perfectly stable and mean nothing at all. Last seen states near-total confidence every day of the month while being right about half the time, and the timetables hold theirs steady through a 40-point collapse in their own accuracy. Stability in a confidence signal is not evidence it is tracking anything — it is what a signal looks like when it is ignoring the world. The timetables do not move their stated confidence when they break, so the gap between what they claim and what they achieve opens at the shift; last seen states 98% while being right 58% of the time, a confidence number carrying no information at all; Perpetua* is the one whose stated confidence tracks its own accuracy through the change.
 
 ## What in the figure demonstrates it
 

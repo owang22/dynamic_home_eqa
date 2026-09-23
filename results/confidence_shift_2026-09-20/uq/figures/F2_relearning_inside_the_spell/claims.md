@@ -2,7 +2,7 @@
 
 ## The claim
 
-> Given ten days of the new routine the counter re-learns it 2.0 to 3.2 times as fast as any language memory: +31 points from the first sick days to the end of the spell, against +15 for reflection, +10 for long-context and +10 for retrieval.
+> The language memories do not behave as one class, and the one that behaves most like a COUNTER is the one built like a counter. Retrieval answers by pulling sightings from the same time of day across the whole history, capped but never aged out — which is the never-forgets timetable's index, plus a recency window. Behaviourally it tracks that counter at a correlation of +0.90 with a mean gap of 4.1 points, where the other language memories track it at +0.55 and 8–9 points, and at the return it RISES as that counter does while every adapting method falls. A language memory inherits the failure mode of whatever it is indexed by: choosing the retrieval key is choosing which disruption the memory will fail on. Given ten days of the new routine the counter re-learns it 2.0 to 3.2 times as fast as any language memory: +31 points from the first sick days to the end of the spell, against +15 for reflection, +10 for long-context and +10 for retrieval.
 
 ## What in the figure demonstrates it
 

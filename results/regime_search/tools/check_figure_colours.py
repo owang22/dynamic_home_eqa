@@ -18,7 +18,15 @@ Three rules, each of which exists because breaking it hid a real failure:
   ALL THREE DEFICIENCIES. Perpetua* against the never-forgets blue was fine under both red-green forms and
   5.5 under tritanopia. A red-green-only check would have passed it, and would have missed F6 entirely.
 
-Reference lines count as series: F4's red promise line has to be distinguishable from the green it crosses.
+Reference lines and callouts count as series: F4's promise line has to be distinguishable from the green it
+crosses, and F6's "inverted" callout from the bars it sits above.
+
+KNOWN AND ACCEPTED: the standard-error bands composite to near-identical pale washes and this check does not
+flag them, because it skips anything below 0.2 opacity. That is deliberate. A band is identified by the line
+running through it, never by matching one band's colour to another's, and the obvious "fix" -- darkening the
+bands so they separate -- would make every region where two bands overlap far harder to read than the faint
+ambiguity it removes. If a future reader rediscovers this, the answer is that it was measured, considered, and
+left alone.
 """
 import collections
 import glob

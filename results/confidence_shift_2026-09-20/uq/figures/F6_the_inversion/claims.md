@@ -2,11 +2,11 @@
 
 ## The claim
 
-> At the shift the never-forgets timetable answers the questions it gets wrong and hands over the ones it would have got right — its gate runs backwards. Perpetua* keeps the sign the right way round in every window.
+> At the moment the routine changes, the never-forgets timetable's gate runs BACKWARDS: it answers the questions it gets wrong and hands over the ones it would have got right. That is worse than a gate that does nothing at all. Perpetua* keeps the sign the right way round in every window, which is what shows the failure to be a property of the confidence signal rather than of gating as an idea.
 
 ## What in the figure demonstrates it
 
-The never-forgets timetable's first-sick-days pair, where the pale bar overtakes the solid one, against Perpetua*'s, where it does not. The per-window edge — kept minus handed over — is in the numbers.
+The never-forgets timetable's first-sick-days pair, where the hatched bar overtakes the solid one, against Perpetua*'s, where it does not. The per-window edge — kept minus handed over — is in the numbers.
 
 ## What it does NOT show
 

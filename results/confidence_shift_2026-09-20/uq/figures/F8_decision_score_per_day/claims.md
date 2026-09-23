@@ -2,7 +2,7 @@
 
 ## The claim
 
-> Scored +1 for a right answer, −1 for a wrong one and 0 for declining, the timetables collapse at the shift while Perpetua* and long-context do not.
+> Scored the way a user would feel it — +1 for a right answer, −1 for a wrong one, 0 for declining — the ranking inverts at the moment of change: the methods that are most accurate in the settled world are the ones that collapse, and one goes NEGATIVE. On day 14 the never-forgets timetable scores below zero, meaning it would have done better answering nothing at all. Accuracy in a stable world does not predict value when the world moves.
 
 ## What in the figure demonstrates it
 

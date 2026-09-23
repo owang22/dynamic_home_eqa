@@ -2,7 +2,7 @@
 
 ## The claim
 
-> Every learner climbs through the settled fortnight, breaks on the first sick day, re-learns inside the spell, and breaks again on the return.
+> A change in the household's hidden routine costs accuracy TWICE: once when it happens and again when the world goes back to how it was. The second break is the half that is not obvious and it is not the smaller one — the 3-day timetable loses 41 points at the change and 24 at the return. And the method that survives the return is the one that cannot adapt: the never-forgets timetable gains 3 points on the day every adaptive method breaks, because the routine that returned is the one it never stopped believing. Adaptation is not free; it is paid for at every reversal.
 
 ## What in the figure demonstrates it
 
