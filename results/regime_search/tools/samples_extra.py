@@ -41,6 +41,48 @@ SAMPLES = os.path.join(os.path.dirname(ROOT), "confidence_shift_2026-09-20",
 DAYS = 31
 
 
+WARMUP = 20   # DecayingStepConformal holds q=1 for its first 20 questions per household
+
+
+def conformal_per_day(done_days):
+    """Per-day LAC coverage and set size, pooled over households, excluding each household's warm-up.
+
+    A day is reported only when every household has finished it -- the same rule the rest of this file uses,
+    and the one that stopped a single household's partial day reading as a three-household average."""
+    import glob as _g
+    sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(ROOT)), "src"))
+    from baselines.patrol.uq_agents import DecayingStepConformal
+    by_day = collections.defaultdict(lambda: {"n": 0, "covered": 0, "size": 0.0, "hh": set()})
+    for f in sorted(_g.glob(os.path.join(SAMPLES, "hh_s*", "hh_s*.jsonl"))):
+        lac = DecayingStepConformal(alpha=0.1)
+        for i, l in enumerate(open(f)):
+            if not l.strip():
+                continue
+            try:
+                r = json.loads(l)
+            except ValueError:
+                continue
+            dist, truth = r.get("dist") or {}, r.get("truth")
+            s_set = {y for y, p in dist.items() if (1.0 - p) <= lac.q + 1e-9}
+            if not s_set and dist:                 # LAC keeps the model's own top answer
+                s_set = {max(dist, key=dist.get)}
+            lac.update(truth not in s_set, 1.0 - dist.get(truth, 0.0))
+            d = r.get("day_index")
+            if i < WARMUP or d not in done_days:
+                continue
+            c = by_day[d]
+            c["n"] += 1
+            c["covered"] += 1 if truth in s_set else 0
+            c["size"] += len(s_set)
+            c["hh"].add(r["household"])
+    out = {}
+    for d, c in by_day.items():
+        if c["n"]:
+            out[d] = {"coverage": round(100.0 * c["covered"] / c["n"], 2),
+                      "set_size": round(c["size"] / c["n"], 3), "n": c["n"], "n_hh": len(c["hh"])}
+    return out
+
+
 def running_arms():
     """How many sampling processes are still going. Used both for the page's "still running" wording and to
     decide whether the final day of each household is complete."""
@@ -136,6 +178,11 @@ def main():
             cells[h] = arr
         gap[source] = {"cells": cells, "hasLeadcal": knots is not None}
 
+    # ---- conformal coverage and set size per day, so the paper figure and the page's chart share one
+    # computation instead of the figure re-deriving it. Replayed from each row's saved distribution in file
+    # order, exactly as tools/samples_chart.py does, including its warm-up rule.
+    conformal = conformal_per_day(done)
+
     k = rows[0].get("k")
     live = live_now
 
@@ -150,6 +197,7 @@ def main():
         "per_hh_last": {h: last[h] for h in hhs},
         "lines": {"longcontext": line},
         "gap": gap,
+        "conformal": conformal,
         "metrics": ["acc", "conf", "dis"],
     }
     print(write_keys("samples_extra", {"samples_live": payload}))

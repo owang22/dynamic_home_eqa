@@ -40,6 +40,12 @@ At the shift the never-forgets timetable answers the questions it gets wrong and
 
 Population one resident off sick, that resident's own things; households ttfrozen 4130, perpetua 4130. Renders, caption and claims in `F6_the_inversion/`.
 
+## [F7](F7_sets_break_rather_than_widen/) — F7_sets_break_rather_than_widen
+
+The conformal set does not widen when the routine changes — it keeps its width and loses its guarantee. Coverage falls from 92% in the settled week to 69% on the first sick day, while the set stays at about 1.64 places against 1.59 before.
+
+Population one resident off sick, that resident's own things; households long-context, sampled 3. Renders, caption and claims in `F7_sets_break_rather_than_widen/`.
+
 ## [F8](F8_decision_score_per_day/) — F8_decision_score_per_day
 
 Scored +1 for a right answer, −1 for a wrong one and 0 for declining, the timetables collapse at the shift while Perpetua* and long-context do not.

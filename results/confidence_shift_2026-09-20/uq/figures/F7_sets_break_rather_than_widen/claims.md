@@ -1,0 +1,22 @@
+# What F7 does and does not support
+
+## The claim
+
+> The conformal set does not widen when the routine changes — it keeps its width and loses its guarantee. Coverage falls from 92% in the settled week to 69% on the first sick day, while the set stays at about 1.64 places against 1.59 before.
+
+## What in the figure demonstrates it
+
+Day 14 in both panels, marked: coverage 69% against a 90% promise, with a set of 1.42 places — NARROWER than the settled-week average of 1.59. A method reacting to the change would have widened it.
+
+## What it does NOT show
+
+Three households, so treat the levels as indicative. Applying our claim bar to the per-household changes, the coverage fall is the part that survives — it has the same sign in all three households — while the set-size change does not differ from zero. This is also one conformal wrapper; four others were tried and are on the page, not here.
+
+## The numbers
+
+Measured on the DAILY values, not read off the plotted line.
+
+| series | settled week 9-13 | day 14 | spell 14-23 |
+|---|---|---|---|
+| coverage % | 91.6 | 68.8 | 86.3 |
+| set size (places) | 1.59 | 1.42 | 1.64 |

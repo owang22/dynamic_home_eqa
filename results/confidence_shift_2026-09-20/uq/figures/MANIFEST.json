@@ -296,6 +296,39 @@
     "folder": "F6_the_inversion"
   },
   {
+    "figure": "F7",
+    "claim": "The conformal set does not widen when the routine changes \u2014 it keeps its width and loses its guarantee. Coverage falls from 92% in the settled week to 69% on the first sick day, while the set stays at about 1.64 places against 1.59 before.",
+    "population": "one resident off sick, that resident's own things",
+    "households": {
+      "long-context, sampled": 3
+    },
+    "split": "all questions",
+    "band": "none: single-day rates pooled over households",
+    "note": "Each question was put to the model ten times at temperature 0.7 and the conformal set built from how often each place came back. Each household's first 20 questions are excluded while the threshold warms up, and a day is shown only once all households have finished it.",
+    "caption": "Top: how often the truth was inside the conformal set, against the 90% the method promises (dashed). Bottom: how many places the set contained. At the first sick day the guarantee breaks while the set stays the same width \u2014 the method's uncertainty does not notice the change, it simply becomes wrong about it.",
+    "look_for": "Day 14 in both panels, marked: coverage 69% against a 90% promise, with a set of 1.42 places \u2014 NARROWER than the settled-week average of 1.59. A method reacting to the change would have widened it.",
+    "not_shown": "Three households, so treat the levels as indicative. Applying our claim bar to the per-household changes, the coverage fall is the part that survives \u2014 it has the same sign in all three households \u2014 while the set-size change does not differ from zero. This is also one conformal wrapper; four others were tried and are on the page, not here.",
+    "drawing": "Drawn per day rather than as a three-day average: this figure's claim is about a single day, and even a stage-bounded average pairs day 14 with day 15 and reports 75% where the day itself is 69%.",
+    "numbers": {
+      "coverage %": {
+        "settled week 9-13": 91.6,
+        "day 14": 68.8,
+        "spell 14-23": 86.3
+      },
+      "set size (places)": {
+        "settled week 9-13": 1.59,
+        "day 14": 1.42,
+        "spell 14-23": 1.64
+      }
+    },
+    "files": [
+      "F7_sets_break_rather_than_widen.png",
+      "F7_sets_break_rather_than_widen.svg",
+      "F7_sets_break_rather_than_widen.pdf"
+    ],
+    "folder": "F7_sets_break_rather_than_widen"
+  },
+  {
     "figure": "F8",
     "claim": "Scored +1 for a right answer, \u22121 for a wrong one and 0 for declining, the timetables collapse at the shift while Perpetua* and long-context do not.",
     "population": "one resident off sick, that resident's own things",

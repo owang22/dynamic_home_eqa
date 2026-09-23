@@ -785,7 +785,76 @@ def f6(DATA, EXTRA, manifest):
         "numbers": nums})
 
 
-FIGS = {"F1": f1, "F2": f2, "F3": f3, "F4": f4, "F5": f5, "F6": f6, "F8": f8, "F9": f9}
+def f7(DATA, EXTRA, manifest):
+    """The sets break rather than widen: coverage and set size per day."""
+    S = EXTRA["samples_live"]
+    C = S["conformal"]
+    days = sorted(int(d) for d in C)
+    cov = [C[str(d)]["coverage"] for d in days]
+    size = [C[str(d)]["set_size"] for d in days]
+    n_hh = max(C[str(d)]["n_hh"] for d in days)
+    fig, ax = plt.subplots(2, 1, figsize=(SINGLE, 3.4), sharex=True,
+                           gridspec_kw={"hspace": 0.16, "height_ratios": [1.15, 1]})
+    # THE EXCEPTION to the three-day average, taken deliberately. This figure's claim is about a SINGLE day:
+    # coverage craters on day 14 and the set does not widen to compensate. Even a stage-bounded average pairs
+    # day 14 with day 15 and reports 75% where the day itself is 69%, softening the one number the figure
+    # exists to show. Drawn per day, with that day marked, rather than smoothed.
+    ax[0].plot(days, cov, "-", color=COL["longcontext"], lw=1.6, zorder=4)
+    ax[0].axhline(90, color="#c0392b", ls="--", lw=1.0, zorder=2)
+    ax[0].annotate("dashed line = the 90% it promises", xy=(0.015, 0.06), xycoords="axes fraction",
+                   ha="left", va="bottom", fontsize=6.2, color="#c0392b")
+    ax[1].plot(days, size, "-", color=COL["longcontext"], lw=1.6, zorder=4)
+    d14 = C.get("14")
+    if d14:
+        ax[0].plot([14], [d14["coverage"]], "o", ms=3.2, color=COL["longcontext"], zorder=5)
+        ax[0].annotate(f"{d14['coverage']:.0f}%", xy=(14, d14["coverage"]), xytext=(4, -1),
+                       textcoords="offset points", fontsize=6.4, color=INK, va="top")
+        ax[1].plot([14], [d14["set_size"]], "o", ms=3.2, color=COL["longcontext"], zorder=5)
+        ax[1].annotate(f"{d14['set_size']:.2f}", xy=(14, d14["set_size"]), xytext=(4, -1),
+                       textcoords="offset points", fontsize=6.4, color=INK, va="top")
+    boundaries(ax, DATA, "person")
+    finish(ax[0], "% of the time the\ntruth was in the set", xlab="", ylim=(40, 105))
+    finish(ax[1], "places it must name", ylim=(1.0, 2.2))
+    lead = [C[str(d)]["coverage"] for d in range(9, 14) if str(d) in C]
+    spell = [C[str(d)]["coverage"] for d in range(14, 24) if str(d) in C]
+    lead_s = [C[str(d)]["set_size"] for d in range(9, 14) if str(d) in C]
+    spell_s = [C[str(d)]["set_size"] for d in range(14, 24) if str(d) in C]
+    legend_below(ax[1], f"long-context sampled {S['k']}× per question, {n_hh} households · drawn per day, NOT "
+                        "as a three-day average, because the claim is about one day", ncol=1, gap=0.34)
+    save(fig, "F7_sets_break_rather_than_widen", manifest, {
+        "figure": "F7",
+        "claim": "The conformal set does not widen when the routine changes — it keeps its width and loses its "
+                 "guarantee. Coverage falls from "
+                 f"{avg(lead):.0f}% in the settled week to {d14['coverage']:.0f}% on the first sick day, while "
+                 f"the set stays at about {avg(spell_s):.2f} places against {avg(lead_s):.2f} before.",
+        "population": POP_LABEL["person"], "households": {"long-context, sampled": n_hh},
+        "split": "all questions",
+        "band": "none: single-day rates pooled over households",
+        "note": "Each question was put to the model ten times at temperature 0.7 and the conformal set built "
+                "from how often each place came back. Each household's first 20 questions are excluded while "
+                "the threshold warms up, and a day is shown only once all households have finished it.",
+        "caption": "Top: how often the truth was inside the conformal set, against the 90% the method promises "
+                   "(dashed). Bottom: how many places the set contained. At the first sick day the guarantee "
+                   "breaks while the set stays the same width — the method's uncertainty does not notice the "
+                   "change, it simply becomes wrong about it.",
+        "look_for": f"Day 14 in both panels, marked: coverage {d14['coverage']:.0f}% against a 90% promise, "
+                    f"with a set of {d14['set_size']:.2f} places — NARROWER than the settled-week average of "
+                    f"{avg(lead_s):.2f}. A method reacting to the change would have widened it.",
+        "not_shown": f"Three households, so treat the levels as indicative. Applying our claim bar to the "
+                     "per-household changes, the coverage fall is the part that survives — it has the same "
+                     "sign in all three households — while the set-size change does not differ from zero. "
+                     "This is also one conformal wrapper; four others were tried and are on the page, not here.",
+        "drawing": "Drawn per day rather than as a three-day average: this figure's claim is about a single "
+                   "day, and even a stage-bounded average pairs day 14 with day 15 and reports 75% where the "
+                   "day itself is 69%.",
+        "numbers": {"coverage %": {"settled week 9-13": r2(avg(lead)), "day 14": r2(d14["coverage"]),
+                                   "spell 14-23": r2(avg(spell))},
+                    "set size (places)": {"settled week 9-13": round(avg(lead_s), 2),
+                                          "day 14": round(d14["set_size"], 2),
+                                          "spell 14-23": round(avg(spell_s), 2)}}})
+
+
+FIGS = {"F1": f1, "F2": f2, "F3": f3, "F4": f4, "F5": f5, "F6": f6, "F7": f7, "F8": f8, "F9": f9}
 
 
 def main():
