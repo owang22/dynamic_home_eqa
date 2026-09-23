@@ -296,5 +296,53 @@ def main():
               f"{fmt(mse(firedD), 20)} {f'{len(firedD)}/{nC}':>6}")
 
 
+
+
+def held_out():
+    """Out-of-sample test of the post-hoc repair (2.5 in the deliverable).
+
+    Repair: C falls at a change only because the method MIXES post-change observations into the same
+    predictive histogram. The shorter the memory, the less of the window is old regime, the less the peak
+    falls. Prediction, written before this ran: on the held-out scenarios, AUC(-C) > 0.60 for the
+    never-forgets and 3-day timetables and < 0.56 for the 1-day timetable, with AUC(L) > AUC(-C) for the
+    never-forgets timetable."""
+    global REG
+    base = os.path.dirname(REG)
+    for scen in ("sick10_all", "sick10_partial", "holiday_to_work", "sick10_owner"):
+        REG_s = os.path.join(base, scen)
+        print("=" * 100)
+        print(f"TABLE 19  held-out scenario: {scen}   (shift at day 14 in all of them)")
+        print("=" * 100)
+        print(f"{'method':24s} {'AUC of -C':>16} {'AUC of L':>16} {'C shift (sd)':>16} {'n hh':>6}")
+        for d in ORDER:
+            if not os.path.isdir(os.path.join(REG_s, d)):
+                continue
+            saved, REG = REG, REG_s
+            try:
+                data = load(d)
+            finally:
+                REG = saved
+            ac, al, cz = [], [], []
+            for hh, rows in data.items():
+                pos = [r for r in rows if 14 <= r["day"] <= 16]
+                neg = [r for r in rows if 9 <= r["day"] <= 13]
+                if len(pos) < MIN_CELL or len(neg) < MIN_CELL:
+                    continue
+                ac.append(1 - auc([r["conf"] for r in pos], [r["conf"] for r in neg]))
+                al.append(auc([r["nll"] for r in pos], [r["nll"] for r in neg]))
+                by = collections.defaultdict(list)
+                for r in rows:
+                    by[r["day"]].append(r["conf"])
+                b = [st.mean(by[dd]) for dd in range(9, 14) if len(by.get(dd, [])) >= 3]
+                s2 = [st.mean(by[dd]) for dd in range(14, 17) if len(by.get(dd, [])) >= 3]
+                if len(b) >= 3 and s2 and st.stdev(b) > 1e-9:
+                    cz.append((st.mean(s2) - st.mean(b)) / st.stdev(b))
+            if not ac:
+                continue
+            print(f"{DIRS[d]:24s} {fmt(mse(ac), 16)} {fmt(mse(al), 16)} {fmt(mse(cz), 16)} {mse(ac)[2]:>6}")
+        print()
+
+
 if __name__ == "__main__":
     main()
+    held_out()

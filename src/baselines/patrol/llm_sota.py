@@ -195,6 +195,9 @@ class FactStore(Store):
             st = stays(h, day)
             if st:
                 movers.append(f"- {o}: " + "; ".join(st))
+                held = [f for f in self.facts if f["obj"] == o and f["status"] == "current"]
+                if held:
+                    movers.append("    memory already holds: " + "; ".join(self.fact_text(f) for f in held))
         if not movers:
             return
         ex = L0 + ["", f"It is the end of {L.day_label(day, self.day_names)}. Extract facts for the robot's memory.", "",
@@ -202,11 +205,12 @@ class FactStore(Store):
                    "there until the object was next seen somewhere else (times in between are when it was seen there):"]
         ex += movers + ["", "Write facts about each object's ROUTINE: which spot it is at during which stretch of a typical "
                         "day, as today's stays show it. Give stretches, not single moments (write 09:30-17:30, never "
-                        "09:30-09:30); merge stays at the same spot. One fact per object and spot. Use only object and "
-                        "spot names above.",
+                        "09:30-09:30); merge stays at the same spot. One fact per object and spot. Where today agrees "
+                        "with a fact the memory already holds (same spot, times within about an hour), repeat that fact's "
+                        "exact wording. Use only object and spot names above.",
                         'Reply with JSON: {"facts": [{"object": ..., "spot": ..., "hours": "HH:MM-HH:MM"}, ...]}']
         text, _ = self.ask([{"role": "system", "content": L.SYSTEM}, {"role": "user", "content": "\n".join(ex)}],
-                           FACTS_SCHEMA, 2500, f"facts extract day {day}")
+                           FACTS_SCHEMA, 2500, f"facts extract day {day}", llm_authored=self.authored())
         try:
             new = [f for f in json.loads(text or "{}").get("facts", [])
                    if f.get("object") in memory.sightings and f.get("spot") in ctx["allowed"]]

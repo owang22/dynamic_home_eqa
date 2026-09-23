@@ -484,9 +484,6 @@ def main():
         print()
 
 
-if __name__ == "__main__":
-    main()
-
 
 def extra_tables():
     """Why the formula and the measurement disagree: is q monotone in the confidence, or inverted?"""
@@ -652,3 +649,9 @@ def floor_tables():
             print(f"{NAME[m]:22s} {wn:13s} {fmt(*mse(accs)[:2]):>15} {fmt(*mse(konst)[:2]):>16} "
                   f"{fmt(*mse(hon)[:2]):>16} {fmt(*mse(order)[:2]):>16} {gain:>8.2f}   (n {len(hon)})")
         print()
+
+
+if __name__ == "__main__":
+    main()
+    extra_tables()
+    floor_tables()
