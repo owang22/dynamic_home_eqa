@@ -59,6 +59,7 @@ OWNERS = {
     "affected_windows_extra": ("affected_windows",),
     "deferral_extra":         ("deferral_live",),
     "samples_extra":          ("samples_live",),
+    "decision_extra":         ("decision_live",),
 }
 
 

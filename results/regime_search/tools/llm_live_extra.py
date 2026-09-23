@@ -56,10 +56,19 @@ MSG_LABEL = {"nomsg": " · no message", "startmsg": " · start message", "starte
 
 
 # Households whose data exists on disk but is deliberately NOT used, so the page shows a clean household count
-# rather than something half-finished. Long-context costs ~10x the compute per question of the other memories; its
-# told arms were only ever run on hh_s0-s2, so finishing the other seven no-message households could not improve any
-# comparison and the server time went to the two-spells arms instead (coordinator, 05:20).
-ABANDONED = {("person", "longcontext", "nomsg"): {f"hh_s{i}" for i in range(3, 10)}}
+# rather than something half-finished.
+#
+# This used to exclude long-context no-message on hh_s3-s9, on the reasoning that its told arms only ever ran on
+# hh_s0-s2 so extra untold households could not improve any comparison. That reasoning expired on 22 Sept at
+# 19:12, when the run extending long-context to the remaining households started: the untold arms for s3, s4 and
+# s5 turned out to be almost entirely cached and completed in minutes, and their told arms are being generated.
+# Excluding them now would throw away real households and understate every long-context level on the page.
+#
+# Removing this is safe for the PAIRED numbers because they never relied on it: told-vs-untold contrasts are
+# computed on the intersection of the households both arms ran on (the matched-household pass below), and report
+# `matched_is_full` when that intersection is smaller than an arm's own household set. Levels improve, contrasts
+# stay matched.
+ABANDONED = {}
 
 
 def msg_tag(told: bool, key_tag) -> str:

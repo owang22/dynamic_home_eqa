@@ -18,6 +18,7 @@ import json
 import math
 import os
 import sys
+import textwrap
 
 import matplotlib
 matplotlib.use("Agg")
@@ -49,6 +50,17 @@ NAME = {
     "naive": "recency buffer", "lastseen": "last seen",
 }
 EDGE = {"sick": "sick", "return": "back to normal", "sick2": "sick again", "return2": "back again"}
+# Three steps of the long-context hue for its three message arms -- one memory told different things, so one
+# colour. Stepped by measured contrast against white (12.5:1, 7.0:1, 3.9:1) rather than by transparency: the
+# old lightest arm was an alpha wash that came out at 1.98:1 and was the hardest line on the page, which is
+# unacceptable for the arm that carries the return claim.
+ARM_STEPS = ["#4a1d6b", "#7a3aa7", "#a266d4"]
+
+# said in plain words on every figure that smooths, because a reader must know which line is which
+NOTE = "line = 3-day average within each stage, band = \u00b11 s.e."
+NOTE_LONG = ("The line is a centred three-day average, computed WITHIN each stage so it never averages "
+             "across a boundary: a window straddling day 14 renders the 3-day timetable's 40.8-point fall "
+             "as 6.8. The band is ±1 standard error across households, computed on the daily values.")
 
 rcParams.update({
     "font.size": 8, "axes.labelsize": 8, "axes.titlesize": 8,
@@ -96,10 +108,27 @@ def load():
     return DATA, EXTRA
 
 
-def series(DATA, pop, key, split="all", field="acc"):
+def complete_hh(DATA, pop, key, need=0.9):
+    """Households whose arm actually covers the calendar. A run still in flight has households stopped at
+    different days; letting them all in changes WHICH households the daily mean is made of as the axis
+    advances, which can manufacture a step at exactly the day of interest. Same trap as the sampling run."""
+    R = DATA[pop]
+    A = R["agents"].get(key) or {}
+    days = R["days"] - 1
+    out = []
+    for hh, cells in A.items():
+        got = sum(1 for d in range(1, R["days"]) if cells["all"][d] and cells["all"][d][0] >= MIN_HH_CELL)
+        if got >= need * days:
+            out.append(hh)
+    return sorted(out)
+
+
+def series(DATA, pop, key, split="all", field="acc", only_hh=None):
     """Per-day mean across households and its standard error -- the page's panelSeries, same rules."""
     R = DATA[pop]
     A = R["agents"].get(key)
+    if A and only_hh is not None:
+        A = {h: c for h, c in A.items() if h in only_hh}
     if not A:
         raise KeyError(f"{key!r} is not in DATA[{pop!r}].agents -- a figure asking for it would be drawn a line "
                        f"short with nothing to show for it. Available: {sorted(R['agents'])[:6]}...")
@@ -133,6 +162,12 @@ def stages_of(DATA, pop):
     return out
 
 
+def stage_lookup(DATA, pop):
+    """A day -> stage-name function, so the smoother can refuse to cross a boundary."""
+    st = DATA[pop]["stages"]
+    return lambda d: st.get(str(int(d)), "plain")
+
+
 def boundaries(ax_list, DATA, pop, label_on=None, pad_frac=1.012):
     """Dotted vertical rules at each stage boundary, labelled above the top plot. Nothing is drawn OVER the
     data: a wash behind a one-standard-error band is what made those bands unreadable on the page."""
@@ -147,28 +182,73 @@ def boundaries(ax_list, DATA, pop, label_on=None, pad_frac=1.012):
     return st
 
 
-def line(ax, S, colour, label, clip_from=1, lw=1.5, band=True):
+def roll3(xs, ys, stage_of=None):
+    """Centred three-day mean that NEVER averages across a stage boundary.
+
+    A plain centred window destroys the thing these figures exist to show. Measured on the 3-day timetable: the
+    raw fall at day 14 is 40.8 points, and a window straddling the boundary draws it as 6.8 -- day 13 borrows
+    from the first sick day and day 14 borrows back from the last settled day, and a 41-point cliff is rendered
+    as a gentle slope. So a day's window is restricted to days in its OWN stage: the boundary days average over
+    two days or one, and the break stays the size it is.
+
+    Not a gap-filler either: a day with no value stays without one."""
+    out = []
+    for i, x in enumerate(xs):
+        win = []
+        for j in (i - 1, i, i + 1):
+            if not (0 <= j < len(ys)) or abs(xs[j] - x) > 1:
+                continue
+            if stage_of is not None and stage_of(xs[j]) != stage_of(x):
+                continue
+            win.append(ys[j])
+        out.append(sum(win) / len(win))
+    return out
+
+
+def line(ax, S, colour, label, clip_from=1, lw=1.6, band=True, smooth=True, stage_of=None):
+    """One line per series: a centred three-day mean, bounded by stage, with its standard-error band.
+
+    The band is computed on the DAILY values across households, which is the uncertainty we actually have; only
+    the line is smoothed. The raw daily series is not drawn -- at this density it was clutter rather than
+    information."""
     xs = [d for d, m in zip(S["days"], S["mean"]) if m is not None and d >= clip_from]
     ys = [m for d, m in zip(S["days"], S["mean"]) if m is not None and d >= clip_from]
     if band:
         lo = [m - e for d, m, e in zip(S["days"], S["mean"], S["se"]) if m is not None and d >= clip_from]
         hi = [m + e for d, m, e in zip(S["days"], S["mean"], S["se"]) if m is not None and d >= clip_from]
-        ax.fill_between(xs, lo, hi, color=colour, alpha=0.15, lw=0, zorder=2)
-    ax.plot(xs, ys, "-", color=colour, lw=lw, label=label, zorder=3, solid_joinstyle="round")
+        ax.fill_between(xs, lo, hi, color=colour, alpha=0.13, lw=0, zorder=2)
+    if smooth:
+        ax.plot(xs, roll3(xs, ys, stage_of), "-", color=colour, lw=lw, label=label, zorder=4,
+                solid_joinstyle="round")
+    else:
+        ax.plot(xs, ys, "-", color=colour, lw=lw, label=label, zorder=4, solid_joinstyle="round")
 
 
-def legend_below(ax, note, ncol=2, order=None):
+def legend_below(ax, note, ncol=2, order=None, inside=None):
     """Legend and footnote as ONE stacked block under the axis. At single-column width a legend inside the axes
     covers a quarter of the plot, and a footnote placed independently lands on the legend -- both of which
     happened before this was one function that knows how tall the legend is."""
     h, l = ax.get_legend_handles_labels()
     if order == "reverse":
         h, l = h[::-1], l[::-1]
-    rows = math.ceil(len(l) / ncol)
-    ax.legend(h, l, loc="upper center", bbox_to_anchor=(0.5, -0.20), ncol=ncol,
-              frameon=False, handlelength=1.6, columnspacing=1.2, borderaxespad=0)
-    ax.annotate(note, xy=(0.5, -0.20 - rows * 0.115 - 0.04), xycoords="axes fraction",
-                ha="center", va="top", fontsize=6.5, color="#555555")
+    if inside:
+        # The empty strip runs along the BOTTOM of the plot, under every line, not in a corner -- a corner box
+        # sat on the day-14 dip, which is the one part of this figure nobody may cover.
+        ax.legend(h, l, loc=inside, ncol=ncol, frameon=True, framealpha=0.92, edgecolor="#dddddd",
+                  handlelength=1.5, columnspacing=1.0, borderaxespad=0.3, fontsize=6.6)
+        y0 = -0.24
+    else:
+        leg = ax.legend(h, l, loc="upper center", bbox_to_anchor=(0.5, -0.17), ncol=ncol,
+                        frameon=False, handlelength=1.5, columnspacing=1.0, borderaxespad=0)
+        # Ask the legend where it actually ended rather than guessing from a row count: a guessed row height
+        # left a gap of a couple of lines under a three-row legend and none under a one-row one.
+        ax.figure.canvas.draw()
+        y0 = leg.get_window_extent().transformed(ax.transAxes.inverted()).y0 - 0.045
+    # wrapped to the PLOT's width: an unwrapped note runs the full canvas and drags the tight bounding box out
+    # either side, which is what left the data occupying half the figure.
+    ax.annotate("\n".join(textwrap.fill(ln, 78) for ln in note.split("\n")),
+                xy=(0.5, y0), xycoords="axes fraction", ha="center", va="top",
+                fontsize=6.3, color="#555555", linespacing=1.35)
 
 
 def finish(ax, ylab, xlab="day", ylim=(30, 100)):
@@ -183,17 +263,64 @@ def finish(ax, ylab, xlab="day", ylim=(30, 100)):
         ax.spines[side].set_visible(False)
 
 
+def numbers_table(entry):
+    rows = entry.get("numbers") or {}
+    if not rows:
+        return "_no table for this figure_\n"
+    cols = list(next(iter(rows.values())).keys())
+    out = ["| series | " + " | ".join(str(c) for c in cols) + " |",
+           "|" + "---|" * (1 + len(cols))]
+    for k, row in rows.items():
+        out.append(f"| {k} | " + " | ".join("–" if row.get(c) is None else str(row.get(c)) for c in cols) + " |")
+    return "\n".join(out) + "\n"
+
+
 def save(fig, name, manifest, entry):
-    os.makedirs(OUT, exist_ok=True)
+    """One self-contained folder per figure: the three renders, a paste-ready caption, an honest claims file,
+    and the numbers, so any one folder can be handed to someone with nothing else explained."""
+    folder = os.path.join(OUT, name)
+    os.makedirs(folder, exist_ok=True)
     paths = []
     for ext in ("png", "svg", "pdf"):
-        p = os.path.join(OUT, f"{name}.{ext}")
-        fig.savefig(p, format=ext, bbox_inches="tight", pad_inches=0.02)
-        paths.append(os.path.basename(p))
+        fp = os.path.join(folder, f"{name}.{ext}")
+        fig.savefig(fp, format=ext, bbox_inches="tight", pad_inches=0.02)
+        paths.append(f"{name}.{ext}")
     plt.close(fig)
+
+    hh = ", ".join(f"{k} {v}" for k, v in entry["households"].items())
+    with open(os.path.join(folder, "caption.md"), "w") as f:
+        f.write(f"# Caption for {entry['figure']}\n\n")
+        f.write(f"**Title line:** {entry.get('title') or '_none needed — this figure does not carry its own title; the paper caption is enough._'}\n\n")
+        f.write("Paste and edit; written as a caption, not a summary.\n\n---\n\n")
+        f.write(entry.get("caption", entry["claim"]) + "\n\n---\n\n")
+        f.write(f"- **Population:** {entry['population']}\n- **Households:** {hh}\n")
+        f.write(f"- **Questions:** {entry.get('split', 'all')}\n")
+        f.write(f"- **Bands:** {entry.get('band', 'none')}\n")
+        f.write("- **Dotted vertical rules:** the stage boundaries — the first sick day and the first day back. "
+                "Nothing is shaded, so the lines and their bands sit on a plain ground.\n")
+        if entry.get("drawing"):
+            f.write(f"- **How the line is drawn:** {entry['drawing']}\n")
+        if entry.get("provisional"):
+            f.write(f"- **Provisional:** {entry['provisional']}\n")
+
+    with open(os.path.join(folder, "claims.md"), "w") as f:
+        f.write(f"# What {entry['figure']} does and does not support\n\n## The claim\n\n> {entry['claim']}\n\n")
+        f.write("## What in the figure demonstrates it\n\n" + entry.get("look_for", "_not written_") + "\n\n")
+        f.write("## What it does NOT show\n\n" + entry.get("not_shown", "_not written_") + "\n\n")
+        if entry.get("history"):
+            f.write("## How this claim changed\n\n" + entry["history"] + "\n\n")
+        f.write("## The numbers\n\nMeasured on the DAILY values, not read off the plotted line.\n\n")
+        f.write(numbers_table(entry))
+
+    with open(os.path.join(folder, "numbers.md"), "w") as f:
+        f.write(f"# {entry['figure']} — numbers behind the figure\n\n"
+                "Regenerated with the figure from the same data. Never read a value off the picture.\n\n")
+        f.write(numbers_table(entry))
+
     entry["files"] = paths
+    entry["folder"] = name
     manifest.append(entry)
-    print(f"  {name}: " + ", ".join(paths))
+    print(f"  {name}/  ({', '.join(paths)} + caption.md, claims.md, numbers.md)")
 
 
 POP_LABEL = {"person": "one resident off sick, that resident's own things",
@@ -210,8 +337,8 @@ def f1(DATA, EXTRA, manifest):
     fig, ax = plt.subplots(figsize=(SINGLE, 2.5))
     nums, hh = {}, {}
     for key, m in keys:
-        S = series(DATA, pop, key)
-        line(ax, S, COL[m], NAME[m])
+        S = series(DATA, pop, key, only_hh=complete_hh(DATA, pop, key))
+        line(ax, S, COL[m], NAME[m], stage_of=stage_lookup(DATA, pop))
         hh[m] = S["hh"]
         val = lambda d: (S["mean"][d - 1] if S["mean"][d - 1] is not None else None)
         nums[NAME[m]] = {"day 13": r2(val(13)), "day 14": r2(val(14)),
@@ -220,20 +347,36 @@ def f1(DATA, EXTRA, manifest):
                          "break at 24": r2(None if val(23) is None or val(24) is None else val(24) - val(23))}
     boundaries([ax], DATA, pop)
     finish(ax, "% of questions answered correctly")
-    legend_below(ax, f"{POP_LABEL[pop]} · {hh.get('tt3d', '?')} households "
-                     f"(long-context {hh.get('longcontext', '?')}{', ' + GROWING_NOTE if grow else ''}) · "
-                     f"band = ±1 standard error", ncol=2)
+    legend_below(ax, f"{POP_LABEL[pop]}, all questions · {hh.get('tt3d', '?')} households "
+                     f"(long-context {hh.get('longcontext', '?')}{'; ' + GROWING_NOTE if grow else ''})\n"
+                     + NOTE, ncol=4)
     save(fig, "F1_learn_break_relearn", manifest, {
         "figure": "F1",
         "claim": "Every learner climbs through the settled fortnight, breaks on the first sick day, re-learns "
                  "inside the spell, and breaks again on the return.",
         "population": POP_LABEL[pop], "households": hh, "split": "all questions",
-        "band": "±1 standard error across households",
+        "caption": "Accuracy per day for four methods through a routine that changes twice. Every method "
+                   "climbs through the settled fortnight, falls sharply on the first sick day (dotted rule), "
+                   "re-learns the new routine over the following week, and falls again when the old routine "
+                   "returns (second dotted rule). The two timetables break hardest and recover furthest; "
+                   "long-context breaks least and recovers least.",
+        "look_for": "The two dotted rules and what happens at them. The 3-day timetable falls 40.8 points on "
+                    "day 14 and the never-forgets timetable 40.5; by day 23 the 3-day timetable is above where "
+                    "it started the spell. At day 24 both fall again, and the never-forgets timetable is the "
+                    "one that recovers immediately, because the old routine is the one it never stopped "
+                    "believing. Long-context's day-14 fall is the smallest of the four.",
+        "not_shown": "This is accuracy only — nothing here says whether a method KNOWS it has broken, which is "
+                     "the subject of F8 and F9. Long-context rests on fewer households than the counters (see "
+                     "the count above) and its band is correspondingly wider; do not read a gap between it and "
+                     "a counter as an effect without checking the band. The plotted line is a three-day "
+                     "average, so the visible fall is shallower than the real one: quote the numbers, not the "
+                     "picture.",
+                "band": "±1 standard error across households", "drawing": NOTE_LONG,
         "provisional": grow and "long-context household count will rise: a larger run is in progress", "numbers": nums})
 
 
 def f2(DATA, EXTRA, manifest):
-    """The counters re-learn the new routine; the language memories do not."""
+    """How much of the new routine each method re-learns inside the spell."""
     grow = growing()
     pop = "person"
     keys = [("tt3d", "tt3d"), ("person:llm_longcontext_nomsg", "longcontext"),
@@ -241,8 +384,8 @@ def f2(DATA, EXTRA, manifest):
     fig, ax = plt.subplots(figsize=(SINGLE, 2.5))
     nums, hh = {}, {}
     for key, m in keys:
-        S = series(DATA, pop, key)
-        line(ax, S, COL[m], NAME[m])
+        S = series(DATA, pop, key, only_hh=complete_hh(DATA, pop, key))
+        line(ax, S, COL[m], NAME[m], stage_of=stage_lookup(DATA, pop))
         hh[m] = S["hh"]
         got = [S["mean"][d - 1] for d in range(14, 24) if S["mean"][d - 1] is not None]
         early = [S["mean"][d - 1] for d in range(14, 17) if S["mean"][d - 1] is not None]
@@ -252,15 +395,39 @@ def f2(DATA, EXTRA, manifest):
                          "spell mean": r2(avg(got))}
     boundaries([ax], DATA, pop)
     finish(ax, "% of questions answered correctly")
-    legend_below(ax, f"{POP_LABEL[pop]} · band = ±1 standard error across households\n"
-                     f"long-context on {hh.get('longcontext', '?')} households"
-                     f"{' (' + GROWING_NOTE + ')' if grow else ''}, the others on {hh.get('tt3d', '?')}", ncol=2)
-    save(fig, "F2_counters_relearn_language_does_not", manifest, {
+    legend_below(ax, f"{POP_LABEL[pop]}, all questions · long-context on {hh.get('longcontext', '?')} households"
+                     f"{' (' + GROWING_NOTE + ')' if grow else ''}, the others on {hh.get('tt3d', '?')}\n"
+                     + NOTE, ncol=4)
+    save(fig, "F2_relearning_inside_the_spell", manifest, {
         "figure": "F2",
-        "claim": "Given ten days of the new routine the counter learns it; the language memories barely move.",
+        "claim": (lambda g: "Given ten days of the new routine the counter re-learns it "
+                            f"{g['3-day timetable'] / max(g['reflection'], 0.1):.1f} to "
+                            f"{g['3-day timetable'] / max(min(g['long-context'], g['retrieval']), 0.1):.1f} times "
+                            "as fast as any language memory: "
+                            f"+{g['3-day timetable']:.0f} points from the first sick days to the end of the spell, "
+                            f"against +{g['reflection']:.0f} for reflection, +{g['long-context']:.0f} for "
+                            f"long-context and +{g['retrieval']:.0f} for retrieval."
+                  )({k: v["re-learning inside the spell"] for k, v in nums.items()}),
         "population": POP_LABEL[pop], "households": hh, "split": "all questions",
         "band": "±1 standard error across households",
-        "note": "The counts are per method above; long-context ran on fewer households than the counters.",
+        "caption": "Accuracy per day for the 3-day timetable and three language memories. All four break on "
+                   "the first sick day. Over the following ten days, during which every method is living in "
+                   "the new routine and is told the right answer after every question, the counter re-learns "
+                   "the routine and the language memories recover far less.",
+        "look_for": "The slope between the first sick days and the end of the spell. The 3-day timetable goes "
+                    "from 57.9 to 88.8, a gain of 30.8 points. Reflection gains 15.2, retrieval 10.4 and "
+                    "long-context 9.7 — between a third and a half of the counter's.",
+        "not_shown": "It does not show that the language memories learn NOTHING: reflection's +15.2 is a real "
+                     "gain, about half the counter's. It also does not separate re-learning from same-day "
+                     "feedback, since these are all questions rather than cold ones. Long-context is on fewer "
+                     "households than the rest.",
+        "history": "This figure asserted until 22 Sept that the language memories \"barely move\". Its own "
+                   "numbers contradicted that — reflection re-learns half as much as the counter, which is not "
+                   "\"barely\" — so the claim was changed to the ratio it can actually support and the file "
+                   "was renamed off `F2_counters_relearn_language_does_not`, which had encoded the overclaim "
+                   "in its name.",
+                "note": "The counts are per method above; long-context ran on fewer households than the counters.",
+        "drawing": NOTE_LONG,
         "provisional": grow and "long-context household count will rise: a larger run is in progress",
         "numbers": nums})
 
@@ -269,10 +436,15 @@ def f3(DATA, EXTRA, manifest):
     """What one sentence buys and costs, with the measured clip days."""
     grow = growing()
     pop = "person"
-    arms = [("person:llm_longcontext_nomsg", "never told", 1.0),
-            ("person:llm_longcontext_startmsg", "told on the first sick day", 0.68),
-            ("person:llm_longcontext_startend", "told again on the first day back", 0.42)]
-    S = {k: series(DATA, pop, k) for k, _, _ in arms}
+    arms = [("person:llm_longcontext_nomsg", "never told", ARM_STEPS[0]),
+            ("person:llm_longcontext_startmsg", "told on the first sick day", ARM_STEPS[1]),
+            ("person:llm_longcontext_startend", "told again on the first day back", ARM_STEPS[2])]
+    # A told-vs-untold figure must be drawn on the households all three arms ran, not on each arm's own set.
+    # With the extension running, the untold arm has ten households, told-once six and told-twice three; drawing
+    # each on its own set would put three different populations on one chart and call the gaps between them an
+    # effect. Matched here, and the matched count is what the figure states.
+    matched = sorted(set.intersection(*(set(complete_hh(DATA, pop, k)) for k, _, _ in arms)))
+    S = {k: series(DATA, pop, k, only_hh=matched) for k, _, _ in arms}
     # Each told arm is the SAME run as the one above it until the day it is told, so it is drawn only from the
     # day it measurably departs. Measured here, not taken from the calendar -- on this memory one arm departs
     # three days before its message, and a calendar clip would have hidden that.
@@ -289,18 +461,13 @@ def f3(DATA, EXTRA, manifest):
             clip[k] = first
         prev = k
     fig, ax = plt.subplots(figsize=(SINGLE, 2.5))
-    for k, lab, alpha in reversed(arms):          # palest and most-told at the bottom, never-told on top
-        ax.plot([], [])
-        line(ax, S[k], COL["longcontext"], lab, clip_from=clip.get(k, 1), lw=1.5)
-        ax.lines[-1].set_alpha(alpha)
-        for c in ax.collections[-1:]:
-            c.set_alpha(0.12 * alpha)
+    for k, lab, c in reversed(arms):             # most-told at the bottom, never-told on top
+        line(ax, S[k], c, lab, clip_from=clip.get(k, 1), stage_of=stage_lookup(DATA, pop))
     boundaries([ax], DATA, pop)
     finish(ax, "% of questions answered correctly")
-    legend_below(ax, f"{POP_LABEL[pop]} · long-context on {S[arms[0][0]]['hh']} households"
-                     f"{' \u2014 ' + GROWING_NOTE if grow else ''} · band = ±1 standard error\n"
-                     "one memory told three things; each told arm is drawn from the day it measurably departs",
-                 ncol=1, order="reverse")
+    legend_below(ax, f"{POP_LABEL[pop]} · all three arms on the same {len(matched)} households"
+                     f"{'; ' + GROWING_NOTE if grow else ''}\n"
+                     + NOTE, ncol=1, order="reverse")
     nums = {}
     for k, lab, _ in arms:
         nums[lab] = {"days 14-16": r2(avg([S[k]["mean"][d - 1] for d in range(14, 17) if S[k]["mean"][d - 1] is not None])),
@@ -310,10 +477,25 @@ def f3(DATA, EXTRA, manifest):
         "figure": "F3",
         "claim": "One sentence buys back much of the break and costs on the return; each told arm is identical "
                  "to the untold run until the day it is told.",
-        "population": POP_LABEL[pop], "households": {"longcontext": S[arms[0][0]]["hh"]},
+        "population": POP_LABEL[pop], "households": {"longcontext (matched across all three arms)": len(matched)},
         "split": "all questions", "band": "±1 standard error across households",
         "note": "Each told arm is drawn from the day it measurably departs from the arm above it, computed from "
-                "the data rather than from the calendar. Departure days are in the numbers below.",
+                "the data rather than from the calendar. Departure days are in the numbers below. "
+                "Each told arm is the same run as the one above it until that day.",
+        "caption": "One long-context memory, told three different things, on the same households. The "
+                   "darkest line is never told; the middle line is told \"Yuki is home sick today\" on the "
+                   "first sick day; the lightest is told again that the resident is back on the first day of "
+                   "the return. Each told arm is the same run as the one above it until the day it is told, so "
+                   "it is drawn only from the day it measurably departs.",
+        "look_for": "Where each line begins. The told-once line emerges at day 14 and runs above the untold "
+                    "line for the rest of the spell — that gap is what one sentence buys. The told-twice line "
+                    "emerges before the return day, which is a genuine early difference in the runs and not a "
+                    "drawing choice; the departure days are in the numbers.",
+        "not_shown": "At this household count almost nothing here clears our claim bar, and the bands overlap "
+                     "heavily — treat the gaps as indicative, not established. It also does not show a cost of "
+                     "the message on the way out for this memory; the buffer and retrieval show that more "
+                     "clearly and on more households.",
+        "drawing": NOTE_LONG,
         "provisional": grow and "household count will rise: a larger run is in progress",
         "numbers": nums})
 
@@ -326,7 +508,116 @@ def r2(v):
     return None if v is None else round(v, 1)
 
 
-FIGS = {"F1": f1, "F2": f2, "F3": f3}
+DEC_NAME = {"ttfrozen": "never-forgets timetable", "tt3d": "3-day timetable",
+            "perpetua": "Perpetua*", "longcontext": "long-context", "lastseen": "last seen"}
+DEC_ORDER = ["ttfrozen", "tt3d", "perpetua", "longcontext"]
+HINDSIGHT = "thresholds chosen with hindsight, so these are upper bounds, not a deployable policy"
+
+
+def f8(DATA, EXTRA, manifest):
+    """Daily decision score, each method at its own best fixed threshold."""
+    D = EXTRA["decision_live"]["methods"]
+    fig, ax = plt.subplots(figsize=(SINGLE, 2.5))
+    nums, hh = {}, {}
+    for m in DEC_ORDER:
+        M = D.get(m)
+        if not M:
+            continue
+        days = sorted(int(d) for d in M["per_day"])
+        S = {"days": days, "mean": [M["per_day"][str(d)] for d in days],
+             "se": [0] * len(days), "hh": M["n_hh"]}
+        line(ax, S, COL[m], DEC_NAME[m], band=False, stage_of=stage_lookup(DATA, "person"))
+        hh[m] = M["n_hh"]
+        nums[DEC_NAME[m]] = {"its own best threshold": M["best_bar_overall"],
+                             "% of questions declined at it": M["declined_at_best"],
+                             **{w: v["best"] for w, v in M["windows"].items()}}
+    boundaries([ax], DATA, "person")
+    ax.axhline(0, color=INK, lw=0.8, alpha=0.5, zorder=1)
+    finish(ax, "daily score (+1 / \u22121 / 0)", ylim=None)
+    legend_below(ax, f"{POP_LABEL['person']} · {hh.get('ttfrozen', '?')} households, long-context "
+                     f"{hh.get('longcontext', '?')}{'; rising' if growing() else ''}\n"
+                     f"each at its own best threshold; {HINDSIGHT}", ncol=2)
+    save(fig, "F8_decision_score_per_day", manifest, {
+        "figure": "F8",
+        "claim": "Scored +1 for a right answer, \u22121 for a wrong one and 0 for declining, the timetables "
+                 "collapse at the shift while Perpetua* and long-context do not.",
+        "population": POP_LABEL["person"], "households": hh, "split": "all questions",
+        "band": "none: this is a score, not an average with a spread",
+        "note": "Each method uses its OWN best fixed threshold, because the comparison would otherwise measure "
+                "their confidence scales rather than their judgement \u2014 the timetables spread mass over "
+                "dozens of places and rarely exceed 0.5, long-context says 0.95 to almost everything.",
+        "caption": "Daily decision score under a rule that needs no coverage target to explain: +1 for a "
+                   "right answer, −1 for a wrong one, 0 for declining to answer. Each method uses its own best "
+                   "fixed confidence threshold. Both timetables collapse on the first sick day; Perpetua* and "
+                   "long-context do not.",
+        "look_for": "The first dotted rule. The never-forgets timetable falls from 7.7 in the settled week to "
+                    "0.7 on the first sick days and the 3-day timetable from 7.6 to 2.9, while Perpetua* goes "
+                    "4.6 to 4.6 and long-context 4.6 to 5.1. Note also that Perpetua* sits BELOW both "
+                    "timetables while the world is stable.",
+        "not_shown": "The thresholds are chosen with hindsight for the window being scored, so these are upper "
+                     "bounds, not a policy anyone could run. Each method uses a different threshold, so the "
+                     "lines are not a like-for-like confidence comparison — that is deliberate, since the "
+                     "confidence scales differ wildly, but it means a reader cannot infer anything about the "
+                     "thresholds themselves from this figure.",
+                "caveat": HINDSIGHT + "; this is not a deployable policy",
+        "drawing": NOTE_LONG, "numbers": nums})
+
+
+def f9(DATA, EXTRA, manifest):
+    """What being allowed to decline is worth, by window."""
+    D = EXTRA["decision_live"]["methods"]
+    order = EXTRA["decision_live"]["windows_order"]
+    fig, ax = plt.subplots(figsize=(FULL * 0.62, 2.5))
+    meths = [m for m in DEC_ORDER if m in D]
+    w = 0.8 / len(meths)
+    nums, hh = {}, {}
+    for i, m in enumerate(meths):
+        M = D[m]
+        xs = [j + (i - (len(meths) - 1) / 2) * w for j in range(len(order))]
+        ys = [M["windows"].get(k, {}).get("gain", 0.0) for k in order]
+        ax.bar(xs, ys, width=w * 0.92, color=COL[m], label=DEC_NAME[m], zorder=3)
+        hh[m] = M["n_hh"]
+        nums[DEC_NAME[m]] = {k: M["windows"].get(k, {}).get("gain") for k in order}
+    ax.axhline(0, color=INK, lw=0.8, zorder=2)
+    ax.set_xticks(range(len(order)))
+    ax.set_xticklabels([textwrap.fill(k, 12) for k in order], fontsize=6.4)
+    finish(ax, "points gained by declining", xlab="", ylim=None)
+    ax.grid(True, axis="y", alpha=0.5)
+    ax.grid(False, axis="x")
+    legend_below(ax, f"{POP_LABEL['person']} · {hh.get('ttfrozen', '?')} households, long-context "
+                     f"{hh.get('longcontext', '?')}{'; rising' if growing() else ''}\n"
+                     f"best threshold per window minus answering everything; {HINDSIGHT}", ncol=2)
+    save(fig, "F9_value_of_declining", manifest, {
+        "figure": "F9",
+        "claim": "At the shift, being allowed to decline is worth almost nothing to the timetables (+0.2 and "
+                 "+0.4) and a great deal to Perpetua* (+2.9). Perpetua* scores BELOW both timetables while the "
+                 "world is stable: it is not the better model, it is the only one whose uncertainty is worth "
+                 "acting on.",
+        "population": POP_LABEL["person"], "households": hh, "split": "all questions",
+        "band": "none: bars are a difference of two scores",
+        "note": "Score under the best threshold for that window, minus the score when forced to answer every "
+                "question. Settled figures for context are in F8's numbers: Perpetua* 4.6 against the "
+                "timetables' 7.7 and 7.6.",
+        "caption": "What being allowed to decline is worth, by window: the decision score under the best "
+                   "threshold for that window, minus the score when the method is forced to answer every "
+                   "question. Higher bars mean the method's own confidence carries information worth acting "
+                   "on. At the moment the routine changes, only Perpetua* gains materially.",
+        "look_for": "The first-sick-days group. Perpetua* gains 2.9 points from being allowed to decline, "
+                    "against 0.3 for the never-forgets timetable, 0.4 for the 3-day timetable and 0.6 for "
+                    "long-context. On the first days back the pattern repeats: Perpetua* 1.4, everything else "
+                    "at or below 0.2.",
+        "not_shown": "This is not a claim that Perpetua* is the better model — F8's settled-week numbers show "
+                     "it scoring 4.6 against the timetables' 7.7 and 7.6. The claim is narrower and stranger: "
+                     "it is the worst forecaster of the four and the only one whose uncertainty is worth "
+                     "acting on. The thresholds are also chosen with hindsight, which strengthens the negative "
+                     "half — even given the answers in advance, declining buys the counters almost nothing "
+                     "exactly when it would matter.",
+                "caveat": HINDSIGHT + ", which makes the negative result stronger: even handed the answers in advance, "
+                  "declining buys the counters nothing at the moment it would matter",
+        "numbers": nums})
+
+
+FIGS = {"F1": f1, "F2": f2, "F3": f3, "F8": f8, "F9": f9}
 
 
 def main():
@@ -346,23 +637,22 @@ def main():
     merged.update({e["figure"]: e for e in manifest})
     ordered = [merged[k] for k in sorted(merged)]
     json.dump(ordered, open(mpath, "w"), indent=2)
+    # top-level file is an INDEX across folders, not a copy of what now lives inside them
     with open(os.path.join(OUT, "MANIFEST.md"), "w") as f:
         f.write("# Paper figures\n\nRegenerated by `results/regime_search/tools/paper_figures.py` from "
                 "`story_data.json` and `story_extra.json` — the same files the interactive page is built from. "
-                "No number here or in any figure is typed into the script.\n\n")
+                "No number here or in any figure is typed into the script.\n\n"
+                "**Every number in this file is measured on the DAILY values, not on the smoothed line.** The "
+                "figures plot a centred three-day average, bounded so it never crosses a stage boundary. Even "
+                "bounded, smoothing shrinks a one-day cliff: the 3-day timetable's fall at day 14 is 40.8 "
+                "points on the daily values and reads as 30.5 on the plotted line. Quote the numbers here, not "
+                "what the line appears to show.\n\n")
         for e in ordered:
-            f.write(f"## {e['figure']} — {', '.join(e['files'])}\n\n")
-            f.write(f"**Claim.** {e['claim']}\n\n")
-            f.write(f"- Population: {e['population']}\n")
-            f.write(f"- Households: {e['households']}\n")
-            for k in ("split", "band", "note", "provisional"):
-                if e.get(k):
-                    f.write(f"- {k.capitalize()}: {e[k]}\n")
-            f.write("\n| series | " + " | ".join(next(iter(e["numbers"].values())).keys()) + " |\n")
-            f.write("|" + "---|" * (1 + len(next(iter(e["numbers"].values())))) + "\n")
-            for s, row in e["numbers"].items():
-                f.write(f"| {s} | " + " | ".join("–" if v is None else str(v) for v in row.values()) + " |\n")
-            f.write("\n")
+            f.write(f"## [{e['figure']}]({e['folder']}/) — {e['folder']}\n\n")
+            f.write(f"{e['claim']}\n\n")
+            f.write(f"Population {e['population']}; households "
+                    + ", ".join(f"{k} {v}" for k, v in e["households"].items()) + ". ")
+            f.write(f"Renders, caption and claims in `{e['folder']}/`.\n\n")
     print(f"\nmanifest: {mpath} and MANIFEST.md ({len(ordered)} figures)")
     return 0
 
