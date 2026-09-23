@@ -1,5 +1,7 @@
 # Caption for F7
 
+**Single-column figure** — reproduce at about 3.4 in wide.
+
 **Title line:** _none needed — this figure does not carry its own title; the paper caption is enough._
 
 Paste and edit; written as a caption, not a summary.

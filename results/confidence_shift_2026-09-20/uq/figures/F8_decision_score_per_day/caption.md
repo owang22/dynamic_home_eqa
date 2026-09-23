@@ -1,5 +1,7 @@
 # Caption for F8
 
+**Single-column figure** — reproduce at about 3.4 in wide.
+
 **Title line:** _none needed — this figure does not carry its own title; the paper caption is enough._
 
 Paste and edit; written as a caption, not a summary.
@@ -15,4 +17,4 @@ Daily decision score under a rule that needs no coverage target to explain: +1 f
 - **Questions:** all questions
 - **Bands:** none: this is a score, not an average with a spread
 - **Dotted vertical rules:** the stage boundaries — the first sick day and the first day back. Nothing is shaded, so the lines and their bands sit on a plain ground.
-- **How the line is drawn:** The line is a centred three-day average, computed WITHIN each stage so it never averages across a boundary: a window straddling day 14 renders the 3-day timetable's 40.8-point fall as 6.8. The band is ±1 standard error across households, computed on the daily values.
+- **How the line is drawn:** The line is a centred three-day average computed within each stage, never across a boundary. These are rates rather than averages over households, so no band is drawn.

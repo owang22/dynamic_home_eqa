@@ -2,7 +2,7 @@
 
 ## The claim
 
-> The conformal set does not widen when the routine changes — it keeps its width and loses its guarantee. Coverage falls from 92% in the settled week to 69% on the first sick day, while the set stays at about 1.64 places against 1.59 before.
+> The conformal set does not widen when the routine changes. On the first sick day its coverage falls from 92% in the settled week to 69% — far below the 90% it promises — while the set it offers gets SMALLER, 1.42 places against 1.59 before. Over the whole spell it averages 1.64, so nothing about its width registers the change.
 
 ## What in the figure demonstrates it
 

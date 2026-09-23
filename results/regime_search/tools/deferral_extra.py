@@ -62,6 +62,12 @@ WINDOWS = {"lead": range(9, 14), "d14_16": range(14, 17), "d17_23": range(17, 24
            "d24_26": range(24, 27), "d27_31": range(27, 32)}
 
 
+# Which households each memory's rows came from. The rows themselves are (t_query, day, confidence, correct)
+# and carry no household, so the count has to be recorded as they are loaded -- and it has to exist, because
+# without it the figures reached for `n`, the QUESTION count, and published "4130 households".
+HH_SEEN = collections.defaultdict(set)
+
+
 def llm_rows():
     """-> {memory: [(t_query, day, confidence, correct), ...]} pooled over households, no-message arms."""
     out = collections.defaultdict(list)
@@ -75,6 +81,7 @@ def llm_rows():
           if (hh, mem) in seen:
               continue
           seen.add((hh, mem))
+          HH_SEEN[mem].add(hh)
           bp = f"{FM}/{hh}_{label}.jsonl"
           if not os.path.exists(bp):
               continue
@@ -97,6 +104,7 @@ def classical_rows():
     """Each counter's own confidence: the top probability of its distribution, same as everywhere else."""
     out = collections.defaultdict(list)
     for cp in sorted(glob.glob(os.path.join(CLASSICAL, f"hh_s*_{LABEL}.jsonl"))):
+        hh = os.path.basename(cp).split("_" + LABEL)[0]
         for line in open(cp):
             try:
                 r = json.loads(line)
@@ -105,6 +113,7 @@ def classical_rows():
             key = CLASSICAL_BELIEFS.get(r.get("belief"))
             if not key:
                 continue
+            HH_SEEN[key].add(hh)
             out[key].append((r.get("t_query", 0), r["day_index"], float(r.get("top_prob") or 0.0),
                              int(bool(r["correct"]))))
     return dict(out)
@@ -324,7 +333,8 @@ def main():
     for mem, rows in sorted(src.items()):
         if len(rows) < 100:
             continue
-        out[mem] = {"name": NAME.get(mem, mem), "n": len(rows), "classical": mem in CLASSICAL_BELIEFS.values(),
+        out[mem] = {"name": NAME.get(mem, mem), "n": len(rows), "n_hh": len(HH_SEEN.get(mem, ())),
+                    "classical": mem in CLASSICAL_BELIEFS.values(),
                     "per_day": per_day_gate(rows), "discrimination": discrimination(rows)}
         out[mem]["decomposition"] = decomposition(rows, out[mem]["per_day"])
         out[mem]["mass_below_bar"] = mass_below_bar(rows)

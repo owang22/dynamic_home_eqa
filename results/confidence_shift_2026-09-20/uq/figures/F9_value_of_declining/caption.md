@@ -1,5 +1,7 @@
 # Caption for F9
 
+**Wider than a single column** — reproduce at about 3.8 in. Do NOT squeeze it into one column; its labels are set for this width and shrinking them puts the smallest text near 4pt.
+
 **Title line:** _none needed — this figure does not carry its own title; the paper caption is enough._
 
 Paste and edit; written as a caption, not a summary.
