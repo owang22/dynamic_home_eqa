@@ -73,6 +73,21 @@ NAME = {
     "naive": "recency buffer", "lastseen": "last seen",
 }
 EDGE = {"sick": "sick", "return": "back to normal", "sick2": "sick again", "return2": "back again"}
+
+# The argument these figures are parts of. Stated once here and attached to the claims it actually bears on,
+# with the measurements that support each half, because it is a framing and framings are where overclaiming
+# starts. What it rests on, all of it measured in this set:
+#   told explicitly, these memories adapt AT ONCE -- long-context told on the first sick morning is +6.3 points
+#     that same day and +14.6 by the next, on the households all three arms ran;
+#   when the message stops being true they go on acting on it -- every one of the four told arms sits below its
+#     own untold twin a week after the return, by 2.8 to 11.4 points;
+#   Perpetua* is the exception and its mechanism is in its code: it models how long a sighting stays true.
+SPINE = ("These memories can represent the new regime perfectly well \u2014 told about it, they adapt at once. "
+         "What none of them can do is notice from evidence that the old regime expired, or that an instruction "
+         "has. Neither a sighting nor a sentence carries a validity window, so language does not fix the "
+         "problem, it moves it: from failing to notice that sightings went stale to failing to notice that an "
+         "instruction did. Perpetua* is the exception because how long a thing stays true is precisely what it "
+         "models.")
 # The message arms use the same three steps as the language family, for the same reason -- one memory told different things, so one
 # colour. Stepped by measured contrast against white (12.5:1, 7.0:1, 3.9:1) rather than by transparency: the
 # old lightest arm was an alpha wash that came out at 1.98:1 and was the hardest line on the page, which is
@@ -487,7 +502,10 @@ def f1(DATA, EXTRA, manifest):
                             f"{'gains' if n['never-forgets timetable']['break at 24'] > 0 else 'loses'} "
                             f"{abs(n['never-forgets timetable']['break at 24']):.0f} points on the day every "
                             "adaptive method breaks, because the routine that returned is the one it never "
-                            "stopped believing. Adaptation is not free; it is paid for at every reversal.")(nums),
+                            "stopped believing. Adaptation is not free; it is paid for at every reversal.\n\n"
+                            + SPINE + " The return break is that defect seen from the other side: what expired "
+                            "was the sick-day routine, and nothing in these memories dates what they learned "
+                            "during it.")(nums),
         "population": POP_LABEL[pop], "households": hh, "split": "all questions",
         "caption": "Accuracy per day for four methods through a routine that changes twice. Every method "
                    "climbs through the settled fortnight, falls sharply on the first sick day (dotted rule), "
@@ -572,7 +590,9 @@ def f2(DATA, EXTRA, manifest):
                        "language memories track it at +0.55 and 8\u20139 points, and at the return it RISES as "
                        "that counter does while every adapting method falls. A language memory inherits the "
                        "failure mode of whatever it is indexed by: choosing the retrieval key is choosing which "
-                       "disruption the memory will fail on. "),
+                       "disruption the memory will fail on.\n\n" + SPINE + " Retrieval's index is the "
+                       "clearest case: same time of day, whole history, no notion of when a sighting stopped "
+                       "being informative.\n\n"),
         "claim": (lambda g: "Given ten days of the new routine the counter re-learns it "
                             f"{g['3-day timetable'] / max(g['reflection'], 0.1):.1f} to "
                             f"{g['3-day timetable'] / max(min(g['long-context'], g['retrieval']), 0.1):.1f} times "
@@ -660,7 +680,9 @@ def f3(DATA, EXTRA, manifest):
                  "old pattern at the end of the spell, while the arm told \u201cYuki is home sick today\u201d "
                  "on the first morning sits above it from that day on. That is the uncomfortable half of the "
                  "accuracy story: what repairs the break is being TOLD, not the evidence, so a memory nobody "
-                 "can talk to is a memory that does not recover.",
+                 "can talk to is a memory that does not recover.\n\n" + SPINE + " This figure is where that "
+                 "is easiest to see, because the message is the counterfactual: it holds the memory fixed and "
+                 "changes only whether the regime was announced.",
         "population": POP_LABEL[pop], "households": {"longcontext (matched across all three arms)": len(matched)},
         "split": "all questions", "band": "±1 standard error across households",
         "caveat": "THREE HOUSEHOLDS. At this count almost nothing in this figure clears our claim bar and the "
@@ -870,57 +892,105 @@ def gate_series(M, field):
             "se": [0] * len(days), "hh": M["n"]}
 
 
+def conf_shift(DATA, EXTRA, mem):
+    """How far a method's OWN stated confidence moved from the settled week to the first sick days."""
+    key = {"ttfrozen": "ttfrozen", "tt3d": "tt3d", "perpetua": "perpetua"}.get(mem)
+    if key:
+        only = complete_hh(DATA, "person", key)
+        C = series(DATA, "person", key, field="conf", only_hh=only)
+        a = avg([C["mean"][d - 1] for d in range(9, 14) if C["mean"][d - 1] is not None])
+        b = avg([C["mean"][d - 1] for d in range(14, 17) if C["mean"][d - 1] is not None])
+        return None if a is None or b is None else round(b - a, 1)
+    arm = (EXTRA.get("llm_live", {}).get("person") or {}).get(f"llm_{mem}_nomsg")
+    if not arm:
+        return None
+    w = arm.get("windows") or {}
+    a, b = (w.get("lead") or {}).get("conf"), (w.get("d14_16") or {}).get("conf")
+    return None if a is None or b is None else round(b - a, 1)
+
+
 def f4(DATA, EXTRA, manifest):
-    """Handing the question over: how often, and how often still wrong on what it kept."""
+    """Reacting is not recovering: the gate declines far more, and is still wrong several times over."""
     D = EXTRA["deferral_live"]["memories"]
     alpha = EXTRA["deferral_live"]["alpha"]
-    fig, ax = plt.subplots(2, 1, figsize=(SINGLE, 3.6), sharex=True,
-                           gridspec_kw={"hspace": 0.16})
-    nums, hh = {}, {}
+    promise = 100.0 * alpha
+    # The miss rate is drawn as a MULTIPLE of the promised rate, not as a percentage, so that "three times what
+    # it promised" is read rather than computed. The promise is then the line at 1 and needs no arithmetic.
+    fig, ax = plt.subplots(2, 1, figsize=(SINGLE, 3.5), sharex=True,
+                           gridspec_kw={"hspace": 0.14, "height_ratios": [1.35, 1]})
+    st = stage_lookup(DATA, "person")
+    nums, hh, peaks = {}, {}, []
     for m in GATE_ORDER:
         M = D.get(m)
         if not M:
             continue
-        st = stage_lookup(DATA, "person")
-        line(ax[0], gate_series(M, "hand_over"), COL[m], GATE_NAME[m], band=False, stage_of=st)
-        line(ax[1], gate_series(M, "wrong_when_answered"), COL[m], GATE_NAME[m], band=False, stage_of=st)
+        mult = gate_series(M, "wrong_when_answered")
+        mult["mean"] = [v / promise for v in mult["mean"]]
+        line(ax[0], mult, COL[m], GATE_NAME[m], band=False, stage_of=st)
+        line(ax[1], gate_series(M, "hand_over"), COL[m], GATE_NAME[m], band=False, stage_of=st)
         hh[GATE_NAME[m]] = gate_hh(M)
         pd = M["per_day"]
+        w = lambda f, days: avg([pd[str(d)][f] for d in days if str(d) in pd])
+        sick = w("wrong_when_answered", range(14, 17))
+        peaks.append((sick / promise, GATE_NAME[m], COL[m]))
         nums[GATE_NAME[m]] = {
-            "hands over, settled 9-13": r2(avg([pd[str(d)]["hand_over"] for d in range(9, 14) if str(d) in pd])),
-            "hands over, days 14-16": r2(avg([pd[str(d)]["hand_over"] for d in range(14, 17) if str(d) in pd])),
-            "wrong on what it keeps, settled": r2(avg([pd[str(d)]["wrong_when_answered"] for d in range(9, 14) if str(d) in pd])),
-            "wrong on what it keeps, 14-16": r2(avg([pd[str(d)]["wrong_when_answered"] for d in range(14, 17) if str(d) in pd])),
-        }
+            "hands over, settled 9-13": r2(w("hand_over", range(9, 14))),
+            "hands over, days 14-16": r2(w("hand_over", range(14, 17))),
+            "wrong on what it keeps, settled": r2(w("wrong_when_answered", range(9, 14))),
+            "wrong on what it keeps, 14-16": r2(sick),
+            "times the promised rate, 14-16": round(sick / promise, 1),
+            # the ROUTE: does the gate decline more because the method's own confidence fell, or only because
+            # the controller raised its bar after the fact? This column is the first half of that answer.
+            "its own confidence moved (points)": conf_shift(DATA, EXTRA, m)}
     boundaries(ax, DATA, "person")
-    ax[1].axhline(100 * alpha, color=REF, ls="--", lw=1.0, zorder=2)
-    ax[1].annotate(f"the {int(100*alpha)}-in-100 it promised", xy=(0.985, 100 * alpha),
+    ax[0].axhline(1.0, color=REF, ls="--", lw=1.0, zorder=2)
+    ax[0].annotate(f"what it promised ({promise:.0f}% wrong)", xy=(0.985, 1.0),
                    xycoords=("axes fraction", "data"), xytext=(0, -4), textcoords="offset points",
-                   ha="right", va="top", fontsize=6.2, color=REF, zorder=6)
-    finish(ax[0], "% handed over", xlab="", ylim=(0, 100))
-    finish(ax[1], "% wrong, of those kept", ylim=(0, 100))
-    legend_below(ax[1], ncol=2, gap=0.30)
-    save(fig, "F4_handing_the_question_over", manifest, {
+                   ha="right", va="top", fontsize=6.2, color=REF)
+    # rank the methods ON the plot, worst first, so a reader can tell good from bad without tracing four lines
+    peaks.sort(reverse=True)
+    for r, (mx, name, c) in enumerate(peaks):
+        ax[0].annotate(f"{mx:.1f}\u00d7  {name}", xy=(0.03, 0.96 - r * 0.105), xycoords="axes fraction",
+                       fontsize=6.1, color=c, va="top", fontweight="bold" if r == 0 else "normal")
+    finish(ax[0], "times its promised\nerror rate", xlab="", ylim=(0, max(7, max(p[0] for p in peaks) + 1)))
+    finish(ax[1], "% handed over", ylim=(0, 100))
+    save(fig, "F4_reacting_is_not_recovering", manifest, {
         "figure": "F4",
-        "claim": "Letting a method decline the questions it is unsure of does not protect it when the world "
-                 "changes. At the shift the timetables give up most of the day's questions AND break their "
-                 "error promise on the ones they keep: they pay the cost of refusing to answer without buying "
-                 "the accuracy that was supposed to purchase. The gate reacts a day late and by too little, "
-                 "because it is driven by the same confidence that has not noticed anything yet.",
+        "claim": (lambda n: "Reacting is not recovering. When the routine changes these gates DO notice \u2014 "
+                            "every one of them roughly doubles or triples how often it declines to answer "
+                            "\u2014 and the answers they keep are still wrong "
+                            f"{min(v['times the promised rate, 14-16'] for v in n.values()):.1f} to "
+                            f"{max(v['times the promised rate, 14-16'] for v in n.values()):.1f} times more "
+                            "often than the rate they promised. Noticing that something is wrong is not the "
+                            "same as knowing WHICH answers are wrong, and only the second one protects a user.")(nums),
         "population": POP_LABEL["person"], "households": hh, "split": "all questions",
-        "band": "none: these are rates, drawn as a three-day average within each stage",
-        "prose_numbers_ok": {"0.1": "alpha, the gate's target error rate \u2014 a setting, not a measurement"},
-        "note": f"The dashed line is the one-in-ten error rate the gate was set to hold (alpha={alpha}).",
-        "caption": "Top: how often each method declines to answer. Bottom: how often it is nonetheless wrong on "
-                   "the questions it did answer, against the one-in-ten rate it was set to hold (dashed). A "
-                   "gate that worked would keep the lower line flat across the dotted boundary by giving up "
-                   "more questions; these do not.",
-        "look_for": "The bottom panel at the first dotted rule. The promise is held comfortably through the "
-                    "settled fortnight and broken immediately at the shift, and the top panel shows the gate "
-                    "reacting by handing over more — but a day late and not by enough.",
-        "not_shown": "It does not show WHY each method fails the promise; F5 separates confidence from "
-                     "accuracy, and F6 shows the inversion behind the never-forgets timetable's failure. The "
-                     "gate threshold is adaptive, so these are not a fixed policy.",
+        "band": "none: these are rates",
+        "prose_numbers_ok": {"0.1": "alpha, the error rate the gate was set to hold -- a setting"},
+        "note": ("The top axis is the miss rate among ANSWERED questions divided by the rate the gate was set "
+                 f"to hold (alpha={alpha}), so the dashed line at 1 is the promise and 3 means three times as "
+                 "many wrong answers as promised. The lower panel is the evidence that the gate did react."),
+        "caption": "Top: how often each method is wrong on the questions it chose to answer, as a multiple of "
+                   "the error rate its gate was set to hold; the dashed line at 1 is that promise. Bottom: how "
+                   "often it declined to answer. The gates react to the change \u2014 the lower panel roughly "
+                   "doubles \u2014 and the upper panel shows that reacting did not make the kept answers "
+                   "reliable.",
+        "look_for": (lambda n: "The top panel at the first dotted rule, where every line leaves the promise "
+                               "behind. The ranking is printed on the plot: worst is the never-forgets "
+                               f"timetable at {max(v['times the promised rate, 14-16'] for v in n.values()):.1f} "
+                               "times its promised rate. Then the lower panel, which shows this is not a "
+                               "failure to react: hand-over roughly doubles at the same moment.")(nums),
+        "not_shown": (lambda n: "It does not show WHY the gate reacts, which differs by method and is the "
+                                "more interesting half. The last column of the table is that answer: the "
+                                "timetables' own confidence falls at the shift, by "
+                                f"{abs(n['never-forgets timetable']['its own confidence moved (points)']):.1f} "
+                                f"and {abs(n['3-day timetable']['its own confidence moved (points)']):.1f} "
+                                "points, while long-context's moves "
+                                f"{n['long-context']['its own confidence moved (points)']:+.1f} \u2014 so for "
+                                "the language memory the entire reaction is the controller raising its bar "
+                                "after mistakes have already been made, and none of the four moves its "
+                                "confidence as far as its accuracy fell. Nor does it show what the questions "
+                                "it hands over would have scored: that is F6, and for one method the answer "
+                                "is worse than what it kept.")(nums),
         "drawing": NOTE_NO_BAND, "numbers": nums})
 
 
@@ -1030,7 +1100,8 @@ def f6(DATA, EXTRA, manifest):
                  "answers the questions it gets wrong and hands over the ones it would have got right. That is "
                  "worse than a gate that does nothing at all. Perpetua* keeps the sign the right way round in "
                  "every window, which is what shows the failure to be a property of the confidence signal "
-                 "rather than of gating as an idea.",
+                 "rather than of gating as an idea.\n\n" + SPINE + " That is why the exception is this "
+                 "method and not a better-tuned gate on one of the others.",
         "population": POP_LABEL["person"], "households": hh, "split": "all questions",
         "band": "none: these are window accuracies",
         "encoding_words": {"pale": "the handed-over bars are hatched, not tinted",
