@@ -44,6 +44,10 @@ Memories
   RECENT_CAP sightings + up to 10 empty-listing lines (the recent-sightings list shows 60 sightings).
   Adaptations, stated: ingestion is nightly per day rather than per message; sightings are structured
   already, so there is no entity-extraction step; facts are keyed by object.
+* ``truecard`` the recent-sightings list with the residents' descriptions kept TRUE for each day: on the
+  sick days (the days of the bank's "home sick" messages) the sick resident's line says "home sick at the
+  moment, resting on the couch in the living room through the day; no work or trips out" (the simulator's
+  own description of the sick-day event); on every other day the original description.
 ``--days`` answers only the listed days. This is exact only where each arm makes it so, NOT a guarantee
 of the harness. Arms with no LLM writes (naive, pinned, nocard, debate) are exact because their state never
 depends on which days were answered. The fact stores are exact because each nightly write filters sightings
@@ -106,6 +110,11 @@ class Pinned(Store):
 class NoCard(Store):
     kind, in_house = "nocard", "naive"
     strip_cards = True
+
+
+class TrueCard(Store):
+    kind, in_house = "truecard", "naive"
+    SICK = "Weekdays: home sick at the moment, resting on the couch in the living room through the day; no work or trips out."
 
 
 class Debate(Store):
@@ -191,7 +200,7 @@ class FactStore(Store):
     def nightly(self, day: int, memory: L.Memory, ctx: dict) -> None:
         L0 = L.header_lines((day + 1) * DAY_SECONDS - 60, self.day_names, ctx["cards"], ctx["rooms"], ctx["patrol_hours"],
                             False, ctx["hints"](day))
-        movers = []
+        movers, mover_objs = [], []
         cutoff = (day + 1) * DAY_SECONDS      # the night's write sees only what had been seen by the end of that day,
         for o in sorted(memory.sightings):   # whenever it runs: no later sightings leak in, and --days stays exact
             h = [(t, r) for t, r in memory.history(o) if t < cutoff]
@@ -199,6 +208,7 @@ class FactStore(Store):
                 continue
             st = stays(h, day)
             if st:
+                mover_objs.append(o)
                 movers.append(f"- {o}: " + "; ".join(st))
                 held = [f for f in self.facts if f["obj"] == o and f["status"] == "current"]
                 if held:
@@ -215,7 +225,11 @@ class FactStore(Store):
                         "exact wording. Use only object and spot names above.",
                         'Reply with JSON: {"facts": [{"object": ..., "spot": ..., "hours": "HH:MM-HH:MM"}, ...]}']
         text, _ = self.ask([{"role": "system", "content": L.SYSTEM}, {"role": "user", "content": "\n".join(ex)}],
-                           FACTS_SCHEMA, 2500, f"facts extract day {day}", llm_authored=self.authored())
+                           # at least one fact per object listed: with an unconstrained list the model returned
+                           # {"facts": []} on 4 of 9 nights (withdrawn/facts_zep_hh0_empty_nights)
+                           {**FACTS_SCHEMA, "properties": {"facts": {**FACTS_SCHEMA["properties"]["facts"],
+                                                                     "minItems": min(len(mover_objs), 80)}}},
+                           3000, f"facts extract day {day}", llm_authored=self.authored())
         try:
             new = [f for f in json.loads(text or "{}").get("facts", [])
                    if f.get("object") in memory.sightings and f.get("spot") in ctx["allowed"]]
@@ -313,7 +327,7 @@ class FactsStale(FactStore):
     kind, policy = "facts_stale", "stale"
 
 
-STORES = {c.kind: c for c in (Naive, Pinned, NoCard, Debate, DebateOracle, FactsMem0, FactsZep, FactsStale)}
+STORES = {c.kind: c for c in (Naive, Pinned, NoCard, TrueCard, Debate, DebateOracle, FactsMem0, FactsZep, FactsStale)}
 
 
 def strip_cards(lines: List[str], names: Dict[str, str]) -> List[str]:
@@ -441,7 +455,14 @@ def run_arm(bank_path: pathlib.Path, kind: str, told: bool, client: L.LLMClient,
                     nobj = {}
                 noticing.append({"day": noticing_day, "changed": bool(nobj.get("changed")), "who": nobj.get("who"),
                                  "confidence": nobj.get("confidence")})
-            Lh = L.header_lines(q.t_query, day_names, cards, rooms, patrol_hours, False, hints, "conf", patrol_times,
+            q_cards = cards
+            if isinstance(store, TrueCard):
+                sick = [h["text"] for h in header.get("hint_messages", []) if h["day_index"] == q.day_index and "home sick" in h["text"]]
+                if sick:
+                    who = sick[0].split(": ", 1)[-1].split(" is home sick")[0].strip()
+                    assert who in names.values(), (who, names)
+                    q_cards = [{**c, "weekday": TrueCard.SICK} if c["name"] == who else c for c in cards]
+            Lh = L.header_lines(q.t_query, day_names, q_cards, rooms, patrol_hours, False, hints, "conf", patrol_times,
                                 question_moments, feedback_delay_min)
             if getattr(store, "strip_cards", False):
                 Lh = strip_cards(Lh, names)

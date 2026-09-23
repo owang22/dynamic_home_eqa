@@ -76,3 +76,22 @@ Follow-up ONLY if this shows an effect: the card corrected on day 14 to say she 
   record agree) against the paired spell. The moved/unmoved split goes underneath as corroboration only. Unmoved questions in
   the spell are reported POOLED across households with their total n, marked as pooled and not as a paired test.
   Classification source: the bank's truth at question time (the base run's `truth` column), identical for every arm.
+
+## The residents' descriptions kept TRUE for each day (`truecard`) — written ~02:51, before launch (launched 02:52). Six households, hh_s0-5.
+Days 14-23: the sick resident's line (the name comes from that household's day-14 message) reads "Every day: home sick at
+the moment, resting on the couch in the living room through the day; no work or trips out." That wording is the
+simulator's own description of the sick-day event ("Off sick, resting on the couch all day"; schedule: work and trips
+removed, rest_couch added). All other days: the original card. Other residents: unchanged. It carries MORE than the start
+message ("X is home sick today"): it names the couch. So this is the "accurate written routine" condition, not "told the
+stage".
+Same days 11-17, 21-22, 24-28. Card-removed is extended to hh_s3-5 so both compare on six households, paired.
+Predictions (coordinator's recorded as theirs; mine separate):
+- Coordinator: the true card beats both the stale card (the recent-sightings list) and no card in the spell, and beats no
+  card on the return. Reading if so: "keep written context current", not "do not give context". If the true card only
+  MATCHES no card, the routine text does nothing useful even when accurate.
+- Mine: lead-up identical to the recent-sightings list, since the prompts are identical before day 14 (a check, not a
+  prediction: any difference there is a bug). Spell: the true card beats the stale card by more than card removal did (cold
+  +30 or more), because it names the couch. Return: equal to the recent-sightings list, because the card is the original
+  again on day 24 (the prompts differ only in the day's card, so any return cost would come from the model's own
+  sick-day sightings).
+- Expect shrinkage from three to six households (hh_s0 was +35 alone); report both numbers.

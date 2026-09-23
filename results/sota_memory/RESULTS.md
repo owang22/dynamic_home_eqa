@@ -51,3 +51,41 @@ Notes on reading (agreed with the coordinator, 02:40):
   bug. The irony is worth one line in the write-up: a memory built to represent when facts were true was building its
   early facts from evidence that did not exist yet, and it would have looked well-behaved in the settled period for the
   wrong reason. The day-subset exactness statement is now scoped per arm in llm_sota.py's docstring.
+
+## The recent-sightings list with the residents' descriptions removed — landed 02:50, days 11-17, 21-22, 24-28, 0 fallbacks
+Paired on the same questions against the recent-sightings list; n=3 households, so the bar is mean bigger than the spread.
+Pinned is shown on the SAME question ids for comparison.
+| window | all questions: card removed | per household | pinned | cold: card removed | per household | pinned |
+|---|---|---|---|---|---|---|
+| lead-up 11-13 | +4.1, spread 5.5 | 83->83, 72->83, 90->92 | +9.2, spread 7.6 | +4.2, spread 7.2 | 92->92, 69->81, 83->83 | +9.7 |
+| first sick days 14-16 | **+9.7**, spread 6.4 | 44->48, 65->73, 50->67 | +2.8 | +5.5, spread 5.3 | 12->18, 37->47, 20->20 | +2.0 |
+| later spell 17, 21, 22 | **+18.8**, spread 15.7 | 42->77, 69->73, 62->79 | +5.6 | **+28.6**, spread 15.8 | 13->60, 35->53, 36->57 | +14.5 |
+| first days back 24-26 | -8.3, spread 8.3 (at the bar, not past it) | 75->67, 67->67, 90->73 | +1.4 | -15.6, spread 33.3 | 50->50, 50->57, 92->38 | +2.0 |
+| 27-28 | -2.1, spread 6.5 | 75->78, 71->71, 94->84 | +3.1 | -4.2 | | +6.7 |
+Moved vs unmoved (strata.py), later spell: moved +21.0, spread 15.7 (40->77, 68->74, 62->82; passes). Unmoved +6.7, spread
+11.5; POOLED 67->70 (n27, pooled, not a paired test). First days back: unmoved -8.0, spread 7.2 (80->70, 68->68, 93->79).
+
+Reading:
+- The shape the coordinator predicted holds on three households: nothing measurable while the card is true, a gain once
+  it is stale, a cost when it becomes true again (at the bar, not past it). The gain is on the things the shift moved.
+- Lead-up bound: per household +0, +11, +2; mean +4.1, standard error 3.2. A gain of up to ~10 points or a loss of ~2 is
+  not excluded, so the card carried no measurable useful information in the settled fortnight at this resolution.
+- WINNER'S CURSE AGAIN: hh_s0 alone (reported at 02:32) gave +35 on the later spell; the other two gave +4 and +17. The
+  three-household mean is about half the first household's.
+- Card removed vs pinned, paired on the same questions, later spell: cold 60 vs 33, 53 vs 59, 57 vs 36 (+14 mean, spread
+  ~18); all questions +13, spread ~15. NOT distinguishable at n=3. The claim "removing the written routine beats pinning
+  the right line" is NOT established. Both help; the card removal's point estimate is larger. These are two
+  interventions that differ in more than one way, not a decomposition.
+
+## FINDING: an LLM-written fact store corrupted itself four ways before a single question was answered
+The shared nightly fact store (used by the three published revision policies) was checked by reading the STORE, not the
+accuracy. Each failure below was invisible in end-to-end scores, and the literature reports these systems by end-to-end
+scores only.
+| # | failure | what it would have done to the numbers | how it was caught | fix | archived at |
+|---|---|---|---|---|---|
+| 1 | Zero-length validity windows: the extractor copied single sightings as facts ("desk_b1, 18:00-18:00", "cupboard_k1, 03:00-03:00") | Every nightly 03:00 round contradicts yesterday's point facts, so the store becomes a sighting log with dates. A "validity window" policy then shows windows that mean nothing | Reading the day 0-2 facts after the smoke run | Extraction reads each day as merged stays (spot, from-to) and is told to give stretches, never single moments | smoke/facts_zep_extract_v1_pointfacts |
+| 2 | Paraphrase churn: facts were rewritten each night with slightly different times, and the revision step invalidated them as contradictions (34 facts invalidated on day 2, including "desk 11:26-21:05" vs "desk 11:04-24:00") | The store reduces to "yesterday's timeline"; the validity-window policy would look like a one-day forgetter for reasons unrelated to revision | Counting the revision ops per night | Extraction is shown the facts already held and told to repeat their exact wording when today agrees (the prior context Graphiti also gives its extractor); by day 3: 25 duplicates, 10 adds, 10 invalidations | smoke/facts_zep_extract_v2_daytranscripts |
+| 3 | Future sightings leaked into past facts: the nightly write for day d read the memory as of whenever it ran; with answering from day 11, the day 0-10 facts were built from up to 11 days of later sightings | Near-perfect settled-period facts for the wrong reason: a validity-window memory that had seen the future; the results would also have depended on which days were answered | An unexpected cache miss: the day-0 prompt differed between two runs that should have matched | Each write filters sightings to before the end of its own day; verified byte-identical prompts under --days 4 and --days 11 | withdrawn/facts_zep_hh0_future_sightings_leak |
+| 4 | Empty nights: with an unconstrained list, extraction returned {"facts": []} on 4 of 9 nights (days 1, 2, 5, 8); at temperature 0 a retry reproduces it | A store with random missing days: facts stay "current" through days they were never checked, so revision appears to keep stale facts | Listing every extraction call's fact count | The schema requires at least one fact per object listed that night | withdrawn/facts_zep_hh{0,1,2}_empty_nights |
+Irony worth one line: #3 is a memory designed to represent WHEN facts were true, building its early facts from evidence
+that did not exist yet.
