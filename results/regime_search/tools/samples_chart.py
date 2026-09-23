@@ -181,21 +181,30 @@ def main():
     warm_last = max((r["day_index"] for r in rows if r["_warm"]), default=0)
     pooled_last = max(acc) if acc else 0          # last day EVERY household has reached
     SHIFT_DAY = 14
+    # Stage boundaries as dotted rules in ink, not as washes across the window. A band sits underneath the
+    # lines and their spread and makes a narrow one hard to read, which is the whole reason for the change; a
+    # rule marks the same day and leaves the plot area clean. The warm-up and the not-yet-complete tail get the
+    # same treatment rather than a grey wash and a hatch over the data.
+    SHIFT_DAY = 14
+    edges = []
+    if maxd >= SHIFT_DAY:
+        edges.append((SHIFT_DAY, "sick"))
+    if maxd > 23.5:
+        edges.append((24, "back to normal"))
+    if warm_last:
+        edges.append((warm_last + .5, "threshold warmed up"))
+    if pooled_last and pooled_last < maxd:
+        edges.append((pooled_last + .5, "not all households yet"))
     for A in ax:
-        if warm_last:
-            A.axvspan(0.5, warm_last + .5, color="#b0b0b0", alpha=.22, lw=0)
-        if maxd > 13.5:
-            A.axvspan(13.5, min(23.5, maxd + .5), color="#f0c987", alpha=.45, lw=0)
-        if maxd > 23.5:
-            A.axvspan(23.5, maxd + .5, color="#bcdcc8", alpha=.45, lw=0)
-        A.grid(alpha=.25)
-        if maxd >= SHIFT_DAY:
-            A.axvline(SHIFT_DAY, color="#c0392b", lw=1.4, alpha=.85, zorder=5)
-        # One household finished all 31 days before the other two, so its faint line runs past the end of
-        # the pooled line. Without this hatch that end reads as the run having died.
-        if pooled_last and pooled_last < maxd:
-            A.axvspan(pooled_last + .5, maxd + .5, facecolor="none", edgecolor="#9a9a93",
-                      hatch="///", alpha=.35, lw=0, zorder=1)
+        A.set_facecolor("white")
+        A.grid(alpha=.25, color="#cccccc")
+        A.set_axisbelow(True)
+        for d, _ in edges:
+            A.axvline(d, color="#141413", lw=1.1, ls=":", alpha=.75, zorder=4)
+    for d, lab in edges:                      # label once, above the top panel, so no panel is crowded
+        ax[0].annotate(lab, xy=(d, 1.012), xycoords=("data", "axes fraction"),
+                       ha="center", va="bottom", fontsize=8.5, color="#141413")
+    TITLE_PAD = 22                            # room for the boundary labels between the plot and the title
 
     # --- panel 1: does the agreement signal move when the accuracy does? -------------------------------------
     d1 = sorted(acc)
@@ -226,7 +235,7 @@ def main():
                   f"two fall, one rises)")
     else:
         t = "Accuracy against the agreement signal, each divided by its own settled week"
-    ax[0].set_title(t, fontsize=10.5)
+    ax[0].set_title(t, fontsize=10.5, pad=TITLE_PAD)
     ax[0].legend(fontsize=9, loc="lower left", framealpha=.9)
 
     # --- panel 2: the set size. the strong result is that this does NOT move ---------------------------------
@@ -252,8 +261,8 @@ def main():
     d4 = sorted(cov)
     ax[2].plot(d4, [100 * cov[d] for d in d4], "o-", color=C_COV, lw=2.4, ms=4.5, zorder=4,
                label="how often the truth was in the set")
-    ax[2].axhline(90, color="#c0392b", ls="--", lw=1.3, zorder=3)
-    ax[2].text(0.995, 0.78, "90% promised", fontsize=8.5, color="#c0392b", ha="right",
+    ax[2].axhline(90, color="#c0392b", ls="--", lw=1.3, zorder=3)   # a target, not a stage: stays as it is
+    ax[2].text(0.995, 0.04, "the 90% the method promises", fontsize=8.5, color="#c0392b", ha="right",
                transform=ax[2].transAxes)
     eff_c = window_effect(rows, LEAD, [14], "lac_covered", warm_ok=False)
     if eff_c:
@@ -284,15 +293,15 @@ def main():
                        ec="#d9a441" if live else "#199e70", lw=1))
     note = (f"Faint lines are the {len(hh)} households on their own, bold is the pool. Colour marks the "
             f"quantity, not a method — every line here is long-context memory.")
-    note2 = (f"Grey band: the threshold's warm-up, where coverage is not yet meaningful. Hatched: days only "
-             f"some households have reached, so the pool stops there. Rebuilt {_t.strftime('%H:%M')}.")
+    note2 = ("Dotted rules mark the boundaries; nothing is drawn over the plot area, so the lines and their "
+             f"spread read against a plain ground. Rebuilt {_t.strftime('%H:%M')}.")
     fig.suptitle("Sampling the same question 10 times: the conformal set keeps its width and loses its promise",
                  fontsize=12.5, y=0.995)
     fig.text(0.5, 0.028, note, ha="center", fontsize=8.5, color="#666")
     fig.text(0.5, 0.009, note2, ha="center", fontsize=8.5, color="#666")
     fig.tight_layout(rect=(0, 0.046, 1, 0.950))
     out = os.path.join(ROOT, "samples_uncertainty.png")
-    fig.savefig(out, dpi=125)
+    fig.savefig(out, dpi=125, facecolor="white")
     print("wrote", out)
 
     # every number that reaches prose is printed here, with the bar applied, so none of it is typed by hand
