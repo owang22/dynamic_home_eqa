@@ -504,3 +504,33 @@ names, so the rename broke them loudly rather than silently producing wrong labe
 the single name dictionary, which means the next rename cannot leave a lookup pointing at a name that no longer
 exists — a structural fix rather than a repair, and the reason to prefer a lookup that can break over a literal
 that cannot.
+
+## 23 Sept, early — one figure carrying two estimators, and a slice that swallowed four functions
+
+Two faults of the same family: a thing that looked like one thing and was two.
+
+**F8's table and F8's line disagreed about what a window number meant.** The figure draws each method's daily
+score at ONE threshold chosen for the whole run. Its numbers table reported, per window, the score under a
+threshold refitted *for that window* — a different estimator, the one F9 uses. Nothing was inconsistent enough
+to catch the eye: both are decision scores, both in the same units, and the refit one is only a little larger.
+The prose then took the table at its word and described the thresholds as "chosen with hindsight for the window
+being scored", which is a true sentence about the table and a false one about the picture beside it. The table
+columns are now the window means of the line that is actually drawn.
+
+The prose read those columns **by position** (`list(nums[m])[2 + i]`), so swapping what the columns contained
+changed every quoted number with nothing to announce it. It now reads them by name. A positional read of a dict
+whose contents are being edited is a silent-change machine; the number-audit catches a number that has gone
+stale, not one that has quietly become a different measurement with the same value nearby.
+
+The wording is now written once, as a constant carried by all three decision figures, and it says what each one
+actually does: one threshold per run (F8), one per window per household (F9), one per day (F10). None of them is
+"swept per day" in the sense of being refitted on held-out data. That phrase had been used in conversation about
+F8 and is wrong about all three.
+
+**Separately: replacing a function by slicing between two markers deleted four other functions.** The slice ran
+from `def f9` to `FIGS = {`, on the assumption that f9 was the last figure. It is not — f4 through f7 are
+defined after it, and between f9 and f4 sat four module-level definitions (`GATE_ORDER`, `GATE_NAME`,
+`gate_hh`, `gate_series`, `conf_shift`) that three later figures depend on. The build failed loudly with a
+NameError, which is the lucky case; had the removed code been prose rather than definitions it would have
+failed silently. Slice to the NEXT definition, found by grepping line numbers, never to a marker assumed to be
+adjacent — and read what is between the two, because module-level code lives between functions too.
