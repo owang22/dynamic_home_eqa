@@ -506,6 +506,8 @@ def save(fig, name, manifest, entry):
             f.write(f"- **How the line is drawn:** {entry['drawing']}\n")
         if entry.get("note"):
             f.write(f"- **About the data:** {entry['note']}\n")
+        if entry.get("rerun_floor"):
+            f.write(f"- **The floor under any effect here:** {entry['rerun_floor']}\n")
         if entry.get("bound_wording"):
             f.write(f"- **How much hindsight this figure uses:** {entry['bound_wording']}\n")
         if entry.get("caveat"):
@@ -582,6 +584,7 @@ def f1(DATA, EXTRA, manifest):
     legend_below(ax, ncol=1)
     save(fig, "F1_learn_break_relearn", manifest, {
         "figure": "F1",
+        "rerun_floor": RERUN_FLOOR,
         "claim": (lambda n: "A change in the household's hidden routine costs accuracy TWICE: once when it "
                             "happens and again when the world goes back to how it was. The second break is the "
                             "half that is not obvious and it is not the smaller one \u2014 the timetable with a three-day memory "
@@ -673,6 +676,7 @@ def f2(DATA, EXTRA, manifest):
     legend_below(ax, ncol=1)
     save(fig, "F2_relearning_inside_the_spell", manifest, {
         "figure": "F2",
+        "rerun_floor": RERUN_FLOOR,
         "claim_head": ("The language memories do not behave as one class, and the one that behaves most like "
                        "a COUNTER is the one built like one. Retrieval answers by pulling sightings from "
                        "the same time of day across the whole history, capped but never aged out \u2014 which "
@@ -834,6 +838,7 @@ def f3(DATA, EXTRA, manifest):
     nums.update(con["rows"])
     save(fig, "F3_what_one_sentence_buys", manifest, {
         "figure": "F3",
+        "rerun_floor": RERUN_FLOOR,
         "claim": (lambda c: "Ten days of living in the new routine, corrected after every single question, do "
                             "not teach the whole-log-in-the-prompt memory the new routine. One sentence does, and on ten "
                             "matched households the whole arc of it now clears our bar on this one memory. "
@@ -852,12 +857,20 @@ def f3(DATA, EXTRA, manifest):
                             "What does clear is the positive form: retracting is worth "
                             f"{c('A & B - A only','first days back 24-26')} points against telling once, and "
                             f"{c('A & B - A only','a week later 27-31')} a week later.\n\n"
+                            "\n\nThe smallest of those four, 6.8 points, is more than 3 times the largest "
+                            "by-window rerun floor measured so far (2.1 points). That is the comparison to "
+                            "make, rather than one against the pooled rerun figure: the floor is not uniform "
+                            "across the run, and every claim here rests on a single window.\n\n"
                             + SPINE + " This figure is where it is earned end to end on a single memory, "
                             "because the message is the counterfactual: it holds the memory fixed and changes "
                             "only whether the regime was announced, and then whether the announcement was "
                             "taken back.")(con["get"]),
         "population": POP_LABEL[pop], "households": {"longcontext (matched across all three arms)": len(matched)},
         "split": "all questions", "band": "±1 standard error across households",
+        "prose_numbers_ok": {
+            "2.1": "the largest by-window rerun floor measured by the memory strand, quoted from the floor "
+                   "paragraph below; not a quantity this figure computes",
+            "3": "a multiple, not a measurement: the ratio of this figure's smallest effect to that floor"},
         "note": "Each told arm is drawn from the day it departs from the arm above it, measured from the data "
                 "rather than taken from the calendar, with the search starting at that arm's own message day. "
                 "Departure days are in the numbers below, and so is any day an arm differed from the one "
@@ -918,6 +931,46 @@ DEC_ORDER = ["ttfrozen", "tt3d", "perpetua", "longcontext"]
 WIN_DAYS = {"settled week 9-13": range(9, 14), "first sick days 14-16": range(14, 17),
             "rest of the spell 17-23": range(17, 24), "first days back 24-26": range(24, 27),
             "a week later 27-31": range(27, 32)}
+# How much of a difference is just the run being run again. Measured by the memory strand: the recent-sightings
+# list run twice over the same data, one run kept from the workshop session and one fresh on 22-23 Sept.
+#
+# One dict, and the paragraph below is built from it, so the prose cannot drift from the measurement the way a
+# table drifts from a line. When the extended version lands (six households), edit these values only.
+RERUN_FLOOR_VALUES = {
+    "households": 3, "answers_changed_pct": 3, "answers_changed_lo": 0, "answers_changed_hi": 9,
+    "typical_points": "1 to 2", "worst_hh_window": 6,
+    "pooled_mean": 0.0, "pooled_mean_abs": 1.2, "pooled_spread": 1.8,
+    "by_window": {"lead-up": 1.8, "first sick days": -0.7, "later spell": 0.0,
+                  "first days back": 0.7, "days 27-28": -2.1},
+}
+_RF = RERUN_FLOOR_VALUES
+RERUN_FLOOR = (
+    "Some of any difference here is the run having been run again. Identical prompts at temperature zero do "
+    "not reproduce on this server, so a repeat of the same arm on the same data does not give the same "
+    "answers, and that sets a floor under every effect involving a memory whose answers a language model "
+    f"generates. Measured so far on {_RF['households']} households, by repeating the recent-sightings list "
+    f"over the same data: about {_RF['answers_changed_pct']}% of answers change "
+    f"({_RF['answers_changed_lo']} to {_RF['answers_changed_hi']}% depending on the household and the "
+    f"window), accuracy moves {_RF['typical_points']} points typically and at most "
+    f"{_RF['worst_hh_window']} in a single household-window. Pooled over all three households and every day: "
+    f"mean {_RF['pooled_mean']:.1f}, mean absolute {_RF['pooled_mean_abs']:.1f}, spread "
+    f"{_RF['pooled_spread']:.1f} points.\n\n"
+    "  Two things to do with that, rather than quoting the pooled number and moving on. FIRST, the floor is "
+    "NOT uniform across the run. By window its mean is "
+    + ", ".join(f"{k} {v:+.1f}" if v else f"{k} {v:.1f}" for k, v in _RF["by_window"].items())
+    + " \u2014 so an effect resting on a single window has a larger floor under it than the pooled figure "
+      "suggests, and quoting the pooled number beside a one-window effect understates it. SECOND, where it "
+      "helps a reader, state an effect as a multiple of the floor: nineteen points against a floor of one to "
+      "two is actionable in a way that a value with a spread beside it is not.\n\n"
+    "  What this floor does NOT cover: the counting methods \u2014 the timetables and the survival-time "
+    "model \u2014 generate no text and reproduce exactly on the same data, so they have no rerun floor of "
+    "this kind. And it is measured on ONE language memory; it is indicative for the others rather than "
+    "measured on them. Rerun noise is symmetric, so it does not bias a paired mean, and every spread quoted "
+    "in these folders is computed across households from the runs as they happened \u2014 the noise is "
+    "already inside each band, and an effect that cleared its bar cleared it with the noise included."
+)
+
+
 HINDSIGHT = "thresholds chosen with hindsight, so these are upper bounds, not a deployable policy"
 HINDSIGHT_RUN = ("one threshold per method, chosen knowing the whole run, so this is an upper bound "
                  "rather than a deployable policy")
@@ -963,6 +1016,7 @@ def f8(DATA, EXTRA, manifest):
     legend_below(ax, ncol=1)
     save(fig, "F8_decision_score_per_day", manifest, {
         "figure": "F8",
+        "rerun_floor": RERUN_FLOOR,
         "bound_wording": BOUND_WORDING,
         "claim": "Scored the way a user would feel it — +1 for a right answer, \u22121 for a wrong one, 0 for "
                  "declining — the ranking inverts at the moment of change: the methods that are most accurate "
@@ -1061,6 +1115,7 @@ def f9(DATA, EXTRA, manifest):
     g = lambda m, f: DD[m][sick][f]
     save(fig, "F9_what_the_confidence_adds", manifest, {
         "figure": "F9",
+        "rerun_floor": RERUN_FLOOR,
         "bound_wording": BOUND_WORDING,
         "claim": ("Being allowed to decline is worth something to every method at the shift, but for the "
                   "timetables that is not because their confidence knows anything. The value splits in two: "
@@ -1213,6 +1268,7 @@ def f4(DATA, EXTRA, manifest):
     legend_below(ax[1], ncol=1, gap=0.30)
     save(fig, "F4_reacting_is_not_recovering", manifest, {
         "figure": "F4",
+        "rerun_floor": RERUN_FLOOR,
         "claim": (lambda n: "Reacting is not recovering. When the routine changes these rules that decide whether to answer DO notice \u2014 "
                             "every one of them roughly doubles or triples how often it declines to answer "
                             "\u2014 and the answers they keep are still wrong "
@@ -1284,6 +1340,7 @@ def f5(DATA, EXTRA, manifest):
     legend_below(ax[0], ncol=2, gap=0.22)
     save(fig, "F5_confidence_against_accuracy", manifest, {
         "figure": "F5",
+        "rerun_floor": RERUN_FLOOR,
         "claim_head": ("A confidence number can be perfectly stable and mean nothing at all. The memory that follows its last sighting states "
                        "near-total confidence every day of the month while being right about half the time, "
                        "and the timetables hold theirs steady through a 40-point collapse in their own "
@@ -1353,6 +1410,7 @@ def f6(DATA, EXTRA, manifest):
     legend_below(ax[0], ncol=1)
     save(fig, "F6_the_inversion", manifest, {
         "figure": "F6",
+        "rerun_floor": RERUN_FLOOR,
         "claim": "At the moment the routine changes, the timetable that never forgets's rule for deciding whether to answer runs BACKWARDS: it "
                  "answers the questions it gets wrong and hands over the ones it would have got right. That is "
                  "worse than a rule that decides whether to answer that does nothing at all. the survival-time model keeps the sign the right way round in "
@@ -1413,6 +1471,7 @@ def f7(DATA, EXTRA, manifest):
     legend_below(ax[1], ncol=1, gap=0.34)
     save(fig, "F7_sets_break_rather_than_widen", manifest, {
         "figure": "F7",
+        "rerun_floor": RERUN_FLOOR,
         # The claim used to quote the spell-average set size against the settled average, which describes a
         # different window from the day the claim is about -- and in doing so undersold it. On the day the
         # guarantee fails the set is NARROWER than the settled week, which is stronger than "unchanged".
@@ -1483,6 +1542,7 @@ def f10(DATA, EXTRA, manifest):
     sick = "first sick days 14-16"
     save(fig, "F10_the_same_test_one_day_at_a_time", manifest, {
         "figure": "F10",
+        "rerun_floor": RERUN_FLOOR,
         "claim": ("Refitting the threshold every single day \u2014 the most generous reading there is \u2014 "
                   "does not rescue either timetable at the shift, and it separates them into two findings "
                   "that the window version ran together.\n\n"

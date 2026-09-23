@@ -90,6 +90,12 @@ Consequences we act on:
 - A cache MISS means a fresh generation, which can differ from the logged one. Two arms can therefore differ
   on a day before either was told anything. Where that happens it is a rerun artefact, not a design fact, and
   it is reported rather than drawn (see F3's numbers table and problems_found.md).
+- **The departure day each told arm is drawn from is measured, but the search starts at that arm's own message
+  day.** The measurement was originally allowed to set the drawing, on the reasoning that a calendar clip would
+  hide a real early departure. It would — but the only early departure it ever found was noise, and the figure
+  drew a second message taking effect three days before it was sent. Measuring is how we know that; drawing
+  from it was the mistake. Anyone reinstating the old rule will have the same good reason we did, so the
+  reasoning is recorded here rather than only in the code.
 - Rerun noise is symmetric, so it does not bias a paired mean, and every spread we quote is computed across
   households from the runs as they happened — the noise is already inside every bar and every effect that
   cleared the bar did so with it included.
