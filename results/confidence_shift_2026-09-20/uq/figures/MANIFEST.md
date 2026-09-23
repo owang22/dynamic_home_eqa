@@ -12,6 +12,12 @@ These memories can represent the new regime perfectly well — told about it, th
 
 *single-column, 3.15 in wide.* Population one resident off sick, that resident's own things; households ttfrozen 10, tt3d 10, perpetua 10, longcontext 10. Renders, caption and claims in `F1_learn_break_relearn/`.
 
+## [F10](F10_the_same_test_one_day_at_a_time/) — F10_the_same_test_one_day_at_a_time
+
+Refitting the threshold every single day — the most generous reading there is — does not rescue the timetables at the shift. The timetable that never forgets has a confidence signal that beats hindsight-on-shuffled-labels in every window of the run except one: 0.20 against a bar of 0.10 in the settled week, 0.35 against 0.21 on the first days back — and at the first sick days 0.07 against a bar of 0.33, which is nothing. The three-day timetable is clears at neither boundary (0.18 against 0.39 at the shift, 0.29 against 0.35 on the return). The survival-time model moves the other way, from 0.51 settled to 2.25 at the shift, the largest value it reaches all run. So the never-forgets timetable does not have a weak signal that the shift weakens further: it has a working signal that stops working on the day the routine changes and works again a week later.
+
+*1.5-column, 3.7 in wide.* Population one resident off sick, that resident's own things; households ttfrozen 10, tt3d 10, perpetua 10, longcontext 10. Renders, caption and claims in `F10_the_same_test_one_day_at_a_time/`.
+
 ## [F2](F2_relearning_inside_the_spell/) — F2_relearning_inside_the_spell
 
 Given ten days of the new routine the timetable with a three-day memory re-learns it 2.0 to 3.0 times as fast as any language memory: +31 points from the first sick days to the end of the spell, against +15 for reflection, +12 for the whole-log-in-the-prompt memory and +10 for retrieval.

@@ -219,6 +219,83 @@ def declining_decomposition(rows_by_method, shuffles=60, seed=5):
     return out
 
 
+def per_day_hindsight(rows_by_method, shuffles=40, seed=11):
+    """The value of being allowed to decline, REFIT EVERY DAY: per day, the score under the best bar for that
+    day minus the score if forced to answer.
+
+    This is the loosest upper bound in the paper and is here to be compared with the two tighter ones, so that
+    the wording on each figure can be exact:
+
+      F8   one bar per method for the WHOLE RUN, then scored per day. A real if oracular policy: a deployer
+           who guessed the right constant once would get this.
+      F9   one bar per method per WINDOW, chosen knowing the window. Not deployable, and drawn against a floor.
+      here one bar per method per DAY, chosen knowing the day. Not deployable at all -- with roughly a hundred
+           and fifty rows behind each bar, hindsight alone buys a large number, which is why this one is only
+           ever read against its own shuffled-label floor.
+
+    The bar is shared across households (one number per day), matching F8's estimator rather than F9's
+    per-household one; the floor is the same quantity on labels shuffled inside each household on that day.
+    """
+    import random, bisect
+    rnd = random.Random(seed)
+
+    def day_table(by_hh, d):
+        """For each household: confidences sorted, and the prefix sums that give the score above any bar."""
+        tab = {}
+        for hh, seq in by_hh.items():
+            rows = sorted(((c, ok) for day, c, ok in seq if day == d), key=lambda t: t[0])
+            if not rows:
+                continue
+            confs = [c for c, _ in rows]
+            # suffix[i] = score from answering every row from i upward
+            suf = [0] * (len(rows) + 1)
+            for i in range(len(rows) - 1, -1, -1):
+                suf[i] = suf[i + 1] + (1 if rows[i][1] else -1)
+            tab[hh] = (confs, suf)
+        return tab
+
+    def score(tab, bar):
+        vals = [suf[bisect.bisect_right(confs, bar)] for confs, suf in tab.values()]
+        return st.mean(vals) if vals else None
+
+    out = {}
+    for mem, by_hh in rows_by_method.items():
+        gain, floor, sd, forced_out = {}, {}, {}, {}
+        for d in range(1, DAYS):
+            tab = day_table(by_hh, d)
+            if len(tab) < 2:
+                continue
+            bars = sorted({round(c, 3) for confs, _ in tab.values() for c in confs})
+            bars = [-1.0] + bars[:: max(1, len(bars) // 60)]
+            forced = score(tab, -1.0)
+            gain[d] = round(max(score(tab, b) for b in bars) - forced, 3)
+            forced_out[d] = round(forced, 3)
+            nulls = []
+            for _ in range(shuffles):
+                # reshuffle the OUTCOMES inside each household, keeping its confidences where they are
+                shtab = {}
+                for hh, seq in by_hh.items():
+                    rows = sorted(((c, ok) for day, c, ok in seq if day == d), key=lambda t: t[0])
+                    if not rows:
+                        continue
+                    oks = [ok for _, ok in rows]
+                    rnd.shuffle(oks)
+                    confs = [c for c, _ in rows]
+                    suf = [0] * (len(rows) + 1)
+                    for i in range(len(rows) - 1, -1, -1):
+                        suf[i] = suf[i + 1] + (1 if oks[i] else -1)
+                    shtab[hh] = (confs, suf)
+                nulls.append(max(score(shtab, b) for b in bars) - score(shtab, -1.0))
+            floor[d] = round(st.mean(nulls), 3)
+            # The spread of the shuffled runs is the bar this figure is claimed against: there is no
+            # across-household spread to use, because the threshold here is one number shared by all ten.
+            sd[d] = round(st.stdev(nulls), 3) if len(nulls) > 1 else None
+        if gain:
+            out[mem] = {"n_hh": len(by_hh), "gain": gain, "null_gain": floor, "null_sd": sd,
+                        "forced": forced_out}
+    return out
+
+
 def main():
     rows = load_rows()
     if not rows:
@@ -226,6 +303,8 @@ def main():
         return 1
     out = {"windows_order": list(WINDOWS), "methods": {},
            "declining_decomposition": declining_decomposition(
+               {m: {hh: list(seq) for hh, seq in by.items()} for m, by in rows.items()}),
+           "per_day_hindsight": per_day_hindsight(
                {m: {hh: list(seq) for hh, seq in by.items()} for m, by in rows.items()}),
            "confidence_tracks_correctness": tracks_correctness(
                {m: {hh: [(d, c, ok) for d, c, ok in seq] for hh, seq in by.items()}

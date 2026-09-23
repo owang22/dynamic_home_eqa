@@ -502,6 +502,8 @@ def save(fig, name, manifest, entry):
             f.write(f"- **How the line is drawn:** {entry['drawing']}\n")
         if entry.get("note"):
             f.write(f"- **About the data:** {entry['note']}\n")
+        if entry.get("bound_wording"):
+            f.write(f"- **How much hindsight this figure uses:** {entry['bound_wording']}\n")
         if entry.get("caveat"):
             f.write(f"- **Read with care:** {entry['caveat']}\n")
         if entry.get("provisional"):
@@ -864,8 +866,26 @@ def r2(v):
 
 
 DEC_NAME = NAME          # one source of names, so a rename cannot land in one figure and miss another
+BOUND_WORDING = (
+    "The three decision figures use three different amounts of hindsight, and each should be described with "
+    "the words that match it. F8: ONE threshold per method for the whole run, then scored day by day \u2014 "
+    "oracular in that the constant was chosen knowing the whole run, but it is at least a single policy "
+    "someone could hold. F9: one threshold per method per WINDOW, chosen knowing that window's outcomes, and "
+    "one per household. F10: one threshold per method per DAY, chosen knowing that day. None of the three is "
+    "swept per day in the sense of being refitted on held-out data, and none is a deployable policy; all "
+    "three are upper bounds on what declining could be worth, F8 the tightest and F10 the loosest."
+)
+
+
 DEC_ORDER = ["ttfrozen", "tt3d", "perpetua", "longcontext"]
+# The same five windows decision_extra.py cuts on, so a per-day figure here and a per-window one there are
+# summarising the identical days. If that file's WINDOWS moves, this moves with it.
+WIN_DAYS = {"settled week 9-13": range(9, 14), "first sick days 14-16": range(14, 17),
+            "rest of the spell 17-23": range(17, 24), "first days back 24-26": range(24, 27),
+            "a week later 27-31": range(27, 32)}
 HINDSIGHT = "thresholds chosen with hindsight, so these are upper bounds, not a deployable policy"
+HINDSIGHT_RUN = ("one threshold per method, chosen knowing the whole run, so this is an upper bound "
+                 "rather than a deployable policy")
 
 
 def f8(DATA, EXTRA, manifest):
@@ -887,7 +907,9 @@ def f8(DATA, EXTRA, manifest):
         hh[m] = M["n_hh"]
         nums[DEC_NAME[m]] = {"its own best threshold": M["best_bar_overall"],
                              "% of questions declined at it": M["declined_at_best"],
-                             **{w: v["best"] for w, v in M["windows"].items()},
+                             **{w: round(avg([M["per_day"][str(d)] for d in rng
+                                              if str(d) in M["per_day"]]) or 0.0, 1)
+                                for w, rng in WIN_DAYS.items()},
                              # the worst single day, so the below-zero moment the figure marks is backed by
                              # the table like every other number in the prose
                              "worst single day": round(min(M["per_day"].values()), 1)}
@@ -906,6 +928,7 @@ def f8(DATA, EXTRA, manifest):
     legend_below(ax, ncol=1)
     save(fig, "F8_decision_score_per_day", manifest, {
         "figure": "F8",
+        "bound_wording": BOUND_WORDING,
         "claim": "Scored the way a user would feel it — +1 for a right answer, \u22121 for a wrong one, 0 for "
                  "declining — the ranking inverts at the moment of change: the methods that are most accurate "
                  "in the settled world are the ones that collapse, and one goes NEGATIVE. On day 14 the "
@@ -930,18 +953,20 @@ def f8(DATA, EXTRA, manifest):
                                f"while the survival-time model goes {w(nm("perpetua"), 0):.1f} to {w(nm("perpetua"), 1):.1f} and "
                                f"the whole-log-in-the-prompt memory {w(nm("longcontext"), 0):.1f} to {w(nm("longcontext"), 1):.1f}. Note "
                                "also that the survival-time model sits BELOW both timetables while the world is stable."
-                     )(lambda m, i: nums[m][list(nums[m])[2 + i]])
+                     )(lambda m, i: nums[m][("settled week 9-13", "first sick days 14-16")[i]])
                     + (f" And on day {worst_below[0]} the {worst_below[2]}'s daily score is "
                        f"{worst_below[1]:+.1f} — below zero, meaning it would have scored better answering "
                        "nothing at all that day. That single day is the sharpest form of this figure's point "
                        "and the window averages above do not show it."
                        if worst_below else ""),
-        "not_shown": "The thresholds are chosen with hindsight for the window being scored, so these are upper "
-                     "bounds, not a policy anyone could run. Each method uses a different threshold, so the "
+        "not_shown": "The threshold here is ONE number per method for the whole run, chosen knowing the whole "
+                     "run \u2014 not refitted per window, which is F9, and not per day, which is F10. That "
+                     "makes it an upper bound, though the tightest of the three, and not a policy anyone could "
+                     "have run in advance. Each method uses a different threshold, so the "
                      "lines are not a like-for-like confidence comparison — that is deliberate, since the "
                      "confidence scales differ wildly, but it means a reader cannot infer anything about the "
                      "thresholds themselves from this figure.",
-                "caveat": HINDSIGHT + ", which makes the negative result stronger: even handed the answers in advance, "
+                "caveat": HINDSIGHT_RUN + ", which makes the negative result stronger: even handed the answers in advance, "
                   "declining buys the counters almost nothing exactly when it would matter",
         "drawing": NOTE_NO_BAND, "numbers": nums})
 
@@ -990,6 +1015,7 @@ def f9(DATA, EXTRA, manifest):
     g = lambda m, f: DD[m][sick][f]
     save(fig, "F9_what_the_confidence_adds", manifest, {
         "figure": "F9",
+        "bound_wording": BOUND_WORDING,
         "claim": ("Being allowed to decline is worth something to every method at the shift, but for the "
                   "timetables that is not because their confidence knows anything. The value splits in two: "
                   "what the best all-or-nothing choice gives, which needs no signal at all and pays whenever a "
@@ -1370,7 +1396,82 @@ def f7(DATA, EXTRA, manifest):
                                           "spell 14-23": round(avg(spell_s), 2)}}})
 
 
-FIGS = {"F1": f1, "F2": f2, "F3": f3, "F4": f4, "F5": f5, "F6": f6, "F7": f7, "F8": f8, "F9": f9}
+def f10(DATA, EXTRA, manifest):
+    """The same question as F9, asked one day at a time: does the confidence beat hindsight-on-noise TODAY?"""
+    P = EXTRA["decision_live"]["per_day_hindsight"]
+    meths = [m for m in DEC_ORDER if m in P]
+    fig, ax = plt.subplots(figsize=(SINGLE, 2.5))
+    nums, hh = {}, {}
+    for m in meths:
+        M = P[m]
+        days = sorted(int(d) for d in M["gain"])
+        S = {"days": days, "se": [0] * len(days), "hh": M["n_hh"],
+             "mean": [M["gain"][str(d)] - M["null_gain"][str(d)] for d in days]}
+        line(ax, S, COL[m], nm_legend(m), band=False, stage_of=stage_lookup(DATA, "person"))
+        hh[m] = M["n_hh"]
+        row = {}
+        for w, rng in WIN_DAYS.items():
+            g = avg([M["gain"][str(d)] for d in rng if str(d) in M["gain"]])
+            f = avg([M["null_gain"][str(d)] for d in rng if str(d) in M["null_gain"]])
+            sd = avg([M["null_sd"][str(d)] for d in rng if str(d) in M["null_sd"]])
+            row[w] = None if g is None else round(g - f, 2)
+            row[w + " (bar to clear)"] = None if sd is None else round(2 * sd, 2)
+        nums[nm(m)] = row
+    boundaries([ax], DATA, "person")
+    ax.axhline(0, color=INK, lw=0.9, zorder=3)
+    finish(ax, "What the confidence beats\nhindsight-on-noise by", ylim=None)
+    legend_below(ax, ncol=2)
+    v = lambda m, w, k="": nums[nm(m)][w + k]
+    sick = "first sick days 14-16"
+    save(fig, "F10_the_same_test_one_day_at_a_time", manifest, {
+        "figure": "F10",
+        "claim": ("Refitting the threshold every single day \u2014 the most generous reading there is \u2014 "
+                  "does not rescue the timetables at the shift. The timetable that never forgets has a "
+                  "confidence signal that beats hindsight-on-shuffled-labels in every window of the run "
+                  f"except one: {v('ttfrozen','settled week 9-13'):.2f} against a bar of "
+                  f"{v('ttfrozen','settled week 9-13',' (bar to clear)'):.2f} in the settled week, "
+                  f"{v('ttfrozen','first days back 24-26'):.2f} against "
+                  f"{v('ttfrozen','first days back 24-26',' (bar to clear)'):.2f} on the first days back "
+                  f"\u2014 and at the first sick days {v('ttfrozen',sick):.2f} against a bar of "
+                  f"{v('ttfrozen',sick,' (bar to clear)'):.2f}, which is nothing. The three-day timetable is "
+                  "clears at neither boundary "
+                  f"({v('tt3d',sick):.2f} against {v('tt3d',sick,' (bar to clear)'):.2f} at the shift, "
+                  f"{v('tt3d','first days back 24-26'):.2f} against "
+                  f"{v('tt3d','first days back 24-26',' (bar to clear)'):.2f} on the return). The "
+                  "survival-time model moves the other way, from "
+                  f"{v('perpetua','settled week 9-13'):.2f} settled to {v('perpetua',sick):.2f} at the shift, "
+                  "the largest value it reaches all run. So the never-forgets timetable does not have a weak "
+                  "signal that the shift weakens further: it has a working signal that stops working on the "
+                  "day the routine changes and works again a week later."),
+        "population": POP_LABEL["person"], "households": hh, "split": "all questions",
+        "band": "none: the zero line IS the noise floor, because what is plotted is already the excess over it",
+        "note": ("One threshold per DAY, shared across the ten households, chosen knowing that day's outcomes. "
+                 "The floor subtracted from it is the same procedure run on labels shuffled inside each "
+                 "household on that day, averaged over 40 shuffles."),
+        "bound_wording": BOUND_WORDING,
+        "caption": ("Per day, the score under the best threshold for that day minus the score from answering "
+                    "everything, with the same quantity on shuffled labels subtracted off. Zero means the "
+                    "confidence tells you nothing a coin could not have told you, once hindsight is paid for."),
+        "look_for": ("The first dotted rule. The never-forgets timetable dips to and below the zero line "
+                     "there, at the same moment the survival-time model rises to its highest point of the "
+                     "run. The three-day timetable is near zero at both rules, which is why the claim above "
+                     "treats the two timetables differently rather than as one story."),
+        "not_shown": ("It does not show the total value of declining, most of which comes from the level term "
+                      "and not from the ordering \u2014 that split is F9's. It is not a deployable policy: the "
+                      "threshold is chosen knowing the day it is scored on, which is why a noise floor has to "
+                      "be subtracted at all. Days 1 to 8 are drawn for completeness and nothing is claimed "
+                      "from them: the methods' memories are still filling, and the settled comparison in "
+                      "every window table starts at day 9."),
+        "mechanism": ("The floor itself moves, and that is the point. In the settled week hindsight on shuffled "
+                      "labels buys almost nothing, because a method that is right four times in five leaves "
+                      "little for a threshold to find. At the shift the timetables are right about half the "
+                      "time, and hindsight on pure noise then buys a great deal. Their observed gain rises at "
+                      "the shift too \u2014 which is why the raw number looks like a result \u2014 but it "
+                      "rises no faster than the floor beneath it."),
+        "numbers": nums})
+
+
+FIGS = {"F1": f1, "F2": f2, "F3": f3, "F4": f4, "F5": f5, "F6": f6, "F7": f7, "F8": f8, "F9": f9, "F10": f10}
 
 
 def main():
