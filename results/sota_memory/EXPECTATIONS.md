@@ -127,3 +127,19 @@ The recent-sightings list with the stale card AND the residents' daily "X is hom
   be corrected by appending a correction". If the current card is meaningfully better, the finding is "fix the description".
 - Wording differs across arms. The message and the stage card are OUR wording; the couch card is the simulator's own
   description. A small difference is not necessarily about the mechanism.
+
+## Fact store with MECHANICAL extraction + the validity-window judge (`facts_zep_mech`) — written 06:28, before launch
+Facts are made by rule from each day's sightings: the object's stays that day (spot, from, to), stays under 60 min dropped,
+times rounded out to the hour, same-spot overlaps merged. No LLM writes facts. The only LLM call in the write path is the
+revision judge (the Graphiti-style policy: ADD / DUPLICATE for new facts, INVALIDATE for old current facts), with the same
+prompt as before. hh_s0-2, days 11-17, 21-22, 24-28, hard stop 09:00. It tests whether the judge closes a fact's
+validity window when shown a clean contradiction.
+- Coordinator (theirs): the judge lags one to two nights, as it did on hh_s0 (0 and 1 invalidations after days 14 and 15).
+- Mine: the lag is shorter than before but present. The day-14 facts (couch or coffee table all day) contradict "desk
+  09:00-17:00" plainly, so I expect some invalidations on night 14 but not most (under half of the contradicted desk facts),
+  and most by night 16. Accuracy: within a few points of the recent-sightings list (the 40 sightings in the prompt dominate).
+- Check before trusting: nightly invalidation counts must NOT be constant; spot-check night 14 by hand.
+- Smoke (days 0-3, hh_s0, read BEFORE the full launch, so not a result): the judge over-invalidates in the settled period,
+  closing 30/30 and 42/48 facts whose only difference was the hours ("desk 00:00-23:00" vs "desk 03:00-24:00"). Not tuned:
+  the judge is the thing under test. The full run will show whether it over-invalidates in the lead-up and under-invalidates
+  at the break, which would be the opposite of what a validity window is for.

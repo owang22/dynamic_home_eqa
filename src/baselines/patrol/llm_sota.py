@@ -197,8 +197,33 @@ def stays(h: List[Tuple[int, str]], day: int) -> List[str]:
     return out
 
 
+def mech_facts(h: List[Tuple[int, str]], day: int, obj: str) -> List[Dict[str, str]]:
+    """Facts made by RULE from one day's sightings (no LLM): the day's stays (spot, from the first sighting there to the
+    first sighting elsewhere, clipped to the day), stays under 60 min dropped, times rounded out to whole hours,
+    same-spot overlaps merged. Deterministic, so the store's contents are inspectable."""
+    d0, d1 = day * DAY_SECONDS, (day + 1) * DAY_SECONDS
+    runs = []
+    i = 0
+    while i < len(h):
+        j = i
+        while j + 1 < len(h) and h[j + 1][1] == h[i][1]:
+            j += 1
+        a, b = max(h[i][0], d0), min(h[j + 1][0] if j + 1 < len(h) else d1, d1)
+        if b > a and b - a >= 3600:
+            runs.append((h[i][1], (a - d0) // 3600, -(-(b - d0) // 3600)))
+        i = j + 1
+    merged: Dict[str, List[List[int]]] = defaultdict(list)
+    for spot, a, b in runs:
+        for iv in merged[spot]:
+            if a <= iv[1] and b >= iv[0]:
+                iv[0], iv[1] = min(iv[0], a), max(iv[1], b); break
+        else:
+            merged[spot].append([a, b])
+    return [{"object": obj, "spot": sp, "hours": f"{a:02d}:00-{b:02d}:00"} for sp, ivs in sorted(merged.items()) for a, b in sorted(ivs)]
+
+
 class FactStore(Store):
-    kind, policy = "facts", None
+    kind, policy, mechanical = "facts", None, False
 
     def __init__(self, ask, day_names):
         super().__init__(ask, day_names)
@@ -212,13 +237,15 @@ class FactStore(Store):
     def nightly(self, day: int, memory: L.Memory, ctx: dict) -> None:
         L0 = L.header_lines((day + 1) * DAY_SECONDS - 60, self.day_names, ctx["cards"], ctx["rooms"], ctx["patrol_hours"],
                             False, ctx["hints"](day))
-        movers, mover_objs = [], []
+        movers, mover_objs, mech = [], [], []
         cutoff = (day + 1) * DAY_SECONDS      # the night's write sees only what had been seen by the end of that day,
         for o in sorted(memory.sightings):   # whenever it runs: no later sightings leak in, and --days stays exact
             h = [(t, r) for t, r in memory.history(o) if t < cutoff]
             if len({r for _, r in h}) < 2:
                 continue
             st = stays(h, day)
+            if st and self.mechanical:
+                mech += mech_facts(h, day, o)
             if st:
                 mover_objs.append(o)
                 movers.append(f"- {o}: " + "; ".join(st))
@@ -227,6 +254,11 @@ class FactStore(Store):
                     movers.append("    memory already holds: " + "; ".join(self.fact_text(f) for f in held))
         if not movers:
             return
+        if self.mechanical:
+            new = [f for f in mech if f["spot"] in ctx["allowed"]]
+            if not new:
+                self.log.append({"day": day, "extracted": 0}); return
+            return self.revise(day, new, L0)
         ex = L0 + ["", f"It is the end of {L.day_label(day, self.day_names)}. Extract facts for the robot's memory.", "",
                    "Today's stays of the objects that move: each stay is a spot and the stretch from the first sighting "
                    "there until the object was next seen somewhere else (times in between are when it was seen there):"]
@@ -249,6 +281,9 @@ class FactStore(Store):
             new = []
         if not new:
             self.log.append({"day": day, "extracted": 0}); return
+        return self.revise(day, new, L0)
+
+    def revise(self, day: int, new: List[dict], L0: List[str]) -> None:
         new_ids = {f"n{i + 1}": f for i, f in enumerate(new)}
         objs = sorted({f["object"] for f in new})
         cur = {f["id"]: f for f in self.facts if f["obj"] in objs and f["status"] == "current"}
@@ -339,11 +374,15 @@ class FactsZep(FactStore):
     kind, policy = "facts_zep", "zep"
 
 
+class FactsZepMech(FactStore):
+    kind, policy, mechanical = "facts_zep_mech", "zep", True
+
+
 class FactsStale(FactStore):
     kind, policy = "facts_stale", "stale"
 
 
-STORES = {c.kind: c for c in (Naive, LongContext, Pinned, NoCard, TrueCard, StageCard, Debate, DebateOracle, FactsMem0, FactsZep, FactsStale)}
+STORES = {c.kind: c for c in (Naive, LongContext, Pinned, NoCard, TrueCard, StageCard, Debate, DebateOracle, FactsMem0, FactsZep, FactsZepMech, FactsStale)}
 
 
 def strip_cards(lines: List[str], names: Dict[str, str]) -> List[str]:

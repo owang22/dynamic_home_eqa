@@ -87,6 +87,8 @@ scores only.
 | 2 | Paraphrase churn: facts were rewritten each night with slightly different times, and the revision step invalidated them as contradictions (34 facts invalidated on day 2, including "desk 11:26-21:05" vs "desk 11:04-24:00") | The store reduces to "yesterday's timeline"; the validity-window policy would look like a one-day forgetter for reasons unrelated to revision | Counting the revision ops per night | Extraction is shown the facts already held and told to repeat their exact wording when today agrees (the prior context Graphiti also gives its extractor); by day 3: 25 duplicates, 10 adds, 10 invalidations | smoke/facts_zep_extract_v2_daytranscripts |
 | 3 | Future sightings leaked into past facts: the nightly write for day d read the memory as of whenever it ran; with answering from day 11, the day 0-10 facts were built from up to 11 days of later sightings | Near-perfect settled-period facts for the wrong reason: a validity-window memory that had seen the future; the results would also have depended on which days were answered | An unexpected cache miss: the day-0 prompt differed between two runs that should have matched | Each write filters sightings to before the end of its own day; verified byte-identical prompts under --days 4 and --days 11 | withdrawn/facts_zep_hh0_future_sightings_leak |
 | 4 | Empty nights: with an unconstrained list, extraction returned {"facts": []} on 4 of 9 nights (days 1, 2, 5, 8); at temperature 0 a retry reproduces it | A store with random missing days: facts stay "current" through days they were never checked, so revision appears to keep stale facts | Listing every extraction call's fact count | The schema requires at least one fact per object listed that night | withdrawn/facts_zep_hh{0,1,2}_empty_nights |
+| 5 | Revision output truncated (MY harness bug): a 2,500-token limit cut the JSON on 6 nights; the failed parse passed silently as "no decisions" and the night's facts were dropped | A store frozen for most of the later spell | Listing nights with zero operations | Limit raised to 8,000; an unparseable revision now prints loudly and keeps the facts as additions | withdrawn/facts_zep_hh0_truncated_revisions |
+| 6 | Copy-through freeze (caused by the fix for #2): the extractor copied held facts verbatim regardless of the day's evidence (day 17: stays on the coffee table, extracted "desk_b1, 00:00-23:00"); every new fact was a duplicate for 11 nights | The validity-window judge never sees a contradiction; accuracy equals the plain memory, which looks like 'no effect of the policy' | Identical duplicate counts night after night (76/76) | Not fixed tonight; the clean test is mechanical extraction | nottold/hh_s0_t03_facts_zep_nottold_lookoff |
 Irony worth one line: #3 is a memory designed to represent WHEN facts were true, building its early facts from evidence
 that did not exist yet.
 
@@ -160,7 +162,7 @@ Reading:
   equal" were true by construction (identical prompts), so they were checks, not predictions.
 
 ## Fact store with the validity-window policy (Zep/Graphiti-style), hh_s0 only — landed ~04:50. NOT a fair test; see #5.
-STANDS (a direct observation of the mechanism, on nights whose revision parsed): after the first sick day the revision judge had
+WITHDRAWN 07:37 (see the mechanical-extraction section; it was the extractor, not the judge). Previously marked as standing: after the first sick day the revision judge had
 56 new facts and the contradicting evidence in front of it and invalidated 0; after day 15, 1; after day 16, 30.
 DOES NOT STAND: the accuracy figures below, including the day 14-16 figure of 27. The store behind them was also missing facts
 from truncated nights (#5). They are unusable as evidence and are kept only as a record. The clean re-run supplies the numbers
@@ -228,3 +230,58 @@ but single windows move up to 10. Verdict: slightly larger on average, carried b
 distinguishable at three households. Neither prediction is confirmed: the coordinator's "larger" points the right way, mine
 "about the same" is within the noise. For the told-vs-untold figure on this memory, the per-window floor is up to ~10 points
 in single households, so a single-window claim on few households needs that margin.
+
+## Fact store, clean re-run (06:27, hh_s0): no truncation, but a SIXTH failure. The policy still has not been tested.
+Accuracy vs the same-session recent-sightings list, same questions: lead-up 85->83, first sick days 44->46, later spell
+44->48, first days back 79->81, 27-28 75->78, all 65->67. Within a few points everywhere, one household.
+#6 COPY-THROUGH FREEZE (caused by the fix for #2): from day 15 to day 25 the revision step marked every new fact a duplicate
+(76/76, then 75/75, each night; one invalidation in eleven nights). The extractor was copying the held facts verbatim
+regardless of the day's evidence. Day 17: charger_yuki's stays were "coffee_table_l1 from 09:24, still there at 16:03" and the
+extracted fact was "desk_b1, 00:00-23:00", the held fact word for word. The instruction "repeat an existing fact's wording
+where today agrees" became "repeat the existing facts". The store froze at the break, so the validity-window judge was never
+shown a contradiction. The accuracy tie says nothing about validity windows: the answers came from the 40 recent sightings in
+the same prompt. Caught by the identical duplicate counts night after night, a suspiciously constant metric.
+Where this leaves the strand: six write-side failures, each found by inspecting the store. Fixing one (#2, paraphrase churn)
+produced another (#6, copy-through). An LLM extraction step sits between the evidence and the revision policy, and with this
+model we could not make it faithful. The revision policies are therefore UNTESTED on this task. The control that would test
+them is the one the coordinator named at 02:20: facts extracted MECHANICALLY from the sightings (stays merged by rule), so that
+only the revision judge is an LLM. Not run tonight.
+What does stand from the fact store: the day-14/15 invalidation lag (0 and 1) from the first clean-parsing run, and the
+failure catalogue itself.
+
+## Fact store with MECHANICAL extraction: the validity-window judge audited directly (07:37, hh_s0-2, complete, 0 unparseable)
+Facts made by rule from each day's stays. The only LLM call in the write path is the judge (ADD / DUPLICATE / INVALIDATE).
+judge_audit.py reconstructs every decision from the revision prompt. "Contradicted" = none of that night's rule-made facts
+put the object at the same spot with overlapping hours; "agreeing" = at least one does.
+| household | stage | P(closed given contradicted) | P(closed given agreeing) | false closures, same spot + hours overlap (the claim) | same spot at all (upper bound) |
+|---|---|---|---|---|---|
+| hh_s0 | lead-up / sick / back | 100% / 99% / 100% | 44% / 37% / 31% | 38% / 39% / 41% | 69% / 76% / 74% |
+| hh_s1 | lead-up / sick / back | 99% / 99% / 99% | 47% / 37% / 38% | 36% / 44% / 45% | 75% / 75% / 74% |
+| hh_s2 | lead-up / sick / back | 99% / 99% / 100% | 52% / 42% / 36% | 31% / 38% / 34% | 70% / 69% / 70% |
+Nights from first contradiction to closure: 0 in almost every case (hh_s0 sick: 279 of 280 same night, one after 5 nights).
+
+Reading:
+- NO LAG. Shown a clean contradiction, the judge closes the window the SAME NIGHT, 99-100% of the time, in every stage,
+  including the night of the break.
+- It OVER-CLOSES: it also closes 31-52% of facts the night's evidence agrees with. Between a third and a half of all its
+  closures are false by the strict count. The discrimination gap is about 50-65 points (99% vs 31-52%), so it IS reading
+  the contradiction; it is aggressive, not blind.
+- The format caveat: counting any same-spot closure as false gives 69-76%; requiring overlapping hours gives 31-45%. Our
+  rounding made the same behaviour look different from day to day, so about half the apparent over-closure is our fact
+  format. A fact store's schema becomes the judge's evidence: a formatting choice upstream becomes a semantic judgement
+  downstream. Added to the catalogue as a limit of the mechanical extractor.
+- CORRECTION to the earlier "stands" claim. The 0 and 1 invalidations after days 14-15 in the first LLM-extraction run were
+  NOT the judge's lag. On those nights the extractor was already copying the held facts through (day 15: charger_yuki's stays
+  were the bed then coffee_table_l1 from 12:02, and the extracted facts were the held "desk_b1, 00:00-17:51" word for word).
+  The judge was never shown a contradiction. That claim is withdrawn: it was failure #6 appearing earlier than we noticed.
+- Accuracy vs the same-session recent-sightings list, same questions (all questions): lead-up 85->79, 76->66, 90->92; first
+  sick days 44->46, 62->65, 50->62; later spell 44->60, 69->62, 60->58; first days back 79->77, 67->67, 88->77; all
+  65->67, 68->64, 74->75. No window is consistent across households; nothing clears the spread (n=3). A store whose windows
+  close fast and too often does not measurably change answers when the 40 recent sightings sit in the same prompt.
+Predictions: the coordinator's "lag of one to two nights" was REFUTED (0 nights). Mine, "shorter lag, under half closed on
+night 14, most by night 16", was REFUTED too (all closed the same night). Mine, "accuracy within a few points of the list",
+roughly held (inconsistent, nothing detected).
+Strand conclusion, updated: with an LLM writing the facts, the store failed six ways and the policies went untested. With
+facts written by rule, the validity-window judge DOES detect change immediately. What it gets wrong is the reverse: it
+closes too much. The "evidence present, not acted on" failure we see elsewhere tonight is NOT what this judge does. It sat
+in the extraction step, where the LLM copied the old facts forward.
