@@ -1,0 +1,75 @@
+name: gap0
+sim_dir: /home/oliver/robot/dynamic_home_eqa/data/situation_sim/regime_search/sweep_gap_owner_copy
+day0: Monday
+days: 32
+events:
+  rain:
+    weekday: 0.0
+    weekend: 0.0
+  guest_visit:
+    weekday: 0.0
+    weekend: 0.0
+  late_work:
+    weekday: 0.0
+    weekend: 0.0
+  grocery_delivery:
+    weekday: 0.0
+    weekend: 0.0
+  laundry_day:
+    weekday: 0.0
+    weekend: 0.0
+  sick_day:
+    weekday: 0.0
+    weekend: 0.0
+calendar:
+- name: lead
+  days:
+  - 0
+  - 13
+  day_kind: weekday
+  suppress_random_events: true
+- name: sick
+  days:
+  - 14
+  - 23
+  day_kind: weekday
+  force_events:
+  - event: sick_day
+    resident: resident_1
+  suppress_random_events: true
+- name: return
+  days:
+  - 24
+  - 31
+  day_kind: weekday
+  suppress_random_events: true
+patrol_hours: 0
+patrol_times: 03:00
+questions: activity
+question_moment: during
+question_owners:
+- resident_1
+classes:
+- book
+- water_bottle
+- tablet
+- mug
+- charger
+- glasses
+- glass
+- razor
+question_min_gap_min: 0
+per_day: 16
+oversample: 1024
+timetable_bin_hours: 2
+negative_evidence: false
+feedback_delay_min: 10
+extra_beliefs:
+- name: timetable
+  half_life_h: 72
+- name: most_frequent
+  half_life_h: 72
+- name: timetable
+  half_life_h: 24
+- name: most_frequent
+  half_life_h: 24
