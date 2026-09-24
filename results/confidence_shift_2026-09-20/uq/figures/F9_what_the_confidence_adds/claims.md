@@ -6,11 +6,11 @@ SUPPORTING, and technical. Establishes that the timetables' apparent gain from b
 
 ## The claim
 
-> Being allowed to decline is worth something to every method at the shift, but for the timetables that is not because their confidence knows anything. The value splits in two: what the best all-or-nothing choice gives, which needs no signal at all and pays whenever a method is wrong more often than right, and what the ORDER of the confidences adds on top. At the shift the timetable that never forgets is right 51.3% of the time, so declining is worth 2.07 to it on the level alone — and its ordering adds 0.37 against a hindsight-on-noise floor of 0.29, which is nothing. The three-day timetable is the same story (0.43 against 0.36). The survival-time model's ordering adds 2.70 against a floor of 0.52, and the whole-log-in-the-prompt memory's 1.33 against 0.30. The honest contrast is not a big effect against a small one. It is a real effect against no measurable effect.
+> Being allowed to decline is worth something to every method at the shift, but for the timetables that is not because their confidence knows anything. The value splits in two: what the best all-or-nothing choice gives, which needs no signal at all and pays whenever a method is wrong more often than right, and what the ORDER of the confidences adds on top. At the shift the timetable that never forgets is right 51.3% of the time, so declining is worth 2.07 to it on the level alone — and its ordering adds 0.37 against a hindsight-on-noise floor of 0.29, which is nothing. The three-day timetable is the same story (0.43 against 0.36). The survival-time model's ordering adds 2.70 against a floor of 0.52, and the LLM's 1.33 against 0.30. The honest contrast is not a big effect against a small one. It is a real effect against no measurable effect.
 
 ## What in the figure demonstrates it
 
-The first-sick-days group. Both timetables' bars sit on their own floors; the survival-time model's stands well clear of it and the whole-log-in-the-prompt memory's clears too.
+The first-sick-days group. Both timetables' bars sit on their own floors; the survival-time model's stands well clear of it and the LLM's clears too.
 
 ## Why this happens
 
@@ -22,7 +22,7 @@ It does not show the level part, which is real and is where the timetables' appa
 
 ## The same quantity measured a stricter way
 
-A stricter estimator gives the same ranking. Choosing ONE threshold for all ten households instead of one each, the totals are 0.33 for the timetable that never forgets, 0.40 for the three-day one, 2.83 for the survival-time model and 0.77 for the whole-log memory. Its noise floor sits near 0.01, because a single policy applied to every household has far less freedom to chase noise, so on that estimator every bar clears its floor. The two agree on the ranking and disagree on the floor: that is a fact about the estimators rather than about the methods, and a reviewer who recomputes one of them should expect a different-looking number.
+A stricter estimator gives the same ranking. Choosing ONE threshold for all ten households instead of one each, the totals are 0.33 for the timetable that never forgets, 0.40 for the three-day one, 2.83 for the survival-time model and 0.77 for the LLM. Its noise floor sits near 0.01, because a single policy applied to every household has far less freedom to chase noise, so on that estimator every bar clears its floor. The two agree on the ranking and disagree on the floor: that is a fact about the estimators rather than about the methods, and a reviewer who recomputes one of them should expect a different-looking number.
 
 ## The numbers
 
@@ -42,7 +42,7 @@ Measured on the DAILY values, not read off the plotted line.
 | survival-time model — noise floor for that | 0.15 | 0.52 | 0.07 | 0.52 | 0.25 |
 | survival-time model — the level part | 0.06 | 0.67 | 0.0 | 0.42 | 0.26 |
 | survival-time model — % right | 66.3 | 55.4 | 73.7 | 56.8 | 59.1 |
-| whole-log-in-the-prompt memory — what the ordering adds | 0.38 | 1.33 | 0.37 | 0.83 | 0.84 |
-| whole-log-in-the-prompt memory — noise floor for that | 0.08 | 0.3 | 0.06 | 0.16 | 0.1 |
-| whole-log-in-the-prompt memory — the level part | 0.0 | 0.0 | 0.0 | 0.0 | 0.0 |
-| whole-log-in-the-prompt memory — % right | 69.6 | 61.7 | 71.3 | 67.4 | 69.5 |
+| LLM — what the ordering adds | 0.38 | 1.33 | 0.37 | 0.83 | 0.84 |
+| LLM — noise floor for that | 0.08 | 0.3 | 0.06 | 0.16 | 0.1 |
+| LLM — the level part | 0.0 | 0.0 | 0.0 | 0.0 | 0.0 |
+| LLM — % right | 69.6 | 61.7 | 71.3 | 67.4 | 69.5 |

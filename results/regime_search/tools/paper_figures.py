@@ -75,7 +75,7 @@ NAME = {
     "ttfrozen":    "timetable that never forgets",
     "tt3d":        "timetable with a three-day memory",
     "perpetua":    "survival-time model",
-    "longcontext": "whole-log-in-the-prompt memory",
+    "longcontext": "LLM",
     "retrieval":   "same-hour lookup memory",
     "reflect":     "nightly self-notes memory",
     "naive":       "recent-sightings list",
@@ -87,7 +87,7 @@ NAME = {
 NAME_LEGEND = {
     "ttfrozen":    "timetable, never forgets",
     "tt3d":        "timetable, three-day memory",
-    "longcontext": "whole log in the prompt",
+    "longcontext": "LLM",
     "retrieval":   "same-hour lookup",
     "reflect":     "nightly self-notes",
     "naive":       "recent sightings",
@@ -125,7 +125,7 @@ ARM_LABEL = {"nomsg": "no message", "startmsg": "A only", "startend": "A & B"}
 # The argument these figures are parts of. Stated once here and attached to the claims it actually bears on,
 # with the measurements that support each half, because it is a framing and framings are where overclaiming
 # starts. What it rests on, all of it measured in this set:
-#   told explicitly, these memories adapt AT ONCE -- the whole-log-in-the-prompt memory told on the first sick morning is +6.3 points
+#   told explicitly, these memories adapt AT ONCE -- the LLM told on the first sick morning is +6.3 points
 #     that same day and +14.6 by the next, on the households all three arms ran;
 #   when the message stops being true they go on acting on it -- every one of the four told arms sits below its
 #     own untold twin a week after the return, by 2.8 to 11.4 points;
@@ -174,7 +174,7 @@ SINGLE, FULL = 3.4, 7.0            # column widths, inches
 
 
 def growing():
-    """Is a run adding households to the the whole-log-in-the-prompt memory arms right now? A figure that will gain households must
+    """Is a run adding households to the the LLM arms right now? A figure that will gain households must
     SAY its current count and that more are coming -- a silent three reads as a settled three, and someone
     writes a caption around it."""
     import subprocess
@@ -385,6 +385,15 @@ def finish(ax, ylab, xlab="Day", ylim=(30, 100)):
         ax.spines[side].set_visible(False)
 
 
+def fig_title(fig, text):
+    """A short, bold headline across the top of the figure -- the question it asks, in a few words, never a
+    full sentence. Kept separate from the y-axis label on purpose: the axis names the quantity plotted
+    ("Accuracy", "Correlation"), the title names what the figure is for. Placed above everything else the
+    figure draws -- the "normal / sick / normal" stage labels included -- so it never competes with them, and
+    captured by the same tight bbox as the rest of the figure on save."""
+    fig.suptitle(text, fontsize=8.8, fontweight="bold", y=1.045)
+
+
 def numbers_table(entry):
     rows = entry.get("numbers") or {}
     if not rows:
@@ -584,9 +593,11 @@ def f1(DATA, EXTRA, manifest):
                          "break at 24": r2(None if val(23) is None or val(24) is None else val(24) - val(23))}
     boundaries([ax], DATA, pop)
     finish(ax, "Accuracy")
-    legend_below(ax, ncol=1)
+    legend_below(ax, ncol=2)
+    fig_title(fig, "Learn, break, relearn")
     save(fig, "F1_learn_break_relearn", manifest, {
         "figure": "F1",
+        "title": "Learn, break, relearn",
         "claim_head": ('The disruption this paper is about, and its size. Accuracy only — nothing here says whether a method KNOWS it has broken, which is the question the rest of the figures ask. '),
         "role": ('SETUP, not a finding. Establishes that there is a disruption and that it costs accuracy, so that everything afterwards has a shift to be exacerbated at. The behaviour of a stale-window estimator meeting a change in the distribution it estimates is standard, and this figure is not claiming otherwise; it is here to define A and B and to show the size of the thing the rest of the paper is about. One panel in the paper, not a section.'),
         "rerun_floor": RERUN_FLOOR,
@@ -608,7 +619,7 @@ def f1(DATA, EXTRA, manifest):
                    "climbs through the settled fortnight, falls sharply on the first sick day (dotted rule), "
                    "re-learns the new routine over the following week, and falls again when the old routine "
                    "returns (second dotted rule). The two timetables break hardest and recover furthest; "
-                   "the whole-log-in-the-prompt memory breaks least and recovers least.",
+                   "the LLM breaks least and recovers least.",
         "look_for": ("The two dotted rules and what happens at them. The timetable with a three-day memory falls "
                      f"{abs(nums[nm("tt3d")]['break at 14']):.1f} points on day 14 and the timetable that "
                      f"never forgets {abs(nums[nm("ttfrozen")]['break at 14']):.1f}; by day 23 the "
@@ -616,16 +627,16 @@ def f1(DATA, EXTRA, manifest):
                      f"({nums[nm("tt3d")]['break at 24']:+.1f} and "
                      f"{nums[nm("ttfrozen")]['break at 24']:+.1f}), and the timetable that never forgets "
                      "is the one that recovers immediately, because the old routine is the one it never "
-                     "stopped believing. The whole-log memory's day-14 fall is "
+                     "stopped believing. The LLM's day-14 fall is "
                      f"{abs(nums[nm("longcontext")]['break at 14']):.1f} points, the smallest of the four."),
         "not_shown": "This is accuracy only — nothing here says whether a method KNOWS it has broken, which is "
-                     "the subject of F8 and F9. The whole-log-in-the-prompt memory rests on fewer households than the counters (see "
+                     "the subject of F8 and F9. The LLM rests on fewer households than the counters (see "
                      "the count above) and its band is correspondingly wider; do not read a gap between it and "
                      "a counter as an effect without checking the band. The plotted line is a three-day "
                      "average, so the visible fall is shallower than the real one: quote the numbers, not the "
                      "picture.",
                 "band": "±1 standard error across households", "drawing": NOTE_LONG_ACC,
-        "provisional": grow and "the whole-log-in-the-prompt memory household count will rise: a larger run is in progress", "numbers": nums})
+        "provisional": grow and "the LLM household count will rise: a larger run is in progress", "numbers": nums})
 
 
 def f2(DATA, EXTRA, manifest):
@@ -679,8 +690,10 @@ def f2(DATA, EXTRA, manifest):
     boundaries([ax], DATA, pop)
     finish(ax, "Accuracy")
     legend_below(ax, ncol=1)
+    fig_title(fig, "Relearning inside the spell")
     save(fig, "F2_relearning_inside_the_spell", manifest, {
         "figure": "F2",
+        "title": "Relearning inside the spell",
         "role": ("BACKGROUND. An accuracy result about how fast each memory re-learns, which is a different question from the paper's. Keep it for the appendix or for a different paper; it earns space here only if a reviewer asks whether the methods ever recover."),
         "rerun_floor": RERUN_FLOOR,
         "claim_head": ("The language memories do not behave as one class, and the one that behaves most like "
@@ -700,7 +713,7 @@ def f2(DATA, EXTRA, manifest):
                             "as fast as any language memory: "
                             f"+{g[nm("tt3d")]:.0f} points from the first sick days to the end of the spell, "
                             f"against +{g[nm("reflect")]:.0f} for reflection, +{g[nm("longcontext")]:.0f} for "
-                            f"the whole-log-in-the-prompt memory and +{g[nm("retrieval")]:.0f} for retrieval."
+                            f"the LLM and +{g[nm("retrieval")]:.0f} for retrieval."
                   )({k: v["re-learning inside the spell"] for k, v in nums.items()}),
         "population": POP_LABEL[pop], "households": hh, "split": "all questions",
         "band": "±1 standard error across households, on the timetable with a three-day memory only",
@@ -713,25 +726,25 @@ def f2(DATA, EXTRA, manifest):
                      f"{nums[nm("tt3d")]['days 20-23']:.1f}, a gain of "
                      f"{nums[nm("tt3d")]['re-learning inside the spell']:.1f} points. Reflection gains "
                      f"{nums[nm("reflect")]['re-learning inside the spell']:.1f}, retrieval "
-                     f"{nums[nm("retrieval")]['re-learning inside the spell']:.1f} and the whole-log-in-the-prompt memory "
+                     f"{nums[nm("retrieval")]['re-learning inside the spell']:.1f} and the LLM "
                      f"{nums[nm("longcontext")]['re-learning inside the spell']:.1f}."),
         "not_shown": ("It does not show that the language memories learn NOTHING: reflection's "
                       f"+{nums[nm("reflect")]['re-learning inside the spell']:.1f} is a real gain, about "
                       f"{nums[nm("reflect")]['re-learning inside the spell'] / max(nums[nm("tt3d")]['re-learning inside the spell'], 0.1):.0%} "
                       "of the timetable with a three-day memory's. It also does not separate re-learning from same-day "
-                      "feedback, since these are all questions rather than cold ones. The whole-log-in-the-prompt memory is on "
+                      "feedback, since these are all questions rather than cold ones. The LLM is on "
                       "fewer households than the rest."),
         "history": "This figure asserted until 22 Sept that the language memories \"barely move\". Its own "
                    "numbers contradicted that — reflection re-learns half as much as the timetable with a three-day memory, which is not "
                    "\"barely\" — so the claim was changed to the ratio it can actually support and the file "
                    "was renamed off `F2_counters_relearn_language_does_not`, which had encoded the overclaim "
                    "in its name.",
-        "note": "The counts are per method above; the whole-log-in-the-prompt memory ran on fewer households than the counters. "
+        "note": "The counts are per method above; the LLM ran on fewer households than the counters. "
                 "The shaded envelope behind the three language memories spans the highest and lowest of "
                 "THEIR OWN three estimates on each day — it is the spread between those methods, not a "
                 "pooled standard error, and it is there so the three read as one class against the timetable with a three-day memory.",
         "drawing": NOTE_LONG_ACC,
-        "provisional": grow and "the whole-log-in-the-prompt memory household count will rise: a larger run is in progress",
+        "provisional": grow and "the LLM household count will rise: a larger run is in progress",
         "numbers": nums})
 
 
@@ -830,6 +843,7 @@ def f3(DATA, EXTRA, manifest):
     boundaries([ax], DATA, pop)
     finish(ax, "Accuracy")
     legend_below(ax, ncol=1, order="reverse")
+    fig_title(fig, "What one sentence buys")
     nums = {}
     for k, lab, _, _ in arms:
         nums[lab] = {"days 14-16": r2(avg([S[k]["mean"][d - 1] for d in range(14, 17) if S[k]["mean"][d - 1] is not None])),
@@ -844,10 +858,11 @@ def f3(DATA, EXTRA, manifest):
     nums.update(con["rows"])
     save(fig, "F3_what_one_sentence_buys", manifest, {
         "figure": "F3",
+        "title": "What one sentence buys",
         "role": ('OFF-THESIS AS IT STANDS, and the strongest number in the project. It is an accuracy result: what a sentence buys, and what a sentence nobody retracted costs. It joins the argument only if the confidence half is measured \\u2014 does an arm told something that has since lapsed stay confident while getting worse? That check has not been run. Until it is, this is a guest from another paper.'),
         "rerun_floor": RERUN_FLOOR,
         "claim": (lambda c: "Ten days of living in the new routine, corrected after every single question, do "
-                            "not teach the whole-log-in-the-prompt memory the new routine. One sentence does, and on ten "
+                            "not teach the LLM the new routine. One sentence does, and on ten "
                             "matched households the whole arc of it now clears our bar on this one memory. "
                             f"Told at A it is {c('A only - no message','first sick days 14-16')} points ahead "
                             "of the untold run on the first sick days and "
@@ -869,7 +884,7 @@ def f3(DATA, EXTRA, manifest):
                             "\u2014 a bar the runs' rerun noise is already inside, since the spread is "
                             "computed across households from the runs as they happened. What they are not is "
                             "a licence to read one household's line in one window off this figure: the "
-                            "whole-log memory's rerun floor reaches 10 points in a single household-window, "
+                            "LLM's rerun floor reaches 10 points in a single household-window, "
                             "which is larger than three of these four contrasts. The contrast survives that "
                             "and a single household's level does not.\n\n"
                             + SPINE + " This figure is where it is earned end to end on a single memory, "
@@ -891,7 +906,7 @@ def f3(DATA, EXTRA, manifest):
                 "differ. The twice-told arm differs on two such days by 0.625 points \u2014 one answer in a "
                 "hundred and sixty \u2014 and used to be drawn from the first of them, three days before it "
                 "was told anything.",
-        "caption": "One the whole-log-in-the-prompt memory told three different things, on the same ten households. The "
+        "caption": "One the LLM told three different things, on the same ten households. The "
                    "darkest line is never told; the middle line is told \u201cYuki is home sick today\u201d on "
                    "the first sick day (A); the lightest is told that again and then told on the first day of "
                    "the return that the resident is back (A & B). Each told arm is the same run as the one "
@@ -959,8 +974,8 @@ RERUN_FLOOR = (
     "all-days floor and applies it to a one-window effect will be badly misled. The honest form of the "
     f"sentence: across all days the floor is small, and per window on a single household it can reach "
     f"{_RF['window_worst']}. By window, averaged across households, its mean is {_RF_WIN()}.\n\n"
-    "  No arm inherits another arm's floor. The recent-sightings list's share did not predict the whole-log "
-    f"memory's, the counting methods have none at all, and the variation across windows is larger than the "
+    "  No arm inherits another arm's floor. The recent-sightings list's share did not predict the LLM's, "
+    f"the counting methods have none at all, and the variation across windows is larger than the "
     "variation between memories. The floor is a property of an arm and a window, measured, not a constant "
     f"for the project. {_RF['longer_prompt_verdict']}.\n\n"
     "  The counting methods \u2014 the timetables and the survival-time model \u2014 make no model calls "
@@ -1005,19 +1020,12 @@ def f8(DATA, EXTRA, manifest):
                              "worst single day": round(min(M["per_day"].values()), 1)}
     boundaries([ax], DATA, "person")
     ax.axhline(0, color=INK, lw=0.8, alpha=0.5, zorder=1)
-    # A daily score below zero means the method would have done better answering NOTHING at all. It is the
-    # sharpest moment in this figure and the smoothed window average hides it, so it is marked on the day.
-    if worst_below:
-        d, v, who = worst_below
-        ax.plot([d], [v], "o", ms=3.4, color=COL["ttfrozen"], zorder=6)
-        ax.annotate(f"{v:+.1f}: worse than not answering", xy=(d, v), xycoords="data",
-                    xytext=(0.02, 0.13), textcoords="axes fraction",
-                    fontsize=6.2, color=INK, va="bottom", ha="left",
-                    arrowprops=dict(arrowstyle="-", lw=0.6, color=INK, shrinkA=2, shrinkB=3))
     finish(ax, "Score", ylim=None)
-    legend_below(ax, ncol=1)
+    legend_below(ax, ncol=2)
+    fig_title(fig, "Decision score per day")
     save(fig, "F8_decision_score_per_day", manifest, {
         "figure": "F8",
+        "title": "Decision score per day",
         "claim_head": ('Accuracy and uncertainty are separate axes, and the cleanest proof is a method that loses on one and wins on the other. '),
         "role": ('CARRIES THE THESIS, and it is the figure to open on. Scored the way a user feels it, the ranking inverts: the methods most accurate in the settled world collapse hardest and one goes negative, while the survival-time model sits BELOW both timetables when things are stable and wins at the shift. A separate axis can only be demonstrated by a method that loses on one and wins on the other, and this is that method.'),
         "rerun_floor": RERUN_FLOOR,
@@ -1033,7 +1041,7 @@ def f8(DATA, EXTRA, manifest):
                              "0.5": "the half-way bar the +1/\u22121/0 scoring implies \u2014 a setting"},
         "note": "Each method uses its OWN best fixed threshold, because the comparison would otherwise measure "
                 "their confidence scales rather than their judgement \u2014 the timetables spread mass over "
-                "dozens of places and rarely exceed 0.5, the whole-log-in-the-prompt memory says 0.95 to almost everything. "
+                "dozens of places and rarely exceed 0.5, the LLM says 0.95 to almost everything. "
                 "Every window figure in the table below is the mean of the DRAWN daily series, computed from it "
                 "rather than recomputed beside it. That is the structural fix, not a repair: this table "
                 "previously held per-window refits \u2014 a different estimator, in the same units, with values "
@@ -1042,14 +1050,14 @@ def f8(DATA, EXTRA, manifest):
         "caption": "Daily decision score under a rule that needs no target to explain: +1 for a "
                    "right answer, −1 for a wrong one, 0 for declining to answer. Each method uses its own best "
                    "fixed confidence threshold. Both timetables collapse on the first sick day; the survival-time model and "
-                   "the whole-log-in-the-prompt memory do not.",
+                   "the LLM do not.",
         "below_zero": worst_below,
         "look_for": (lambda w: "The first dotted rule. The timetable that never forgets falls from "
                                f"{w(nm("ttfrozen"), 0):.1f} in the settled week to "
                                f"{w(nm("ttfrozen"), 1):.1f} on the first sick days and the "
                                f"timetable with a three-day memory from {w(nm("tt3d"), 0):.1f} to {w(nm("tt3d"), 1):.1f}, "
                                f"while the survival-time model goes {w(nm("perpetua"), 0):.1f} to {w(nm("perpetua"), 1):.1f} and "
-                               f"the whole-log-in-the-prompt memory {w(nm("longcontext"), 0):.1f} to {w(nm("longcontext"), 1):.1f}. Note "
+                               f"the LLM {w(nm("longcontext"), 0):.1f} to {w(nm("longcontext"), 1):.1f}. Note "
                                "also that the survival-time model sits BELOW both timetables while the world is stable."
                      )(lambda m, i: nums[m][("settled week 9-13", "first sick days 14-16")[i]])
                     + (f" And on day {worst_below[0]} the {worst_below[2]}'s daily score is "
@@ -1080,15 +1088,11 @@ def f9(DATA, EXTRA, manifest):
     for i_m, m in enumerate(meths):
         M = DD[m]
         xs = [k + (i_m - (len(meths) - 1) / 2) * w for k in range(len(order))]
-        ax.bar(xs, [M.get(k, {}).get("ordering", 0.0) for k in order], width=w * 0.92,
-               color=COL[m], label=nm_legend(m), zorder=3)
-        # The floor is drawn PER BAR, not as one band: it is what a threshold chosen with hindsight reaches on
-        # SHUFFLED labels, and it differs by method because a method whose accuracy sits near a half gives
-        # hindsight more to work with. A bar that does not clear its own line is not a result.
-        for x, k in zip(xs, order):
-            f = M.get(k, {}).get("null_ordering")
-            if f is not None:
-                ax.plot([x - w * 0.46, x + w * 0.46], [f, f], "-", color=INK, lw=1.1, zorder=5)
+        # The floor -- what a threshold chosen with hindsight reaches on SHUFFLED labels -- is subtracted out
+        # of every bar rather than drawn alongside it, so every method is on the same zero-is-nothing footing
+        # and a bar that would not have cleared its own floor now sits at or below zero.
+        heights = [M.get(k, {}).get("ordering", 0.0) - (M.get(k, {}).get("null_ordering") or 0.0) for k in order]
+        ax.bar(xs, heights, width=w * 0.92, color=COL[m], label=nm_legend(m), zorder=3)
         # The count is NOT the same in every window -- a household needs twenty answered rows inside a window
         # to enter it, and the three-day return window is short. Reporting the first window's count as if it
         # held for all five is how a figure comes to claim more households than it has.
@@ -1104,21 +1108,16 @@ def f9(DATA, EXTRA, manifest):
     ax.axhline(0, color=INK, lw=0.8, zorder=2)
     ax.set_xticks(range(len(order)))
     ax.set_xticklabels([textwrap.fill(k, 12) for k in order], fontsize=6.4)
-    finish(ax, "What the confidence\nordering adds", xlab="", ylim=None)
+    finish(ax, "Points added", xlab="", ylim=None)
     ax.grid(True, axis="y", alpha=0.5)
     ax.grid(False, axis="x")
-    # Headroom measured from the TALLEST BAR, not a constant: the note sat across the survival-time model's
-    # first-sick-days bar, which is the one bar the figure exists to show.
-    tall = max(max(DD[m].get(k, {}).get("ordering", 0.0) for k in order) for m in meths)
-    ax.set_ylim(0, tall * 1.34)
-    ax.annotate("black line on each bar = what hindsight reaches on shuffled labels;\n"
-                "a bar that does not clear its own line is not a result",
-                xy=(0.02, 0.97), xycoords="axes fraction", ha="left", va="top", fontsize=6.0, color=INK)
     legend_below(ax, ncol=2)
+    fig_title(fig, "What the confidence adds")
     sick = "first sick days 14-16"
     g = lambda m, f: DD[m][sick][f]
     save(fig, "F9_what_the_confidence_adds", manifest, {
         "figure": "F9",
+        "title": "What the confidence adds",
         "role": ("SUPPORTING, and technical. Establishes that the timetables' apparent gain from being allowed to decline is not coming from their confidence at all. It is the rigour behind F10 rather than a figure a reader needs to see."),
         "rerun_floor": RERUN_FLOOR,
         "bound_wording": BOUND_WORDING,
@@ -1132,7 +1131,7 @@ def f9(DATA, EXTRA, manifest):
                   f"floor of {g('ttfrozen','null_ordering'):.2f}, which is nothing. The three-day timetable is "
                   f"the same story ({g('tt3d','ordering'):.2f} against {g('tt3d','null_ordering'):.2f}). The "
                   f"survival-time model's ordering adds {g('perpetua','ordering'):.2f} against a floor of "
-                  f"{g('perpetua','null_ordering'):.2f}, and the whole-log-in-the-prompt memory's "
+                  f"{g('perpetua','null_ordering'):.2f}, and the LLM's "
                   f"{g('longcontext','ordering'):.2f} against {g('longcontext','null_ordering'):.2f}. The "
                   "honest contrast is not a big effect against a small one. It is a real effect against no "
                   "measurable effect."),
@@ -1149,7 +1148,7 @@ def f9(DATA, EXTRA, manifest):
         "conservative_variant": ("A stricter estimator gives the same ranking. Choosing ONE threshold for all "
                                  "ten households instead of one each, the totals are 0.33 for the timetable "
                                  "that never forgets, 0.40 for the three-day one, 2.83 for the survival-time "
-                                 "model and 0.77 for the whole-log memory. Its noise floor sits near 0.01, "
+                                 "model and 0.77 for the LLM. Its noise floor sits near 0.01, "
                                  "because a single policy applied to every household has far less freedom to "
                                  "chase noise, so on that estimator every bar clears its floor. The two agree "
                                  "on the ranking and disagree on the floor: that is a fact about the "
@@ -1163,7 +1162,7 @@ def f9(DATA, EXTRA, manifest):
                     "more to work with, so the floor rises at the shift for exactly the methods whose bars "
                     "rise there. A bar that does not clear its own line is not a result."),
         "look_for": ("The first-sick-days group. Both timetables' bars sit on their own floors; the "
-                     "survival-time model's stands well clear of it and the whole-log-in-the-prompt memory's "
+                     "survival-time model's stands well clear of it and the LLM's "
                      "clears too."),
         "not_shown": ("It does not show the level part, which is real and is where the timetables' apparent "
                       "gain comes from; those numbers are in the claim. It is not a deployable policy \u2014 "
@@ -1242,7 +1241,7 @@ def f4(DATA, EXTRA, manifest):
     for mx, m, M in ranked:
         mult = gate_series(M, "wrong_when_answered")
         mult["mean"] = [v / promise for v in mult["mean"]]
-        lab = f"{mx:.1f}\u00d7  {nm_legend(m)}"
+        lab = nm_legend(m)
         line(ax[0], mult, COL[m], lab, band=False, stage_of=st)
         line(ax[1], gate_series(M, "hand_over"), COL[m], lab, band=False, stage_of=st)
         hh[GATE_NAME[m]] = gate_hh(M)
@@ -1270,9 +1269,11 @@ def f4(DATA, EXTRA, manifest):
               for d in range(len(v["mean"])) if v["mean"][d] is not None) / promise
     finish(ax[0], "Wrong answers \u00f7\nwhat it promised", xlab="", ylim=(0, top + 0.8))
     finish(ax[1], "How often it hands\nthe question over", ylim=(0, 100))
-    legend_below(ax[1], ncol=1, gap=0.30)
+    legend_below(ax[1], ncol=2, gap=0.30)
+    fig_title(fig, "Reacting is not recovering")
     save(fig, "F4_reacting_is_not_recovering", manifest, {
         "figure": "F4",
+        "title": "Reacting is not recovering",
         "role": ('SUPPORTING. Rules out the obvious objection to the whole argument: that a method could simply notice it is in trouble and decline more. They do notice, and the answers they keep are still wrong far more often than they promised. Noticing is not being calibrated.'),
         "rerun_floor": RERUN_FLOOR,
         "claim": (lambda n: "Reacting is not recovering. When the routine changes these rules that decide whether to answer DO notice \u2014 "
@@ -1305,9 +1306,9 @@ def f4(DATA, EXTRA, manifest):
                                 "timetables' own confidence falls at the shift, by "
                                 f"{abs(n[nm("ttfrozen")]['its own confidence moved (points)']):.1f} "
                                 f"and {abs(n[nm("tt3d")]['its own confidence moved (points)']):.1f} "
-                                "points, while the whole-log-in-the-prompt memory's moves "
+                                "points, while the LLM's moves "
                                 f"{n[nm("longcontext")]['its own confidence moved (points)']:+.1f}. So "
-                                "whole-log memory's entire reaction is the controller raising its bar after "
+                                "LLM's entire reaction is the controller raising its bar after "
                                 "mistakes have already been made, and none of the four moves its "
                                 "confidence as far as its accuracy fell. Nor does it show what the questions "
                                 "it hands over would have scored: that is F6, and for one method the answer "
@@ -1342,8 +1343,10 @@ def f5(DATA, EXTRA, manifest):
     finish(ax[0], "Accuracy", ylim=(0, 100))
     finish(ax[1], "Confidence", ylim=(0, 100))
     legend_below(ax[0], ncol=2, gap=0.22)
+    fig_title(fig, "Behavior Across Changing Regimes")
     save(fig, "F5_confidence_against_accuracy", manifest, {
         "figure": "F5",
+        "title": "Behavior Across Changing Regimes",
         "role": ("States the paper's claim in its simplest form: accuracy and uncertainty are separate "
                  "axes, and a regime shift moves one and not the other. Everything after this figure is "
                  "about why, and what it costs."),
@@ -1416,8 +1419,10 @@ def f6(DATA, EXTRA, manifest):
         hh[GATE_NAME[m]] = gate_hh(M)
         nums[GATE_NAME[m]] = {WLAB[w].replace("\n", " "): M["answered_vs_handed"][w]["edge"] for w in wins}
     legend_below(ax[0], ncol=1)
+    fig_title(fig, "The inversion")
     save(fig, "F6_the_inversion", manifest, {
         "figure": "F6",
+        "title": "The inversion",
         "claim_head": ('Being badly calibrated is not a neutral property. At the shift it inverts the one decision the uncertainty exists to make. '),
         "role": ('CARRIES THE THESIS. Miscalibration in the direction that costs you: at the shift the rule runs backwards, answering what it gets wrong and handing over what it would have got right. This is why a separate uncertainty axis is a practical problem and not a measurement curiosity.'),
         "rerun_floor": RERUN_FLOOR,
@@ -1438,7 +1443,7 @@ def f6(DATA, EXTRA, manifest):
         "look_for": "The timetable that never forgets's first-sick-days pair, where the hatched bar overtakes the "
                     "solid one, against the survival-time model's, where it does not. The per-window edge — kept minus "
                     "handed over — is in the numbers.",
-        "not_shown": "Two methods only; the timetable with a three-day memory is close to a wash and the whole-log-in-the-prompt memory never inverts, "
+        "not_shown": "Two methods only; the timetable with a three-day memory is close to a wash and the LLM never inverts, "
                      "so neither adds to the contrast. It also does not show how MANY questions each bar "
                      "rests on, which differs a great deal between the kept and handed-over halves.",
         "numbers": nums})
@@ -1479,8 +1484,10 @@ def f7(DATA, EXTRA, manifest):
     lead_s = [C[str(d)]["set_size"] for d in range(9, 14) if str(d) in C]
     spell_s = [C[str(d)]["set_size"] for d in range(14, 24) if str(d) in C]
     legend_below(ax[1], ncol=1, gap=0.34)
+    fig_title(fig, "Sets break rather than widen")
     save(fig, "F7_sets_break_rather_than_widen", manifest, {
         "figure": "F7",
+        "title": "Sets break rather than widen",
         "claim_head": ('The machinery that is supposed to express uncertainty keeps its shape exactly while the promise it makes stops holding. '),
         "role": ('CARRIES THE THESIS, and on pure fit it is the best figure in the set: the uncertainty apparatus keeps its shape while its promise fails. The set does not widen when the world changes \\u2014 it gets SMALLER while the truth falls out of it. Weakest-powered figure here at three households, so it is the one to strengthen if any compute is available.'),
         "rerun_floor": RERUN_FLOOR,
@@ -1492,7 +1499,7 @@ def f7(DATA, EXTRA, manifest):
                  "below the 90% it promises — while the set it offers gets SMALLER, "
                  f"{d14['set_size']:.2f} places against {avg(lead_s):.2f} before. Over the whole spell it "
                  f"averages {avg(spell_s):.2f}, so nothing about its width registers the change.",
-        "population": POP_LABEL["person"], "households": {"the whole-log-in-the-prompt memory, sampled": n_hh},
+        "population": POP_LABEL["person"], "households": {"the LLM, sampled": n_hh},
         "split": "all questions",
         "band": "none: single-day rates pooled over households",
         "prose_numbers_ok": {"0.7": "the sampling temperature \u2014 a setting, not a measurement"},
@@ -1550,10 +1557,12 @@ def f10(DATA, EXTRA, manifest):
     ax.axhline(0, color=INK, lw=0.9, zorder=3)
     finish(ax, "What the confidence beats\nhindsight-on-noise by", ylim=None)
     legend_below(ax, ncol=2)
+    fig_title(fig, "The same test, one day at a time")
     v = lambda m, w, k="beats the floor by": nums[f"{nm(m)} \u2014 {k}"][w]
     sick = "first sick days 14-16"
     save(fig, "F10_the_same_test_one_day_at_a_time", manifest, {
         "figure": "F10",
+        "title": "The same test, one day at a time",
         "claim_head": ('The failure is not general. It is localised to the days the routine changes, which is what makes it a claim about regime shifts rather than about these methods. '),
         "role": ("CARRIES THE THESIS, and it is the specific contribution: the failure is localised to the disruption. The never-forgets timetable's confidence beats chance in every window of the month EXCEPT the days the routine changes, and again a week later. 'Exacerbated at regime shifts' measured rather than asserted."),
         "rerun_floor": RERUN_FLOOR,
@@ -1628,9 +1637,14 @@ def f11(DATA, EXTRA, manifest):
     SHORT = {"settled 1-13": "settled\n1\u201313", "first sick days 14-16": "sick\n14\u201316",
              "rest of spell 17-23": "spell\n17\u201323", "first days back 24-26": "back\n24\u201326",
              "a week later 27-31": "later\n27\u201331"}
+    # Each window's point sits on the DAY axis at its own midpoint, so this figure's x axis is the same "Day"
+    # axis every other figure uses, with the same dotted A/B rules and the same normal/sick/normal labels above
+    # it -- a reader does not have to learn a second convention for this one page.
+    MID = {"settled 1-13": 7, "first sick days 14-16": 15, "rest of spell 17-23": 20,
+           "first days back 24-26": 25, "a week later 27-31": 29}
     fig, ax = plt.subplots(figsize=(SINGLE, 2.6))
     nums, hh = {}, {}
-    xs = list(range(len(order)))
+    xs = [MID[k] for k in order]
     for m in meths:
         W = T[m]
         ys = [W[k]["r"] for k in order]
@@ -1645,24 +1659,15 @@ def f11(DATA, EXTRA, manifest):
     # Zero is the whole reading of this figure: at zero a method's stated confidence tells you nothing about
     # whether it is right. It is annotation ink, not a series, so it carries no hue.
     ax.axhline(0, color=INK, lw=1.0, zorder=3)
-    # Sits ON the line it names, at the left edge where no series passes, rather than floating in the middle
-    # of the plot where it landed across the three-day timetable.
-    # BELOW the line and at the right, the one region of this plot no series enters: every method crosses
-    # near zero somewhere in the middle, so anything sitting on the line there is struck through by a curve.
-    ax.annotate("at this line the confidence\ncarries no information",
-                xy=(len(order) - 0.65, -0.025), fontsize=6.0, color=INK, ha="right", va="top")
-    # The shift is a column here rather than a rule, because the x axis is stages and not days.
-    ax.axvspan(0.5, 1.5, color=INK, alpha=0.055, lw=0, zorder=0)
-    ax.set_xticks(xs)
-    ax.set_xticklabels([SHORT[k] for k in order], fontsize=6.6)
-    ax.set_xlim(-0.4, len(order) - 0.6)
-    finish(ax, "Does its confidence predict\nbeing right?", xlab="", ylim=None)
-    ax.grid(True, axis="y", alpha=0.5)
-    ax.grid(False, axis="x")
+    boundaries([ax], DATA, "person")
+    ax.set_xlim(0.5, 31.5)
+    finish(ax, "Correlation", ylim=None)
     legend_below(ax, ncol=2)
+    fig_title(fig, "Confidence-Accuracy Correlation")
     g = lambda m, k: T[m]["first sick days 14-16"][k]
     save(fig, "F11_whose_confidence_survives", manifest, {
         "figure": "F11",
+        "title": "Confidence-Accuracy Correlation",
         "role": ("The paper's positive result and the one a model designer can act on. Every other figure "
                  "says something is broken; this one says which design choice is not broken, and the "
                  "mechanism section attaches here."),
@@ -1673,14 +1678,14 @@ def f11(DATA, EXTRA, manifest):
                   f"similar amounts: {T['ttfrozen']['settled 1-13']['r']:.2f} for the timetable that never "
                   f"forgets, {T['tt3d']['settled 1-13']['r']:.2f} for the three-day one, "
                   f"{T['perpetua']['settled 1-13']['r']:.2f} for the survival-time model and "
-                  f"{T['longcontext']['settled 1-13']['r']:.2f} for the whole log in the prompt. On the "
+                  f"{T['longcontext']['settled 1-13']['r']:.2f} for the LLM. On the "
                   "first days of the new routine the two timetables fall to nothing "
                   f"({g('ttfrozen','r'):.2f} and {g('tt3d','r'):.2f}; the falls of "
                   f"{abs(g('ttfrozen','change_from_settled')):.2f} and "
                   f"{abs(g('tt3d','change_from_settled')):.2f} both clear our bar). The survival-time "
                   f"model does not move ({g('perpetua','r'):.2f}, a change of "
-                  f"{g('perpetua','change_from_settled'):+.2f} that does not clear), and the whole log in "
-                  f"the prompt degrades without breaking ({g('longcontext','r'):.2f}).\n\n"
+                  f"{g('perpetua','change_from_settled'):+.2f} that does not clear), and the LLM "
+                  f"degrades without breaking ({g('longcontext','r'):.2f}).\n\n"
                   "The reason is in the arithmetic of the two confidence numbers rather than in their "
                   "quality. A timetable's confidence is the share of its sightings in the matching hour bin "
                   "that fell at the answer it is giving \u2014 a ratio of counts. Scale every count down "

@@ -16,7 +16,7 @@ The timetable that never forgets's first-sick-days pair, where the hatched bar o
 
 ## What it does NOT show
 
-Two methods only; the timetable with a three-day memory is close to a wash and the whole-log-in-the-prompt memory never inverts, so neither adds to the contrast. It also does not show how MANY questions each bar rests on, which differs a great deal between the kept and handed-over halves.
+Two methods only; the timetable with a three-day memory is close to a wash and the LLM never inverts, so neither adds to the contrast. It also does not show how MANY questions each bar rests on, which differs a great deal between the kept and handed-over halves.
 
 ## The numbers
 

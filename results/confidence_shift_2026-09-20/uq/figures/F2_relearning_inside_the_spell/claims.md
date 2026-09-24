@@ -10,15 +10,15 @@ BACKGROUND. An accuracy result about how fast each memory re-learns, which is a 
 
 These memories can represent the new regime perfectly well — told about it, they adapt at once. What none of them can do is notice from evidence that the old regime expired, or that an instruction has. Neither a sighting nor a sentence carries a validity window, so language does not fix the problem, it moves it: from failing to notice that sightings went stale to failing to notice that an instruction did. the survival-time model is the exception because how long a thing stays true is precisely what it models. Retrieval's index is the clearest case: same time of day, whole history, no notion of when a sighting stopped being informative.
 
-Given ten days of the new routine the timetable with a three-day memory re-learns it 2.0 to 3.0 times as fast as any language memory: +31 points from the first sick days to the end of the spell, against +15 for reflection, +12 for the whole-log-in-the-prompt memory and +10 for retrieval.
+Given ten days of the new routine the timetable with a three-day memory re-learns it 2.0 to 3.0 times as fast as any language memory: +31 points from the first sick days to the end of the spell, against +15 for reflection, +12 for the LLM and +10 for retrieval.
 
 ## What in the figure demonstrates it
 
-The slope between the first sick days and the end of the spell. The timetable with a three-day memory goes from 57.9 to 88.8, a gain of 30.8 points. Reflection gains 15.2, retrieval 10.4 and the whole-log-in-the-prompt memory 11.5.
+The slope between the first sick days and the end of the spell. The timetable with a three-day memory goes from 57.9 to 88.8, a gain of 30.8 points. Reflection gains 15.2, retrieval 10.4 and the LLM 11.5.
 
 ## What it does NOT show
 
-It does not show that the language memories learn NOTHING: reflection's +15.2 is a real gain, about 49% of the timetable with a three-day memory's. It also does not separate re-learning from same-day feedback, since these are all questions rather than cold ones. The whole-log-in-the-prompt memory is on fewer households than the rest.
+It does not show that the language memories learn NOTHING: reflection's +15.2 is a real gain, about 49% of the timetable with a three-day memory's. It also does not separate re-learning from same-day feedback, since these are all questions rather than cold ones. The LLM is on fewer households than the rest.
 
 ## How this claim changed
 
@@ -32,5 +32,5 @@ Measured on the DAILY values, not read off the plotted line.
 |---|---|---|---|---|---|
 | timetable with a three-day memory | 57.9 | 88.8 | 30.8 | 77.4 | 1.0 |
 | nightly self-notes memory | 66.0 | 81.2 | 15.2 | 74.7 | 2.0 |
-| whole-log-in-the-prompt memory | 61.7 | 73.1 | 11.5 | 68.4 | 2.7 |
+| LLM | 61.7 | 73.1 | 11.5 | 68.4 | 2.7 |
 | same-hour lookup memory | 55.8 | 66.2 | 10.4 | 61.6 | 3.0 |

@@ -13,6 +13,6 @@ Regenerated with the figure from the same data. Never read a value off the pictu
 | survival-time model — beats the floor by | 0.51 | 2.25 | 0.59 | 1.05 | 1.55 |
 | survival-time model — bar it has to clear | 0.23 | 0.5 | 0.16 | 0.51 | 0.33 |
 | survival-time model — the floor itself | 0.09 | 0.88 | 0.05 | 0.58 | 0.15 |
-| whole-log-in-the-prompt memory — beats the floor by | 0.28 | 0.75 | 0.37 | 0.38 | 0.65 |
-| whole-log-in-the-prompt memory — bar it has to clear | 0.17 | 0.26 | 0.14 | 0.21 | 0.22 |
-| whole-log-in-the-prompt memory — the floor itself | 0.04 | 0.11 | 0.04 | 0.05 | 0.07 |
+| LLM — beats the floor by | 0.28 | 0.75 | 0.37 | 0.38 | 0.65 |
+| LLM — bar it has to clear | 0.17 | 0.26 | 0.14 | 0.21 | 0.22 |
+| LLM — the floor itself | 0.04 | 0.11 | 0.04 | 0.05 | 0.07 |

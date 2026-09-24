@@ -16,7 +16,7 @@ Regenerated with the figure from the same data. Never read a value off the pictu
 | survival-time model — noise floor for that | 0.15 | 0.52 | 0.07 | 0.52 | 0.25 |
 | survival-time model — the level part | 0.06 | 0.67 | 0.0 | 0.42 | 0.26 |
 | survival-time model — % right | 66.3 | 55.4 | 73.7 | 56.8 | 59.1 |
-| whole-log-in-the-prompt memory — what the ordering adds | 0.38 | 1.33 | 0.37 | 0.83 | 0.84 |
-| whole-log-in-the-prompt memory — noise floor for that | 0.08 | 0.3 | 0.06 | 0.16 | 0.1 |
-| whole-log-in-the-prompt memory — the level part | 0.0 | 0.0 | 0.0 | 0.0 | 0.0 |
-| whole-log-in-the-prompt memory — % right | 69.6 | 61.7 | 71.3 | 67.4 | 69.5 |
+| LLM — what the ordering adds | 0.38 | 1.33 | 0.37 | 0.83 | 0.84 |
+| LLM — noise floor for that | 0.08 | 0.3 | 0.06 | 0.16 | 0.1 |
+| LLM — the level part | 0.0 | 0.0 | 0.0 | 0.0 | 0.0 |
+| LLM — % right | 69.6 | 61.7 | 71.3 | 67.4 | 69.5 |

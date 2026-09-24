@@ -14,7 +14,7 @@ The top panel at the first dotted rule, where every line leaves the promise behi
 
 ## What it does NOT show
 
-It does not show WHY the rule that decides whether to answer reacts, which differs by method and is the more interesting half. The last column of the table is that answer: the timetables' own confidence falls at the shift, by 10.1 and 8.6 points, while the whole-log-in-the-prompt memory's moves +0.1. So whole-log memory's entire reaction is the controller raising its bar after mistakes have already been made, and none of the four moves its confidence as far as its accuracy fell. Nor does it show what the questions it hands over would have scored: that is F6, and for one method the answer is worse than what it kept.
+It does not show WHY the rule that decides whether to answer reacts, which differs by method and is the more interesting half. The last column of the table is that answer: the timetables' own confidence falls at the shift, by 10.1 and 8.6 points, while the LLM's moves +0.1. So LLM's entire reaction is the controller raising its bar after mistakes have already been made, and none of the four moves its confidence as far as its accuracy fell. Nor does it show what the questions it hands over would have scored: that is F6, and for one method the answer is worse than what it kept.
 
 ## The numbers
 
@@ -24,5 +24,5 @@ Measured on the DAILY values, not read off the plotted line.
 |---|---|---|---|---|---|---|
 | timetable that never forgets | 21.4 | 70.6 | 12.5 | 63.0 | 6.3 | -10.1 |
 | timetable with a three-day memory | 29.1 | 70.4 | 12.5 | 41.2 | 4.1 | -8.6 |
-| whole-log-in-the-prompt memory | 45.5 | 57.9 | 19.0 | 27.7 | 2.8 | 0.1 |
+| LLM | 45.5 | 57.9 | 19.0 | 27.7 | 2.8 | 0.1 |
 | survival-time model | 48.7 | 53.3 | 16.5 | 23.9 | 2.4 | -1.3 |

@@ -6,7 +6,7 @@ The paper's positive result and the one a model designer can act on. Every other
 
 ## The claim
 
-> Whether a method's confidence survives a change in the routine is not a matter of how good the method is. It follows from what its confidence is a function of. In a settled household all four methods' stated confidence predicts being right, and by similar amounts: 0.35 for the timetable that never forgets, 0.28 for the three-day one, 0.37 for the survival-time model and 0.29 for the whole log in the prompt. On the first days of the new routine the two timetables fall to nothing (-0.12 and -0.00; the falls of 0.47 and 0.28 both clear our bar). The survival-time model does not move (0.43, a change of +0.07 that does not clear), and the whole log in the prompt degrades without breaking (0.22).
+> Whether a method's confidence survives a change in the routine is not a matter of how good the method is. It follows from what its confidence is a function of. In a settled household all four methods' stated confidence predicts being right, and by similar amounts: 0.35 for the timetable that never forgets, 0.28 for the three-day one, 0.37 for the survival-time model and 0.29 for the LLM. On the first days of the new routine the two timetables fall to nothing (-0.12 and -0.00; the falls of 0.47 and 0.28 both clear our bar). The survival-time model does not move (0.43, a change of +0.07 that does not clear), and the LLM degrades without breaking (0.22).
 
 The reason is in the arithmetic of the two confidence numbers rather than in their quality. A timetable's confidence is the share of its sightings in the matching hour bin that fell at the answer it is giving — a ratio of counts. Scale every count down and the ratio is unchanged, so the number is very nearly blind to how old the evidence is. The survival-time model's confidence is a probability advanced from the last sighting by an exponential decay toward that object's long-run base rate, at a speed fitted per object: it IS a measure of how stale the evidence is, and it is least confident about exactly the objects that move most.
 
@@ -33,4 +33,4 @@ Measured on the DAILY values, not read off the plotted line.
 | timetable that never forgets | 0.35 | -0.116 | 0.151 | 0.388 | 0.373 | -0.466 | yes |
 | timetable with a three-day memory | 0.281 | -0.001 | 0.267 | 0.113 | 0.381 | -0.283 | yes |
 | survival-time model | 0.367 | 0.433 | 0.357 | 0.286 | 0.48 | 0.066 | no |
-| whole-log-in-the-prompt memory | 0.293 | 0.218 | 0.253 | 0.256 | 0.322 | -0.075 | no |
+| LLM | 0.293 | 0.218 | 0.253 | 0.256 | 0.322 | -0.075 | no |

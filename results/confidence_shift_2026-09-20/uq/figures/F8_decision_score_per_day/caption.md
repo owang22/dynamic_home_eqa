@@ -1,14 +1,14 @@
 # Caption for F8
 
-**Single-column figure** — reproduce at 3.09 in, its rendered width.
+**Single-column figure** — reproduce at 3.42 in, its rendered width.
 
-**Title line:** _none needed — this figure does not carry its own title; the paper caption is enough._
+**Title line:** Decision score per day
 
 Paste and edit; written as a caption, not a summary.
 
 ---
 
-Daily decision score under a rule that needs no target to explain: +1 for a right answer, −1 for a wrong one, 0 for declining to answer. Each method uses its own best fixed confidence threshold. Both timetables collapse on the first sick day; the survival-time model and the whole-log-in-the-prompt memory do not.
+Daily decision score under a rule that needs no target to explain: +1 for a right answer, −1 for a wrong one, 0 for declining to answer. Each method uses its own best fixed confidence threshold. Both timetables collapse on the first sick day; the survival-time model and the LLM do not.
 
 ---
 
@@ -18,12 +18,12 @@ Daily decision score under a rule that needs no target to explain: +1 for a righ
 - **Bands:** none: this is a score, not an average with a spread
 - **Dotted vertical rules:** the stage boundaries — the first sick day and the first day back. Nothing is shaded, so the lines and their bands sit on a plain ground.
 - **How the line is drawn:** The line is a centred three-day average computed within each stage, never across a boundary. These are rates rather than averages over households, so no band is drawn.
-- **About the data:** Each method uses its OWN best fixed threshold, because the comparison would otherwise measure their confidence scales rather than their judgement — the timetables spread mass over dozens of places and rarely exceed 0.5, the whole-log-in-the-prompt memory says 0.95 to almost everything. Every window figure in the table below is the mean of the DRAWN daily series, computed from it rather than recomputed beside it. That is the structural fix, not a repair: this table previously held per-window refits — a different estimator, in the same units, with values close enough that a reader comparing table to line saw an agreement that was not there. Wherever a table sits beside a line, compute the table from the line.
+- **About the data:** Each method uses its OWN best fixed threshold, because the comparison would otherwise measure their confidence scales rather than their judgement — the timetables spread mass over dozens of places and rarely exceed 0.5, the LLM says 0.95 to almost everything. Every window figure in the table below is the mean of the DRAWN daily series, computed from it rather than recomputed beside it. That is the structural fix, not a repair: this table previously held per-window refits — a different estimator, in the same units, with values close enough that a reader comparing table to line saw an agreement that was not there. Wherever a table sits beside a line, compute the table from the line.
 - **The floor under any effect here:** Some of any difference here is the run having been run again. Identical prompts at temperature zero do not reproduce on this server, so a repeat of the same arm on the same data does not give the same answers, and that sets a floor under every effect involving a memory whose answers a language model generates. Measured on 3 households by re-running each arm over the same data with byte-identical prompts, the share of answers that change is the recent-sightings list about 3%; the whole-log-in-the-prompt memory about 5% (4%, 6%, 4% by household). Across all days accuracy moves 0 to 2 points.
 
   But a single window in a single household moved as much as 10 points (one household's last two days, 78 to 88; another household's lead-up, 66 to 62). That is the figure to carry, not the all-days one. Every headline result in these folders is stated per window, and a reader who takes the all-days floor and applies it to a one-window effect will be badly misled. The honest form of the sentence: across all days the floor is small, and per window on a single household it can reach 10. By window, averaged across households, its mean is lead-up +1.8, first sick days -0.7, later spell 0.0, first days back +0.7, days 27-28 -2.1.
 
-  No arm inherits another arm's floor. The recent-sightings list's share did not predict the whole-log memory's, the counting methods have none at all, and the variation across windows is larger than the variation between memories. The floor is a property of an arm and a window, measured, not a constant for the project. Whether the longer prompt carries a genuinely larger floor is unresolved: slightly larger on average, carried by one household, and not distinguishable at three households.
+  No arm inherits another arm's floor. The recent-sightings list's share did not predict the LLM's, the counting methods have none at all, and the variation across windows is larger than the variation between memories. The floor is a property of an arm and a window, measured, not a constant for the project. Whether the longer prompt carries a genuinely larger floor is unresolved: slightly larger on average, carried by one household, and not distinguishable at three households.
 
   The counting methods — the timetables and the survival-time model — make no model calls and were re-run and reproduced exactly: one household's whole classical arm, all nine beliefs and 4464 rows, came back byte-identical to the stored log, as did the question bank it was scored on.
 

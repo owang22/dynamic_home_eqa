@@ -10,7 +10,7 @@ A change in the household's hidden routine costs accuracy TWICE: once when it ha
 
 These memories can represent the new regime perfectly well — told about it, they adapt at once. What none of them can do is notice from evidence that the old regime expired, or that an instruction has. Neither a sighting nor a sentence carries a validity window, so language does not fix the problem, it moves it: from failing to notice that sightings went stale to failing to notice that an instruction did. the survival-time model is the exception because how long a thing stays true is precisely what it models. The return break is that defect seen from the other side: what expired was the sick-day routine, and nothing in these memories dates what they learned during it.
 
-*single-column, 3.15 in wide.* Population one resident off sick, that resident's own things; households ttfrozen 10, tt3d 10, perpetua 10, longcontext 10. Renders, caption and claims in `F1_learn_break_relearn/`.
+*single-column, 3.5 in wide.* Population one resident off sick, that resident's own things; households ttfrozen 10, tt3d 10, perpetua 10, longcontext 10. Renders, caption and claims in `F1_learn_break_relearn/`.
 
 ## [F10](F10_the_same_test_one_day_at_a_time/) — F10_the_same_test_one_day_at_a_time
 
@@ -22,31 +22,31 @@ SECOND, and separately, the timetable with a three-day memory never had much of 
 
 The survival-time model moves the other way, from 0.51 settled to 2.25 at the shift, the largest value it reaches all run.
 
-*1.5-column, 3.7 in wide.* Population one resident off sick, that resident's own things; households ttfrozen 10, tt3d 10, perpetua 10, longcontext 10. Renders, caption and claims in `F10_the_same_test_one_day_at_a_time/`.
+*1.5-column, 3.59 in wide.* Population one resident off sick, that resident's own things; households ttfrozen 10, tt3d 10, perpetua 10, longcontext 10. Renders, caption and claims in `F10_the_same_test_one_day_at_a_time/`.
 
 ## [F11](F11_whose_confidence_survives/) — F11_whose_confidence_survives
 
-In a settled household all four methods' stated confidence predicts being right, and by similar amounts: 0.35 for the timetable that never forgets, 0.28 for the three-day one, 0.37 for the survival-time model and 0.29 for the whole log in the prompt. On the first days of the new routine the two timetables fall to nothing (-0.12 and -0.00; the falls of 0.47 and 0.28 both clear our bar). The survival-time model does not move (0.43, a change of +0.07 that does not clear), and the whole log in the prompt degrades without breaking (0.22).
+In a settled household all four methods' stated confidence predicts being right, and by similar amounts: 0.35 for the timetable that never forgets, 0.28 for the three-day one, 0.37 for the survival-time model and 0.29 for the LLM. On the first days of the new routine the two timetables fall to nothing (-0.12 and -0.00; the falls of 0.47 and 0.28 both clear our bar). The survival-time model does not move (0.43, a change of +0.07 that does not clear), and the LLM degrades without breaking (0.22).
 
 The reason is in the arithmetic of the two confidence numbers rather than in their quality. A timetable's confidence is the share of its sightings in the matching hour bin that fell at the answer it is giving — a ratio of counts. Scale every count down and the ratio is unchanged, so the number is very nearly blind to how old the evidence is. The survival-time model's confidence is a probability advanced from the last sighting by an exponential decay toward that object's long-run base rate, at a speed fitted per object: it IS a measure of how stale the evidence is, and it is least confident about exactly the objects that move most.
 
 A change in routine is an event that makes old evidence wrong WITHOUT changing the historical frequencies. So it is invisible to one confidence number by construction, and visible to the other by construction. That is a design prescription and not a league table: put the age of the evidence in the state, not only its frequency.
 
-*1.5-column, 3.79 in wide.* Population one resident off sick, that resident's own things; households ttfrozen 10, tt3d 10, perpetua 10, longcontext 10. Renders, caption and claims in `F11_whose_confidence_survives/`.
+*single-column, 3.55 in wide.* Population one resident off sick, that resident's own things; households ttfrozen 10, tt3d 10, perpetua 10, longcontext 10. Renders, caption and claims in `F11_whose_confidence_survives/`.
 
 ## [F2](F2_relearning_inside_the_spell/) — F2_relearning_inside_the_spell
 
-Given ten days of the new routine the timetable with a three-day memory re-learns it 2.0 to 3.0 times as fast as any language memory: +31 points from the first sick days to the end of the spell, against +15 for reflection, +12 for the whole-log-in-the-prompt memory and +10 for retrieval.
+Given ten days of the new routine the timetable with a three-day memory re-learns it 2.0 to 3.0 times as fast as any language memory: +31 points from the first sick days to the end of the spell, against +15 for reflection, +12 for the LLM and +10 for retrieval.
 
 *single-column, 3.15 in wide.* Population one resident off sick, that resident's own things; households tt3d 10, reflect 10, longcontext 10, retrieval 10. Renders, caption and claims in `F2_relearning_inside_the_spell/`.
 
 ## [F3](F3_what_one_sentence_buys/) — F3_what_one_sentence_buys
 
-Ten days of living in the new routine, corrected after every single question, do not teach the whole-log-in-the-prompt memory the new routine. One sentence does, and on ten matched households the whole arc of it now clears our bar on this one memory. Told at A it is +10.4 points ahead of the untold run on the first sick days and +9.3 through the rest of the spell. Left standing after the routine reverts, the same sentence COSTS 8.6 points on the first days back and 6.8 a week later. Retracted at B, that cost is gone. The arm told at both ends sits +0.7 against never being told on the first days back and +0.9 a week later, neither of which clears the bar — so any residual difference is smaller than we can measure, which is a bound and not a proof that it is zero. What does clear is the positive form: retracting is worth +9.2 points against telling once, and +7.7 a week later.
+Ten days of living in the new routine, corrected after every single question, do not teach the LLM the new routine. One sentence does, and on ten matched households the whole arc of it now clears our bar on this one memory. Told at A it is +10.4 points ahead of the untold run on the first sick days and +9.3 through the rest of the spell. Left standing after the routine reverts, the same sentence COSTS 8.6 points on the first days back and 6.8 a week later. Retracted at B, that cost is gone. The arm told at both ends sits +0.7 against never being told on the first days back and +0.9 a week later, neither of which clears the bar — so any residual difference is smaller than we can measure, which is a bound and not a proof that it is zero. What does clear is the positive form: retracting is worth +9.2 points against telling once, and +7.7 a week later.
 
 
 
-Those four are differences BETWEEN two arms on the SAME household, averaged over ten households and judged against twice their own standard error — a bar the runs' rerun noise is already inside, since the spread is computed across households from the runs as they happened. What they are not is a licence to read one household's line in one window off this figure: the whole-log memory's rerun floor reaches 10 points in a single household-window, which is larger than three of these four contrasts. The contrast survives that and a single household's level does not.
+Those four are differences BETWEEN two arms on the SAME household, averaged over ten households and judged against twice their own standard error — a bar the runs' rerun noise is already inside, since the spread is computed across households from the runs as they happened. What they are not is a licence to read one household's line in one window off this figure: the LLM's rerun floor reaches 10 points in a single household-window, which is larger than three of these four contrasts. The contrast survives that and a single household's level does not.
 
 These memories can represent the new regime perfectly well — told about it, they adapt at once. What none of them can do is notice from evidence that the old regime expired, or that an instruction has. Neither a sighting nor a sentence carries a validity window, so language does not fix the problem, it moves it: from failing to notice that sightings went stale to failing to notice that an instruction did. the survival-time model is the exception because how long a thing stays true is precisely what it models. This figure is where it is earned end to end on a single memory, because the message is the counterfactual: it holds the memory fixed and changes only whether the regime was announced, and then whether the announcement was taken back.
 
@@ -56,13 +56,13 @@ These memories can represent the new regime perfectly well — told about it, th
 
 Reacting is not recovering. When the routine changes these rules that decide whether to answer DO notice — every one of them roughly doubles or triples how often it declines to answer — and the answers they keep are still wrong 2.4 to 6.3 times more often than the rate they promised. Noticing that something is wrong is not the same as knowing WHICH answers are wrong, and only the second one protects a user.
 
-*single-column, 3.27 in wide.* Population one resident off sick, that resident's own things; households timetable that never forgets 10, timetable with a three-day memory 10, whole-log-in-the-prompt memory 10, survival-time model 10. Renders, caption and claims in `F4_reacting_is_not_recovering/`.
+*1.5-column, 3.62 in wide.* Population one resident off sick, that resident's own things; households timetable that never forgets 10, timetable with a three-day memory 10, LLM 10, survival-time model 10. Renders, caption and claims in `F4_reacting_is_not_recovering/`.
 
 ## [F5](F5_confidence_against_accuracy/) — F5_confidence_against_accuracy
 
 At the shift the timetables' accuracy collapses while the confidence they state in their own answers barely moves, so the gap between what they claim and what they deliver opens by 10 points in a single day for the timetable that never forgets. The survival-time model is the one whose stated confidence moves with its own accuracy through the change, its gap at day 14 being +24.8 points against that timetable's +10.3. It is also the least accurate method on this chart while the household is stable, which is the point rather than an inconsistency: whatever makes a method accurate in a settled world is not what makes its uncertainty survive a change to that world.
 
-*double-column, 6.34 in wide.* Population one resident off sick, that resident's own things; households ttfrozen 10, tt3d 10, perpetua 10, longcontext 10. Renders, caption and claims in `F5_confidence_against_accuracy/`.
+*double-column, 5.97 in wide.* Population one resident off sick, that resident's own things; households ttfrozen 10, tt3d 10, perpetua 10, longcontext 10. Renders, caption and claims in `F5_confidence_against_accuracy/`.
 
 ## [F6](F6_the_inversion/) — F6_the_inversion
 
@@ -76,17 +76,17 @@ These memories can represent the new regime perfectly well — told about it, th
 
 The list of places the rule offers does not widen when the routine changes. On the first sick day its how often the truth is in its list falls from 92% in the settled week to 69% — far below the 90% it promises — while the set it offers gets SMALLER, 1.42 places against 1.59 before. Over the whole spell it averages 1.64, so nothing about its width registers the change.
 
-*single-column, 3.27 in wide.* Population one resident off sick, that resident's own things; households the whole-log-in-the-prompt memory, sampled 3. Renders, caption and claims in `F7_sets_break_rather_than_widen/`.
+*single-column, 3.27 in wide.* Population one resident off sick, that resident's own things; households the LLM, sampled 3. Renders, caption and claims in `F7_sets_break_rather_than_widen/`.
 
 ## [F8](F8_decision_score_per_day/) — F8_decision_score_per_day
 
 Scored the way a user would feel it — +1 for a right answer, −1 for a wrong one, 0 for declining — the ranking inverts at the moment of change: the methods that are most accurate in the settled world are the ones that collapse, and one goes NEGATIVE. On day 14 the timetable that never forgets scores below zero, meaning it would have done better answering nothing at all. Accuracy in a stable world does not predict value when the world moves.
 
-*single-column, 3.09 in wide.* Population one resident off sick, that resident's own things; households ttfrozen 10, tt3d 10, perpetua 10, longcontext 10. Renders, caption and claims in `F8_decision_score_per_day/`.
+*single-column, 3.42 in wide.* Population one resident off sick, that resident's own things; households ttfrozen 10, tt3d 10, perpetua 10, longcontext 10. Renders, caption and claims in `F8_decision_score_per_day/`.
 
 ## [F9](F9_what_the_confidence_adds/) — F9_what_the_confidence_adds
 
-Being allowed to decline is worth something to every method at the shift, but for the timetables that is not because their confidence knows anything. The value splits in two: what the best all-or-nothing choice gives, which needs no signal at all and pays whenever a method is wrong more often than right, and what the ORDER of the confidences adds on top. At the shift the timetable that never forgets is right 51.3% of the time, so declining is worth 2.07 to it on the level alone — and its ordering adds 0.37 against a hindsight-on-noise floor of 0.29, which is nothing. The three-day timetable is the same story (0.43 against 0.36). The survival-time model's ordering adds 2.70 against a floor of 0.52, and the whole-log-in-the-prompt memory's 1.33 against 0.30. The honest contrast is not a big effect against a small one. It is a real effect against no measurable effect.
+Being allowed to decline is worth something to every method at the shift, but for the timetables that is not because their confidence knows anything. The value splits in two: what the best all-or-nothing choice gives, which needs no signal at all and pays whenever a method is wrong more often than right, and what the ORDER of the confidences adds on top. At the shift the timetable that never forgets is right 51.3% of the time, so declining is worth 2.07 to it on the level alone — and its ordering adds 0.37 against a hindsight-on-noise floor of 0.29, which is nothing. The three-day timetable is the same story (0.43 against 0.36). The survival-time model's ordering adds 2.70 against a floor of 0.52, and the LLM's 1.33 against 0.30. The honest contrast is not a big effect against a small one. It is a real effect against no measurable effect.
 
-*1.5-column, 4.06 in wide.* Population one resident off sick, that resident's own things; households timetable that never forgets 10 (8 in the first days back 24-26), timetable with a three-day memory 10 (8 in the first days back 24-26), survival-time model 10 (8 in the first days back 24-26), whole-log-in-the-prompt memory 10 (8 in the first days back 24-26). Renders, caption and claims in `F9_what_the_confidence_adds/`.
+*1.5-column, 3.85 in wide.* Population one resident off sick, that resident's own things; households timetable that never forgets 10 (8 in the first days back 24-26), timetable with a three-day memory 10 (8 in the first days back 24-26), survival-time model 10 (8 in the first days back 24-26), LLM 10 (8 in the first days back 24-26). Renders, caption and claims in `F9_what_the_confidence_adds/`.
 

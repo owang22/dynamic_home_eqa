@@ -2,7 +2,7 @@
 
 **Wider than a single column** — reproduce at about 4.4 in. Do NOT squeeze it into one column; its labels are set for this width and shrinking them puts the smallest text near 4pt.
 
-**Title line:** _none needed — this figure does not carry its own title; the paper caption is enough._
+**Title line:** The inversion
 
 Paste and edit; written as a caption, not a summary.
 
@@ -21,7 +21,7 @@ For two methods, the accuracy of the questions the rule that decides whether to 
 
   But a single window in a single household moved as much as 10 points (one household's last two days, 78 to 88; another household's lead-up, 66 to 62). That is the figure to carry, not the all-days one. Every headline result in these folders is stated per window, and a reader who takes the all-days floor and applies it to a one-window effect will be badly misled. The honest form of the sentence: across all days the floor is small, and per window on a single household it can reach 10. By window, averaged across households, its mean is lead-up +1.8, first sick days -0.7, later spell 0.0, first days back +0.7, days 27-28 -2.1.
 
-  No arm inherits another arm's floor. The recent-sightings list's share did not predict the whole-log memory's, the counting methods have none at all, and the variation across windows is larger than the variation between memories. The floor is a property of an arm and a window, measured, not a constant for the project. Whether the longer prompt carries a genuinely larger floor is unresolved: slightly larger on average, carried by one household, and not distinguishable at three households.
+  No arm inherits another arm's floor. The recent-sightings list's share did not predict the LLM's, the counting methods have none at all, and the variation across windows is larger than the variation between memories. The floor is a property of an arm and a window, measured, not a constant for the project. Whether the longer prompt carries a genuinely larger floor is unresolved: slightly larger on average, carried by one household, and not distinguishable at three households.
 
   The counting methods — the timetables and the survival-time model — make no model calls and were re-run and reproduced exactly: one household's whole classical arm, all nine beliefs and 4464 rows, came back byte-identical to the stored log, as did the question bank it was scored on.
 
