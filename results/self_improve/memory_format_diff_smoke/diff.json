@@ -1,5 +1,5 @@
 {
- "household": "hh_s2_t03",
+ "household": "hh_s3_t03",
  "runs": {
   "wholesale rewrite": {
    "arm": "the fixed schedule with wholesale rewrite",
@@ -14,44 +14,86 @@
     "rotation_seed": 0,
     "days_for_one_full_pass": 9.0,
     "rota_in_the_order_it_is_walked": [
-     "kitchen",
-     "balcony",
+     "storage",
      "entry",
-     "office",
+     "bedroom_3",
      "living",
      "bathroom",
-     "dining",
-     "storage",
-     "bedroom_1"
+     "bedroom_1",
+     "balcony",
+     "bedroom_2",
+     "kitchen"
     ]
    },
    "nightly": [
     {
      "day": 0,
      "model_call_failed": false,
-     "n_characters": 458,
+     "n_characters": 420,
      "identical_to_last_night": false,
      "period": "settled"
     },
     {
      "day": 1,
      "model_call_failed": false,
-     "n_characters": 611,
+     "n_characters": 343,
      "identical_to_last_night": false,
      "period": "settled"
     },
     {
      "day": 2,
      "model_call_failed": false,
-     "n_characters": 786,
+     "n_characters": 457,
+     "identical_to_last_night": false,
+     "period": "settled"
+    },
+    {
+     "day": 3,
+     "model_call_failed": false,
+     "n_characters": 457,
+     "identical_to_last_night": true,
+     "period": "settled"
+    },
+    {
+     "day": 4,
+     "model_call_failed": false,
+     "n_characters": 797,
+     "identical_to_last_night": false,
+     "period": "settled"
+    },
+    {
+     "day": 5,
+     "model_call_failed": false,
+     "n_characters": 889,
+     "identical_to_last_night": false,
+     "period": "settled"
+    },
+    {
+     "day": 6,
+     "model_call_failed": false,
+     "n_characters": 889,
+     "identical_to_last_night": true,
+     "period": "settled"
+    },
+    {
+     "day": 7,
+     "model_call_failed": false,
+     "n_characters": 1128,
+     "identical_to_last_night": false,
+     "period": "settled"
+    },
+    {
+     "day": 8,
+     "model_call_failed": false,
+     "n_characters": 1743,
      "identical_to_last_night": false,
      "period": "settled"
     }
    ],
    "peeks": {},
-   "n_looks": 3,
-   "n_sightings": 42,
-   "n_absences_recorded": 158
+   "n_looks": 9,
+   "n_sightings": 94,
+   "n_absences_recorded": 1918
   },
   "incremental edits": {
    "arm": "the fixed schedule with incremental edits",
@@ -66,47 +108,68 @@
     "rotation_seed": 0,
     "days_for_one_full_pass": 9.0,
     "rota_in_the_order_it_is_walked": [
-     "kitchen",
-     "balcony",
+     "storage",
      "entry",
-     "office",
+     "bedroom_3",
      "living",
      "bathroom",
-     "dining",
-     "storage",
-     "bedroom_1"
+     "bedroom_1",
+     "balcony",
+     "bedroom_2",
+     "kitchen"
     ]
    },
    "nightly": [
     {
      "day": 0,
      "model_call_failed": false,
-     "n_edits_offered": 6,
+     "the_look_saw_something_it_is_asked_about": false,
+     "at_least_one_edit_was_required": false,
+     "n_edits_offered": 0,
      "applied": {
-      "add": 6,
+      "add": 0,
       "revise": 0,
       "record evidence": 0
      },
      "rejected": [],
-     "n_claims_now": 6,
+     "n_claims_now": 0,
      "period": "settled"
     },
     {
      "day": 1,
      "model_call_failed": false,
-     "n_edits_offered": 0,
+     "the_look_saw_something_it_is_asked_about": true,
+     "at_least_one_edit_was_required": true,
+     "n_edits_offered": 1,
      "applied": {
-      "add": 0,
+      "add": 1,
       "revise": 0,
       "record evidence": 0
      },
      "rejected": [],
-     "n_claims_now": 6,
+     "n_claims_now": 1,
      "period": "settled"
     },
     {
      "day": 2,
      "model_call_failed": false,
+     "the_look_saw_something_it_is_asked_about": true,
+     "at_least_one_edit_was_required": true,
+     "n_edits_offered": 2,
+     "applied": {
+      "add": 1,
+      "revise": 1,
+      "record evidence": 0
+     },
+     "rejected": [],
+     "n_claims_now": 2,
+     "period": "settled"
+    },
+    {
+     "day": 3,
+     "model_call_failed": false,
+     "the_look_saw_something_it_is_asked_about": false,
+     "at_least_one_edit_was_required": false,
      "n_edits_offered": 0,
      "applied": {
       "add": 0,
@@ -114,44 +177,119 @@
       "record evidence": 0
      },
      "rejected": [],
-     "n_claims_now": 6,
+     "n_claims_now": 2,
+     "period": "settled"
+    },
+    {
+     "day": 4,
+     "model_call_failed": false,
+     "the_look_saw_something_it_is_asked_about": true,
+     "at_least_one_edit_was_required": true,
+     "n_edits_offered": 4,
+     "applied": {
+      "add": 3,
+      "revise": 1,
+      "record evidence": 0
+     },
+     "rejected": [],
+     "n_claims_now": 5,
+     "period": "settled"
+    },
+    {
+     "day": 5,
+     "model_call_failed": false,
+     "the_look_saw_something_it_is_asked_about": true,
+     "at_least_one_edit_was_required": true,
+     "n_edits_offered": 6,
+     "applied": {
+      "add": 2,
+      "revise": 4,
+      "record evidence": 0
+     },
+     "rejected": [],
+     "n_claims_now": 7,
+     "period": "settled"
+    },
+    {
+     "day": 6,
+     "model_call_failed": false,
+     "the_look_saw_something_it_is_asked_about": false,
+     "at_least_one_edit_was_required": false,
+     "n_edits_offered": 0,
+     "applied": {
+      "add": 0,
+      "revise": 0,
+      "record evidence": 0
+     },
+     "rejected": [],
+     "n_claims_now": 7,
+     "period": "settled"
+    },
+    {
+     "day": 7,
+     "model_call_failed": false,
+     "the_look_saw_something_it_is_asked_about": true,
+     "at_least_one_edit_was_required": true,
+     "n_edits_offered": 4,
+     "applied": {
+      "add": 2,
+      "revise": 2,
+      "record evidence": 0
+     },
+     "rejected": [],
+     "n_claims_now": 9,
+     "period": "settled"
+    },
+    {
+     "day": 8,
+     "model_call_failed": false,
+     "the_look_saw_something_it_is_asked_about": true,
+     "at_least_one_edit_was_required": true,
+     "n_edits_offered": 6,
+     "applied": {
+      "add": 5,
+      "revise": 1,
+      "record evidence": 0
+     },
+     "rejected": [],
+     "n_claims_now": 14,
      "period": "settled"
     }
    ],
    "peeks": {},
-   "n_looks": 3,
-   "n_sightings": 42,
-   "n_absences_recorded": 158
+   "n_looks": 9,
+   "n_sightings": 94,
+   "n_absences_recorded": 1918
   }
  },
  "comparison": {
   "per_peek": {},
   "the_rewrite_arm": {
-   "n_nights": 3,
-   "n_nights_identical_to_the_night_before": 0,
-   "share_identical_to_the_night_before": 0.0,
+   "n_nights": 9,
+   "n_nights_identical_to_the_night_before": 2,
+   "share_identical_to_the_night_before": 0.2222222222222222,
    "n_nights_the_model_call_failed": 0
   },
   "the_incremental_arm": {
-   "n_nights": 3,
-   "n_claims_at_the_end": 6,
-   "n_nights_with_no_edit_at_all": 2,
-   "total_added": 6,
-   "total_revised": 0,
+   "n_nights": 9,
+   "n_claims_at_the_end": 14,
+   "n_nights_with_no_edit_at_all": 3,
+   "total_added": 14,
+   "total_revised": 9,
    "total_evidence_attached": 0,
    "n_edits_rejected": 0,
-   "n_nights_the_model_call_failed": 0
+   "n_nights_the_model_call_failed": 0,
+   "n_nights_that_saw_something": 6,
+   "n_nights_that_saw_something_but_made_no_edit": 0
   },
-  "concerns": [
-   "the incremental arm never revised a claim, so it is an append-only log rather than an edited store"
-  ]
+  "concerns": []
  },
  "llm": {
-  "calls": 5,
-  "cached": 1,
-  "prompt_tokens": 4328,
-  "completion_tokens": 555,
-  "seconds": 20.226917505264282,
+  "calls": 8,
+  "cached": 10,
+  "prompt_tokens": 8370,
+  "completion_tokens": 2756,
+  "seconds": 97.74918913841248,
   "model": "Qwen/Qwen3.8-27B"
  }
 }

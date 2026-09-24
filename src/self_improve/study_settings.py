@@ -63,6 +63,14 @@ class Settings:
     in the settled-period top three in only one of them. A control that cannot
     possibly detect the change is rigged, not fair."""
 
+    shared_warm_start: bool = False
+    """One walkthrough of the whole house on day 0 at 18:00, the same for every
+    arm. Off by default. Measured reason it may be needed: one room a day gives
+    only 4.0 sightings per asked-about object across the whole month, and only
+    17.6 days in 32 on which any asked-about object is seen at all (8 in the worst
+    household), so claims about the ordinary routine rest on about two sightings
+    each. Being identical across arms, it cannot favour one."""
+
     rotation_seed: int = 0
     """The order the fixed rota is walked in, per household. When one full pass
     takes longer than the thing being detected, this order carries the result, so

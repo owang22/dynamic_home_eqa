@@ -131,8 +131,17 @@ def compare(rewrite: Dict[str, Any], incremental: Dict[str, Any]) -> Dict[str, A
         concerns.append(
             "the incremental arm never revised a claim, so it is an append-only log "
             "rather than an edited store")
-    if out["the_incremental_arm"]["n_nights_with_no_edit_at_all"] > 0.7 * len(inights):
-        concerns.append("the incremental arm made no edit on most nights")
+    silent = [n for n in inights
+              if n.get("the_look_saw_something_it_is_asked_about")
+              and not n.get("n_edits_offered")]
+    saw = [n for n in inights if n.get("the_look_saw_something_it_is_asked_about")]
+    out["the_incremental_arm"]["n_nights_that_saw_something"] = len(saw)
+    out["the_incremental_arm"]["n_nights_that_saw_something_but_made_no_edit"] = len(silent)
+    if saw and len(silent) > 0.2 * len(saw):
+        concerns.append(
+            f"the incremental arm saw something it is asked about on {len(saw)} nights "
+            f"and made no edit on {len(silent)} of them: the arm is silently empty, "
+            f"which no accuracy number would have shown")
     out["concerns"] = concerns
     return out
 

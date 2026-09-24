@@ -432,11 +432,13 @@ def check(banks, settled, disrupted, after, quiet=False):
         if not row:
             continue
         v = statistics.mean(vmean[h] for h in hours)
-        if v > 0.5 and row["headroom"] < MIN_HEADROOM_BAND:
+        # a band that holds almost no questions cannot sink the study, however little
+        # headroom it has, so the tension only counts where questions actually land
+        if row["share"] > 0.15 and v > 0.5 and row["headroom"] < MIN_HEADROOM_BAND:
             fails.append(f"the '{name}' band is where the change is most visible ({100 * v:.0f}%) but it has "
                          f"only {100 * row['headroom']:.0f} points of headroom - visible and informative "
                          f"do not overlap")
-        elif v > 0.5 and row["headroom"] < 0.15:
+        elif row["share"] > 0.15 and v > 0.5 and row["headroom"] < 0.15:
             warns.append(f"the '{name}' band is visible ({100 * v:.0f}%) but thin on headroom "
                          f"({100 * row['headroom']:.0f} points)")
     lines.append("")

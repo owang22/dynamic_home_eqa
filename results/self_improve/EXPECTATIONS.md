@@ -148,8 +148,77 @@ household whose movers are *most* heterogeneous — five distinct destinations, 
 counts are recorded per household in `which_objects_moved.json` either way, so
 the choice stays visible.
 
+## Amendment, 2026-09-24, after the memory-format diff on one household
+
+Written down as an amendment rather than a silent edit, because it changes the
+pre-registered prediction before the four cells run.
+
+**Measured.** One household (s3, the most heterogeneous: 15 asked objects, 8
+movers, 5 destinations), same look stream, same words describing what was seen,
+only the instruction about how to write differing. Over 23 nights the wholesale
+rewrite arm:
+
+- wrote a per-object location table, one sentence per object, not a summary of
+  routines;
+- filled the "which routine or condition does this hold under" slot with the
+  *date of the sighting*, never with a routine;
+- copied forward, verbatim, every object it had not re-observed. 13 of 22
+  consecutive nights were 100% identical to the night before, and the nights that
+  changed changed only the lines for objects that day's look had found;
+- therefore still contained settled-period facts untouched deep inside the
+  disruption: on night 21 it still recorded places first seen on days 4, 10 and
+  13.
+
+**What it means.** The pre-registered prediction — that the wholesale-rewrite arm
+loses the ordinary-routine claim — is **false as the arm currently behaves**.
+Told that whatever it does not write down is gone, the model does not forget; it
+copies. A rewrite of a fifteen-object household fits in the allowed length one
+line per object, so nothing forces it to generalise.
+
+**Restated prediction, still checkable in the notes file and still surviving a
+null on accuracy:**
+
+> The wholesale-rewrite arm keeps only the latest place per object, tagged with
+> the date it was seen, and so cannot say which routine a place belongs to. The
+> incremental arm can, and therefore can re-promote the ordinary-routine place
+> when the resident returns rather than having to re-observe it. The measurable
+> consequence is at the return, not during the disruption.
+
+The original prediction is kept on the record as refuted rather than removed.
+
+**Two silently empty arms, found and fixed before the cells ran.** Both are worth
+recording because neither would have shown up in an accuracy number - each would
+have looked like "a weak memory".
+
+1. With the explanation of what an edit is placed BEFORE the instruction to make
+   edits, the model replied `{"edits": []}` to a night with six fresh sightings
+   and an empty notes file. Putting the imperative first fixed that one night.
+2. That was not enough. Over a full 29-night run the incremental arm then made no
+   edit on **17 of the 19 nights on which it saw something it is asked about**,
+   finishing a 15-object household with 6 claims and 1 revision. Three different
+   wordings did not fix it. What fixed it was structural: on any night whose look
+   found an asked-about object, the schema now REQUIRES at least one edit. Nights
+   that found nothing may still make none, so the model is never forced to
+   invent. After the fix, over nine nights: 14 claims, 9 revisions, and no night
+   that saw something and said nothing.
+
+The comparison numbers quoted above for the incremental arm come from the run
+BEFORE this fix and are not a fair reading of the format; the rewrite-arm numbers
+are unaffected by it. The full comparison will be rerun.
+
+**The lever, if a genuine rewrite contrast is wanted.** A length cap is the
+honest one: cap the summary at fewer sentences than the household has objects and
+abstraction becomes compulsory, which is what makes forgetting real. That is a
+design change and it is not made unilaterally.
+
 ## Null risks, stated in advance
 
+0. **The two ways of writing notes may not differ at all.** Measured above: given
+   the same evidence, the rewrite arm converges on a copy-forward per-object
+   table, which preserves the past as well as a claim store does. What still
+   differs is whether the notes can name the condition a place holds under. If
+   that turns out not to differ either, the memory factor is not separable in this
+   setup and should be reported as such rather than run four ways.
 1. **The disruption may still be one sentence long.** Even here, 4 of 10
    households send 83-100% of their movers to the same destination. The memory
    factor is strongest in s1, s3 and s4 (5 destinations each) and close to

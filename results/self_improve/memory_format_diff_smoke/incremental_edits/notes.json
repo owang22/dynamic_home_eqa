@@ -1,98 +1,325 @@
 {
- "household": "hh_s2_t03",
+ "household": "hh_s3_t03",
  "arm": "the fixed schedule with incremental edits",
  "how_memory_is_written": "incremental edits",
- "written_up_to_day": 2,
- "next_claim_number": 7,
+ "written_up_to_day": 8,
+ "next_claim_number": 15,
  "claims": [
   {
    "claim_id": "claim_0001",
-   "statement": "glass_ines is on the kitchen table in the kitchen",
-   "holds_under": "current",
-   "supporting_observation_ids": [
-    "sighting_0018"
-   ],
-   "contradicting_observation_ids": [],
-   "last_revised_day": 0,
-   "last_revised_time": 84600,
-   "status": "provisional",
-   "standing": "still standing",
-   "first_written_day": 0,
-   "revision_history": []
-  },
-  {
-   "claim_id": "claim_0002",
-   "statement": "glass_tomas is on the cupboard in the kitchen",
-   "holds_under": "current",
-   "supporting_observation_ids": [
-    "sighting_0006"
-   ],
-   "contradicting_observation_ids": [],
-   "last_revised_day": 0,
-   "last_revised_time": 84600,
-   "status": "provisional",
-   "standing": "still standing",
-   "first_written_day": 0,
-   "revision_history": []
-  },
-  {
-   "claim_id": "claim_0003",
-   "statement": "mug_ines is on the sink in the kitchen",
-   "holds_under": "current",
-   "supporting_observation_ids": [
-    "sighting_0024"
-   ],
-   "contradicting_observation_ids": [],
-   "last_revised_day": 0,
-   "last_revised_time": 84600,
-   "status": "provisional",
-   "standing": "still standing",
-   "first_written_day": 0,
-   "revision_history": []
-  },
-  {
-   "claim_id": "claim_0004",
-   "statement": "mug_tomas is on the sink in the kitchen",
-   "holds_under": "current",
-   "supporting_observation_ids": [
-    "sighting_0025"
-   ],
-   "contradicting_observation_ids": [],
-   "last_revised_day": 0,
-   "last_revised_time": 84600,
-   "status": "provisional",
-   "standing": "still standing",
-   "first_written_day": 0,
-   "revision_history": []
-  },
-  {
-   "claim_id": "claim_0005",
-   "statement": "water_bottle_ines is on the dish rack in the kitchen",
-   "holds_under": "current",
-   "supporting_observation_ids": [
-    "sighting_0012"
-   ],
-   "contradicting_observation_ids": [],
-   "last_revised_day": 0,
-   "last_revised_time": 84600,
-   "status": "provisional",
-   "standing": "still standing",
-   "first_written_day": 0,
-   "revision_history": []
-  },
-  {
-   "claim_id": "claim_0006",
-   "statement": "water_bottle_tomas is on the dish rack in the kitchen",
+   "statement": "water_bottle_felix is on the entry_hook_e1 in the entry",
    "holds_under": "current",
    "supporting_observation_ids": [
     "sighting_0013"
    ],
    "contradicting_observation_ids": [],
-   "last_revised_day": 0,
-   "last_revised_time": 84600,
+   "last_revised_day": 4,
+   "last_revised_time": 430200,
+   "status": "provisional",
+   "standing": "set aside for now",
+   "first_written_day": 1,
+   "revision_history": [
+    {
+     "day": 2,
+     "time": 257400,
+     "why": "Absence of water_bottle_felix in bedroom_3 does not directly contradict entry location, but the prompt implies checking for updates. However, usually absence in one room doesn't set aside a claim in another unless the claim was 'in the home",
+     "was": {
+      "statement": "water_bottle_felix is on the entry_hook_e1 in the entry",
+      "holds_under": "current",
+      "status": "provisional",
+      "standing": "still standing"
+     }
+    },
+    {
+     "day": 4,
+     "time": 430200,
+     "why": "Absence in bathroom does not directly contradict entry location, but the prompt says 'anything a claim got wrong needs that claim revised'. The absence is just a negative check. However, usually, if we don't find it where we looked, and we*",
+     "was": {
+      "statement": "water_bottle_felix is on the entry_hook_e1 in the entry",
+      "holds_under": "current",
+      "status": "provisional",
+      "standing": "set aside for now"
+     }
+    }
+   ]
+  },
+  {
+   "claim_id": "claim_0002",
+   "statement": "book_ines is on the nightstand_b3 in the bedroom_3",
+   "holds_under": "current",
+   "supporting_observation_ids": [
+    "sighting_0028"
+   ],
+   "contradicting_observation_ids": [],
+   "last_revised_day": 5,
+   "last_revised_time": 516600,
+   "status": "provisional",
+   "standing": "set aside for now",
+   "first_written_day": 2,
+   "revision_history": [
+    {
+     "day": 5,
+     "time": 516600,
+     "why": "Absence of book_ines in bedroom_1 does not directly contradict its location in bedroom_3, but the prompt implies checking for consistency. However, usually absence in one room doesn't set aside a claim in another unless the claim was 'in a",
+     "was": {
+      "statement": "book_ines is on the nightstand_b3 in the bedroom_3",
+      "holds_under": "current",
+      "status": "provisional",
+      "standing": "still standing"
+     }
+    }
+   ]
+  },
+  {
+   "claim_id": "claim_0003",
+   "statement": "glasses_felix is on the bathroom_shelf_ba1 in the bathroom",
+   "holds_under": "current",
+   "supporting_observation_ids": [
+    "sighting_0042"
+   ],
+   "contradicting_observation_ids": [],
+   "last_revised_day": 5,
+   "last_revised_time": 516600,
+   "status": "provisional",
+   "standing": "set aside for now",
+   "first_written_day": 4,
+   "revision_history": [
+    {
+     "day": 5,
+     "time": 516600,
+     "why": "Absence of glasses_felix in bedroom_1 does not directly contradict its location in the bathroom.",
+     "was": {
+      "statement": "glasses_felix is on the bathroom_shelf_ba1 in the bathroom",
+      "holds_under": "current",
+      "status": "provisional",
+      "standing": "still standing"
+     }
+    }
+   ]
+  },
+  {
+   "claim_id": "claim_0004",
+   "statement": "razor_aisha is on the sink_ba_ba1 in the bathroom",
+   "holds_under": "current",
+   "supporting_observation_ids": [
+    "sighting_0049"
+   ],
+   "contradicting_observation_ids": [],
+   "last_revised_day": 5,
+   "last_revised_time": 516600,
+   "status": "provisional",
+   "standing": "set aside for now",
+   "first_written_day": 4,
+   "revision_history": [
+    {
+     "day": 5,
+     "time": 516600,
+     "why": "Absence of razor_aisha in bedroom_1 does not directly contradict its location in the bathroom.",
+     "was": {
+      "statement": "razor_aisha is on the sink_ba_ba1 in the bathroom",
+      "holds_under": "current",
+      "status": "provisional",
+      "standing": "still standing"
+     }
+    }
+   ]
+  },
+  {
+   "claim_id": "claim_0005",
+   "statement": "razor_felix is on the sink_ba_ba1 in the bathroom",
+   "holds_under": "current",
+   "supporting_observation_ids": [
+    "sighting_0050"
+   ],
+   "contradicting_observation_ids": [],
+   "last_revised_day": 5,
+   "last_revised_time": 516600,
+   "status": "provisional",
+   "standing": "set aside for now",
+   "first_written_day": 4,
+   "revision_history": [
+    {
+     "day": 5,
+     "time": 516600,
+     "why": "Absence of razor_felix in bedroom_1 does not directly contradict its location in the bathroom.",
+     "was": {
+      "statement": "razor_felix is on the sink_ba_ba1 in the bathroom",
+      "holds_under": "current",
+      "status": "provisional",
+      "standing": "still standing"
+     }
+    }
+   ]
+  },
+  {
+   "claim_id": "claim_0006",
+   "statement": "book_felix is on the nightstand_b1 in the bedroom_1",
+   "holds_under": "current",
+   "supporting_observation_ids": [
+    "sighting_0059"
+   ],
+   "contradicting_observation_ids": [],
+   "last_revised_day": 7,
+   "last_revised_time": 689400,
+   "status": "provisional",
+   "standing": "set aside for now",
+   "first_written_day": 5,
+   "revision_history": [
+    {
+     "day": 7,
+     "time": 689400,
+     "why": "Absence of book_felix in bedroom_2 does not directly contradict its location in bedroom_1, but the prompt implies checking for contradictions. However, usually absence in one room doesn't set aside a claim in another unless the claim was 'X",
+     "was": {
+      "statement": "book_felix is on the nightstand_b1 in the bedroom_1",
+      "holds_under": "current",
+      "status": "provisional",
+      "standing": "still standing"
+     }
+    }
+   ]
+  },
+  {
+   "claim_id": "claim_0007",
+   "statement": "tablet_felix is on the nightstand_b1 in the bedroom_1",
+   "holds_under": "current",
+   "supporting_observation_ids": [
+    "sighting_0060"
+   ],
+   "contradicting_observation_ids": [],
+   "last_revised_day": 7,
+   "last_revised_time": 689400,
+   "status": "provisional",
+   "standing": "set aside for now",
+   "first_written_day": 5,
+   "revision_history": [
+    {
+     "day": 7,
+     "time": 689400,
+     "why": "Absence of tablet_felix in bedroom_2 does not directly contradict its location in bedroom_1.",
+     "was": {
+      "statement": "tablet_felix is on the nightstand_b1 in the bedroom_1",
+      "holds_under": "current",
+      "status": "provisional",
+      "standing": "still standing"
+     }
+    }
+   ]
+  },
+  {
+   "claim_id": "claim_0008",
+   "statement": "book_aisha is on the desk_b2 in the bedroom_2",
+   "holds_under": "current",
+   "supporting_observation_ids": [
+    "sighting_0064"
+   ],
+   "contradicting_observation_ids": [],
+   "last_revised_day": 7,
+   "last_revised_time": 689400,
    "status": "provisional",
    "standing": "still standing",
-   "first_written_day": 0,
+   "first_written_day": 7,
+   "revision_history": []
+  },
+  {
+   "claim_id": "claim_0009",
+   "statement": "mug_aisha is on the dish_rack_k1 in the kitchen",
+   "holds_under": "current",
+   "supporting_observation_ids": [
+    "sighting_0067"
+   ],
+   "contradicting_observation_ids": [],
+   "last_revised_day": 8,
+   "last_revised_time": 775800,
+   "status": "provisional",
+   "standing": "set aside for now",
+   "first_written_day": 7,
+   "revision_history": [
+    {
+     "day": 8,
+     "time": 775800,
+     "why": "Sighting_0077 places mug_aisha in the kitchen, contradicting the previous location in bedroom_2.",
+     "was": {
+      "statement": "mug_aisha is on the desk_b2 in the bedroom_2",
+      "holds_under": "current",
+      "status": "provisional",
+      "standing": "still standing"
+     }
+    }
+   ]
+  },
+  {
+   "claim_id": "claim_0010",
+   "statement": "glass_felix is on the kitchen_table_k1 in the kitchen",
+   "holds_under": "current",
+   "supporting_observation_ids": [
+    "sighting_0082"
+   ],
+   "contradicting_observation_ids": [],
+   "last_revised_day": 8,
+   "last_revised_time": 775800,
+   "status": "provisional",
+   "standing": "still standing",
+   "first_written_day": 8,
+   "revision_history": []
+  },
+  {
+   "claim_id": "claim_0011",
+   "statement": "glass_ines is on the sink_k1 in the kitchen",
+   "holds_under": "current",
+   "supporting_observation_ids": [
+    "sighting_0091"
+   ],
+   "contradicting_observation_ids": [],
+   "last_revised_day": 8,
+   "last_revised_time": 775800,
+   "status": "provisional",
+   "standing": "still standing",
+   "first_written_day": 8,
+   "revision_history": []
+  },
+  {
+   "claim_id": "claim_0012",
+   "statement": "mug_felix is on the sink_k1 in the kitchen",
+   "holds_under": "current",
+   "supporting_observation_ids": [
+    "sighting_0092"
+   ],
+   "contradicting_observation_ids": [],
+   "last_revised_day": 8,
+   "last_revised_time": 775800,
+   "status": "provisional",
+   "standing": "still standing",
+   "first_written_day": 8,
+   "revision_history": []
+  },
+  {
+   "claim_id": "claim_0013",
+   "statement": "mug_ines is on the pantry_shelf_k1 in the kitchen",
+   "holds_under": "current",
+   "supporting_observation_ids": [
+    "sighting_0086"
+   ],
+   "contradicting_observation_ids": [],
+   "last_revised_day": 8,
+   "last_revised_time": 775800,
+   "status": "provisional",
+   "standing": "still standing",
+   "first_written_day": 8,
+   "revision_history": []
+  },
+  {
+   "claim_id": "claim_0014",
+   "statement": "water_bottle_ines is on the sink_k1 in the kitchen",
+   "holds_under": "current",
+   "supporting_observation_ids": [
+    "sighting_0094"
+   ],
+   "contradicting_observation_ids": [],
+   "last_revised_day": 8,
+   "last_revised_time": 775800,
+   "status": "provisional",
+   "standing": "still standing",
+   "first_written_day": 8,
    "revision_history": []
   }
  ],

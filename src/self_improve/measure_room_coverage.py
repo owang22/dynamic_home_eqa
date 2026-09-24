@@ -21,8 +21,7 @@ import pathlib
 import statistics
 from typing import Dict, List, Tuple
 
-FROZEN_BANKS = pathlib.Path(
-    "/home/oliver/robot/dynamic_home_eqa_fm/results/fm_memory/banks_f1")
+from self_improve.frozen_household import FROZEN_BANKS
 
 # A room name the simulator uses for "ask whether a person is home", not a real room.
 NOT_A_REAL_ROOM = "person_check"

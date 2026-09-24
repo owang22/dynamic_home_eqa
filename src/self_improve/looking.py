@@ -226,6 +226,28 @@ class TheHouseAsSeen:
         self._log.flush()
         return record
 
+    def shared_warm_start(self, day: int = 0, at_clock: str = "18:00") -> LookRecord:
+        """One walkthrough of the whole house, identical for every arm.
+
+        Why it is offered: measured on 2026-09-24, one room a day over a fair
+        rotation gives on average 4.0 sightings per asked-about object across the
+        whole month, only 17.6 days in 32 on which any asked-about object is seen
+        at all, and in the worst household 8 days in 32. Half a dozen claims have
+        to be written from two settled-period sightings each. That starves the
+        memory before the disruption even starts.
+
+        A walkthrough on day 0 fixes the settled-period starvation without
+        touching the disruption, and because it is the same for every arm it
+        cannot favour one. It is the bank's own opening walkthrough time (18:00 on
+        day 0), so it is not an invention of this study.
+
+        It is off by default because turning it on changes what every arm knows;
+        it is a setting, and whether it was used is recorded in the log header.
+        """
+        every_room = [t for t in self.household.look_targets("room")]
+        return self.look(every_room, day, clock_to_seconds(at_clock),
+                         "the shared walkthrough every arm gets")
+
     # ------------------------------------------------- what an arm may read --
 
     def absences_so_far(self) -> List[Absence]:

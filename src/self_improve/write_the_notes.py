@@ -164,9 +164,23 @@ def write_the_notes_incrementally(notes: Notes, household: FrozenHousehold, day:
         "assert. If today's looks only confirm what a claim already says, attach "
         "the evidence to it rather than writing the claim again.",
     ]
+    # On a night whose look found something the robot is asked about, the schema
+    # REQUIRES at least one edit. Measured on 2026-09-24, one household, 29
+    # nights: without it the model replied {"edits": []} on 17 of the 19 nights
+    # that saw an asked-about object, ending the month with 6 claims for a
+    # 15-object household while the rewrite arm wrote 1,885 characters. Wording
+    # the instruction three different ways did not fix it; the schema does. A
+    # night that found nothing is still allowed to make no edit, so the model is
+    # never forced to invent.
+    saw_something = any(s["object_id"] in set(household.asked_objects)
+                        for look in looks_today for s in look.sightings)
+    schema = EDITS_SCHEMA
+    if saw_something:
+        schema = json.loads(json.dumps(EDITS_SCHEMA))
+        schema["properties"]["edits"]["minItems"] = 1
     messages = [{"role": "system", "content": SYSTEM},
                 {"role": "user", "content": "\n".join(lines)}]
-    text, _ = client.complete(messages, EDITS_SCHEMA, max_tokens=1400)
+    text, _ = client.complete(messages, schema, max_tokens=1400)
     edits: List[dict] = []
     if text:
         try:
@@ -207,6 +221,8 @@ def write_the_notes_incrementally(notes: Notes, household: FrozenHousehold, day:
             rejected.append(f"{action}: {problem}")
     notes.written_up_to_day = day
     return {"day": day, "model_call_failed": not text,
+            "the_look_saw_something_it_is_asked_about": saw_something,
+            "at_least_one_edit_was_required": saw_something,
             "n_edits_offered": len(edits), "applied": applied,
             "rejected": rejected, "n_claims_now": len(notes.claims)}
 
