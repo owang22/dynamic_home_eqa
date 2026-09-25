@@ -99,6 +99,17 @@ def main() -> int:
         name, row = options[0]
         filled[name] += 1
         picked.append((name, row))
+    # THE THIRD LEAK, found by the reasoner as well. One question per object stops two
+    # records covering the same moment for the SAME object, and does nothing about other
+    # objects: each sighting lists what else was in the room, so if question A asks where the
+    # mug is at day 25 21:40 and question B, a different object in the same household, has a
+    # sighting at exactly that instant in the mug's room, then the mug is printed in B's list
+    # and A's room is handed over. It fired on 27 of 79 questions, and a fourth channel - a
+    # sighting at the asked instant in a room whose contents do NOT list the asked object -
+    # ruled a room out on another 24. The reasoner also reported that the list is useless
+    # inside its own record, since the record already states presence or absence for every
+    # earlier look, so it pays off only across records, which is to say only as the leak.
+    asked_about = {row["object_id"] for _, row in picked}
     asked, truth = [], []
     for window, r in picked:
         at = r["time"]
@@ -112,7 +123,6 @@ def main() -> int:
                                  if s["object_id"] != r["object_id"]})
                 seen.append({"day": look["day"], "clock": _clock(look["time"]),
                              "spot": mine[0]["place_id"], "room": mine[0]["room"],
-                             "also in the room": others[:8],
                              "people there": look.get("residents_seen") or []})
             else:
                 for t in look["targets"]:

@@ -280,14 +280,20 @@ def movers_and_stayers(household: FrozenHousehold) -> Dict[str, bool]:
 
 
 def answer_one_day(household: FrozenHousehold, notes: Notes, questions: Sequence[dict],
-                   client: LLMClient, read_budget_lines: int) -> List[Dict[str, Any]]:
+                   client: LLMClient, read_budget_lines: int, *,
+                   eyes: Optional[Any] = None) -> List[Dict[str, Any]]:
     """Put one day's questions to one frozen memory. No looking happens here: the
-    notes are read-only and nothing is written back."""
+    notes are read-only and nothing is written back.
+
+    `eyes` threads to the prompt for the arm whose memory is half observation record. It is
+    not defaulted away, because a default here would score that arm without the thing that
+    defines it and the number would look like the arm. The prompt refuses rather than
+    guessing - see frozen_memory_test.question_prompt."""
     allowed = set(household.places)
     out: List[Dict[str, Any]] = []
     for question in questions:
         messages, was_read = question_prompt_and_what_was_read(
-            household, notes, question, read_budget_lines)
+            household, notes, question, read_budget_lines, eyes=eyes)
         text, _ = client.complete(messages, CONF_SCHEMA, max_tokens=400)
         place, confidence, reasoning, status = parse_conf(text, allowed)
         true_place = household.true_place_for_question(question)

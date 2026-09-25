@@ -12,8 +12,13 @@ THE ARMS, in the order they matter. If time runs short the last three go, never 
                                           asked, so its notes may not just copy places.
   2. claim store told if it was right      ten homes. ACE. TWO model calls a night.
   3. incremental edits                     ten homes. The plain claim store both are forks of.
-  4. newest sighting, no model             ten homes. Calls NO model at all, so it is nearly
-                                          free and needs no warm-up.
+  4. last seen, no model                   ten homes. Walk back through the rooms it has
+                                          been seen in, newest first. Calls NO model at all,
+                                          so it is nearly free and needs no warm-up. Renamed
+                                          from `newest sighting, no model` on 2026-09-25 when
+                                          it was given the whole trail rather than one room -
+                                          the old name is not reused, so no directory on disk
+                                          holds two different rules under one name.
   5. prior only, no notes                  ten homes. Prices the prior. Without it we cannot
                                           say any of the above is the memory.
   6. wholesale rewrite                     ONE home. The published weak family and ACE's own
@@ -50,6 +55,8 @@ from typing import Any, Dict, List, Optional, Tuple
 from baselines.patrol.llm import LLMClient
 from self_improve import search_driven as sd
 from self_improve.frozen_household import FrozenHousehold
+from self_improve.memory_notes import (ACE_AS_PUBLISHED, MEMGPT_AS_PUBLISHED,
+                                      THE_LOG_AND_THE_ROUTINE_DERIVED_ALLOWANCE)
 from self_improve.study_settings import LOCKED
 from self_improve.three_prompts import PILOT_BANKS, PILOT_TEN, TimedClient, beat, take_the_lock
 
@@ -78,7 +85,20 @@ ARMS: Dict[str, Tuple[str, str, int]] = {
     "a small working memory and an archive": ("a small working memory and an archive",
                                              MEMORY_GUIDED, 10),
     "incremental edits": ("incremental edits", MEMORY_GUIDED, 10),
-    "newest sighting, no model": ("incremental edits", sd.NEWEST_SIGHTING, 10),
+    # The two published designs, rebuilt from their own papers and their own shipped code
+    # rather than from our reading of them: three rounds of reflection only after a wrong
+    # answer, embedding grouping with a model-written merge, ADD-only application (ACE); a
+    # fixed-size block of free text edited by exact substring replacement with a paginated
+    # archive behind it (MemGPT). They had run for FIVE DAYS as smoke tests and were never
+    # in this list, so no launcher could queue them and nothing advanced past day 4 - which
+    # is exactly the fault of adding a run to the artifact before adding it to the runner.
+    # The ceiling test. Our arm on the control's derived allowance, nothing else changed,
+    # because the flat 16 binds on 27% of its nights at 24 questions a day. Three homes: it
+    # only has to be paired against the cells already run on the same three.
+    "ours, allowance derived": (THE_LOG_AND_THE_ROUTINE_DERIVED_ALLOWANCE, MEMORY_GUIDED, 3),
+    "ACE as published": (ACE_AS_PUBLISHED, MEMORY_GUIDED, 3),
+    "MemGPT as published": (MEMGPT_AS_PUBLISHED, MEMORY_GUIDED, 3),
+    "last seen, no model": ("incremental edits", sd.LAST_SEEN, 10),
     "prior only, no notes": ("incremental edits", sd.PRIOR_ONLY, 10),
     "wholesale rewrite": ("wholesale rewrite", MEMORY_GUIDED, 1),
 }
@@ -88,14 +108,46 @@ THE_ORDER = tuple(ARMS)
 # on hh_s109_t03 has to finish and be declared passed before its ten cells are queued: three
 # new arms tonight have had a fault in their first hour. `cells_to_launch` refuses to emit a
 # held arm, so a launcher cannot queue it by accident.
-ON_HOLD = {"a small working memory and an archive":
-           "waiting on the five-day live check at results/self_improve/memgpt/one_home"}
+# Released 2026-09-25 after the coordinator read its notes and its sixteen nights of records.
+# Nothing is held now; the dict stays so a future arm can be held the same way.
+ON_HOLD: Dict[str, str] = {}
+
+# WHAT MEMGPT'S NUMBERS DO AND DO NOT SUPPORT. Over sixteen nights on one home the overflow
+# refusal fired ZERO times: the model keeps its working memory 88-96% full and then revises
+# what is already there rather than adding - 47 revisions against 10 new notes - so it never
+# asks for room it does not have. That is MemGPT behaving as intended, and it means the
+# mechanism that makes this arm MemGPT rather than a small claim store with a search has never
+# been exercised.
+#
+# CORRECTED 2026-09-25. The paragraph above said the overflow refusal had fired zero times, and
+# that was an absent-field zero twice over. The count was read from
+# `n_writes_refused_for_want_of_room`, a key `write_the_notes_memgpt` has never written - it
+# writes `refused_because_working_memory_was_full`, a list - and it was read over sixteen nights
+# of one home rather than the 320 that have now landed. Read from the right key over all ten
+# homes, the refusal fired TWICE:
+#
+#   hh_s19_t03  night 3  - 1,080 of 1,200 characters held, a 199-character note would not fit
+#   hh_s151_t03 night 20 - 1,160 of 1,200 characters held, a 154-character note would not fit
+#
+# Both were given the second go the method allows and neither was still refused after it, so the
+# one-retry limit was reached twice and was enough twice. Two nights in 320 is still too few to
+# support a claim about eviction, but "it never fires" is no longer one of the things we know.
+#
+# So this arm supports "does a 1,200-character working memory plus an archive search help", and
+# on eviction it says only that the pressure is rare at this size and that one retry cleared it
+# both times it appeared.
+MEMGPT_SUPPORTS = (
+    "does a 1,200-character working memory plus an archive search help. On eviction it says "
+    "only this: over 320 nights on ten homes the overflow refusal fired twice, on hh_s19_t03 "
+    "night 3 and hh_s151_t03 night 20, and the single retry the method allows cleared it both "
+    "times. Two nights is too few to support a claim about whether eviction helps, and the "
+    "earlier claim that it never fired was read from a key this arm does not write")
 
 
 def cells_to_launch(arms=None, homes=PILOT_TEN):
     """(arm, household) pairs in priority order, with held arms refused.
 
-    `newest sighting, no model` calls no model at all, so it is emitted first when it is in
+    `last seen, no model` calls no model at all, so it is emitted first when it is in
     the list: it fills a gap for free while something else warms.
     """
     out = []
@@ -107,9 +159,9 @@ def cells_to_launch(arms=None, homes=PILOT_TEN):
             out.append((arm, household))
     return out
 
-# `newest sighting, no model` calls no model at all, so it writes no notes and has no
+# `last seen, no model` calls no model at all, so it writes no notes and has no
 # night-one generation to warm. Everything else does.
-NEEDS_WARMING = tuple(a for a in ARMS if a != "newest sighting, no model")
+NEEDS_WARMING = tuple(a for a in ARMS if a != "last seen, no model")
 
 
 def cell_dir(out: pathlib.Path, arm: str, household: str) -> pathlib.Path:
@@ -125,6 +177,9 @@ def run_one_arm(household: FrozenHousehold, arm: str, client: LLMClient,
     how, sensing, _homes = ARMS[arm]
     out_dir.mkdir(parents=True, exist_ok=True)
     take_the_lock(out_dir, arm, household.name)
+    crashed = out_dir / "CRASHED.txt"   # from an earlier attempt; this one has just started
+    if crashed.exists():
+        crashed.rename(out_dir / "CRASHED_on_an_earlier_attempt.txt")
     started = time.time()
     beat(out_dir, -1, last_day, arm, household.name, started)
     # THE DAY-RENDERER GUARD NEEDS NOTHING FROM THIS MODULE ANY MORE.
@@ -157,16 +212,52 @@ def run_one_arm(household: FrozenHousehold, arm: str, client: LLMClient,
             questions_per_day=questions_per_day, budget=budget, seed=seed,
             tell_it_what_it_ruled_out=True,
             name_the_objects_it_will_be_quizzed_on=NAME_THE_QUIZ_LIST)
+    except BaseException as crash:
+        # A CRASH MUST LEAVE A MARK A DIRECTORY LISTING SHOWS, and must release the lock.
+        # `a small working memory and an archive`/hh_s19_t03 died on day 3 and sat for
+        # thirteen minutes looking like a running cell, because the only record of the crash
+        # was a traceback at the bottom of a log nobody was tailing.
+        (out_dir / "CRASHED.txt").write_text(
+            f"CRASHED {datetime.datetime.now().astimezone().isoformat(timespec='seconds')}\n"
+            f"{arm} / {household.name}\n"
+            f"{type(crash).__name__}: {crash}\n\n"
+            f"This cell did NOT run to completion - it is not a gate holding it back. Its\n"
+            f"partial files are here. The traceback is in this wave's log for the cell.\n")
+        lock = out_dir / "RUNNING.lock"
+        if lock.exists():
+            lock.unlink()
+        raise
     finally:
         sd.LOCKED = was_locked
 
     def refuse(why: str) -> None:
+        """Hold the cell back for review, and say so in a way a directory listing can show.
+
+        `cell_REFUSED.json` beside a live-looking `RUNNING.lock` read like a crash, and it
+        misled me for hours: a cell held back by a gate is not the same thing as a cell that
+        died, and nothing in the directory distinguished them.
+        """
         landed = out_dir / "cell.json"
         if landed.exists():
-            landed.rename(out_dir / "cell_REFUSED.json")
+            landed.rename(out_dir / "cell_HELD_FOR_REVIEW.json")
+        (out_dir / "why.txt").write_text(
+            f"HELD FOR REVIEW - this cell ran to completion and a gate held it back.\n"
+            f"It did not crash. Its files are intact and usable if the gate is overruled.\n\n"
+            f"{why}\n")
+        lock = out_dir / "RUNNING.lock"
+        if lock.exists():
+            lock.unlink()
         raise AssertionError(why)
 
     header = json.loads((out_dir / "searches.jsonl").open().readline())
+    # READ BACK OFF DISK, for the same reason the quiz-list flag is: the wave at 24 questions
+    # a day and the wave at 8 answer different questions, and a cell that quietly ran at the
+    # wrong number would be pooled with the others and nothing would say so. The number is in
+    # the cell's own header, in arm.json, and in the first line of every report.
+    if int(header.get("questions_per_day", -1)) != int(questions_per_day):
+        refuse(f"{household.name}/{arm}: the cell's own header says it ran "
+               f"{header.get('questions_per_day')!r} questions a day, wanted "
+               f"{questions_per_day}")
     if header.get("name_the_objects_it_will_be_quizzed_on") != NAME_THE_QUIZ_LIST:
         refuse(f"{household.name}/{arm}: the cell's own header says the asked-object list "
                f"was {header.get('name_the_objects_it_will_be_quizzed_on')!r}, wanted "
@@ -176,22 +267,102 @@ def run_one_arm(household: FrozenHousehold, arm: str, client: LLMClient,
         refuse(f"{household.name}/{arm}: the read budget truncated the notes on {len(bit)} "
                f"questions, so this arm did not run with unlimited memory")
     nightly = result.get("nightly") or []
+
+    # THE CALL IS CHECKED FIRST, so one event is not reported as two. A night whose call
+    # failed wrote nothing BECAUSE it got nothing back; reporting that separately as "saw
+    # something and applied no edit" made one server failure look like two faults, which is
+    # how `control/hh_s63_t03` came to carry both labels for the same night 16.
+    failed = sorted(n["day"] for n in nightly if n.get("model_call_failed"))
+
+    # A FAILED CALL NO LONGER HOLDS A CELL BACK. Changed 2026-09-25: the old threshold was
+    # "any failed call", which is stricter than the rerun floor this project already reports
+    # against, and it cost three of ten cells of the arm we most needed. A failed call is
+    # server-side: the notes carry forward unchanged, so the cost is that night's
+    # observations never enter the memory. Measured across the four affected cells, that
+    # cost is a night's observations never entering the memory. The cause of every failed
+    # call in this wave was a socket timeout in the shared client, now fixed, and the five
+    # affected cells were rerun rather than annotated - see
+    # THE_FAILED_NIGHTS_were_one_bug.md. A failure that gets past this gate is a localised
+    # gap to be rerun, not a day to be excluded.
+    # What still holds a cell back is anything worse than a localised server gap.
+    n_nights = max(1, len(nightly))
+    if len(failed) > n_nights // 5:
+        refuse(f"{household.name}/{arm}: the nightly call failed on {len(failed)} of "
+               f"{n_nights} nights ({failed}), which is more than a fifth - that is not a "
+               f"localised gap")
+
     did_not_parse = [n["day"] for n in nightly if n.get("the_completion_did_not_parse")]
     if did_not_parse:
         refuse(f"{household.name}/{arm}: the completion did not parse on nights "
-               f"{did_not_parse}, so those nights wrote nothing")
-    failed = [n["day"] for n in nightly if n.get("model_call_failed")]
-    if failed:
-        refuse(f"{household.name}/{arm}: the nightly call failed on nights {failed}")
-    # a night that saw something and wrote nothing. Only for arms that write notes at all.
-    if sensing != sd.NEWEST_SIGHTING:
-        silent = [n["day"] for n in nightly
-                  if n.get("the_look_saw_something_it_is_asked_about")
-                  and not any((n.get("applied") or {}).values())
-                  and not n.get("it_had_nothing_to_add")]
+               f"{did_not_parse}, so those nights wrote nothing while the call SUCCEEDED")
+
+    # a night that saw something and wrote nothing, EXCLUDING nights whose call failed.
+    #
+    # THIS GATE HAS HAD NO POWER ON FIVE OF THE SEVEN ARMS, and measuring it is how that was
+    # found rather than reasoning about it. The first condition reads
+    # `the_look_saw_something_it_is_asked_about`, and ONLY `write_the_notes` writes that key.
+    # Counted over one landed cell of each arm in the ten-home wave, 32 nights each:
+    #
+    #   incremental edits / prior only .......... 32 of 32 nights carry the key -> can refuse
+    #   claim store told if it was right ........  0 -> the condition is always False
+    #   the log and notes about the routine .....  0 -> always False
+    #   a small working memory and an archive ...  0 -> always False
+    #   wholesale rewrite .......................  0, and no `applied` key either
+    #   MemGPT as published .....................  0, and no `applied` key either
+    #
+    # So for five arms this reported a clean result it had no way of reporting anything else
+    # about, which is the shape of fault this project keeps finding. `the_night_wrote_nothing`
+    # below computes the signal HERE, from the night's own report, so a writer cannot leave it
+    # out. It is recorded for every arm now and refuses only where it already refused: turning
+    # refusal on for the other five in the middle of a wave would hold back cells that have
+    # run for hours under the weaker gate. That is the next wave's change, not this one's.
+    #
+    # And for the block arm the bar itself has to be lower. For a claim store, a night that
+    # saw an asked-about object and wrote nothing is a refusal, because a sighting is a fact
+    # the store exists to record. A fixed block of free text is not a list of facts, and
+    # deciding that tonight's block already says what it needs to is an action the method is
+    # entitled to take - its own smoke run did exactly that on night 4. So for the block arm
+    # the gate is that the model was asked and made no call at all, which is still the
+    # failure the gate exists to catch. Nights where it chose to change nothing are counted
+    # in the report instead, never hidden.
+    # Did tonight change the memory at all? One answer for every arm, from whichever key the
+    # arm's own writer reports, and NONE when the report says nothing either way - which is
+    # the whole point, because a function that returned True for a night it cannot read would
+    # rebuild the fault it replaces one level up. The first draft of this did exactly that and
+    # scored the wholesale-rewrite arm as having changed nothing on 32 of 32 nights; that arm
+    # rewrites its whole summary, reports neither `applied` nor `did`, and says
+    # `identical_to_last_night` instead.
+    def the_night_changed_nothing(n: Dict[str, Any]) -> Optional[bool]:
+        for key in ("applied", "did"):
+            if key in n:
+                return not any((n.get(key) or {}).values()) and not n.get(
+                    "it_had_nothing_to_add")
+        if "identical_to_last_night" in n:
+            return bool(n["identical_to_last_night"])
+        return None
+
+    read = [(n["day"], the_night_changed_nothing(n)) for n in nightly
+            if n["day"] not in failed]
+    nights_that_wrote_nothing = [d for d, v in read if v is True]
+    nights_with_no_signal = [d for d, v in read if v is None]
+
+    if sensing != sd.LAST_SEEN:
+        block_arm = how == MEMGPT_AS_PUBLISHED
+        if block_arm:
+            silent = [n["day"] for n in nightly
+                      if int(n.get("n_calls_offered") or 0) == 0
+                      and n["day"] not in failed]
+            why_silent = ("was asked and made no call to its block or its archive at all")
+        else:
+            silent = [n["day"] for n in nightly
+                      if n.get("the_look_saw_something_it_is_asked_about")
+                      and not any((n.get("applied") or {}).values())
+                      and not n.get("it_had_nothing_to_add")
+                      and n["day"] not in failed]
+            why_silent = "saw an asked-about object and applied no edit"
         if silent:
-            refuse(f"{household.name}/{arm}: nights {silent} saw an asked-about object and "
-                   f"applied no edit")
+            refuse(f"{household.name}/{arm}: nights {silent} {why_silent}, and the call did "
+                   f"NOT fail on those nights")
 
     about = {
         "arm": arm, "how_memory_is_written": how, "sensing_arm": sensing,
@@ -201,6 +372,20 @@ def run_one_arm(household: FrozenHousehold, arm: str, client: LLMClient,
             header.get("name_the_objects_it_will_be_quizzed_on"),
         "n_questions_where_the_read_budget_bit": len(bit),
         "n_nights_whose_completion_did_not_parse": len(did_not_parse),
+        # Reported for every arm, refused for two. Read this before any accuracy number: a
+        # memory that changed nothing on many nights is not the method it is named after.
+        "nights_that_changed_the_memory_not_at_all": nights_that_wrote_nothing,
+        "n_nights_that_changed_the_memory_not_at_all": len(nights_that_wrote_nothing),
+        # Nights whose report cannot answer the question. Read the count above against this
+        # one, never on its own: 0 of 32 means nothing if 32 of 32 could not be read.
+        "n_nights_whose_report_cannot_say": len(nights_with_no_signal),
+        "this_arm_can_be_refused_for_a_silent_night": bool(
+            any("the_look_saw_something_it_is_asked_about" in n for n in nightly)
+            or how == MEMGPT_AS_PUBLISHED),
+        "nights_whose_call_failed": failed,
+        "exclude_these_days_from_accuracy": [d + 1 for d in failed],
+        "questions_per_day": questions_per_day,
+        "questions_per_day_in_the_header": header.get("questions_per_day"),
         "n_model_calls_timed": timed.n_calls,
         "seconds": round(time.time() - started, 1),
         "at": datetime.datetime.now().astimezone().isoformat(timespec="seconds"),
@@ -208,6 +393,17 @@ def run_one_arm(household: FrozenHousehold, arm: str, client: LLMClient,
     (out_dir / "arm.json").write_text(json.dumps(about, indent=1))
     result["overnight_wave"] = about
     (out_dir / "cell.json").write_text(json.dumps(result, indent=1))
+
+    # RELEASE THE LOCK ON SUCCESS. It used to be removed only by `refuse()`, so a cell that
+    # finished cleanly left a `RUNNING.lock` behind for ever and the file meant "was started"
+    # while its name says "is running". Nothing was corrupted - `take_the_lock` checks the
+    # recorded pid and takes over a stale one - but every count of live cells built from these
+    # files was wrong: at 11:30 today three of them (`a small working memory and an
+    # archive`/hh_s19, hh_s20, hh_s48) showed as running when two had finished and one had
+    # crashed thirteen minutes earlier.
+    lock = out_dir / "RUNNING.lock"
+    if lock.exists():
+        lock.unlink()
     return result
 
 

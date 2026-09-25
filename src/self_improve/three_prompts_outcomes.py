@@ -72,6 +72,7 @@ from self_improve.study_settings import LOCKED
 from self_improve.three_prompts import ARMS, CONTROL, PILOT_BANKS, PILOT_TEN, cell_dir
 from self_improve.three_prompts_compliance import claims_that_are_shown, paired_difference
 from self_improve.three_prompts_frozen import ROOMIER, STANDARD
+from self_improve.what_is_in_this_file import print_what_is_in_this_file
 from self_improve.write_the_notes import facts_a_statement_asserts
 
 WINDOW_DAYS = tuple(range(14, 24))
@@ -194,6 +195,18 @@ def live_measures(cell: Dict[str, Any], household: FrozenHousehold) -> Dict[str,
             "n_scored": len(scored),
             "share_correct_shelf": (sum(1 for r in scored if r["correct_place"])
                                     / len(scored)) if scored else None,
+            # THE SAME MEASURE OVER THE OTHER DENOMINATOR, because the two disagree on the
+            # verdict and one of them had to be named rather than chosen silently. Over SCORED
+            # questions, ours beats the last-seen rule on exact place by +1.0 (2 SE 1.9, does
+            # not clear); counting a question nobody could score as not-right, +2.1 (2 SE 2.0,
+            # clears by a hair). The gap is 26 unscorable questions that fall almost entirely
+            # in the last-seen cells, so dropping them raises THAT arm's share. Both are
+            # defensible - an owner gets nothing useful from an unanswerable question, and
+            # penalising an arm for a question nobody can score is also wrong - so both are
+            # printed with their denominators, and neither is the report's silent default.
+            "share_correct_shelf_counting_unscorable_as_wrong": (
+                sum(1 for r in these if r["correct_place"]) / len(these)),
+            "n_unscorable": len(these) - len(scored),
             "share_correct_room": (sum(1 for r in scored if r["correct_room"])
                                    / len(scored)) if scored else None,
             "share_answered_from_the_notes": (
@@ -201,6 +214,30 @@ def live_measures(cell: Dict[str, Any], household: FrozenHousehold) -> Dict[str,
         }
 
     movers = set(cell["movers"])
+
+    def where_it_arrived(these):
+        """WHICH STEP reached the right room, on the moved objects.
+
+        First-room-right and never-got-there are different failures and the difference bears on
+        the rooms-opened measure rather than the first-room one: an arm that reaches the right
+        room on step two or three by elimination is reasoning, and one that never arrives is
+        not. Measured on hh_s48_t03 days 14+: right first on 10 of 17, on step 2 once, on step 3
+        twice, never on 4 - so 13 of 17 arrived, which reads very differently from 10 of 17.
+        """
+        opened = [r for r in these if r["rooms_opened"] and r["true_room"]]
+        if not opened:
+            return None
+        at = {1: 0, 2: 0, 3: 0, "never": 0}
+        for r in opened:
+            if r["true_room"] in r["rooms_opened"]:
+                at[r["rooms_opened"].index(r["true_room"]) + 1] = \
+                    at.get(r["rooms_opened"].index(r["true_room"]) + 1, 0) + 1
+            else:
+                at["never"] += 1
+        reached = sum(v for k, v in at.items() if k != "never")
+        return {"n": len(opened), "at_step": {str(k): v for k, v in at.items()},
+                "share_reached_at_all": reached / len(opened),
+                "share_first_room": at.get(1, 0) / len(opened)}
     out: Dict[str, Any] = {
         "whole_month": over(rows),
         "by_period": {period: over([r for r in rows if r["period"] == period])
@@ -211,6 +248,11 @@ def live_measures(cell: Dict[str, Any], household: FrozenHousehold) -> Dict[str,
                                     and r["object_id"] in movers]),
         "by_day": {str(day): over([r for r in rows if r["day"] == day])
                    for day in sorted({r["day"] for r in rows})},
+        # where in the search it arrived, on the MOVED objects, per window
+        "where_it_arrived_on_movers": {
+            period: where_it_arrived([r for r in rows if r["period"] == period
+                                      and r["object_id"] in movers])
+            for period in ("settled", "disrupted", "back to normal")},
     }
     return out
 
@@ -426,13 +468,59 @@ def mechanical_on_the_same_questions(looks_file: pathlib.Path,
 # ------------------------------------------------------------- pulling it in --
 
 
+def the_movers_curve_for_one_cell(cell: Dict[str, Any]) -> Dict[str, Dict[str, Any]]:
+    """Per day, on the objects the illness moves: was the first room opened the right one,
+    and HOW MANY QUESTIONS that rests on.
+
+    WHY THE COUNT IS PART OF THE MEASURE. At 8 questions a day a point on this line rested on
+    3.7 mover questions and 79 of 310 home-days had one or two, so a 0% or 100% day was
+    arithmetic rather than signal - which is what Oliver noticed on the artifact. The count is
+    printed beside every point and any day under `THIN_DAY` is marked, so a thin point cannot
+    be read as a measurement. At 24 questions a day the same homes give 4.7 to 17.9 mover
+    questions a day, and days under five fall from 25% to 8%.
+    """
+    movers = set(cell.get("movers") or ())
+    out: Dict[str, Dict[str, Any]] = {}
+    by_day: Dict[int, List[Dict[str, Any]]] = collections.defaultdict(list)
+    for row in cell["searches"]:
+        if row["object_id"] in movers:
+            by_day[row["day"]].append(row)
+    for day, rows in sorted(by_day.items()):
+        opened = [r for r in rows if r["rooms_opened"]]
+        out[str(day)] = {
+            "n_mover_questions": len(rows),
+            "n_with_a_room_opened": len(opened),
+            "share_first_room_was_right": (
+                sum(1 for r in opened if r["rooms_opened"][0] == r["true_room"])
+                / len(opened)) if opened else None,
+            "period": rows[0].get("period"),
+        }
+    return out
+
+
+# A day this thin is arithmetic, not a measurement, and is marked rather than plotted.
+THIN_DAY = 5
+
+
 def one_cell(root: pathlib.Path, arm: str, household: FrozenHousehold,
              which_cap: str = STANDARD) -> Optional[Dict[str, Any]]:
     cell = cell_dir(root, arm, household.name)
-    if not (cell / "notes.json").exists() or not (cell / "cell.json").exists():
+    if not (cell / "cell.json").exists():
         return None
-    notes = Notes.load(cell / "notes.json")
     the_cell = json.loads((cell / "cell.json").read_text())
+    if (cell / "notes.json").exists():
+        notes = Notes.load(cell / "notes.json")
+    elif the_cell.get("sensing_arm") in ("last seen, no model",
+                                        "newest sighting, no model"):
+        # AN ARM THAT WRITES NO NOTES HAS NO NOTES FILE, and requiring one made this arm
+        # invisible: `one_cell` returned None for all ten of its cells, so the no-model rule
+        # was silently absent from every table - including the headline row, which is
+        # specified as arm 1 against THIS baseline on the same questions and the same look
+        # stream. An empty memory is the correct reading of its notes, not missing data.
+        notes = Notes(cell / "notes.json", household.name, the_cell["arm"],
+                      the_cell["how_memory_is_written"])
+    else:
+        return None
     by_day = reachability_by_day(notes, household, range(1, 32))
     row: Dict[str, Any] = {
         "arm": arm, "household": household.name, "where": str(cell),
@@ -440,6 +528,8 @@ def one_cell(root: pathlib.Path, arm: str, household: FrozenHousehold,
         "read_budget_lines": (the_cell.get("three_prompts") or {}).get(
             "read_budget_lines", "NOT RECORDED"),
         "live": live_measures(the_cell, household),
+        "the_movers_curve": the_movers_curve_for_one_cell(the_cell),
+        "the_forced_identity": found_and_place_on_the_same_questions(the_cell),
         "the_notes_hold": how_much_the_notes_hold(the_cell, notes, household),
         "what_it_cost": what_the_memory_costs(cell, the_cell),
         "reachability_by_day": {str(d): v for d, v in sorted(by_day.items())},
@@ -503,26 +593,92 @@ A contrast smaller than the floor for the SAME measure is not evidence, however 
 standard error - the standard error measures spread across homes and this does not."""
 
 
+THE_FLOOR_SOURCE = [""]
+# Measured elsewhere, so it is BORROWED and says so. A noise floor is per arm and per window,
+# never a project constant - but a wave with no floor of its own was printing no floor line at
+# all, which reads as "this difference is clean" when nothing was checked. Borrowed and
+# labelled beats absent.
+BORROWED_FLOOR = pathlib.Path("results/self_improve/three_prompts/the_rerun_noise_floor.json")
+
+
 def load_the_floor(root: pathlib.Path) -> None:
-    path = root / "the_rerun_noise_floor.json"
-    if not path.exists():
+    for path, where in ((root / "the_rerun_noise_floor.json", "this wave"),
+                        (BORROWED_FLOOR, "three_prompts d0-13, 7 homes, BORROWED")):
+        if not path.exists():
+            continue
+        try:
+            got = json.loads(path.read_text())
+        except ValueError:
+            continue
+        THE_FLOOR.update(got.get("floor_per_measure") or {})
+        THE_FLOOR_SOURCE[0] = where
         return
-    try:
-        THE_FLOOR.update(json.loads(path.read_text()).get("floor_per_measure") or {})
-    except ValueError:
-        pass
 
 
 def against_the_floor(field: Optional[str], difference: float) -> str:
-    """Whether a measured difference clears the rerun noise floor for its own measure."""
+    """Whether a measured difference clears the rerun noise floor FOR ITS OWN MEASURE, with the
+    floor's own value and where it was measured, in the same string.
+
+    The value is in the line because a bracket saying "inside the floor" invites the reader to
+    assume some small floor; our arm's 1.5-point lead on found-within-budget sits under a
+    1.9-point floor, and those two numbers have to be readable together or the lead gets quoted
+    on its own."""
     got = THE_FLOOR.get(field or "")
     if not got:
-        return ""
+        return " [no rerun floor for this measure: unchecked]"
+    mean = 100 * got["mean_absolute_difference"]
+    worst = 100 * got["largest"]
+    where = THE_FLOOR_SOURCE[0]
     if abs(difference) <= got["mean_absolute_difference"]:
-        return " [INSIDE the rerun noise floor: not evidence]"
+        return (f" [INSIDE the {mean:.1f}-pt rerun floor ({where}): not evidence]")
     if abs(difference) <= got["largest"]:
-        return " [above the mean noise but below the worst home's noise]"
-    return " [clears the rerun noise floor]"
+        return (f" [over the {mean:.1f}-pt floor, under the worst home's {worst:.1f} ({where})]")
+    return f" [clears the {mean:.1f}-pt rerun floor, worst home {worst:.1f} ({where})]"
+
+
+def found_and_place_on_the_same_questions(cell: Dict[str, Any]) -> Dict[str, int]:
+    """Does `found it within the budget` pick out exactly the same questions as `exact place
+    right`? Counted per question, which is where the identity lives.
+
+    Measured on the shares it looked FALSE - 94.4% found against 95.5% exact place for the
+    last-seen rule - and that difference is only the 26 unscorable questions, which are in the
+    first denominator and not the second. Per question the two agree on all 2,454 scorable ones
+    and disagree on none, while the plain claim store disagrees on 66 and ours on 13. So the
+    claim to protect is "the same QUESTIONS", not "the same number", and stating it the second
+    way invites a reader to check the shares and conclude it is not true.
+    """
+    agree = disagree = unscorable = 0
+    for row in cell.get("searches") or ():
+        if row.get("correct_place") is None:
+            unscorable += 1
+            continue
+        if bool(row.get("found_it")) == bool(row.get("correct_place")):
+            agree += 1
+        else:
+            disagree += 1
+    return {"agree_on": agree, "disagree_on": disagree, "unscorable": unscorable}
+
+
+def arms_where_found_and_place_are_one_number(by_arm) -> Dict[str, int]:
+    """Arms where `found within the budget` and `exact place right` are the SAME number in
+    every home and every window - which for a last-seen rule is FORCED, not observed.
+
+    Its first guess is the room the object was last seen in, so when the search fails, the
+    last-seen shelf is always inside a room it has already opened: the two measures cannot come
+    apart. Reported as one column with that sentence, never as two findings, because quoting
+    them separately claims two agreements where the arm's construction allows only one.
+
+    Detected from the data rather than from the arm's name, and the detection has power: on the
+    ten-home wave it holds in 40 of 40 home-windows for `last seen, no model` and in 14 of 40
+    and 23 of 40 for the two claim-store arms, which are therefore NOT collapsed.
+    """
+    out: Dict[str, int] = {}
+    for arm, these in by_arm.items():
+        agree = sum((r.get("the_forced_identity") or {}).get("agree_on", 0) for r in these)
+        differ = sum((r.get("the_forced_identity") or {}).get("disagree_on", 0) for r in these)
+        if agree and not differ:
+            out[arm] = agree
+    return out
 
 
 def report_a_contrast(label: str, rows: Sequence[Dict[str, Any]],
@@ -553,7 +709,23 @@ def main(argv=None) -> int:
     parser.add_argument("--banks", type=pathlib.Path, default=PILOT_BANKS)
     parser.add_argument("--cap", default=STANDARD, choices=[STANDARD, ROOMIER])
     parser.add_argument("--out", type=pathlib.Path, default=None)
+    # WHICH ARM IS THE CONTROL IS NOW AN ARGUMENT. This module was written for the
+    # three_prompts variants, where the control was called "control". In the overnight wave
+    # the one-variable partner for "the log and notes about the routine" is
+    # "incremental_edits" - the plain claim store it is a fork of - and a hardcoded name made
+    # the report exit with "no control cells" on a wave with 54 finished ones.
+    parser.add_argument("--only-this-memory-format", default=None,
+                        help="restrict the headline to cells written this way "
+                             "(the three_prompts waves used 'incremental edits'); "
+                             "by default every arm is in it")
+    parser.add_argument("--wholesale-arm", default="control_wholesale",
+                        help="the arm whose memory style is the wholesale rewrite")
+    parser.add_argument("--control", default=CONTROL,
+                        help="the arm every contrast is against "
+                             "(directory name under cells/)")
     args = parser.parse_args(argv)
+
+    print_what_is_in_this_file(args.root, f"OUTCOMES at reasoning cap {args.cap}")
 
     # THE CEILING, before any accuracy number, because it changes how all of them read: the
     # information is present in what the robot saw and the model is not using it, so the
@@ -575,11 +747,47 @@ def main(argv=None) -> int:
         print(f"  WEIGHT: {ceiling['how_much_weight_it_carries']}")
         print(f"  NOT: {ceiling['what_it_does_not_say']}")
 
+    # NO FAILED-NIGHT EXCLUSION RULE ANY MORE, and nothing about it in the accuracy
+    # section. Every lost call in this wave was one bug - a socket built with
+    # `timeout=min(600.0, DEADLINE_S)` against a 900-second watchdog, so the socket gave up
+    # while the server was still generating - and the affected cells were rerun rather than
+    # annotated. THE_FAILED_NIGHTS_were_one_bug.md records the fault, not a caveat on
+    # these numbers; a rerun still in flight shows in the header at the top of this file.
+
+    # EVERY NIGHT WHOSE CALL FAILED, PER CELL, AS A LIST. A count cannot be acted on: the
+    # response cache makes a rerun resume from the first lost night, so which nights were lost
+    # decides what a rerun costs, and a cell that lost night 8 is most of a cell while one that
+    # lost night 29 is nearly free. Printed before any accuracy number, from each cell's own
+    # arm.json, so a wave where the watchdog started biting says so at the top.
+    lost = []
+    for a in sorted((args.root / "cells").glob("*/*/arm.json")):
+        try:
+            got = json.loads(a.read_text())
+        except ValueError:
+            continue
+        nights = got.get("nights_whose_call_failed") or []
+        if nights:
+            lost.append((a.parent.parent.name, a.parent.name, sorted(nights),
+                         got.get("questions_per_day")))
+    print("\n--- NIGHTS WHOSE MODEL CALL FAILED, per cell, as a list\n")
+    if not lost:
+        print("  none, in any finished cell under this root")
+    else:
+        for arm, home, nights, qpd in lost:
+            print(f"  {arm:40s} {home:14s} at {qpd} q/day: nights {nights}")
+        print(f"\n  {len(lost)} cell(s). The cheapest repair is to rerun these cells with a")
+        print("  raised deadline once the wave has landed: the response cache makes a rerun")
+        print("  resume from the first lost night rather than restart. A cell that lost an")
+        print("  EARLY night is most of a cell; one that lost a late night is nearly free.")
+
     load_the_floor(args.root)
     households: Dict[str, FrozenHousehold] = {}
     rows: List[Dict[str, Any]] = []
-    for arm in sorted(ARMS):
-        for name in PILOT_TEN:
+    # discovered from the directories, for the reason in three_prompts_compliance
+    arms = sorted(d.name for d in (args.root / "cells").glob("*") if d.is_dir())
+    for arm in arms:
+        for name in sorted(d.name for d in (args.root / "cells" / arm).glob("*")
+                           if d.is_dir()):
             path = args.banks / f"{name}.jsonl"
             if not path.exists():
                 continue
@@ -595,7 +803,47 @@ def main(argv=None) -> int:
     by_arm: Dict[str, List[Dict[str, Any]]] = collections.defaultdict(list)
     for row in rows:
         by_arm[row["arm"]].append(row)
-    control = by_arm.get(CONTROL, [])
+    # ===== 0c. the per-home, per-day curve on the moved objects, with its n =====
+    print("\n" + "="*100)
+    print("0c. ONE HOME AT A TIME, DAY BY DAY, ON THE OBJECTS THE ILLNESS MOVES:")
+    print("    was the first room opened the right one. The count each point rests on is")
+    print(f"    printed beside it, and a day of fewer than {THIN_DAY} mover questions is")
+    print("    marked * - at that width a 0% or a 100% day is arithmetic, not signal.")
+    print("="*100)
+    homes = sorted({r["household"] for r in rows})
+    arms_here = sorted(by_arm)
+    for home in homes:
+        print(f"\n  --- {home}")
+        print("    day  " + "".join(f"{a[:13]:>16s}" for a in arms_here))
+        thin_here = 0
+        for day in range(1, 32):
+            cells_row = []
+            for arm in arms_here:
+                got = [r["the_movers_curve"].get(str(day)) for r in by_arm[arm]
+                       if r["household"] == home]
+                got = [g for g in got if g]
+                if not got:
+                    cells_row.append(f"{'-':>16s}")
+                    continue
+                g = got[0]
+                n = g["n_mover_questions"]
+                thin = "*" if n < THIN_DAY else " "
+                if g["share_first_room_was_right"] is None:
+                    cells_row.append(f"{'no room':>14s}{thin} ")
+                else:
+                    cells_row.append(f"{g['share_first_room_was_right']:11.0%} n={n:<2d}{thin}")
+                if n < THIN_DAY:
+                    thin_here += 1
+            mark = ("  <- illness starts" if day == 14 else
+                    "  <- back to normal" if day == 24 else "")
+            print(f"    {day:3d}  " + "".join(cells_row) + mark)
+        print(f"    thin points (n < {THIN_DAY}) in this home: {thin_here}")
+    print("\n  This is the measure the 24-questions wave exists for. Pooled over ten homes a")
+    print("  day's point rests on ~37 mover questions and is fine; one home's line at 8")
+    print("  questions a day rests on ~3.7 and is not. Both waves stand, in separate")
+    print("  directories, and the first line of this file says which one this is.")
+
+    control = by_arm.get(args.control, [])
     if not control:
         print("no control cells: nothing can be contrasted")
         return 1
@@ -607,16 +855,47 @@ def main(argv=None) -> int:
           f"read_budget_lines = "
           f"{sorted({str(r['read_budget_lines']) for r in rows})}.\n{'='*100}")
 
-    incremental = {arm: [r for r in by_arm[arm]
-                         if r["how_memory_is_written"] == "incremental edits"]
-                   for arm in by_arm}
-    control_inc = incremental.get(CONTROL, [])
+    # THE HEADLINE USED TO DROP EVERY ARM WHOSE MEMORY FORMAT WAS NOT "incremental edits".
+    # That was right for the three_prompts wave, where every arm shared one format and only
+    # the writing PROMPT differed, so the restriction kept the compared things alike. In the
+    # overnight wave the arms ARE formats, so the same line silently dropped four of the six
+    # finished arms - including `the log and notes about the routine`, the arm the wave
+    # exists to measure - and printed a headline table of two arms without saying anything
+    # was missing. What keeps units comparable here is the question set, which
+    # `report_a_contrast` pairs within home; the format is printed in the table instead.
+    #
+    # `--only-this-memory-format` restores the old behaviour for the older wave.
+    def for_the_headline(rows_of_an_arm):
+        if not args.only_this_memory_format:
+            return list(rows_of_an_arm)
+        return [r for r in rows_of_an_arm
+                if r["how_memory_is_written"] == args.only_this_memory_format]
+
+    incremental = {arm: for_the_headline(by_arm[arm]) for arm in by_arm}
+    control_inc = incremental.get(args.control, [])
+    dropped = {arm: len(by_arm[arm]) - len(incremental[arm]) for arm in by_arm}
+    if any(dropped.values()):
+        print(f"\n  NOTE: --only-this-memory-format="
+              f"{args.only_this_memory_format!r} drops "
+              f"{', '.join(f'{a} {n}' for a, n in sorted(dropped.items()) if n)} cells "
+              f"from the headline.")
+
+    forced_identity = arms_where_found_and_place_are_one_number(by_arm)
 
     # ================= 0. THE HEADLINE: END TO END =================
     print("\n" + "="*100)
     print("0. THE HEADLINE: END TO END. The robot searches in order to answer, so a")
     print("   better memory shows up as a better first room, fewer rooms, more found.")
     print("="*100)
+    for arm, n in sorted(forced_identity.items()):
+        print(f"\n  NOTE on {arm}: 'found it within the budget' and 'exact place right' pick out")
+        print(f"  EXACTLY THE SAME QUESTIONS - all {n} scorable ones agree, none disagree - and")
+        print("  that is forced rather than observed: its first guess IS the room the object was")
+        print("  last seen in, so when the search fails, the last-seen shelf is always inside a")
+        print("  room it has already opened. Reported as ONE column against this arm, never as")
+        print("  two findings. The two SHARES still differ by a few tenths of a point, because")
+        print("  unscorable questions are in the first denominator and not the second - which is")
+        print("  why the claim is about the questions and not about the number.")
     for window, key in (("the disrupted period, days 14-23", ("by_period", "disrupted")),
                         ("the disrupted period, MOVERS only", ("disrupted_movers_only",)),
                         ("the return, days 24-31", ("by_period", "back to normal")),
@@ -649,15 +928,31 @@ def main(argv=None) -> int:
                   f"{m(lambda g: g['share_correct_room']):6.1%} "
                   f"{m(lambda g: g['share_answered_from_the_notes']):10.1%}")
         for arm in sorted(here):
-            if arm == CONTROL or not here[arm]:
+            if arm == args.control or not here[arm]:
                 continue
             print(f"    -- {arm} against the control:")
-            for label, field in (
-                    ("first room was the right one", "share_first_room_was_right"),
-                    ("rooms opened per question (lower is better)", "mean_rooms_opened"),
-                    ("found it within the budget", "share_found_within_budget"),
-                    ("final answer right, shelf", "share_correct_shelf"),
-                    ("final answer right, room", "share_correct_room")):
+            one_number = arm in forced_identity or args.control in forced_identity
+            measures = [("first room was the right one (the MEMORY question)",
+                         "share_first_room_was_right"),
+                        ("rooms opened per question (lower is better)", "mean_rooms_opened")]
+            if one_number:
+                # BOTH LINES, each labelled as the same questions. Collapsing them to one line
+                # was wrong in the other direction: the two shares are NOT the same number
+                # (different denominators - the unscorable questions), and the exact-place
+                # difference is its own finding. What must not happen is the two being read as
+                # two independent agreements, so each label says they are one set of questions.
+                measures += [("found within budget (SAME questions as exact place)",
+                              "share_found_within_budget"),
+                             ("exact place right (same questions; other denominator)",
+                              "share_correct_shelf")]
+            else:
+                measures += [("found it within the budget (what an OWNER feels)",
+                              "share_found_within_budget"),
+                             ("final answer right, shelf", "share_correct_shelf")]
+            measures.append(("exact place, unscorable counted as wrong",
+                             "share_correct_shelf_counting_unscorable_as_wrong"))
+            measures.append(("final answer right, room", "share_correct_room"))
+            for label, field in measures:
                 report_a_contrast(
                     label, here[arm], [r for r in control_inc if get(r)],
                     lambda r, f=field, g=get: (g(r) or {}).get(f),
@@ -677,7 +972,10 @@ def main(argv=None) -> int:
               f"{'d31':>6s} {'facts d13':>9s} {'d23':>6s} {'d31':>6s} "
               f"{'grew only':>10s} {'nights shrank':>13s}")
         for style, these in sorted(styles.items()):
-            these = [r for r in these if r["arm"] in (CONTROL, "control_wholesale")]
+            # restricted to the PAIR that differs only in memory style, so this table is
+            # not a mix of arms. Which arm holds the rewrite is an argument for the same
+            # reason the control is: the wave calls it `wholesale_rewrite`.
+            these = [r for r in these if r["arm"] in (args.control, args.wholesale_arm)]
             if not these:
                 continue
             h = lambda d, f: statistics.mean(r["the_notes_hold"]["at"][d][f] for r in these)
@@ -697,9 +995,11 @@ def main(argv=None) -> int:
             print("\n    the same prompt under the two styles, END TO END, "
                   "disrupted days 14-23:")
             for label, field in (
-                    ("first room was the right one", "share_first_room_was_right"),
+                    ("first room was the right one (the MEMORY question)",
+             "share_first_room_was_right"),
                     ("rooms opened per question (lower is better)", "mean_rooms_opened"),
-                    ("found it within the budget", "share_found_within_budget"),
+                    ("found it within the budget (what an OWNER feels)",
+             "share_found_within_budget"),
                     ("final answer right, shelf", "share_correct_shelf"),
                     ("final answer right, room", "share_correct_room")):
                 report_a_contrast(
@@ -722,7 +1022,7 @@ def main(argv=None) -> int:
               f"{m('reachability_shelf_days_14_23'):6.1%} "
               f"{m('reachability_shelf_days_24_31'):6.1%}")
     for arm in sorted(by_arm):
-        if arm == CONTROL:
+        if arm == args.control:
             continue
         print(f"\n  {arm} against the control:")
         for label, key in (("reachability shelf, disrupted days 14-23",
@@ -757,7 +1057,7 @@ def main(argv=None) -> int:
                   f"{statistics.mean(r[key]['shelf'] for r in here):6.1%} "
                   f"{statistics.mean(r[key]['room'] for r in here):6.1%}")
         for arm in sorted(present):
-            if arm == CONTROL or not present[arm]:
+            if arm == args.control or not present[arm]:
                 continue
             print(f"    -- {arm}:")
             for level in ("shelf", "room"):
@@ -792,6 +1092,29 @@ def main(argv=None) -> int:
             continue
         print(f"    {arm:22s} d13 {d13:5.1%} -> d14 {d14:5.1%} ({d14-d13:+.1%}) | "
               f"d23 {d23:5.1%} -> d24 {d24:5.1%} ({d24-d23:+.1%})")
+
+    # ---- where in the search it arrived, on the moved objects
+    print("\n--- 1c. WHERE IN THE SEARCH IT ARRIVED, on the objects the illness moves\n")
+    print("  First-room-right and never-arrived are different failures. An arm that reaches the")
+    print("  right room on step two or three by elimination is reasoning; one that never arrives")
+    print("  is not - and the difference bears on rooms-opened rather than on first-room.\n")
+    print("  Two numbers, and they are not interchangeable: '1st' is the memory question -")
+    print("  did the notes point at the right room before any looking. 'arrived' is what an")
+    print("  owner feels - did it get there at all within its three rooms. On hh_s48_t03 days")
+    print("  14+ those were 10 of 17 and 13 of 17, which read very differently.\n")
+    print(f"  {'arm':38s} {'window':16s} {'n':>4s} {'1st':>6s} {'2nd':>5s} {'3rd':>5s} "
+          f"{'never':>6s} {'arrived':>8s}")
+    for arm in sorted(by_arm):
+        for period in ("disrupted", "back to normal"):
+            got = [r["live"]["where_it_arrived_on_movers"].get(period) for r in by_arm[arm]
+                   if r["live"].get("where_it_arrived_on_movers", {}).get(period)]
+            if not got:
+                continue
+            n = sum(x["n"] for x in got)
+            step = lambda k: sum(x["at_step"].get(k, 0) for x in got)
+            print(f"  {arm:38s} {period:16s} {n:4d} {step('1'):6d} {step('2'):5d} "
+                  f"{step('3'):5d} {step('never'):6d} "
+                  f"{(n-step('never'))/n if n else 0:7.0%}")
 
     # ---- what the unlimited memory costs
     costed = [r for r in rows if r.get("what_it_cost")]

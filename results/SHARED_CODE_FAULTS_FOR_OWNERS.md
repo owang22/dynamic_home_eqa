@@ -52,3 +52,37 @@ scenario's copy, which is what "working around it" means here.
 **How to notice it has bitten you:** a freshly built bank whose question rows are
 absent, or whose `question_classes` do not match the classes the scenario's own
 `activities.yaml` says are used.
+
+## 2026-09-25 — `baselines/patrol/llm.py`: the socket gave up before the watchdog
+
+**Changed, and it affects every caller.** `_post` built its connection with
+`timeout=min(600.0, self.DEADLINE_S)` while `DEADLINE_S` is 900. So the socket timed out
+three hundred seconds before the watchdog that exists to bound the call — two limits on one
+quantity, where the smaller one was the real one and nobody chose it.
+
+**What it cost, measured.** In an overnight run of 61 cells, 24 calls failed and **every
+single one was `TimeoutError: timed out` at exactly 600 seconds, on both attempts.** The
+calls were not lost; the server was still generating. Five cells were held back by a
+completeness gate because of it, three of them in one arm, and the arms affected were the
+ones whose nightly generation is longest — so the loss was not random across arms.
+
+**Now:** `timeout=self.DEADLINE_S`. The watchdog still kills the socket at 900 seconds, so
+nothing waits longer than it could before; a genuinely lost request is still bounded. For
+callers whose generations are short nothing changes at all. For callers whose generations
+are long, a call that was being cut off mid-flight now returns.
+
+**If you were seeing lost calls on long generations, this was why**, and any run of yours
+that reported "the model call failed" on a slow arm is worth re-reading in that light.
+
+**The same line is still live in `baselines/patrol/uq_llm.py`** (`Client._post`, line 58:
+`timeout=min(600.0, self.DEADLINE_S)` with `DEADLINE_S = 900`). Not changed here, because that
+file belongs to the UQ strand and may have a run against it right now — flagging rather than
+editing. Whoever owns it: the same one-word change applies, and any UQ run that logged a lost
+call on a long generation was probably hit by this.
+
+**One thing to check if you audit your own run for this.** A per-night or per-step "the model
+call failed" flag will not find all of it. Of the five cells affected in our wave, one
+(`claim store told if it was right / hh_s2_t03`) lost an **answer-step** call rather than a
+nightly write, so it carried no failed-night flag anywhere and an audit of that flag reported
+it clean; the loss existed only as `LOST after 2 attempts` in the run log. Grep the logs, not
+the summaries.

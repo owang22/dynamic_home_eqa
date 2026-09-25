@@ -49,15 +49,14 @@ EDITS_SCHEMA: Dict[str, Any] = {
                                "enum": ["write a new note", "revise a note",
                                         "move into working memory",
                                         "move out to the archive",
-                                        "attach evidence"]},
+                                        "attach evidence",
+                                        "set a note aside", "bring a note back"]},
                     "claim_id": {"type": ["string", "null"]},
                     "statement": {"type": ["string", "null"], "maxLength": 240},
                     "holds_under": {"type": ["string", "null"], "maxLength": 120},
                     "into_working_memory": {"type": ["boolean", "null"]},
                     "status": {"type": ["string", "null"],
                                "enum": [PROVISIONAL, ESTABLISHED, None]},
-                    "standing": {"type": ["string", "null"],
-                                 "enum": [STILL_STANDING, SET_ASIDE, None]},
                     "supporting_observation_ids": {"type": "array", "maxItems": 6,
                                                    "items": {"type": "string"}},
                     "contradicting_observation_ids": {"type": "array", "maxItems": 6,
@@ -65,7 +64,7 @@ EDITS_SCHEMA: Dict[str, Any] = {
                     "why": {"type": "string", "maxLength": 240},
                 },
                 "required": ["action", "claim_id", "statement", "holds_under",
-                             "into_working_memory", "status", "standing",
+                             "into_working_memory", "status",
                              "supporting_observation_ids",
                              "contradicting_observation_ids", "why"],
                 "additionalProperties": False}}},
@@ -96,7 +95,8 @@ def what_it_can_see_of_its_memory(notes: Notes, searched_for: str = "") -> str:
 def _apply(notes: Notes, edits: Sequence[dict], day: int, time: int
            ) -> Dict[str, Any]:
     applied = {"write a new note": 0, "revise a note": 0, "move into working memory": 0,
-               "move out to the archive": 0, "attach evidence": 0}
+               "move out to the archive": 0, "attach evidence": 0,
+               "set a note aside": 0, "bring a note back": 0}
     rejected: List[str] = []
     refused_for_space: List[str] = []
     for edit in edits:
@@ -122,9 +122,17 @@ def _apply(notes: Notes, edits: Sequence[dict], day: int, time: int
                                    new_statement=edit.get("statement"),
                                    new_holds_under=edit.get("holds_under"),
                                    new_status=edit.get("status"),
-                                   new_standing=edit.get("standing"),
                                    why=edit.get("why") or "")
                 applied["revise a note"] += 1
+            elif action == "set a note aside":
+                notes.revise_claim(edit["claim_id"], day, time, new_standing=SET_ASIDE,
+                                   why=edit.get("why") or "")
+                applied["set a note aside"] = applied.get("set a note aside", 0) + 1
+            elif action == "bring a note back":
+                notes.revise_claim(edit["claim_id"], day, time,
+                                   new_standing=STILL_STANDING,
+                                   why=edit.get("why") or "")
+                applied["bring a note back"] = applied.get("bring a note back", 0) + 1
             elif action == "move into working memory":
                 notes.put_in_working_memory(edit["claim_id"], day, time)
                 applied["move into working memory"] += 1

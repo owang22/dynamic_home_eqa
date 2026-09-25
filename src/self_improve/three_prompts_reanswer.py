@@ -53,7 +53,10 @@ from self_improve.never_written_or_displaced import the_notes_as_they_stood
 from self_improve.rebuild_the_frozen_snapshots import (check_the_reconstruction,
                                                        which_day_each_observation_was_made)
 from self_improve.score_at_both_levels import room_of
+from self_improve.looking import LookRecord, TheHouseAsSeen
+from self_improve.memory_notes import THE_LOG_AND_THE_ROUTINE
 from self_improve.search_driven import answer_prompt
+from self_improve.the_log_the_robot_reads import the_log_block_for_a_replay
 from self_improve.three_prompts import ARMS, PILOT_BANKS, PILOT_TEN, cell_dir
 
 ROOMIER_CHARACTERS = 2400
@@ -82,12 +85,19 @@ def one_cell(cell: pathlib.Path, household: FrozenHousehold, client: LLMClient,
     allowed = set(household.places)
     schema = roomier_schema(max_characters)
 
+    # the arm's own look stream, for the record-reading arm's record block
+    eyes = TheHouseAsSeen(household, cell / "_replay_eyes.jsonl", "room")
+    eyes.looks = [LookRecord(**{k: v for k, v in json.loads(line).items() if k != "kind"})
+                  for line in (cell / "looks.jsonl").open()
+                  if json.loads(line).get("kind") == "look"]
+
     from_the_notes = [r for r in the_cell["searches"] if r["answered_from"] == "the notes"]
     rows: List[Dict[str, Any]] = []
     n_prompt_mismatches = 0
     stood_cache: Dict[int, Notes] = {}
-    for record in from_the_notes:
-        day = record["day"]
+    for record_row in from_the_notes:
+        record = record_row          # kept for the body below
+        day = record_row["day"]
         if day - 1 not in stood_cache:
             stood_cache[day - 1] = the_notes_as_they_stood(notes, day - 1)
         stood = stood_cache[day - 1]
@@ -96,7 +106,21 @@ def one_cell(cell: pathlib.Path, household: FrozenHousehold, client: LLMClient,
                     "object_id": record["object_id"]}
         ruled_out = (record["rooms_opened"]
                      if record["the_answer_was_told_what_the_search_ruled_out"] else ())
-        messages = answer_prompt(household, question, was_read.text, ruled_out)
+        # THE RECORD-READING ARM ANSWERS FROM TWO SOURCES, NOT ONE. Its answer prompt carries
+        # its own observation record as well as its notes, so rebuilding the prompt without the
+        # record would not be the same question - it would score that arm without the thing
+        # that defines it. The faithfulness check below would have caught it loudly, on every
+        # question of that arm, but only after spending the calls.
+        #
+        # `the_log_block_for_a_replay` subtracts a second internally, so the inclusive bound
+        # cannot reach a replay by accident: rendered AT the question moment the block contains
+        # the search's own find, which is the answer.
+        record = None
+        if the_cell["how_memory_is_written"] == THE_LOG_AND_THE_ROUTINE:
+            record = the_log_block_for_a_replay(eyes, record_row["object_id"],
+                                                record_row["time"])
+        messages = answer_prompt(household, question, was_read.text, ruled_out,
+                                 the_record_to_read=record)
 
         # the faithfulness check: the standard-cap prompt must reproduce what the cell
         # recorded. Served from the cache, so it costs nothing.

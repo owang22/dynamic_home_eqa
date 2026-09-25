@@ -123,6 +123,25 @@ def snapshots_for(cell: pathlib.Path, days: List[int]) -> Dict[int, pathlib.Path
     return out
 
 
+def can_the_frozen_pass_give_the_record() -> bool:
+    """Does `frozen_memory_test.question_prompt` accept the record yet?
+
+    THE RECORD IS HALF OF THAT ARM'S MEMORY BY DESIGN. Its notes are deliberately not about
+    places precisely because the record holds places, so a frozen pass that withholds the
+    record is not measuring a weaker version of the arm - it is measuring an arm nobody built.
+    """
+    import inspect
+    from self_improve import frozen_memory_test as fmt
+    return any(n in inspect.signature(fmt.question_prompt).parameters
+               for n in ("the_record_to_read", "record", "the_log_block"))
+
+
+NOTES_ALONE_LABEL = ("notes alone, record withheld - NOT this arm's accuracy. The record is "
+                     "half of this arm's memory by design: its notes avoid places because the "
+                     "record holds them. This figure answers only 'do the notes contain "
+                     "anything answer-relevant on their own'.")
+
+
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", type=pathlib.Path,
@@ -132,6 +151,11 @@ def main(argv=None) -> int:
     parser.add_argument("--households", nargs="+", default=list(PILOT_TEN))
     parser.add_argument("--freeze-points", nargs="+",
                         default=["before anything changed", "did it learn the new routine"])
+    parser.add_argument("--notes-alone", action="store_true",
+                        help="deliberately WITHHOLD the observation record from the "
+                             "record-reading arm. A separately labelled second diagnostic, "
+                             "never that arm's accuracy: the label is written into the output "
+                             "file and not only into the report.")
     parser.add_argument("--roomier-reasoning", action="store_true",
                         help="raise the reasoning ceiling from 600 to 2400 characters "
                              "and the token budget from 400 to 1200. A separate "
@@ -141,7 +165,24 @@ def main(argv=None) -> int:
                         default=pathlib.Path("llm_prior_cache/self_improve"))
     args = parser.parse_args(argv)
 
+    # REFUSE RATHER THAN SILENTLY OMIT. Three times tonight a defining feature of an arm was
+    # nearly measured away by a default in code that predates the arm. If the frozen pass cannot
+    # carry the record and the record-reading arm is in the list, that is a refusal - not a run
+    # whose numbers quietly describe something else.
+    reads_the_record = [a for a in args.arms
+                        if ARMS.get(a, (None,))[0] == "the log and notes about the routine"
+                        or a == "the log and notes about the routine"]
+    if reads_the_record and not args.notes_alone and not can_the_frozen_pass_give_the_record():
+        print("REFUSING: frozen_memory_test.question_prompt cannot carry the observation "
+              "record yet, and " + ", ".join(reads_the_record) + " answers from its notes AND "
+              "its record. Running it without the record would report a number that looks like "
+              "the arm and is not.\n  Either wait for the parameter, or pass --notes-alone to "
+              "run it deliberately as the separately labelled second diagnostic.")
+        return 2
+
     which = ROOMIER if args.roomier_reasoning else STANDARD
+    if args.notes_alone:
+        which = which + "__notes_alone_record_withheld"
     inner = LLMClient(args.cache)
     client: Any = RoomierReasoning(inner) if args.roomier_reasoning else inner
 
@@ -217,6 +258,9 @@ def main(argv=None) -> int:
               else "_".join(h.replace("hh_", "") for h in args.households)))[:90]
     (out / f"frozen_results_{tag}.json").write_text(json.dumps(
         {"reasoning_cap": which, "rows": rows, "problems": problems,
+         "notes_alone_record_withheld": bool(args.notes_alone),
+         "what_this_is": (NOTES_ALONE_LABEL if args.notes_alone else
+                          "notes plus the observation record as it stood at the freeze day"),
          "note": ("the notes are frozen and no looking happens, so an answer cannot "
                   "have been obtained by finding the object. The full question window "
                   "is used, never a cap.")}, indent=1))

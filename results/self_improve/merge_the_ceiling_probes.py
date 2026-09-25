@@ -53,6 +53,24 @@ def main() -> int:
             for seen in b["every time you have seen it"]:
                 if seen["day"] == a["asked on day"] and seen["clock"] == a["at"]:
                     leaks += 1
+    # THE RESIDUE, stated rather than chased. A sibling record still shows that the robot was
+    # standing in some room at the asked instant, and a look lists everything in a room - so if
+    # the asked object has no sighting at that instant, it was not in that room. Counted over
+    # the ten households: 87 of these exist, each ruling out ONE room of about eight. Closing
+    # it completely needs every question in its own file with a reader that cannot look ahead,
+    # which is one agent per question. Until then this is a known weak channel and the number
+    # belongs beside any score from this probe.
+    residue = 0
+    for a in questions:
+        for b in questions:
+            if b is a or a["home"] != b["home"]:
+                continue
+            for seen in b["every time you have seen it"]:
+                if seen["day"] == a["asked on day"] and seen["clock"] == a["at"]:
+                    residue += 1
+    print(f"known weak channel, stated not fixed: {residue} sibling sighting(s) at an asked "
+          f"instant show which room the robot was in, ruling out one room of about eight")
+
     if leaks:
         print(f"REFUSING TO WRITE: {leaks} question(s) have their own moment printed inside "
               f"another question's record, which is the fault that voided the first probe")

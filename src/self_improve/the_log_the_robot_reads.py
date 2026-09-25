@@ -162,6 +162,24 @@ def the_log_block(eyes: Any, object_id: str, up_to_time: int,
     ])
 
 
+def the_log_block_for_a_replay(eyes: Any, object_id: str, the_question_moment: int,
+                               how_many: int = HOW_MANY_SIGHTINGS_TO_SHOW) -> str:
+    """The record as it stood STRICTLY BEFORE a question - the only safe form for a replay.
+
+    `the_log_block`'s bound is inclusive, which is right in the live run: at the second room
+    of a search the robot has just looked, and that look carries the question's own
+    timestamp, so it must be shown. In a replay - a frozen pass, a re-answer pass, a rebuilt
+    snapshot - the look that FOUND the object carries that same timestamp, so the inclusive
+    bound hands over the answer. Measured on one question: at the question moment the block
+    contains coffee_table_l1, the true place; one second earlier it does not.
+
+    This exists as a separate name rather than as a convention about subtracting one, because
+    a convention is something a caller has to remember and a name is something they have to
+    choose. Found by the wave agent while checking an unrelated inconsistency.
+    """
+    return the_log_block(eyes, object_id, the_question_moment - 1, how_many)
+
+
 WHAT_THE_PEOPLE_ARE_DOING = (
     "Think about what the people in this home are likely to be doing at this time of "
     "day, and where that puts the thing you are looking for. A thing is where somebody "

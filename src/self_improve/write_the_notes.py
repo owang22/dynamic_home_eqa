@@ -65,9 +65,24 @@ def ways_an_object_may_be_written(object_id: str) -> List[str]:
 
 
 def where_an_object_is_named(text: str, object_id: str) -> int:
-    """The first position this object is named at, in any of its forms, or -1."""
+    """The first position this object is named at, in any of its forms, or -1.
+
+    IT NORMALISES THE TEXT ITSELF, and it did not. The forms are lowercase and the match
+    was case-sensitive against the raw text, so "Marco's water bottle is in the dining
+    room" scored as not naming `water_bottle_marco` - and so did every prose mention that
+    began a sentence or used a capitalised name. It only ever appeared to work because the
+    other caller, `facts_a_statement_asserts`, lowercases before calling, and because until
+    the people had real names the model wrote identifiers like `book_dana` in lowercase.
+    The night the notes started saying "Marco's water bottle", a hand count over one
+    household went from six movers named to zero, and I believed the zero.
+
+    Found by two measurements of the same thing disagreeing - 0 of 6 against 6 of 6 on the
+    same household and night - which is the only reason it surfaced at all. Normalising
+    inside the function means no caller can hold it wrong.
+    """
+    hay = _normalise(text)
     for form in ways_an_object_may_be_written(object_id):
-        at = _find_whole_words(text, form)
+        at = _find_whole_words(hay, _normalise(form))
         if at >= 0:
             return at
     return -1
@@ -210,14 +225,22 @@ EDITS_SCHEMA: Dict[str, Any] = {
             "items": {
                 "type": "object",
                 "properties": {
-                    "action": {"type": "string", "enum": ["add", "revise", "record evidence"]},
+                    # SETTING A NOTE ASIDE IS ITS OWN ACTION. It used to be a field on a
+                    # revision, and the model filled it in whenever it touched a note: on
+                    # 2026-09-25, 23 of 24 set-asides in one cell happened in the same edit
+                    # as a change of wording, with stated reasons like "no new evidence to
+                    # change status" - a reason for KEEPING a note. 85% of notes then read
+                    # "set aside for now" whatever the routine, which destroys the one
+                    # measure the study reads off that field. Same shape as the display
+                    # teaching the format: a field offered is a field filled.
+                    "action": {"type": "string",
+                               "enum": ["add", "revise", "record evidence",
+                                        "set a note aside", "bring a note back"]},
                     "claim_id": {"type": ["string", "null"]},
                     "statement": {"type": ["string", "null"], "maxLength": 240},
                     "holds_under": {"type": ["string", "null"], "maxLength": 120},
                     "status": {"type": ["string", "null"],
                                "enum": [PROVISIONAL, ESTABLISHED, None]},
-                    "standing": {"type": ["string", "null"],
-                                 "enum": [STILL_STANDING, SET_ASIDE, None]},
                     "supporting_observation_ids": {"type": "array", "items": {"type": "string"},
                                                    "maxItems": 6},
                     "contradicting_observation_ids": {"type": "array", "items": {"type": "string"},
@@ -225,7 +248,7 @@ EDITS_SCHEMA: Dict[str, Any] = {
                     "why": {"type": "string", "maxLength": 240},
                 },
                 "required": ["action", "claim_id", "statement", "holds_under", "status",
-                             "standing", "supporting_observation_ids",
+                             "supporting_observation_ids",
                              "contradicting_observation_ids", "why"],
                 "additionalProperties": False},
         },
@@ -749,9 +772,17 @@ def write_the_notes_incrementally(notes: Notes, household: FrozenHousehold, day:
                                    new_statement=edit.get("statement"),
                                    new_holds_under=edit.get("holds_under"),
                                    new_status=edit.get("status"),
-                                   new_standing=edit.get("standing"),
                                    why=edit.get("why") or "")
                 applied["revise"] += 1
+            elif action == "set a note aside":
+                notes.revise_claim(edit["claim_id"], day, time, new_standing=SET_ASIDE,
+                                   why=edit.get("why") or "")
+                applied["set a note aside"] = applied.get("set a note aside", 0) + 1
+            elif action == "bring a note back":
+                notes.revise_claim(edit["claim_id"], day, time,
+                                   new_standing=STILL_STANDING,
+                                   why=edit.get("why") or "")
+                applied["bring a note back"] = applied.get("bring a note back", 0) + 1
             elif action == "record evidence":
                 for ids, supports in ((edit.get("supporting_observation_ids") or (), True),
                                       (edit.get("contradicting_observation_ids") or (), False)):

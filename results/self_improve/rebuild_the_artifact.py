@@ -28,7 +28,16 @@ RUNS = [pathlib.Path("results/self_improve/search_driven"),
         pathlib.Path("results/self_improve/three_prompts"),
         # the third way of writing notes, the one told whether its answers worked.
         # Same path shape as search_driven: <variant>/<home>/<arm>/<format>/
-        pathlib.Path("results/self_improve/told_if_right")]
+        pathlib.Path("results/self_improve/told_if_right"),
+        # The overnight wave: the first comparison between these arms that means anything,
+        # and the artifact could not see it. Its shape is <cells>/<arm>/<home>/ - two levels
+        # rather than four, and the arm IS the memory format.
+        pathlib.Path("results/self_improve/overnight_wave"),
+        # The higher-resolution run: same shape as overnight_wave, 24 questions a day.
+        pathlib.Path("results/self_improve/overnight_wave_24_questions"),
+        # The faithful rebuilds, one directory each, shaped <run>/<home>/<arm>/<format>/.
+        pathlib.Path("results/self_improve/ace_as_published"),
+        pathlib.Path("results/self_improve/memgpt_as_published")]
 
 ARM_ORDER = ["memory-guided_search", "prior_only,_no_notes",
              "newest_sighting,_no_model", "random"]
@@ -44,10 +53,26 @@ def was_text(w):
 def read_cell(f, root):
     """One cell's questions and its notes. Path shape: <run>/<home>/<arm>/<format>/"""
     parts = f.relative_to(root).parts
-    if len(parts) < 4 or parts[0].startswith("superseded"):
+    # Superseded and stopped-early trees are on disk on purpose and must never reach the
+    # page: every one of them was set aside because something in it made a number mean
+    # something other than what it said.
+    if len(parts) < 4 or parts[0].startswith(("superseded", "stopped_early")):
         return None
     run, home, arm, fmt = parts[0], parts[1], parts[2], parts[3]
-    if root.name == "three_prompts":
+    if root.name.startswith("overnight_wave"):
+        # <cells>/<arm>/<home>/searches.jsonl. Everything in this wave chooses rooms the same
+        # way, so the arm names the memory and the sensing arm is read from the cell's own
+        # header rather than guessed from the path.
+        if parts[0] != "cells" or len(parts) < 3:
+            return None
+        fmt, home = parts[1], parts[2]
+        run = "overnight" if root.name == "overnight_wave" else "overnight, 24 a day"
+        try:
+            arm = json.loads(f.open().readline()).get("sensing_arm") or "memory-guided_search"
+        except (ValueError, OSError):
+            arm = "memory-guided_search"
+        arm = arm.replace(" ", "_")
+    elif root.name == "three_prompts":
         # this tree is <run>/cells/<variant>/<home>/... so re-read it
         parts = f.relative_to(root).parts
         if "cells" in parts:

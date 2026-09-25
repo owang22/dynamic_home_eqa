@@ -206,6 +206,27 @@ HOW_YOUR_MEMORY_WORKS: Dict[str, List[str]] = {
         "you will be thinking with tomorrow, so it is worth spending on the things you "
         "will need every day rather than on something you can look up.",
     ],
+
+    "MemGPT as published": [
+        "YOUR MEMORY has two parts. Your BLOCK is one piece of writing with a fixed size, and "
+        "all of it is in front of you every time you are asked anything. Your ARCHIVE holds "
+        "separate passages, and none of them is shown to you unless you search for it.",
+        "",
+        "Tonight you can do four things, as many times as you need. You can add a line to the "
+        "end of your block. You can replace a piece of your block: name the piece exactly as "
+        "it appears and say what goes in its place, and if you name something that is not "
+        "there word for word, nothing happens and you are told so. You can put a passage in "
+        "your archive. And you can search your archive, which answers a page at a time.",
+        "",
+        "To move something out of your block, put it in your archive first and then replace "
+        "it in the block with nothing. Nothing is ever lost that way: a passage in the "
+        "archive can always be found again by searching for it.",
+        "",
+        "Your block is full when it is full. A line that will not fit is refused and you are "
+        "told how much room there is. What you keep in the block is what you will be thinking "
+        "with tomorrow, so it is worth spending on what you need every day rather than on "
+        "something you could look up.",
+    ],
 }
 
 
@@ -221,6 +242,8 @@ WHAT_ONE_PIECE_IS_CALLED: Dict[str, str] = {
         "Each note is cut off after {n} characters, so keep one idea to a note.",
     "a small working memory and an archive":
         "Each note is cut off after {n} characters, so keep one idea to a note.",
+    "MemGPT as published":
+        "Anything you write is cut off after {n} characters.",
 }
 
 
@@ -284,7 +307,10 @@ def the_nightly_prompt(method: str, household, day: int, the_day_in_words: str,
            "believe turned out to be wrong.",
            "",
            "When something you believed stops being true, make your best judgement on "
-           "whether to keep it, change it, or put it aside. It may help to record what "
+           "whether to keep it, change it, or set it aside. Setting it aside is its own "
+           "thing to do, separate from changing what it says: it means the note is not "
+           "true at the moment, and it stays in your memory so you can bring it back. "
+           "Changing the words of a note leaves it standing. It may help to record what "
            "made you decide.",
            "",
            # Shared, and it is shared deliberately: asking only one arm to cite its

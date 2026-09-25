@@ -101,7 +101,33 @@ class LLMClient:
         self.stats = {"calls": 0, "cached": 0, "prompt_tokens": 0, "completion_tokens": 0, "seconds": 0.0}
 
     ATTEMPTS = 2            # one retry
-    DEADLINE_S = 900.0      # hard wall-clock cap per attempt, enforced by a watchdog that kills the socket
+    # RAISED from 900 to 2400 on 2026-09-25, and this is infrastructure rather than a
+    # setting of the study. The deadline is not in the cache key and does not reach the
+    # server: at temperature 0 and seed 0 a night that takes 1,100 seconds and succeeds
+    # writes exactly what the same night would have written in 700. All the deadline
+    # decides is whether a night is LOST, and a lost night is not neutral - the notes
+    # carry forward unchanged, so the arm it happens to is handicapped for that night.
+    #
+    # Why 900 was too small, in the same units for once. `max_tokens` is
+    # `300 + 260 * the night's edit allowance`, the allowance is derived from what the
+    # night saw and has no upper bound, and the largest so far is 97 edits, which asks
+    # for 25,520 tokens. Measured on this server under ten concurrent cells, generation
+    # runs at 27 to 33 tokens a second. So 900 seconds buys about 27,000 tokens: the
+    # biggest night we have already run was inside the wall by less than 6%, and one
+    # busier household crosses it. 2,400 seconds covers 30,000 tokens even if contention
+    # halves the rate to 20 a second.
+    #
+    # The cost, stated because it is the only one: a request that is genuinely hung now
+    # holds its slot for up to 2,400 seconds per attempt instead of 900, and ATTEMPTS is
+    # 2, so a hung night can occupy a slot for 80 minutes. Losing 80 minutes of one slot
+    # is cheaper than losing a night of one arm's memory.
+    #
+    # The NEXT limit in the chain, so nobody has to rediscover it: the server is started
+    # with --max-model-len 98304, and a request is prompt tokens plus `max_tokens`. The
+    # worst so far is about 57,000 - a 31,000-token prompt plus 25,520 - so there is
+    # headroom, but the prompt grows with the notes and this is the limit to watch after
+    # the clock.
+    DEADLINE_S = 2400.0     # hard wall-clock cap per attempt, enforced by a watchdog that kills the socket
 
     def key(self, messages: List[dict], schema: Optional[dict], max_tokens: int) -> str:
         blob = json.dumps({"model": self.model, "messages": messages, "schema": schema,
@@ -114,7 +140,18 @@ class LLMClient:
         pool's shutdown and so the whole chain) — so a watchdog thread shuts the socket down at DEADLINE_S, which
         makes the blocked recv raise and lets the retry/fallback path run instead of main() hanging."""
         u = urllib.parse.urlsplit(self.endpoint)
-        conn = http.client.HTTPConnection(u.hostname, u.port or 80, timeout=min(600.0, self.DEADLINE_S))
+        # The socket timeout is the DEADLINE, not a smaller number. It used to be
+        # `min(600.0, self.DEADLINE_S)` with DEADLINE_S at 900, so the socket gave up three
+        # hundred seconds before the watchdog that exists to bound this call - two limits on
+        # one thing, and the smaller one was the real one and nobody chose it.
+        #
+        # Measured on 2026-09-25: every one of 24 failed calls in an overnight run was
+        # `TimeoutError: timed out` at exactly 600 seconds, on both attempts, from arms whose
+        # nightly generation is long. The calls were not lost, they were still working. Five
+        # cells were held back by a gate because of it. The watchdog at DEADLINE_S still
+        # bounds the call, so nothing here waits longer than it ever could - a request that is
+        # genuinely lost is still killed at 900 seconds.
+        conn = http.client.HTTPConnection(u.hostname, u.port or 80, timeout=self.DEADLINE_S)
         done = threading.Event()
 
         def watchdog():

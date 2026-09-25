@@ -79,15 +79,65 @@ THE_LOG_AND_THE_ROUTINE = "the log and notes about the routine"
 # published system in our survey that bounds WRITING, and it bounds it by refusing a write
 # that would overflow rather than by a constant nobody chose.
 A_WORKING_MEMORY_AND_AN_ARCHIVE = "a small working memory and an archive"
+# The sixth way, added 2026-09-25: ACE built the way ACE is built, so that the arm we ran can
+# be read as an ablation of it rather than as a loose imitation. Three differences from
+# `claim store told if it was right`, and nothing else: looking back repeats up to three times
+# when something went wrong, the merging step runs every night instead of behind a line budget
+# we invented, and the merge is judged and written by the model with the pairs proposed by
+# meaning rather than by shared words.
+ACE_AS_PUBLISHED = "ACE as published"
+# The seventh way, added 2026-09-25: MemGPT the way MemGPT is built. The size was already
+# corrected to their own 20,000 characters, but the bigger gap was the SHAPE: their core
+# memory is one block of free text, edited by replacing a piece of it with another piece, and
+# their archive holds separate passages reached only by searching. Ours was a list of numbered
+# notes in both tiers, which is a claim store with a size limit rather than MemGPT.
+MEMGPT_AS_PUBLISHED = "MemGPT as published"
+# The eighth way, added 2026-09-25, and it exists because a limit we set turned out to bind.
+# `THE_LOG_AND_THE_ROUTINE` may write at most 16 notes a night, a flat number chosen on the
+# argument that useful notes about a household are few. The control's allowance is derived from
+# what its night actually saw and runs much higher. Counted after the fact: our arm sat exactly
+# at its ceiling of 16 on 28 of 320 nights at 8 questions a day (16% of the disrupted nights,
+# 14% of the nights after the return) and on 26 of 96 at 24 a day - 27%, a third of the
+# disrupted nights - while the control offered more than 16 on 24.4% of its nights and as many
+# as 52. On those nights ours was structurally forbidden from doing what the control did, and
+# we cannot know from the runs how many edits it wanted.
+#
+# This way of writing is the same arm with the control's derived allowance and NOTHING else
+# changed - the same prompt, the same actions, the same claim store. It is not a replacement:
+# it is the one measurement that says whether the ceiling cost anything, and it has to be its
+# own cells because the cells already run were run at 16. Note which way the confound runs -
+# our arm is the handicapped one and still leads - so this can only widen its lead or leave it
+# where it is, and either answer is worth an hour of GPU.
+THE_LOG_AND_THE_ROUTINE_DERIVED_ALLOWANCE = (
+    "the log and notes about the routine, allowance derived")
 WAYS_OF_WRITING = (WHOLESALE_REWRITE, INCREMENTAL_EDITS, TOLD_IF_IT_WAS_RIGHT,
-                   THE_LOG_AND_THE_ROUTINE, A_WORKING_MEMORY_AND_AN_ARCHIVE)
+                   THE_LOG_AND_THE_ROUTINE, A_WORKING_MEMORY_AND_AN_ARCHIVE,
+                   ACE_AS_PUBLISHED, MEMGPT_AS_PUBLISHED,
+                   THE_LOG_AND_THE_ROUTINE_DERIVED_ALLOWANCE)
 
-# How big the working memory is. Anchored on something real rather than chosen: the
-# wholesale-rewrite arm's whole nightly summary averages about 1,500 characters on the
-# cells measured on 2026-09-24, so a working memory of 1,200 is a little smaller than one
-# of those summaries. That makes "what this model can keep in front of it" comparable to
-# "what the summarising arm keeps", which is the comparison the number has to serve.
-WORKING_MEMORY_CHARACTERS = 1200
+# How big the working memory is, and this number comes from MemGPT's own source rather than
+# from us. `letta/constants.py` sets CORE_MEMORY_PERSONA_CHAR_LIMIT and
+# CORE_MEMORY_HUMAN_CHAR_LIMIT to 20,000 and CORE_MEMORY_BLOCK_CHAR_LIMIT to 100,000, so
+# 20,000 is the smallest block the MemGPT lineage actually runs. Found by the research agent
+# reading their code, after it had already reported that the paper's prose carries no
+# portable number.
+#
+# THE FIRST VERSION WAS 1,200, anchored on our own wholesale arm's summary length, and that
+# was the wrong kind of anchor: it risked failing the arm at a size nobody in that lineage
+# ever ran, which is the exact failure I had asked to be checked for.
+#
+# 20,000 is also not vacuous here, which is why it is the default rather than a gesture at
+# fidelity. Measured over 48 finished cells: the whole memory at the end of a month reaches
+# 22,732 characters at the largest and 4,812 at the median. So the limit binds on the largest
+# cells and not on a typical one - the mechanism engages sometimes, which is the only setting
+# where its contribution is observable at all.
+WORKING_MEMORY_CHARACTERS = 20000
+
+# The deliberately tight setting, kept because it produced something the faithful one may
+# not: squeezed to a sixteenth of MemGPT's smallest real block, the model archived notes of
+# its own accord on night 5 and still never had a single write refused in sixteen nights. A
+# run at this size is labelled the tight variant and never as MemGPT.
+A_DELIBERATELY_TIGHT_WORKING_MEMORY = 1200
 
 
 @dataclass
@@ -163,6 +213,9 @@ class Notes:
         self.how_memory_is_written = how_memory_is_written
         self.claims: List[Claim] = []
         self.nightly_summaries: List[Dict[str, Any]] = []
+        # MemGPT's core memory: one block of free text, not a list of notes. Only the
+        # "MemGPT as published" way of writing uses it; it stays empty for every other arm.
+        self.the_block: str = ""
         self.written_up_to_day: int = -1
         self._next_number = 1
 
@@ -174,6 +227,7 @@ class Notes:
         notes = cls(path, raw["household"], raw["arm"], raw["how_memory_is_written"])
         notes.claims = [Claim(**c) for c in raw["claims"]]
         notes.nightly_summaries = raw.get("nightly_summaries", [])
+        notes.the_block = raw.get("the_block", "")
         notes.written_up_to_day = raw.get("written_up_to_day", -1)
         notes._next_number = raw.get("next_claim_number", len(notes.claims) + 1)
         return notes
@@ -188,6 +242,7 @@ class Notes:
             "next_claim_number": self._next_number,
             "claims": [asdict(c) for c in self.claims],
             "nightly_summaries": self.nightly_summaries,
+            "the_block": self.the_block,
         }, indent=1))
 
     def snapshot_to(self, path: pathlib.Path) -> "Notes":
@@ -447,6 +502,21 @@ class Notes:
                 budget_bit=(False if no_limit else len(available) > read_budget_lines),
                 how_chosen=("the whole summary it keeps, with no length limit" if no_limit
                             else "the first lines of the one summary it keeps"))
+
+        if self.how_memory_is_written == MEMGPT_AS_PUBLISHED:
+            # The block in full, and the archive searched for what was asked about - which is
+            # the only way the archive ever reaches a prompt, as theirs is.
+            found = self.search_the_archive(about_object or "")
+            text = "\n".join(
+                ["Your block:", self.the_block or "(it is empty)", "",
+                 "Found in your archive by searching for what you were asked about:"]
+                + ([c.statement for c in found] or ["(the search found nothing)"]))
+            return WhatWasRead(
+                text=text, claim_ids_shown=tuple(c.claim_id for c in found),
+                n_lines_available=len([c for c in self.claims if c.folded_into is None]),
+                n_lines_shown=len(found), budget_bit=False,
+                how_chosen="its block, plus its archive searched for the thing it was asked "
+                           "about")
 
         if self.how_memory_is_written == A_WORKING_MEMORY_AND_AN_ARCHIVE:
             # This arm does NOT get to read everything it holds. Its working memory is

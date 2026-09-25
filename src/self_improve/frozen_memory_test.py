@@ -37,6 +37,9 @@ from self_improve.frozen_household import (BEYOND_REACH, FrozenHousehold, period
                                            plain_place_name)
 from self_improve.looking import hours_and_minutes
 from self_improve.memory_notes import Notes
+from self_improve.memory_notes import THE_LOG_AND_THE_ROUTINE
+from self_improve.the_log_the_robot_reads import (
+    the_log_block_for_a_replay)
 
 # Which day's notes are frozen, and which days' questions are then asked of them.
 # Every question in the window, not a held-out slice of it. With the
@@ -254,12 +257,42 @@ def yardsticks_for_a_window(household: FrozenHousehold,
 
 
 def question_prompt(household: FrozenHousehold, notes: Notes, question: dict,
-                    read_budget_lines: int) -> List[dict]:
+                    read_budget_lines: int, *,
+                    eyes: Optional[Any] = None) -> List[dict]:
     """Identical across arms apart from the notes themselves.
 
     Both formats read through the same window: the same number of lines, chosen by
     the format's own logic. See memory_notes.what_the_robot_can_read.
+
+    `eyes` IS REQUIRED FOR THE ARM THAT READS ITS OWN RECORD, and the function raises
+    without it rather than quietly leaving the record out. That arm's notes are deliberately
+    not about places, because the record holds places - so a frozen prompt without the
+    record measures an arm we did not build, and it would have looked like a fair diagnostic.
+    The record is bounded by `the_log_block_for_a_replay`, which stops strictly before the
+    question: the inclusive bound that is correct in the live run hands over the answer in a
+    replay, because the look that found the object carries the question's own timestamp.
+
+    Pass `eyes=None` deliberately to run the notes-alone diagnostic instead. That is a
+    different and legitimate question - does this arm's memory contain anything
+    answer-relevant on its own - and the caller must ask for it by name, which is why this
+    is keyword-only. It is not that arm's accuracy and must not be reported as it.
     """
+    # The mirror of the refusal below, and just as important: handing the record to an arm
+    # that does not read one would give it a capability it was never built with, and the
+    # comparison would silently become something else. Neither direction is allowed by
+    # accident.
+    if eyes is not None and notes.how_memory_is_written != THE_LOG_AND_THE_ROUTINE:
+        raise ValueError(
+            f"{notes.how_memory_is_written!r} does not read an observation record, so "
+            f"passing `eyes` would give it one it never had in the live run. Only the arm "
+            f"that reads its own record takes eyes here.")
+    if (notes.how_memory_is_written == THE_LOG_AND_THE_ROUTINE and eyes is None
+            and not _NOTES_ALONE_WAS_ASKED_FOR[0]):
+        raise ValueError(
+            "this arm reads its own observation record and you have not passed `eyes`, so "
+            "the prompt would leave the record out and the answer would look like the arm "
+            "without being it. Pass eyes=<TheHouseAsSeen>, or call "
+            "notes_alone_is_what_i_want() first if you mean the notes-alone diagnostic.")
     was_read = notes.what_the_robot_can_read(read_budget_lines,
                                              about_object=question["object_id"])
     places = sorted(household.places)
@@ -273,7 +306,15 @@ def question_prompt(household: FrozenHousehold, notes: Notes, question: dict,
     lines += [
         "",
         "The robot has not been told where anything is. Everything it knows comes",
-        "from looks it took. These are its notes:",
+        "from looks it took.",
+        "",
+    ]
+    if eyes is not None:
+        lines += [the_log_block_for_a_replay(
+            eyes, question["object_id"],
+            question["day_index"] * DAY_SECONDS + question["t_query"]), ""]
+    lines += [
+        "These are its notes:",
         "",
         was_read.text,
         "",
@@ -285,19 +326,51 @@ def question_prompt(household: FrozenHousehold, notes: Notes, question: dict,
             {"role": "user", "content": "\n".join(lines)}]
 
 
+# The notes-alone diagnostic has to be asked for out loud. A flag rather than a parameter
+# because the refusal above is there to stop a caller drifting into it, and a caller who
+# means it can say so once for the whole pass.
+_NOTES_ALONE_WAS_ASKED_FOR = [False]
+
+
+def notes_alone_is_what_i_want() -> None:
+    """Run the frozen pass WITHOUT the record, for the arm that normally reads it.
+
+    Only call this for the labelled diagnostic, and label its output "notes alone, record
+    withheld, not this arm's accuracy" in the output file and not only in a report.
+    """
+    _NOTES_ALONE_WAS_ASKED_FOR[0] = True
+
+
 def question_prompt_and_what_was_read(household: FrozenHousehold, notes: Notes,
-                                      question: dict, read_budget_lines: int):
+                                      question: dict, read_budget_lines: int, *,
+                                      eyes: Optional[Any] = None):
+    """`eyes` threads straight through to `question_prompt`, which refuses both the arm
+    that needs a record and is not given one and the arm that is given one and never had
+    one. Threading it rather than defaulting it is the point: a default here would put the
+    silent wrong answer back one layer up from where it was just removed."""
     was_read = notes.what_the_robot_can_read(read_budget_lines,
                                              about_object=question["object_id"])
-    return question_prompt(household, notes, question, read_budget_lines), was_read
+    return (question_prompt(household, notes, question, read_budget_lines, eyes=eyes),
+            was_read)
 
 
 def run_frozen_memory_test(household: FrozenHousehold, notes: Notes, client: LLMClient,
                            freeze_point: str, read_budget_lines: int,
                            out_dir: pathlib.Path,
-                           max_questions: Optional[int] = None) -> Dict[str, Any]:
+                           max_questions: Optional[int] = None, *,
+                           eyes: Optional[Any] = None) -> Dict[str, Any]:
     """Freeze these notes and answer the held-out questions. No looking happens
-    here at all: the notes are read-only for the whole test."""
+    here at all: the notes are read-only for the whole test.
+
+    `eyes` is the robot's observation record, for the arm whose memory is half record by
+    design. It is threaded down to the prompt rather than defaulted, and the prompt refuses
+    an arm that needs it and has not got it. The refusal is what converts "a number that
+    looks like the arm and is not" into "this cannot run yet", which is the state to be in.
+
+    NO LOOKING STILL HAPPENS. The record is read at a bound strictly before each question,
+    through `the_log_block_for_a_replay`, so nothing the search found on the day being asked
+    about can reach the prompt - the failure that made the first ceiling probe meaningless.
+    """
     if freeze_point not in FREEZE_POINTS:
         raise ValueError(f"unknown freeze point {freeze_point!r}; "
                          f"expected one of {sorted(FREEZE_POINTS)}")
@@ -321,7 +394,7 @@ def run_frozen_memory_test(household: FrozenHousehold, notes: Notes, client: LLM
     n_times_the_budget_bit = 0
     for question in questions:
         messages, was_read = question_prompt_and_what_was_read(
-            household, frozen, question, read_budget_lines)
+            household, frozen, question, read_budget_lines, eyes=eyes)
         lines_available.append(was_read.n_lines_available)
         if was_read.budget_bit:
             n_times_the_budget_bit += 1

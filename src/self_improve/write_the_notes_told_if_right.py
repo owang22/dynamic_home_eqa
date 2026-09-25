@@ -30,6 +30,29 @@ Nothing is deleted. A folded claim keeps its wording, its history and its eviden
 and stops being shown, so the question this study turns on - is the ordinary
 routine still written down - can be asked of this arm exactly as of the others.
 
+HOW THIS DIFFERS FROM THE REAL ACE, checked against github.com/ace-agent/ace rather than
+against the paper's prose, by the research agent. The shape is faithful; several load-bearing
+specifics are not, and they diverge in BOTH directions:
+
+  - their Reflector loops up to three rounds and only when the answer was wrong, stopping
+    early on a correct one. Ours is one unconditional call every night. This is the clearest
+    divergence and it is the reason this arm is "inspired by ACE's three-role division"
+    rather than "ACE's Reflector".
+  - their grow-and-refine groups by real sentence embeddings (all-mpnet-base-v2, cosine at
+    0.90) and then has an LLM author the merged text. Ours is the mirror image: word overlap
+    for the grouping, and a deterministic concatenation for the merge with no model involved.
+    The paper's "lightweight, non-LLM logic" describes their grouping step only, not the
+    merge. Both halves differ, and in opposite directions, so they are named separately.
+  - their bullets carry no condition field at all. `holds_under` - the thing that lets a
+    claim say "true only under this routine" - is this study's own addition to the format and
+    must not be presented as ACE's.
+  - their released code defines ADD, UPDATE, MERGE and DELETE but executes only ADD; the rest
+    are unused in the shipped batched workflow. Ours actually runs revise, attach-evidence
+    and join. That is a point in this arm's favour rather than a shortfall, and it is stated
+    because a reader who checks the repository would otherwise find the gap themselves.
+  - their DELETE removes a bullet's content outright. Ours never deletes, which was already
+    recorded below and the real code confirms rather than changes.
+
 Three differences from the paper, all deliberate and all to be stated in the write-up:
   - the paper's Generator is a reasoning model producing trajectories; here it is
     the robot's own room choices and answers, which is the task this study has.
@@ -49,6 +72,7 @@ from typing import Any, Dict, List, Optional, Sequence
 from self_improve import what_the_robot_is_told as told
 from self_improve import write_the_notes as writing
 from self_improve.frozen_household import FrozenHousehold
+from self_improve.grouping_by_meaning import pairs_worth_asking_about
 from baselines.patrol.llm import LLMClient
 from self_improve.looking import LookRecord
 from self_improve.memory_notes import (ESTABLISHED, PROVISIONAL, SET_ASIDE,
@@ -221,9 +245,28 @@ def _structured_verdicts(notes: Notes, answers_today: Sequence[Any]) -> List[dic
     return out
 
 
+# How many times the looking-back step may run in one night. ONE is what this arm has always
+# done: look back once and move on. The real ACE looks back and then, if the answer it was
+# reflecting on was still wrong, looks back again, up to three times, stopping early as soon
+# as it is right. Their own table 19 varies this cap - one round gets 61.3 where five gets
+# 67.6 and ten gets 65.2 against a base of 53.3 - so the repeats buy about six points of a
+# fourteen point gain on tasks that never change, and more is not always better.
+#
+# Nothing in their paper tests whether the repeating matters when the world changes, which is
+# the only reason this parameter exists here. Set it above one to get their version.
+HOW_MANY_TIMES_TO_LOOK_BACK = 1
+
+
 def judge_the_day(notes: Notes, household: FrozenHousehold, day: int,
-                  answers_today: Sequence[Any], client: LLMClient) -> Dict[str, Any]:
-    """Step one of the night: which notes helped, which misled, what to change."""
+                  answers_today: Sequence[Any], client: LLMClient,
+                  how_many_times: int = HOW_MANY_TIMES_TO_LOOK_BACK) -> Dict[str, Any]:
+    """Step one of the night: which notes helped, which misled, what to change.
+
+    With `how_many_times` above one it repeats the way theirs does: it looks back, and if any
+    of the day's questions was still answered wrongly it looks back again with those failures
+    put in front of it, up to that many times. It stops as soon as there is nothing left that
+    went wrong, so on a good day it costs exactly one call, as theirs does.
+    """
     lines = (
         told.the_people_who_live_here(household.asked_objects, household.resident_ids)
         + ["",
@@ -245,18 +288,45 @@ def judge_the_day(notes: Notes, household: FrozenHousehold, day: int,
            "keeping beside a new note.",
            "",
            told.how_much_you_may_write(200)])
-    text, _ = client.complete(
-        [{"role": "system", "content": JUDGING_SYSTEM},
-         {"role": "user", "content": "\n".join(lines)}],
-        JUDGEMENT_SCHEMA, max_tokens=1200)
-    verdicts, wanted = [], []
-    if text:
-        try:
-            got = json.loads(text)
-            verdicts = got.get("verdicts") or []
-            wanted = got.get("what_to_change_tonight") or []
-        except ValueError:
-            verdicts, wanted = [], []
+
+    # The questions that still went wrong. Theirs repeats only while something is wrong, and
+    # only these are put in front of it on a second look - a second pass over the whole day
+    # would be a different thing, and would cost the same on a day with nothing to fix.
+    def still_wrong():
+        return [r for r in answers_today
+                if r.rooms_opened and not (r.found_it and r.found_at_step == 1)]
+
+    rounds, verdicts, wanted, text = 0, [], [], None
+    for attempt in range(max(1, how_many_times)):
+        rounds += 1
+        ask = list(lines)
+        if attempt:
+            ask += ["",
+                    f"YOU HAVE LOOKED BACK ONCE ALREADY and these are the questions that "
+                    f"still went wrong today. Look at them again and say what you missed "
+                    f"the first time.",
+                    *the_day_in_results(notes, still_wrong())]
+        text, _ = client.complete(
+            [{"role": "system", "content": JUDGING_SYSTEM},
+             {"role": "user", "content": "\n".join(ask)}],
+            JUDGEMENT_SCHEMA, max_tokens=1200)
+        got_verdicts, got_wanted = [], []
+        if text:
+            try:
+                got = json.loads(text)
+                got_verdicts = got.get("verdicts") or []
+                got_wanted = got.get("what_to_change_tonight") or []
+            except ValueError:
+                got_verdicts, got_wanted = [], []
+        # A later look adds to what the earlier one found rather than replacing it, keyed on
+        # the note and the verdict so one round cannot double-count the same judgement.
+        seen = {(v.get("claim_id"), v.get("it")) for v in verdicts}
+        verdicts += [v for v in got_verdicts
+                     if (v.get("claim_id"), v.get("it")) not in seen]
+        wanted += [w for w in got_wanted if w not in wanted]
+        if not still_wrong():
+            break          # nothing went wrong, so theirs would stop here too
+
     known = {c.claim_id for c in notes.claims}
     kept = [v for v in verdicts if v.get("claim_id") in known
             and v.get("it") in ("helped", "misled")]
@@ -270,6 +340,9 @@ def judge_the_day(notes: Notes, household: FrozenHousehold, day: int,
                                      v.get("about") or "",
                                      v.get("what_it_taught") or "")
     return {"model_call_failed": not text,
+            "how_many_times_it_looked_back": rounds,
+            "how_many_times_it_was_allowed_to": max(1, how_many_times),
+            "n_questions_still_wrong_at_the_end": len(still_wrong()),
             "n_verdicts_offered": len(verdicts),
             "n_verdicts_kept": len(kept),
             "n_named_a_claim_that_does_not_exist": n_named_a_claim_that_does_not_exist,
@@ -374,9 +447,17 @@ def change_the_notes(notes: Notes, household: FrozenHousehold, day: int, time: i
                                    new_statement=edit.get("statement"),
                                    new_holds_under=edit.get("holds_under"),
                                    new_status=edit.get("status"),
-                                   new_standing=edit.get("standing"),
                                    why=edit.get("why") or "")
                 applied["revise"] += 1
+            elif action == "set a note aside":
+                notes.revise_claim(edit["claim_id"], day, time, new_standing=SET_ASIDE,
+                                   why=edit.get("why") or "")
+                applied["set a note aside"] = applied.get("set a note aside", 0) + 1
+            elif action == "bring a note back":
+                notes.revise_claim(edit["claim_id"], day, time,
+                                   new_standing=STILL_STANDING,
+                                   why=edit.get("why") or "")
+                applied["bring a note back"] = applied.get("bring a note back", 0) + 1
             elif action == "record evidence":
                 for ids, supports in ((edit.get("supporting_observation_ids") or (), True),
                                       (edit.get("contradicting_observation_ids") or (), False)):
@@ -413,6 +494,94 @@ def change_the_notes(notes: Notes, household: FrozenHousehold, day: int, time: i
             "were_the_edits_vacuous": writing.were_the_edits_vacuous(
                 [e for e in edits if e.get("action") != "join two claims"],
                 claims_before, household)}
+
+
+MERGE_SCHEMA: Dict[str, Any] = {
+    "type": "object",
+    "properties": {
+        "merges": {
+            "type": "array", "maxItems": 4,
+            "items": {
+                "type": "object",
+                "properties": {
+                    "keep": {"type": "string"},
+                    "fold_in": {"type": "string"},
+                    "one_note_instead": {"type": ["string", "null"], "maxLength": 240},
+                    "they_say_the_same_thing": {"type": "boolean"},
+                    "why": {"type": "string", "maxLength": 200},
+                },
+                "required": ["keep", "fold_in", "one_note_instead",
+                             "they_say_the_same_thing", "why"],
+                "additionalProperties": False}}},
+    "required": ["merges"], "additionalProperties": False}
+
+
+def merge_what_says_the_same_thing(notes: Notes, household: FrozenHousehold, day: int,
+                                   time: int, client: LLMClient) -> Dict[str, Any]:
+    """ACE's grow-and-refine, the way round they do it: meaning groups, the model merges.
+
+    RUNS EVERY NIGHT, with no condition in front of it. That is the change that matters. Ours
+    used to sit behind a line budget we invented, and over 224 nights of this arm that budget
+    was never once approached - mean allowance 42.9 against mean carried 18.1 - so the step
+    never ran at all and we nearly reported "deduplication does not help here". Their paper
+    describes doing it as it goes OR when the context window overflows; the window never
+    overflows on this task, so as-it-goes is the mode that exists here.
+
+    The embedding proposes the few most alike pairs and the MODEL decides whether each pair
+    really says one thing and writes the single note that replaces both. A pair it rejects is
+    left alone and recorded, so a night where nothing merges is distinguishable from a night
+    where nothing was asked.
+    """
+    candidates = pairs_worth_asking_about(notes.claims)
+    if not candidates:
+        return {"n_pairs_proposed": 0, "n_merged": 0, "n_rejected": 0, "pairs": []}
+    lines = ["Two of your notes may be saying the same thing. For each pair below, say "
+             "whether they do, and if they do, write the one note that should replace both.",
+             "",
+             "If they say different things, say so and leave them alone. Two notes about the "
+             "same object at different times of day are NOT the same note.",
+             ""]
+    for one, two, alike in candidates:
+        lines += [f"Pair: [{one.claim_id}] and [{two.claim_id}]",
+                  f"  [{one.claim_id}] {one.statement}",
+                  f"  [{two.claim_id}] {two.statement}",
+                  f"  both hold under: {one.holds_under}",
+                  ""]
+    text, _ = client.complete(
+        [{"role": "system", "content": told.WRITING_SYSTEM},
+         {"role": "user", "content": "\n".join(lines)}],
+        MERGE_SCHEMA, max_tokens=900)
+    merges = []
+    if text:
+        try:
+            merges = json.loads(text).get("merges") or []
+        except ValueError:
+            merges = []
+    ids = {c.claim_id for c in notes.claims}
+    done, rejected, notes_on_pairs = 0, 0, []
+    for m in merges:
+        keep, fold = m.get("keep"), m.get("fold_in")
+        if keep not in ids or fold not in ids or keep == fold:
+            continue
+        if not m.get("they_say_the_same_thing"):
+            rejected += 1
+            notes_on_pairs.append({"keep": keep, "fold_in": fold, "merged": False,
+                                   "why": (m.get("why") or "")[:200]})
+            continue
+        try:
+            notes.fold_one_claim_into_another(
+                keep, fold, day, time,
+                new_statement=m.get("one_note_instead"),
+                why=(m.get("why") or "the model judged these to be one note"))
+            done += 1
+            notes_on_pairs.append({"keep": keep, "fold_in": fold, "merged": True,
+                                   "why": (m.get("why") or "")[:200]})
+        except (KeyError, ValueError):
+            pass
+    return {"n_pairs_proposed": len(candidates), "n_merged": done,
+            "n_rejected": rejected,
+            "how_alike_the_pairs_were": [round(a, 3) for _, _, a in candidates],
+            "pairs": notes_on_pairs}
 
 
 def keep_the_notes_from_growing(notes: Notes, household: FrozenHousehold,
@@ -496,20 +665,31 @@ def keep_the_notes_from_growing(notes: Notes, household: FrozenHousehold,
 def write_the_notes_told_if_right(notes: Notes, household: FrozenHousehold, day: int,
                                   time: int, looks_today: Sequence[LookRecord],
                                   answers_today: Sequence[Any], client: LLMClient,
+                                  as_published: bool = False,
                                   max_edits: Optional[int] = None,
                                   tell_the_model_everything_it_saw: bool = True,
                                   name_the_objects_it_will_be_quizzed_on: bool = False,
                                   a_message_tonight: Optional[str] = None
                                   ) -> Dict[str, Any]:
     """One night of this arm: judge the day, then change the notes. Two model calls."""
-    judgement = judge_the_day(notes, household, day, answers_today, client)
+    # As published: look back up to three times when something went wrong, stopping early
+    # when nothing did. Our own arm looks back once, which is the ablation.
+    judgement = judge_the_day(notes, household, day, answers_today, client,
+                              how_many_times=(3 if as_published else 1))
     report = change_the_notes(
         notes, household, day, time, looks_today, judgement, client,
         max_edits=max_edits,
         tell_the_model_everything_it_saw=tell_the_model_everything_it_saw,
         name_the_objects_it_will_be_quizzed_on=name_the_objects_it_will_be_quizzed_on,
         a_message_tonight=a_message_tonight)
+    # As published: the merging step runs every night, with the pairs proposed by meaning and
+    # the merge written by the model. Ours has it behind a line budget that never fires.
+    report["how_it_merged"] = (
+        merge_what_says_the_same_thing(notes, household, day, time, client)
+        if as_published else {"n_pairs_proposed": 0, "n_merged": 0,
+                              "why": "this arm only merges when it is over its line budget"})
     report["day"] = day
+    report["built_the_way_ACE_is_built"] = as_published
     report["how_it_judged_the_day"] = judgement
     report["n_questions_it_was_shown_the_result_of"] = len(answers_today)
     report["n_model_calls_tonight"] = 2

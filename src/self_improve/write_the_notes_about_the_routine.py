@@ -201,9 +201,17 @@ def write_the_notes_about_the_routine(notes: Notes, household: FrozenHousehold, 
                                    new_statement=edit.get("statement"),
                                    new_holds_under=edit.get("holds_under"),
                                    new_status=edit.get("status"),
-                                   new_standing=edit.get("standing"),
                                    why=edit.get("why") or "")
                 applied["revise"] += 1
+            elif action == "set a note aside":
+                notes.revise_claim(edit["claim_id"], day, time, new_standing=SET_ASIDE,
+                                   why=edit.get("why") or "")
+                applied["set a note aside"] = applied.get("set a note aside", 0) + 1
+            elif action == "bring a note back":
+                notes.revise_claim(edit["claim_id"], day, time,
+                                   new_standing=STILL_STANDING,
+                                   why=edit.get("why") or "")
+                applied["bring a note back"] = applied.get("bring a note back", 0) + 1
             elif action == "record evidence":
                 for ids, supports in ((edit.get("supporting_observation_ids") or (), True),
                                       (edit.get("contradicting_observation_ids") or (), False)):
