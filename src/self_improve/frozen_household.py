@@ -31,9 +31,28 @@ from typing import Dict, Iterable, List, Optional, Sequence, Tuple
 
 from baselines.types import DAY_SECONDS, ON_PERSON, OUT_OF_HOUSE
 
-# The scenario the study runs on, locked 2026-09-24: one resident off sick,
-# questions about everyone's things. Read-only - it belongs to another paper.
+# The scenario the study runs on: illness_v1, as the directory stands now. It passes
+# all six scenario checks and all four legs of the gate (learn +14.2, break -13.3,
+# re-learn +13.5, break again -8.9), and 5 of 10 households show the full
+# four-phase shape.
+#
+# A correction to the record, because it was repeated several times: "illness_v1
+# failed seven ways" was true of an EARLIER build and is NOT true of the directory
+# now at results/self_improve/runs/illness_v1/. It must not be described as the
+# failed scenario anywhere.
+#
+# illness_v2 is superseded: it fails the fourth leg outright - a forgetting learner
+# loses only 1.6 points on the first two days back to normal against a 5-point bar,
+# with a household-clustered error of 4.2 - so its return is not a change and no arm
+# can be measured on it.
 FROZEN_BANKS = pathlib.Path(
+    "/home/oliver/robot/dynamic_home_eqa/results/self_improve/runs/illness_v1/banks")
+
+SUPERSEDED_ILLNESS_V2 = pathlib.Path(
+    "/home/oliver/robot/dynamic_home_eqa/results/self_improve/runs/illness_v2/banks")
+
+# The earlier scenarios, kept so the measurements that ruled them out reproduce.
+SICK10_PARTIAL_SUPERSEDED = pathlib.Path(
     "/home/oliver/robot/dynamic_home_eqa/results/regime_search/sick10_partial/banks")
 
 # The earlier scenario, kept only so the measurements that ruled it out can be

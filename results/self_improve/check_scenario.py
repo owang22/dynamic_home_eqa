@@ -46,6 +46,14 @@ measuring the world. Reported as a contamination percentage, not failed on.
 POWER. Questions per window is the flattering number; objects per window is the real
 one, because twenty questions about one object are not twenty observations.
 
+THE CLASSICAL CURVE (check 7, owned by check_classical_curve.py, which also runs on its
+own). Two counting methods with no language model anywhere - a timetable that never
+forgets and a timetable with a three-day memory - are replayed over the banks, and their
+accuracy must climb through the settled window, fall at the upset, climb back during it,
+and fall again at the return. If a counting method cannot be broken by the disruption
+then there is nothing in the data for a language model to notice, and that is a failing
+scenario, not a failing method. Thresholds and their justifications live in that file.
+
 HOUSEHOLD EXCLUSION. A household where fewer than two asked-about objects change
 their commonest place is a household where the event did not happen. Dropped by
 rule, named in the output, and every other number computed without it.
@@ -509,6 +517,17 @@ def check(banks, settled, disrupted, after, quiet=False):
                  f"{sum(len(b.answers(stage=disrupted)) for b in kept)} questions. "
                  f"Cluster every interval on household and object.")
     lines.append("")
+
+    # ------------------------------------------------ 7. the classical curve
+    # Owned by check_classical_curve.py: two counting methods with no language model
+    # anywhere, followed through the four phases of the calendar. Imported here rather
+    # than at the top so this file still runs if that one is being edited.
+    from check_classical_curve import check_curve
+    cc_lines, cc_fails, cc_warns, cc_numbers = check_curve(banks, settled, disrupted, after, quiet)
+    lines.extend(cc_lines)
+    fails.extend(cc_fails)
+    warns.extend(cc_warns)
+    numbers["classical_curve"] = cc_numbers
     return lines, fails, warns, numbers
 
 

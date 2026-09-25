@@ -55,8 +55,17 @@ def judge_one_look(look: Dict[str, Any]) -> Optional[Dict[str, Any]]:
                   if s.get("revealed_by_target") == target
                   or s.get("room") == target or s.get("place_id") == target}
 
-    first_matched = bool(first) and first <= found_here
-    second_matched = bool(second) and second <= found_here
+    # "I expect to find nothing here" is a legitimate and informative prediction:
+    # a claim that puts the charger on the desk predicts an empty living room. So
+    # a prediction is judged against the objects EITHER claim mentions, and it
+    # holds when that set matches exactly. Testing `first <= found_here` instead
+    # would have scored every expect-nothing prediction as failed, which would have
+    # silently marked the most discriminating looks in the study as settling
+    # nothing.
+    mentioned_by_either = first | second
+    found_among_those = found_here & mentioned_by_either
+    first_matched = found_among_those == first
+    second_matched = found_among_those == second
     if first_matched and not second_matched:
         settled = "the first claim held"
     elif second_matched and not first_matched:
@@ -78,6 +87,7 @@ def judge_one_look(look: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         "the_look_could_tell_them_apart": expectations_differ,
         "why": DIFFERENT_EXPECTATIONS if expectations_differ else CANNOT_TELL_THEM_APART,
         "objects_actually_found_at_the_target": sorted(found_here),
+        "objects_either_claim_mentioned_that_were_found": sorted(found_among_those),
         "what_the_look_settled": settled,
         "either_claim_named_something_in_this_room": bool(first or second),
         "the_look_named_no_expected_objects_at_all": not (first or second),

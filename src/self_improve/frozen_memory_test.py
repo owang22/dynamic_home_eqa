@@ -56,9 +56,10 @@ FREEZE_POINTS = {
             "same information and they should agree. If they differ here, "
             "something other than the intervention is differing."),
         "room_to_move": (
-            "a memory that learned only the ordinary fortnight scores 13-60% "
-            "(mean 34%) here; nothing any arm does can change that at this "
-            "freeze point"),
+            "illness_v1: floor 55% (the ordinary fortnight's places, never "
+            "revised), ceiling 71% (the per-object oracle), 16 points of room - but "
+            "no arm can move within it at this freeze point, since none has seen a "
+            "disrupted day"),
     },
     "did it learn the new routine": {
         "notes_through_day": 23, "questions_from_days": list(range(14, 24)),
@@ -66,9 +67,10 @@ FREEZE_POINTS = {
             "revision. The notes have seen the whole disrupted period; the "
             "questions are that period's own."),
         "room_to_move": (
-            "floor 34% (the ordinary fortnight's places, never revised), ceiling "
-            "80% (every object's own commonest place in this window, known "
-            "perfectly): 46 percentage points of room"),
+            "illness_v1: floor 55%, ceiling 71%, 16 points of room. A result is "
+            "reported as a share of that room, not as a bare accuracy. (The 34%/80%/"
+            "46-point figures previously written here were from the superseded "
+            "sick10_partial scenario.)"),
     },
     "did the looking arm find it sooner": {
         "notes_through_day": 16, "questions_from_days": list(range(17, 20)),
@@ -79,9 +81,10 @@ FREEZE_POINTS = {
             "everything and will sit on top of each other. The looking factor has "
             "to be reported here and the memory factor at the late points."),
         "room_to_move": (
-            "three days of questions, 72 per household: thin, so the looking "
-            "factor is reported with its own standard error and never pooled with "
-            "the memory factor"),
+            "illness_v1: floor 56%, ceiling 76%, 20 points of room - the widest of "
+            "the four, which is why the looking factor belongs here. Three days of "
+            "questions, 72 per household: thin, so it carries its own standard "
+            "error and is never pooled with the memory factor"),
     },
     "did it keep the old routine": {
         "notes_through_day": 28, "questions_from_days": list(range(29, 32)),
@@ -90,12 +93,11 @@ FREEZE_POINTS = {
             "that kept the ordinary-routine claim alongside the new one should "
             "answer the return; notes that overwrote it should not."),
         "room_to_move": (
-            "keeping the ordinary routine is worth about 68% here and is already "
-            "within 2 points of this window's oracle; replacing it with the "
-            "disrupted routine is worth about 45%. So the predicted gap between "
-            "the two ways of writing notes is roughly 23 percentage points. "
-            "Frozen at day 28, not 31: at day 31 the questions come from days the "
-            "notes have already been written over."),
+            "illness_v1: floor 71%, ceiling 81%, 10 points of room - the narrowest "
+            "of the four, because by the return most things are back where a "
+            "never-updated memory already had them. Frozen at day 28, not 31: at "
+            "day 31 the questions come from days the notes have already been "
+            "written over."),
     },
 }
 
@@ -117,6 +119,44 @@ class HeldOutAnswer:
     confidence: Optional[float]
     reasoning: str
     parse_status: str
+
+
+def spread_across_the_days(questions: Sequence[dict], how_many: int) -> List[dict]:
+    """Take a capped sample EVENLY ACROSS THE DAYS of the window, not the first N.
+
+    This replaces `questions[:how_many]`, which was a serious measurement fault rather
+    than a rough edge. The bank's questions are in time order and there are 24 a day, so
+    a cap of 30 selected 24 questions from the window's first day and 6 from its second -
+    2 of 10 days at the main freeze points, and 2 of 3 at the others. Every capped figure
+    was therefore three-quarters a statement about a single day.
+
+    It mattered most at the disrupted window, whose first day is the transition day and is
+    categorically harder than the rest: about 12.5% correct on day 14 against about 49%
+    across days 15 to 23. Capping at the front made every number a measurement of the
+    transition.
+    """
+    if how_many >= len(questions):
+        return list(questions)
+    import collections
+    by_day: Dict[int, List[dict]] = collections.defaultdict(list)
+    for question in questions:
+        by_day[question["day_index"]].append(question)
+    days = sorted(by_day)
+    taken: List[dict] = []
+    # round-robin over the days so every day is represented before any day is deepened
+    position = 0
+    while len(taken) < how_many:
+        added = False
+        for day in days:
+            if position < len(by_day[day]):
+                taken.append(by_day[day][position])
+                added = True
+                if len(taken) == how_many:
+                    break
+        if not added:
+            break
+        position += 1
+    return sorted(taken, key=lambda q: (q["t_query"], q["question_id"]))
 
 
 def questions_in_the_window(household: FrozenHousehold, days: Sequence[int]) -> List[dict]:
@@ -214,8 +254,14 @@ def yardsticks_for_a_window(household: FrozenHousehold,
 
 
 def question_prompt(household: FrozenHousehold, notes: Notes, question: dict,
-                    retrieval_budget: int) -> List[dict]:
-    """Identical across arms apart from the notes themselves."""
+                    read_budget_lines: int) -> List[dict]:
+    """Identical across arms apart from the notes themselves.
+
+    Both formats read through the same window: the same number of lines, chosen by
+    the format's own logic. See memory_notes.what_the_robot_can_read.
+    """
+    was_read = notes.what_the_robot_can_read(read_budget_lines,
+                                             about_object=question["object_id"])
     places = sorted(household.places)
     lines = [
         f"It is day {question['day_index']} at {hours_and_minutes(question['t_query'])}.",
@@ -229,7 +275,7 @@ def question_prompt(household: FrozenHousehold, notes: Notes, question: dict,
         "The robot has not been told where anything is. Everything it knows comes",
         "from looks it took. These are its notes:",
         "",
-        notes.what_the_robot_can_read(retrieval_budget),
+        was_read.text,
         "",
         f"Question: where is {question['object_id']} right now?",
         "",
@@ -239,8 +285,15 @@ def question_prompt(household: FrozenHousehold, notes: Notes, question: dict,
             {"role": "user", "content": "\n".join(lines)}]
 
 
+def question_prompt_and_what_was_read(household: FrozenHousehold, notes: Notes,
+                                      question: dict, read_budget_lines: int):
+    was_read = notes.what_the_robot_can_read(read_budget_lines,
+                                             about_object=question["object_id"])
+    return question_prompt(household, notes, question, read_budget_lines), was_read
+
+
 def run_frozen_memory_test(household: FrozenHousehold, notes: Notes, client: LLMClient,
-                           freeze_point: str, retrieval_budget: int,
+                           freeze_point: str, read_budget_lines: int,
                            out_dir: pathlib.Path,
                            max_questions: Optional[int] = None) -> Dict[str, Any]:
     """Freeze these notes and answer the held-out questions. No looking happens
@@ -257,15 +310,21 @@ def run_frozen_memory_test(household: FrozenHousehold, notes: Notes, client: LLM
 
     questions = questions_in_the_window(household, plan["questions_from_days"])
     if max_questions is not None:
-        questions = questions[:max_questions]
+        questions = spread_across_the_days(questions, max_questions)
     allowed = set(household.places)
 
     out_dir.mkdir(parents=True, exist_ok=True)
     frozen = notes.snapshot_to(out_dir / "notes_as_frozen.json")
     settled_memory_wrong = questions_a_settled_memory_gets_wrong(household, questions)
     answers: List[HeldOutAnswer] = []
+    lines_available: List[int] = []
+    n_times_the_budget_bit = 0
     for question in questions:
-        messages = question_prompt(household, frozen, question, retrieval_budget)
+        messages, was_read = question_prompt_and_what_was_read(
+            household, frozen, question, read_budget_lines)
+        lines_available.append(was_read.n_lines_available)
+        if was_read.budget_bit:
+            n_times_the_budget_bit += 1
         text, _ = client.complete(messages, CONF_SCHEMA, max_tokens=400)
         place, confidence, reasoning, status = parse_conf(text, allowed)
         true_place = household.true_place_for_question(question)
@@ -285,7 +344,13 @@ def run_frozen_memory_test(household: FrozenHousehold, notes: Notes, client: LLM
         "how_memory_is_written": notes.how_memory_is_written,
         "freeze_point": freeze_point,
         "notes_written_up_to_day": notes.written_up_to_day,
-        "retrieval_budget": retrieval_budget,
+        "read_budget_lines": read_budget_lines,
+        "how_the_notes_were_chosen": frozen.what_the_robot_can_read(
+            read_budget_lines).how_chosen,
+        "share_of_questions_where_the_budget_bit":
+            (n_times_the_budget_bit / len(questions)) if questions else None,
+        "mean_lines_of_notes_available": (
+            sum(lines_available) / len(lines_available)) if lines_available else None,
         "n_questions_asked": len(answers),
         "n_questions_scored": len(scored),
         "n_correct": sum(1 for a in scored if a.correct),
