@@ -110,10 +110,32 @@ MEMGPT_AS_PUBLISHED = "MemGPT as published"
 # where it is, and either answer is worth an hour of GPU.
 THE_LOG_AND_THE_ROUTINE_DERIVED_ALLOWANCE = (
     "the log and notes about the routine, allowance derived")
+# The ninth and tenth ways, added 2026-09-25, and they exist because of a measurement. On day
+# 31, a week after the resident recovered, 428 notes across the four claim-store arms described
+# where things went WHILE SOMEBODY WAS ILL and not one of them mentioned that anybody was ill.
+# The condition they carried was a time of day - 74 of them said the placement holds `always` -
+# and none was set aside, so every one was still offered as current belief. So no memory here
+# represents the shift, only its consequences, and nothing could transfer to a second spell.
+#
+# These two arms hand the robot the cause in one sentence, and differ ONLY in the night it
+# arrives, which is the whole question: can a memory use a stated cause, and does it matter
+# whether it hears it before or after the evidence?
+#
+#   TOLD_THE_NIGHT_BEFORE   the night BEFORE the routine changes, and the night before it
+#                           changes back - so the sentence reaches the reflection with no
+#                           disrupted sighting yet to explain. It can only prepare.
+#   TOLD_ON_THE_FIRST_NIGHT the night OF the first changed day, after a full day of it - so the
+#                           sentence arrives as an explanation for something already seen.
+#
+# Everything else is our arm, word for word. Silence on the other thirty nights, and which
+# nights carried a message is recorded so the set can be checked rather than trusted.
+TOLD_THE_NIGHT_BEFORE = "the log and notes, told the night before"
+TOLD_ON_THE_FIRST_NIGHT = "the log and notes, told on the first night"
 WAYS_OF_WRITING = (WHOLESALE_REWRITE, INCREMENTAL_EDITS, TOLD_IF_IT_WAS_RIGHT,
                    THE_LOG_AND_THE_ROUTINE, A_WORKING_MEMORY_AND_AN_ARCHIVE,
                    ACE_AS_PUBLISHED, MEMGPT_AS_PUBLISHED,
-                   THE_LOG_AND_THE_ROUTINE_DERIVED_ALLOWANCE)
+                   THE_LOG_AND_THE_ROUTINE_DERIVED_ALLOWANCE,
+                   TOLD_THE_NIGHT_BEFORE, TOLD_ON_THE_FIRST_NIGHT)
 
 # How big the working memory is, and this number comes from MemGPT's own source rather than
 # from us. `letta/constants.py` sets CORE_MEMORY_PERSONA_CHAR_LIMIT and

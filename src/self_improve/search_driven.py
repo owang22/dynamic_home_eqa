@@ -66,6 +66,7 @@ from self_improve.frozen_household import (BEYOND_REACH, FROZEN_BANKS, FrozenHou
                                            LookTarget, period_of_day)
 from self_improve.looking import TheHouseAsSeen, describe_look_for_the_model, hours_and_minutes
 from self_improve.memory_notes import (THE_LOG_AND_THE_ROUTINE_DERIVED_ALLOWANCE,
+                                      TOLD_THE_NIGHT_BEFORE, TOLD_ON_THE_FIRST_NIGHT,
                                       ACE_AS_PUBLISHED, MEMGPT_AS_PUBLISHED,
                                        A_WORKING_MEMORY_AND_AN_ARCHIVE, Notes,
                                        THE_LOG_AND_THE_ROUTINE, TOLD_IF_IT_WAS_RIGHT)
@@ -148,7 +149,17 @@ SENSING_ARMS = (MEMORY_GUIDED, FIXED_ROTATION, RANDOM, PRIOR_ONLY, LAST_SEEN)
 HOW_MEMORY_IS_WRITTEN = ("wholesale rewrite", "incremental edits",
                          TOLD_IF_IT_WAS_RIGHT, THE_LOG_AND_THE_ROUTINE,
                          A_WORKING_MEMORY_AND_AN_ARCHIVE, ACE_AS_PUBLISHED,
-                         MEMGPT_AS_PUBLISHED, THE_LOG_AND_THE_ROUTINE_DERIVED_ALLOWANCE)
+                         MEMGPT_AS_PUBLISHED, THE_LOG_AND_THE_ROUTINE_DERIVED_ALLOWANCE,
+                         TOLD_THE_NIGHT_BEFORE, TOLD_ON_THE_FIRST_NIGHT)
+
+# The arms built on `the log and notes about the routine`: the same prompt, one thing changed.
+THE_LOG_AND_THE_ROUTINE_FAMILY = (THE_LOG_AND_THE_ROUTINE,
+                                  THE_LOG_AND_THE_ROUTINE_DERIVED_ALLOWANCE,
+                                  TOLD_THE_NIGHT_BEFORE, TOLD_ON_THE_FIRST_NIGHT)
+# Which night the one sentence arrives on, as an offset from the day the routine changes and the
+# day it changes back. 0 is the first changed day itself; -1 is the night before, when the robot
+# has seen nothing of the change yet.
+WHEN_IT_IS_TOLD = {TOLD_THE_NIGHT_BEFORE: -1, TOLD_ON_THE_FIRST_NIGHT: 0}
 
 # The three-way split of a wrong answer, computed from the STRUCTURED sighting
 # records - how many times this arm had already seen this object at the place it
@@ -835,6 +846,30 @@ def use_the_search_day_renderer() -> None:
     write_the_notes_module._what_happened_today = _the_search_day_for_the_note_writer
 
 
+def the_sentence_for_tonight(how_memory_is_written: str, household: FrozenHousehold,
+                             day: int) -> Optional[str]:
+    """The one sentence a told arm hears tonight, or None on the other thirty nights.
+
+    Returns None for every arm that is not a told arm, so nothing about any other arm's prompt
+    changes by a single character - checked by running one household of the untold arm against
+    the existing response cache and confirming every night was a hit.
+
+    WHO is ill and WHEN comes from the household's own `day_causes`, and the function it uses
+    raises rather than guessing, because a sentence delivered on the wrong night is an arm that
+    looks compliant and is not. The person is named, because every look this arm has ever read
+    says "Tomas": a sentence saying `resident_1 is unwell` would put the only inconsistency in
+    the file into the one sentence we ever volunteer.
+    """
+    offset = WHEN_IT_IS_TOLD.get(how_memory_is_written)
+    if offset is None:
+        return None
+    from self_improve.three_prompts import who_is_unwell_and_when
+    who, first_disrupted, first_back = who_is_unwell_and_when(household)
+    called = names_by_resident_id(str(household.bank_path))[who]
+    return write_the_notes_module.the_message_for_tonight(
+        day, who, first_disrupted + offset, first_back + offset, called=called)
+
+
 def extra_note_writing_settings(name_the_objects_it_will_be_quizzed_on: bool = True,
                                 household: Optional[FrozenHousehold] = None
                                 ) -> Dict[str, Any]:
@@ -977,8 +1012,7 @@ def run_one_cell(household: FrozenHousehold, how_memory_is_written: str,
                     name_the_objects_it_will_be_quizzed_on=pinned.get(
                         "name_the_objects_it_will_be_quizzed_on", True),
                     a_message_tonight=pinned.get("a_message_tonight"))
-            elif how_memory_is_written in (THE_LOG_AND_THE_ROUTINE,
-                                           THE_LOG_AND_THE_ROUTINE_DERIVED_ALLOWANCE):
+            elif how_memory_is_written in THE_LOG_AND_THE_ROUTINE_FAMILY:
                 # This arm's notes may not say where anything is, so its allowance is a flat
                 # number rather than derived from the objects it saw: see EDITS_A_NIGHT in
                 # that module. That flat 16 BINDS - on 27% of nights at 24 questions a day -
@@ -990,7 +1024,12 @@ def run_one_cell(household: FrozenHousehold, how_memory_is_written: str,
                     client, tell_the_model_everything_it_saw=True,
                     name_the_objects_it_will_be_quizzed_on=pinned.get(
                         "name_the_objects_it_will_be_quizzed_on", True),
-                    a_message_tonight=pinned.get("a_message_tonight"),
+                    # PER NIGHT, not pinned for the cell. `pinned` is built once before the
+                    # day loop, so a message put there would be repeated on all 32 nights and
+                    # the arm would be "told every day", which is a different experiment.
+                    a_message_tonight=(the_sentence_for_tonight(how_memory_is_written,
+                                                               household, day)
+                                       or pinned.get("a_message_tonight")),
                     **({"max_edits": edits_tonight}
                        if how_memory_is_written == THE_LOG_AND_THE_ROUTINE_DERIVED_ALLOWANCE
                        else {}))

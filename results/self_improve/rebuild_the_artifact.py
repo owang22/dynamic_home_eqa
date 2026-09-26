@@ -12,6 +12,7 @@ import hashlib
 import json
 import pathlib
 import re
+import time
 import sys
 
 HERE = pathlib.Path("/tmp/claude-1027/-home-oliver-robot-dynamic-home-eqa/"
@@ -132,8 +133,17 @@ def read_cell(f, root):
                           "id": "night " + str(s.get("day")),
                           "st": "\n".join(t) if isinstance(t, list) else str(t or ""),
                           "day": s.get("day"), "stand": None, "rh": []})
+    # `fresh` is how many minutes ago this cell last wrote a question, so the page can tell a
+    # cell that is STILL GOING from one that stopped part way. Without it every unfinished cell
+    # looked the same, and a stalled cell read as a running one - which is the difference
+    # between "wait" and "something is wrong".
+    try:
+        quiet = (time.time() - f.stat().st_mtime) / 60.0
+    except OSError:
+        quiet = None
     return questions, notes, {"cfg": run, "hh": home, "arm": arm, "fmt": fmt,
-                              "n": n, "maxday": day_max}
+                              "n": n, "maxday": day_max,
+                              "quiet": None if quiet is None else round(quiet, 1)}
 
 
 def key_for(cell):

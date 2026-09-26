@@ -56,7 +56,8 @@ from baselines.patrol.llm import LLMClient
 from self_improve import search_driven as sd
 from self_improve.frozen_household import FrozenHousehold
 from self_improve.memory_notes import (ACE_AS_PUBLISHED, MEMGPT_AS_PUBLISHED,
-                                      THE_LOG_AND_THE_ROUTINE_DERIVED_ALLOWANCE)
+                                      THE_LOG_AND_THE_ROUTINE_DERIVED_ALLOWANCE,
+                                      TOLD_THE_NIGHT_BEFORE, TOLD_ON_THE_FIRST_NIGHT)
 from self_improve.study_settings import LOCKED
 from self_improve.three_prompts import PILOT_BANKS, PILOT_TEN, TimedClient, beat, take_the_lock
 
@@ -96,6 +97,14 @@ ARMS: Dict[str, Tuple[str, str, int]] = {
     # because the flat 16 binds on 27% of its nights at 24 questions a day. Three homes: it
     # only has to be paired against the cells already run on the same three.
     "ours, allowance derived": (THE_LOG_AND_THE_ROUTINE_DERIVED_ALLOWANCE, MEMORY_GUIDED, 3),
+    # The two told arms. Nobody in this study has ever been told the household changed, and the
+    # measurement that made these worth running is in memory_notes: 428 notes described where
+    # things went while somebody was ill and none of them mentioned the illness. These hand the
+    # robot the cause in one sentence and differ only in the night it arrives - before the change
+    # or on its first night - so the pair separates "can it use a stated cause" from "does it
+    # help to hear it before the evidence".
+    "ours, told the night before": (TOLD_THE_NIGHT_BEFORE, MEMORY_GUIDED, 3),
+    "ours, told on the first night": (TOLD_ON_THE_FIRST_NIGHT, MEMORY_GUIDED, 3),
     "ACE as published": (ACE_AS_PUBLISHED, MEMORY_GUIDED, 3),
     "MemGPT as published": (MEMGPT_AS_PUBLISHED, MEMORY_GUIDED, 3),
     "last seen, no model": ("incremental edits", sd.LAST_SEEN, 10),
