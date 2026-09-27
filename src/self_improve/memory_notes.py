@@ -80,6 +80,12 @@ THE_LOG_AND_THE_ROUTINE = "the log and notes about the routine"
 # wrong place to keep something about a person that is true for a fortnight and then stops. See
 # results/self_improve/WHAT_HAPPENS_TO_THE_SENTENCE.md.
 A_PROFILE_OF_EACH_PERSON = "the log and notes, with a profile of each person"
+# The two put together, which is the point of both. Told in one sentence that somebody is unwell,
+# AND holding a profile of each person to put it in. On its own, the sentence is written into claims
+# and reworded out of them within two nights; on its own, the profile absorbs the changed routine
+# without ever saying why it changed. This arm is the only one where the sentence has somewhere to
+# live that a day's sightings cannot narrow.
+A_PROFILE_AND_TOLD = "the log and notes, a profile of each person, told on the first night"
 # The fifth way, added 2026-09-25: MemGPT (Packer et al.). A small working memory of fixed
 # size that is always in front of the model, plus an unbounded archive that is only reached
 # by searching it, and the model moves things between the two itself. It is the only
@@ -159,7 +165,7 @@ WAYS_OF_WRITING = (WHOLESALE_REWRITE, INCREMENTAL_EDITS, TOLD_IF_IT_WAS_RIGHT,
                    THE_LOG_AND_THE_ROUTINE_DERIVED_ALLOWANCE,
                    TOLD_THE_NIGHT_BEFORE, TOLD_ON_THE_FIRST_NIGHT,
                    THE_LOG_AND_THE_ROUTINE_EIGHT, THE_LOG_AND_THE_ROUTINE_SIXTEEN,
-                   A_PROFILE_OF_EACH_PERSON)
+                   A_PROFILE_OF_EACH_PERSON, A_PROFILE_AND_TOLD)
 
 # How big the working memory is, and this number comes from MemGPT's own source rather than
 # from us. `letta/constants.py` sets CORE_MEMORY_PERSONA_CHAR_LIMIT and

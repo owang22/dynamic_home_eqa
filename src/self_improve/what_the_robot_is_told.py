@@ -25,6 +25,10 @@ from __future__ import annotations
 
 from typing import Dict, List, Optional, Sequence
 
+# Spelled out rather than imported: memory_notes imports nothing from here and this
+# file imports nothing from it, and the pair must stay that way.
+memory_notes_A_PROFILE_AND_TOLD = ("the log and notes, a profile of each person, told on the first night")
+
 
 def the_people_who_live_here(asked_objects: Sequence[str],
                              resident_ids: Sequence[str]) -> List[str]:
@@ -259,6 +263,14 @@ HOW_YOUR_MEMORY_WORKS: Dict[str, List[str]] = {
         "something you could look up.",
     ],
 }
+
+
+# THE SAME WORDS FOR THE ARM THAT IS ALSO TOLD. Set here rather than written into the dict above so
+# that the two arms cannot drift: they are the same list object, and the ONLY difference between the
+# arms is the one sentence delivered on one night. A copy is how arms drift apart, and this project
+# has paid for that twice.
+HOW_YOUR_MEMORY_WORKS[memory_notes_A_PROFILE_AND_TOLD] = HOW_YOUR_MEMORY_WORKS[
+    "the log and notes, with a profile of each person"]
 
 
 # What one piece of this method's memory is called, so the sentence about being cut off

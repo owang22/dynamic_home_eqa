@@ -55,7 +55,7 @@ from typing import Any, Dict, List, Optional, Tuple
 from baselines.patrol.llm import LLMClient
 from self_improve import search_driven as sd
 from self_improve.frozen_household import FrozenHousehold
-from self_improve.memory_notes import (A_PROFILE_OF_EACH_PERSON,
+from self_improve.memory_notes import (A_PROFILE_AND_TOLD, A_PROFILE_OF_EACH_PERSON,
                                       ACE_AS_PUBLISHED, MEMGPT_AS_PUBLISHED,
                                       THE_LOG_AND_THE_ROUTINE_DERIVED_ALLOWANCE,
                                       THE_LOG_AND_THE_ROUTINE_EIGHT,
@@ -103,6 +103,9 @@ ARMS: Dict[str, Tuple[str, str, int]] = {
     # 2026-09-26. Our arm plus a profile of each person that it keeps up to date, given their
     # names and what they do on the first night and nothing else.
     "ours, a profile of each person": (A_PROFILE_OF_EACH_PERSON, MEMORY_GUIDED, 3),
+    # The same arm, plus the one sentence on the first changed day. The pair differ only in
+    # whether the sentence has a profile to live in.
+    "ours, a profile and told": (A_PROFILE_AND_TOLD, MEMORY_GUIDED, 3),
     "ours, eight notes a night": (THE_LOG_AND_THE_ROUTINE_EIGHT, MEMORY_GUIDED, 3),
     "ours, allowance derived": (THE_LOG_AND_THE_ROUTINE_DERIVED_ALLOWANCE, MEMORY_GUIDED, 3),
     # The two told arms. Nobody in this study has ever been told the household changed, and the

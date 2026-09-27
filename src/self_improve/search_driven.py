@@ -65,7 +65,7 @@ from baselines.types import DAY_SECONDS, ON_PERSON, OUT_OF_HOUSE
 from self_improve.frozen_household import (BEYOND_REACH, FROZEN_BANKS, FrozenHousehold,
                                            LookTarget, period_of_day)
 from self_improve.looking import TheHouseAsSeen, describe_look_for_the_model, hours_and_minutes
-from self_improve.memory_notes import (A_PROFILE_OF_EACH_PERSON,
+from self_improve.memory_notes import (A_PROFILE_AND_TOLD, A_PROFILE_OF_EACH_PERSON,
                                       THE_LOG_AND_THE_ROUTINE_DERIVED_ALLOWANCE,
                                       THE_LOG_AND_THE_ROUTINE_EIGHT,
                                       THE_LOG_AND_THE_ROUTINE_SIXTEEN,
@@ -157,14 +157,14 @@ HOW_MEMORY_IS_WRITTEN = ("wholesale rewrite", "incremental edits",
                          TOLD_THE_NIGHT_BEFORE, TOLD_ON_THE_FIRST_NIGHT,
                          THE_LOG_AND_THE_ROUTINE_EIGHT,
                          THE_LOG_AND_THE_ROUTINE_SIXTEEN,
-                         A_PROFILE_OF_EACH_PERSON)
+                         A_PROFILE_OF_EACH_PERSON, A_PROFILE_AND_TOLD)
 
 # The arms built on `the log and notes about the routine`: the same prompt, one thing changed.
 THE_LOG_AND_THE_ROUTINE_FAMILY = (THE_LOG_AND_THE_ROUTINE,
                                   THE_LOG_AND_THE_ROUTINE_DERIVED_ALLOWANCE,
                                   THE_LOG_AND_THE_ROUTINE_EIGHT,
                                   THE_LOG_AND_THE_ROUTINE_SIXTEEN,
-                                  A_PROFILE_OF_EACH_PERSON,
+                                  A_PROFILE_OF_EACH_PERSON, A_PROFILE_AND_TOLD,
                                   TOLD_THE_NIGHT_BEFORE, TOLD_ON_THE_FIRST_NIGHT)
 # How many notes a night each member of that family may write. The flat 16 is the module
 # default; None means counted from what the night saw, the same rule the control uses.
@@ -174,7 +174,10 @@ NOTES_A_NIGHT = {THE_LOG_AND_THE_ROUTINE_EIGHT: 8,
 # Which night the one sentence arrives on, as an offset from the day the routine changes and the
 # day it changes back. 0 is the first changed day itself; -1 is the night before, when the robot
 # has seen nothing of the change yet.
-WHEN_IT_IS_TOLD = {TOLD_THE_NIGHT_BEFORE: -1, TOLD_ON_THE_FIRST_NIGHT: 0}
+WHEN_IT_IS_TOLD = {TOLD_THE_NIGHT_BEFORE: -1, TOLD_ON_THE_FIRST_NIGHT: 0,
+                   # The combined arm hears it on the same night as TOLD_ON_THE_FIRST_NIGHT,
+                   # so the pair differ only in whether there is a profile to put it in.
+                   A_PROFILE_AND_TOLD: 0}
 
 # The three-way split of a wrong answer, computed from the STRUCTURED sighting
 # records - how many times this arm had already seen this object at the place it
@@ -1100,7 +1103,8 @@ def run_one_cell(household: FrozenHousehold, how_memory_is_written: str,
                     **({"keeps_a_profile_of_each_person": True,
                         "who_lives_here": who_lives_here_in_plain_words(
                             str(household.bank_path))}
-                       if how_memory_is_written == A_PROFILE_OF_EACH_PERSON else {}),
+                       if how_memory_is_written in (A_PROFILE_OF_EACH_PERSON,
+                                                   A_PROFILE_AND_TOLD) else {}),
                     **({"max_edits": (edits_tonight
                                       if NOTES_A_NIGHT[how_memory_is_written] is None
                                       else NOTES_A_NIGHT[how_memory_is_written])}
