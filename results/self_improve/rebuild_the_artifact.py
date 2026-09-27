@@ -16,9 +16,16 @@ import re
 import time
 import sys
 
+# WHERE THE PAGE COMES FROM AND WHERE IT IS BUILT. The shell is the page's whole source - its
+# layout, its eight ready-made comparisons, the reader, the instructions panel - and until
+# 2026-09-27 it lived ONLY in a session scratchpad under /tmp, so a day of work on it would have
+# gone when that directory was cleared and this script would then have had nothing to build from.
+# It is in the repository now. The built page and the per-cell trace files still go to the
+# scratchpad, because they are large, regenerable, and published from there.
+SHELL = pathlib.Path(__file__).resolve().parent / "the_live_page" / "live_runs.html"
 HERE = pathlib.Path("/tmp/claude-1027/-home-oliver-robot-dynamic-home-eqa/"
                     "f251de4b-be46-424b-b263-ac9df03b04dc/scratchpad")
-SHELL, PAGE = HERE / "live_runs.html", HERE / "memory_inspector.html"
+PAGE = HERE / "memory_inspector.html"
 # Everything the reader shows in full - reasoning for each room, claim wordings, the
 # wording a claim used to have, whole nightly summaries - goes into one file per cell
 # instead of into the page. Two reasons. Nothing has to be cut short to keep the page
@@ -46,6 +53,13 @@ RUNS = [pathlib.Path("results/self_improve/search_driven"),
         pathlib.Path("results/self_improve/wave_wider_five"),
         pathlib.Path("results/self_improve/wave_the_family_reads_the_log"),
         pathlib.Path("results/self_improve/wave_the_second_illness"),
+        # 2026-09-27, the observation budget sweep: the same homes and arms at 8 and at 4
+        # questions a day, against the 24 a day above.
+        # 2026-09-27: told, told-with-a-profile and the untold parent on the five wider homes,
+        # which is where the prior-over-an-unseen-situation claim has to replicate.
+        pathlib.Path("results/self_improve/wave_told_on_the_wider_homes"),
+        pathlib.Path("results/self_improve/wave_the_budget_sweep_q8"),
+        pathlib.Path("results/self_improve/wave_the_budget_sweep_q4"),
         # The faithful rebuilds, one directory each, shaped <run>/<home>/<arm>/<format>/.
         pathlib.Path("results/self_improve/ace_as_published"),
         pathlib.Path("results/self_improve/memgpt_as_published")]
@@ -86,6 +100,9 @@ def read_cell(f, root):
                "wave_wider_five": "five wider homes",
                "wave_the_family_reads_the_log": "the family reads the log",
                "wave_the_second_illness": "a second illness",
+               "wave_told_on_the_wider_homes": "told, on the wider homes",
+               "wave_the_budget_sweep_q8": "eight a day, wider homes",
+               "wave_the_budget_sweep_q4": "four a day, wider homes",
                # A wave added without a label here used to fall through to the path's first
                # part, which for every one of these trees is the word "cells".
                }.get(root.name, root.name)
@@ -148,6 +165,14 @@ def read_cell(f, root):
                           "rh": [{"d": r.get("day"), "was": was_text(r.get("was")),
                                   "why": r.get("why") or ""}
                                  for r in (c.get("revision_history") or [])]})
+        # THE PROFILES, for the arm that keeps one per person. They are part of that arm's memory
+        # and the page could not see them at all, which is the same fault as a run with no line:
+        # a thing the study turns on, invisible on the page that exists to show it. A profile has
+        # no per-night history, so each is shown as it stands, dated to the last night written.
+        for name, text in sorted((nd.get("profiles") or {}).items()):
+            notes.append({"cfg": run, "hh": home, "arm": arm, "fmt": fmt, "kind": "profile",
+                          "id": "who " + name, "st": text,
+                          "day": nd.get("written_up_to_day"), "stand": None, "rh": []})
         for s in nd.get("nightly_summaries") or []:
             t = s.get("summary")
             notes.append({"cfg": run, "hh": home, "arm": arm, "fmt": fmt, "kind": "summary",
@@ -179,6 +204,97 @@ def read_cell(f, root):
     return questions, notes, {"cfg": run, "hh": home, "arm": arm, "fmt": fmt,
                               "n": n, "maxday": day_max, "lastday": last_day,
                               "quiet": None if quiet is None else round(quiet, 1)}
+
+
+def the_words_each_memory_is_given() -> Dict[str, Any]:
+    """The ACTUAL instructions, lifted out of the module that writes them.
+
+    Not a description of an arm, the words themselves. Written because "made to say what will
+    change" is a phrase on a plot and a reader has no way to know what the model was really asked
+    unless the prompt is on the page beside its line. Anything that is a paragraph added on only
+    some nights says which nights, because an instruction that appears twice in a month is not the
+    same as one that appears every night.
+    """
+    from self_improve import what_the_robot_is_told as told
+    from self_improve import memory_notes as mem
+    out: Dict[str, Any] = {}
+    # KEYED THE WAY THE PAGE KEYS A LINE. The page's `fmt` is the cell directory name, which
+    # `overnight_wave.cell_dir` builds from the ARM name as `arm.replace(" ", "_").replace(",", "")`
+    # - not the memory format's name. Keyed by the format, every lookup on the page missed and the
+    # panel would have read "no instructions recorded" for every arm.
+    from self_improve.overnight_wave import ARMS
+    for method, lines in told.HOW_YOUR_MEMORY_WORKS.items():
+        out[method] = {"every night": [l for l in lines if l]}
+    profile_arms = [mem.A_PROFILE_OF_EACH_PERSON, mem.A_PROFILE_AND_TOLD]
+    for method in profile_arms:
+        if method in out:
+            out[method]["every night, about the people"] = [
+                l for l in told.the_profiles({"Tomas": "(what it has worked out so far)"},
+                                             "Tomas works from home, Ines is retired. "
+                                             "They are a couple.") if l]
+    if mem.TOLD_AND_ASKED_WHAT_CHANGES in out:
+        out[mem.TOLD_AND_ASKED_WHAT_CHANGES][
+            "ONLY on the two nights a sentence arrives, and on no other night"] = [
+            l for l in told.what_to_write_before_you_have_seen_it() if l]
+    told_arms = {mem.TOLD_THE_NIGHT_BEFORE: "the night BEFORE the routine changes, and the night "
+                                            "before it changes back",
+                 mem.TOLD_ON_THE_FIRST_NIGHT: "the first changed night, and the first ordinary "
+                                              "night again",
+                 mem.A_PROFILE_AND_TOLD: "the first changed night, and the first ordinary night "
+                                         "again",
+                 mem.TOLD_AND_ASKED_WHAT_CHANGES: "the night BEFORE the routine changes, and the "
+                                                  "night before it changes back"}
+    for method, when in told_arms.items():
+        if method in out:
+            out[method]["the one sentence it is told, on " + when] = [
+                "Something you have been told, which you did not see for yourself: Tomas is "
+                "unwell and is staying at home instead of going out.",
+                "(and on the other night) Something you have been told, which you did not see "
+                "for yourself: Tomas is better and is back to their usual routine."]
+    for method in (mem.THE_LOG_AND_THE_ROUTINE_EIGHT, mem.THE_LOG_AND_THE_ROUTINE_SIXTEEN):
+        if method in told.HOW_YOUR_MEMORY_WORKS:
+            continue
+        # these two share the parent's words and differ only in the number in this sentence
+        out.setdefault(method, {"every night": [
+            l for l in told.HOW_YOUR_MEMORY_WORKS[mem.THE_LOG_AND_THE_ROUTINE] if l]})
+    n = {mem.THE_LOG_AND_THE_ROUTINE_EIGHT: 8, mem.THE_LOG_AND_THE_ROUTINE_SIXTEEN: 16}
+    for method, many in n.items():
+        out[method]["every night, the limit it is given"] = [
+            l for l in told.how_many_notes_you_may_write(many) if l]
+    # FOUR FORMATS INHERIT THEIR WORDS RATHER THAN DECLARING THEM, and the panel read "no
+    # instructions recorded" for all four until this was added. The two told arms and the counted
+    # allowance are our arm word for word, differing only in a sentence delivered on some nights or
+    # in a number; ACE writes its memory through its own module and is not in the shared table at
+    # all, so what it is told is stated rather than lifted, and says so.
+    for method in (mem.TOLD_THE_NIGHT_BEFORE, mem.TOLD_ON_THE_FIRST_NIGHT,
+                   mem.THE_LOG_AND_THE_ROUTINE_DERIVED_ALLOWANCE):
+        out.setdefault(method, {"every night": [
+            l for l in told.HOW_YOUR_MEMORY_WORKS[mem.THE_LOG_AND_THE_ROUTINE] if l]})
+    out[mem.THE_LOG_AND_THE_ROUTINE_DERIVED_ALLOWANCE][
+        "every night, the limit it is given"] = [
+        "The same sentence as the arms above, with the number counted from what the night saw "
+        "rather than fixed: it may write as many notes as the day earned, the same rule the "
+        "control uses. Measured over the runs, that came out between 40 and 97 a night."]
+    out[mem.ACE_AS_PUBLISHED] = {"how its memory works": [
+        "ACE (Zhang et al., arXiv 2510.04618) is not in the shared table of instructions, because "
+        "it writes its memory through its own module rebuilt from their shipped code rather than "
+        "through the nightly prompt every other arm uses. What it is given each night: the day it "
+        "just had, its own claims, a reflection step repeated up to three times whenever something "
+        "went wrong, and a merging step with candidate pairs proposed by meaning and the merged "
+        "wording written by the model. Only ADD is actually applied, as in their code.",
+        "So the words below are not shown for this arm, because there are none to lift: its "
+        "prompts live in src/self_improve/write_the_notes_told_if_right.py and the grouping module "
+        "beside it."]}
+    # now map every arm the runner knows onto the words of its format, under the directory name
+    by_dir: Dict[str, Any] = {}
+    for arm_name, (fmt, _sensing, _budget) in ARMS.items():
+        words = out.get(fmt)
+        if words:
+            by_dir[arm_name.replace(" ", "_").replace(",", "")] = words
+    # and keep the format names too, so a cell written before an arm was renamed still resolves
+    for fmt, words in out.items():
+        by_dir.setdefault(fmt.replace(" ", "_").replace(",", ""), words)
+    return by_dir
 
 
 def key_for(cell):
@@ -227,7 +343,11 @@ def main():
             cellkeys.append(list(name))
         rows.append([seen[name], r["d"], r["mv"], r["n"],
                      r.get("f1"), r["fd"], r["cp"]])
-    live = json.dumps({"cellkeys": cellkeys, "rows": rows, "cells": cells},
+    live = json.dumps({"cellkeys": cellkeys, "rows": rows, "cells": cells,
+                       # The words each memory is actually given, keyed by the memory format, so a
+                       # reader can see what "made to say what will change" really asked for
+                       # rather than taking a line's name for it.
+                       "words": the_words_each_memory_is_given()},
                       separators=(",", ":"))
     if "</script>" in live:
         print("refusing to write: the page data would break out of its script tag")

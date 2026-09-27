@@ -1,0 +1,1301 @@
+<title>Searching Robot Live</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<style>
+  :root{
+    --ink:#12171c; --ink2:#3d4a50; --muted:#69787d; --faint:#93a1a5;
+    --ground:#f3f6f5; --panel:#fff; --rule:#dde5e3; --rule2:#eef3f1;
+    --accent:#0f6b62; --accent-soft:#e2efec;
+    --sans:"IBM Plex Sans",ui-sans-serif,system-ui,sans-serif;
+    --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+    /* the three states of a run in the matrix: finished, still going, stopped part way */
+    --ok-bg:#e3f4e8; --ok-ink:#12562c;
+    --wait-bg:#fdf3dc; --wait-ink:#6b4a05;
+    --bad-bg:#fbe6e6; --bad-ink:#7d1d1d;
+  }
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+    --ink:#e8efee; --ink2:#bcc9c7; --muted:#8fa09e; --faint:#6b7b79;
+    --ground:#0e1413; --panel:#151d1c; --rule:#25302e; --rule2:#1c2523;
+    --accent:#4fd0c0; --accent-soft:#13302d;
+    --ok-bg:#16351f; --ok-ink:#8fe0a8;
+    --wait-bg:#3a2f11; --wait-ink:#f0d68a;
+    --bad-bg:#3b1a1a; --bad-ink:#f3a3a3;
+  }}
+  :root[data-theme="dark"]{
+    --ink:#e8efee; --ink2:#bcc9c7; --muted:#8fa09e; --faint:#6b7b79;
+    --ground:#0e1413; --panel:#151d1c; --rule:#25302e; --rule2:#1c2523;
+    --accent:#4fd0c0; --accent-soft:#13302d;
+    --ok-bg:#16351f; --ok-ink:#8fe0a8;
+    --wait-bg:#3a2f11; --wait-ink:#f0d68a;
+    --bad-bg:#3b1a1a; --bad-ink:#f3a3a3;
+  }
+  *{box-sizing:border-box}
+  body{background:var(--ground);color:var(--ink);font-family:var(--sans);font-size:14px;line-height:1.55}
+  .wrap{padding-inline:16px;padding-block:18px 44px;max-width:1220px;margin:0 auto}
+  h1{font-size:20px;font-weight:600;margin:0;letter-spacing:-0.01em}
+  .sub{color:var(--muted);font-size:13px;margin:4px 0 0;max-width:72ch}
+  .live{display:inline-block;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+        color:var(--accent);background:var(--accent-soft);padding:2px 8px;border-radius:99px;margin-left:8px;vertical-align:2px}
+
+  header.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--panel);
+             border:1px solid var(--rule);border-radius:10px;padding:10px 12px;margin:16px 0 0;
+             display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+  .fld{display:flex;flex-direction:column;gap:3px}
+  .fld > span{font-size:10px;text-transform:uppercase;letter-spacing:.09em;color:var(--faint);font-weight:600}
+  select{font-family:var(--sans);font-size:13px;padding:5px 8px;border-radius:6px;border:1px solid var(--rule);
+         background:var(--panel);color:var(--ink)}
+  select:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+
+  .picker{position:relative}
+  .picker .face{display:flex;align-items:center;gap:7px;font-size:13px;padding:5px 9px;
+                border:1px solid var(--rule);border-radius:6px;background:var(--panel)}
+  .picker .face .dots{display:flex;gap:3px}
+  .picker .face .dots i{width:9px;height:9px;border-radius:99px;display:inline-block}
+  .picker .drop{position:absolute;left:0;top:calc(100% + 4px);z-index:30;min-width:340px;
+                background:var(--panel);border:1px solid var(--rule);border-radius:9px;
+                padding:9px 11px;box-shadow:0 8px 22px rgba(0,0,0,.12);
+                /* The list has outgrown the screen, so it scrolls on its own and the page
+                   behind it does not scroll with it. */
+                max-height:min(62vh,520px);overflow-y:auto;overscroll-behavior:contain;
+                opacity:0;visibility:hidden;transform:translateY(-3px);
+                transition:opacity .12s,transform .12s,visibility .12s}
+  .picker:hover .drop, .picker:focus-within .drop{opacity:1;visibility:visible;transform:none}
+  .picker .drop .grp{font-size:10px;text-transform:uppercase;letter-spacing:.09em;
+                     color:var(--faint);font-weight:600;margin:9px 0 3px;
+                     border-top:1px solid var(--rule2);padding-top:8px}
+  .picker .drop .grp:first-child{margin-top:0;border-top:0;padding-top:0}
+  .picker .drop label{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--ink2);
+                      cursor:pointer;padding:3px 0}
+  .picker .drop input{accent-color:var(--accent);width:15px;height:15px;margin:0;cursor:pointer}
+  .picker .drop svg.sw{width:20px;height:6px;display:inline-block;flex:0 0 20px}
+  .legend svg.sw{width:22px;height:6px;flex:0 0 22px}
+
+  .card{background:var(--panel);border:1px solid var(--rule);border-radius:10px;padding:14px;margin-top:14px}
+  .card h2{font-size:14px;font-weight:600;margin:0 0 3px}
+  .card p.note{font-size:12.5px;color:var(--muted);margin:0 0 10px;max-width:78ch}
+  /* One row per line, so the colours read as a list rather than a wrapped sentence. */
+  .legend{display:flex;flex-direction:column;gap:2px;font-size:12.5px;color:var(--ink2);
+          margin-top:14px;border-top:1px solid var(--rule2);padding-top:12px}
+  .legend i{display:inline-block;width:16px;height:3px;border-radius:2px;flex:0 0 16px}
+  .legrow{display:flex;align-items:center;gap:9px;flex-wrap:wrap;padding:3px 0}
+  .legrow b{font-weight:500;color:var(--ink)}
+  .legend .why{flex:0 0 auto;width:18px;height:18px;border-radius:99px;border:1px solid var(--rule);
+               background:var(--panel);color:var(--muted);font-size:11px;font-weight:600;
+               cursor:pointer;line-height:1;padding:0}
+  .legend .why:hover{border-color:var(--accent);color:var(--accent)}
+  .legend .why:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+  .legend .about{flex:1 1 100%;font-size:12.5px;color:var(--ink2);background:var(--rule2);
+                 border-radius:7px;padding:9px 12px;margin:4px 0 8px;line-height:1.6}
+  .stats{font-size:12.5px;color:var(--muted);margin-top:8px;font-variant-numeric:tabular-nums}
+  .stats b{font-weight:600}
+  .thin{color:var(--faint)}
+  svg .pt{cursor:pointer}
+  svg .pt:hover{stroke:var(--ink);stroke-width:1.5}
+
+  .reader{display:grid;grid-template-columns:200px 1fr;gap:14px;align-items:start}
+  @media (max-width:760px){.reader{grid-template-columns:1fr}}
+  .side{border:1px solid var(--rule);border-radius:9px;overflow:hidden}
+  .side button{display:block;width:100%;text-align:left;border:0;border-bottom:1px solid var(--rule2);
+               background:transparent;color:var(--ink2);font-family:var(--sans);font-size:12.5px;
+               padding:9px 11px;cursor:pointer;line-height:1.35}
+  .side button:last-child{border-bottom:0}
+  .side button[aria-pressed="true"]{background:var(--accent-soft);color:var(--accent);font-weight:600}
+  .side button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+  .who{border-left:4px solid var(--rule);padding:8px 11px;border-radius:0 7px 7px 0;
+       background:var(--rule2);margin-bottom:10px;font-size:12.5px}
+  .trow{border-bottom:1px solid var(--rule2)}
+  /* A BLOCK, NOT A FLEX ROW. The summary used to be a flex line with baseline alignment and
+     wrapping, and long object names and answers overlapped each other at narrow widths. A
+     block with inline children wraps the way text wraps. */
+  .trow summary{cursor:pointer;display:block;padding:9px 2px;line-height:1.75}
+  .trow summary > *{margin-right:8px}
+  .trow summary::-webkit-details-marker{display:none}
+  .trow .obj{font-family:var(--mono);font-size:12.5px}
+  .tbody{padding:4px 2px 16px 10px}
+  .tbody ol{margin:8px 0;padding-left:22px}
+  .tbody li{font-size:13px;color:var(--ink2);margin-bottom:14px;line-height:1.6}
+  .tbody li > b{display:block;margin-bottom:3px}
+  .tbody p.thin{margin:6px 0 0}
+  /* Nothing is clipped and nothing has its own scrollbar: the reader panel scrolls, and a
+     box of reasoning grows to hold whatever is in it. A box that scrolls inside a panel that
+     scrolls is how two lines end up on top of one another. */
+  .quote{font-size:13px;color:var(--ink2);background:var(--rule2);border:1px solid var(--rule);
+         border-radius:7px;padding:10px 13px;margin:6px 0 10px;white-space:pre-wrap;
+         overflow-wrap:break-word;word-break:normal;line-height:1.62}
+  /* The reader can hold a whole day of questions across ten homes, so it scrolls on its
+     own rather than pushing the plot off the screen. Nothing inside it is shortened. */
+  #rdBody{max-height:min(78vh,900px);overflow-y:auto;padding-right:6px}
+  #rdBody::-webkit-scrollbar{width:9px}
+  #rdBody::-webkit-scrollbar-thumb{background:var(--rule);border-radius:9px}
+  .pill{font-size:10.5px;font-weight:600;padding:2px 7px;border-radius:99px;white-space:nowrap}
+  .pill.right{background:#e3f2e9;color:#1d7a4c}
+  .pill.wrong{background:#fae9e7;color:#a83a32}
+  .pill.n{background:var(--rule2);color:var(--muted)}
+  table{border-collapse:collapse;width:100%;font-size:12.5px;font-variant-numeric:tabular-nums}
+  th,td{text-align:right;padding:5px 8px;border-bottom:1px solid var(--rule2)}
+  /* Three states, and each says which one it is in WORDS as well as in colour, because a
+     colour alone is not readable by everyone and does not survive being printed. */
+  td.done{background:var(--ok-bg);color:var(--ok-ink)}
+  td.going{background:var(--wait-bg);color:var(--wait-ink)}
+  td.stopped{background:var(--bad-bg);color:var(--bad-ink)}
+  td.none{color:var(--faint)}
+  /* One home, one block. Each scrolls inside itself so the page does not become a mile long,
+     and every piece of text inside is shown whole - nothing here is ever shortened. */
+  .homeblock{border:1px solid var(--rule);border-radius:9px;margin:10px 0;background:var(--panel)}
+  .homeblock>summary{cursor:pointer;padding:9px 12px;font-weight:600;font-size:13px;
+                     display:flex;gap:10px;align-items:baseline}
+  .homeblock>summary .thin{font-weight:400}
+  .nightbox{max-height:62vh;overflow-y:auto;overscroll-behavior:contain;padding:2px 12px 12px;
+            border-top:1px solid var(--rule2)}
+  .nightbox h4{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--faint);
+               margin:14px 0 6px;font-weight:600}
+  .nightbox h4:first-child{margin-top:8px}
+  .entry{border-left:3px solid var(--rule);padding:2px 0 2px 10px;margin:0 0 12px}
+  .entry .lab{font-size:11.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+  .entry .said{margin:3px 0 0;white-space:pre-wrap;word-break:break-word}
+  .entry .reason{margin:5px 0 0;padding:7px 9px;background:var(--rule2);border-radius:6px;
+                 white-space:pre-wrap;word-break:break-word;font-size:12.5px}
+  .entry.added{border-left-color:#009E73} .entry.changed{border-left-color:#E69F00}
+  .entry.summary{border-left-color:#0072B2}
+  .key{display:inline-flex;align-items:center;gap:5px;margin-right:12px;white-space:nowrap}
+  .key i.k{width:11px;height:11px;border-radius:3px;display:inline-block;border:1px solid var(--rule)}
+  .key i.k.done{background:var(--ok-bg)} .key i.k.going{background:var(--wait-bg)}
+  .key i.k.stopped{background:var(--bad-bg)}
+  th:first-child,td:first-child{text-align:left}
+  th{font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--faint);font-weight:600}
+</style>
+
+<div class="wrap">
+  <h1>Searching Robot Live<span class="live" id="liveTag">loading</span></h1>
+  <p class="sub">The robot is asked where something is, then looks in up to three rooms before answering. Everything it knows comes from those searches; there is no nightly patrol. Days 14 to 23 are shaded: one person is ill and at home, so their things move. <b>Click any point on the plot to read that day.</b></p>
+
+  <header class="bar">
+    <div class="picker" tabindex="0"><div class="face"><span class="dots" id="pickDots"></span><span id="pickFace">lines</span></div>
+      <div class="drop" id="pickDrop"></div></div>
+    <label class="fld"><span>Home</span><select id="cHh"></select></label>
+    <label class="fld"><span>Objects</span><select id="cSlice">
+      <option value="mv">only the ones the illness moved</option>
+      <option value="all">every object</option></select></label>
+    <label class="fld"><span>Measure</span><select id="cMeasure">
+      <option value="f1">first room was the right one</option>
+      <option value="fd">found the object at all</option>
+      <option value="n">rooms opened</option></select></label>
+    <label class="fld"><span>Grouping</span><select id="cSmooth">
+      <option value="1" selected>one day per point</option>
+      <option value="3">three days per point</option>
+      <option value="0">one point per phase</option></select></label>
+  </header>
+
+  <section class="card">
+    <h2>Read this first: eight comparisons, each answering one question</h2>
+    <p class="note">Every other card on this page is a tool you have to set up. These eight are
+      already set up: two to four lines each, chosen so that everything except the one thing being
+      compared is held still. They follow the measure and the objects boxes at the top and nothing
+      else. Under each plot is the difference between the lines in the windows that matter, worked
+      out from the same questions the plot draws, with a plain yes or no on whether it counts.</p>
+    <p class="note"><b>Watch the number of homes in each cell.</b> A window needs at least eight
+      questions in a home before it is read at all, and with the objects box set to the ones the
+      illness moves, a single day such as day 14 or day 24 holds only about eight of them &mdash; so
+      some homes drop out and the row says three or four homes rather than five. That is the
+      guard working, not a fault. For the single days, set the objects box to all objects, where
+      every home has enough.</p>
+    <div id="blocks"></div>
+  </section>
+
+  <section class="card">
+    <h2 id="chTitle"></h2>
+    <p class="note" id="chNote"></p>
+    <div style="overflow-x:auto"><svg id="ch" viewBox="0 0 900 320" width="100%" style="min-width:600px;display:block" role="img" aria-label="Measure by day for each way of choosing where to look"></svg></div>
+    <div class="legend" id="leg"></div>
+    <div class="stats" id="st"></div>
+  </section>
+
+  <section class="card">
+    <h2 id="rdTitle">What the model wrote</h2>
+    <p class="note" id="rdNote">Click a point on the plot above to choose a line and a day.</p>
+    <div class="reader">
+      <div class="side" role="group" aria-label="What to read">
+        <button id="vRooms" aria-pressed="false">the order of places it looked</button>
+        <button id="vWhy" aria-pressed="false">its reasoning for each choice</button>
+        <button id="vNotes" aria-pressed="false">its memory as it stood that night</button>
+        <button id="vRevs" aria-pressed="false">why it changed a note that night</button>
+        <button id="vNight" aria-pressed="true">THE WHOLE NIGHT'S MEMORY WORK, home by home</button>
+        <button id="vWords" aria-pressed="false">the instructions this memory is given, word for word</button>
+      </div>
+      <div id="rdBody" tabindex="0" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Every pair of arms, window by window</h2>
+    <p class="note" id="cmpNote"></p>
+    <div style="overflow-x:auto"><table id="cmpLevels"></table></div>
+    <h3 style="margin:18px 0 6px;font-size:15px">The difference between each pair, paired inside each home</h3>
+    <p class="note">One difference per home, then the average and two standard errors across
+      homes. A difference counts only if it clears BOTH two standard errors AND the rerun noise
+      floor &mdash; what the same arm, rerun unchanged, moves by on its own. It must also point
+      the same way in every home; a pair that disagrees across homes says so, however large the
+      average. The homes are always taken together here, whatever the home box above is set to,
+      because a paired difference needs more than one home to exist.</p>
+    <div style="overflow-x:auto"><table id="cmpDiffs"></table></div>
+  </section>
+
+  <section class="card">
+    <h2>How far each run has got</h2>
+    <p class="note">Every run in the study covers the same thirty-two days, day 0 to day 31, and
+      writes each question as it finishes. So a cell says only how far that one has got.
+      <span class="key"><i class="k done"></i>all days answered</span>
+      <span class="key"><i class="k going"></i>still going</span>
+      <span class="key"><i class="k stopped"></i>stopped &mdash; either cut from the study on
+      purpose, or it has written nothing for half an hour</span></p>
+    <div style="overflow-x:auto"><table id="tbl"></table></div>
+  </section>
+</div>
+
+<script id="live" type="application/json">__LIVE__</script>
+<script>
+(function(){
+  var D=JSON.parse(document.getElementById('live').textContent), CELLS=D.cells;
+  var WORDS=D.words||{};   // what each memory format is actually told, by format
+  // The rows arrive with the cell's five names replaced by an index into D.cellkeys, because
+  // written out in full they put the page over its 16 MB ceiling. Rebuilt here, so every
+  // reader below still sees plain objects with the field names it expects.
+  var Q=D.rows.map(function(r){
+    var c=D.cellkeys[r[0]];
+    return {cfg:c[0],hh:c[1],arm:c[2],fmt:c[3],key:c[4],
+            d:r[1],mv:r[2],n:r[3],f1:r[4],fd:r[5],cp:r[6]};});
+  // The full text lives in one file per cell, loaded when a point on the plot is
+  // clicked, so nothing has to be shortened to keep this page under its size limit.
+  window.TR=window.TR||{};
+  function keysFor(L){
+    var seen={},out=[];
+    Q.forEach(function(r){
+      if(match(r,L)&&(st.hh==='ALL'||r.hh===st.hh)&&!seen[r.key]){seen[r.key]=1;out.push(r.key);}});
+    return out;
+  }
+  function loadKeys(keys,then){
+    var missing=keys.filter(function(k){return !window.TR[k];});
+    if(!missing.length){then([]);return;}
+    var left=missing.length, failed=[];
+    missing.forEach(function(k){
+      var s=document.createElement('script');
+      s.src='traces/'+k+'.js';
+      s.onload=function(){if(!--left)then(failed);};
+      s.onerror=function(){
+        window.TR[k]={q:[],notes:[],couldNotLoad:true};
+        failed.push(k);if(!--left)then(failed);};
+      document.head.appendChild(s);
+    });
+  }
+  function loadedQ(keys){
+    var out=[];keys.forEach(function(k){var x=window.TR[k];if(x&&x.q)out=out.concat(x.q);});return out;
+  }
+  function loadedNotes(keys){
+    var out=[];keys.forEach(function(k){var x=window.TR[k];if(x&&x.notes)out=out.concat(x.notes);});return out;
+  }
+  var $=function(i){return document.getElementById(i);};
+  // A line's swatch carries its dash pattern as well as its colour. Six lines cannot all
+  // be far apart in colour, so the pattern is what makes a pair separable when the colours
+  // are close - and it survives being printed, or read by someone who cannot tell the two
+  // hues apart at all.
+  function swatch(l){
+    return '<svg class="sw" viewBox="0 0 22 6" aria-hidden="true"><line x1="0" y1="3" '
+      + 'x2="22" y2="3" stroke="'+l.c+'" stroke-width="2.5"'
+      + (l.d?' stroke-dasharray="'+l.d+'"':'')+'/></svg>';
+  }
+  function esc(s){return String(s==null?'':s).replace(/[&<>]/g,function(m){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;'}[m];});}
+
+  // Three groups. The group label carries what is common to its lines, so a line's own name
+  // says only what makes it different. Only the current group is drawn unless you tick more.
+  // COLOURS ARE THE OKABE-ITO SET, not chosen by eye. The old palette put two purples and
+  // two oranges beside each other, and a check of every adjacent pair found the blue and the
+  // purple separated by 2.8 under deuteranopia, which is invisible - so those two lines were
+  // the same line for some readers. This set passes every adjacent pair, and because six
+  // lines on one chart cannot all be far apart, each line also carries its own DASH PATTERN.
+  // Colour and pattern together, so no pair depends on colour alone.
+  var LINES=[
+    // ---- the reason-first wave: every schema reasons before it decides ----
+    {id:'r_routine',cfg:'reasons first',arm:'memory-guided_search',
+     fmt:'the_log_and_notes_about_the_routine',
+     n:'ours',c:'#009E73',d:null,on:false,g:'reasons',
+     i:'Ours, with the schemas corrected. Until 25 September every schema asked for the decision BEFORE the reasoning - 55,613 of 55,613 cached room choices named the room first, with the model\u2019s own thinking switched off - so a room was chosen after no deliberation at all and the explanation was written afterwards. The group below is the same arms under the old order, kept as this one\u2019s ablation.'},
+    {id:'r_plain',cfg:'reasons first',arm:'memory-guided_search',fmt:'incremental_edits',
+     n:'the plain claim store (the control)',c:'#0072B2',d:'10 4 2 4',on:false,g:'reasons',
+     i:'The control, reason-first. Its explanation cap also went from 240 characters to 1,200, which had been cutting 30.7% of every explanation in the study mid-word.'},
+    {id:'r_ace',cfg:'reasons first',arm:'memory-guided_search',fmt:'ACE_as_published',
+     n:'ACE',c:'#CC79A7',d:'7 4',on:false,g:'reasons',
+     i:'ACE, reason-first, and with two limits removed that were ours rather than theirs: its reflection step used to state the verdict before saying what it had learned, and its merging step was capped by us at four merges a night, which bound on 80.5% of calls.'},
+    {id:'r_memgpt',cfg:'reasons first',arm:'memory-guided_search',fmt:'MemGPT_as_published',
+     n:'MemGPT',c:'#D55E00',d:'2 3',on:false,g:'reasons',
+     i:'MemGPT, reason-first, and this is the important correction: the field that has to quote its own block character for character was capped by us at 600 characters against a 20,000-character block, so 40% of its attempts to edit its own memory were refused for a mismatch we caused. Both caps are MemGPT\u2019s own now.'},
+    {id:'r_before',cfg:'reasons first',arm:'memory-guided_search',
+     fmt:'ours_told_the_night_before',
+     n:'ours, told the NIGHT BEFORE the change',c:'#56B4E9',d:'6 3',on:false,g:'reasons',
+     i:'One sentence, on the night before the routine changes and the night before it changes back: the resident is unwell and is staying at home. It reaches the nightly reflection with no disrupted sighting yet to explain, so it can only be used to prepare. Everything else is our arm word for word.'},
+    {id:'r_first',cfg:'reasons first',arm:'memory-guided_search',
+     fmt:'ours_told_on_the_first_night',
+     n:'ours, told on the FIRST NIGHT of the change',c:'#0f6b62',d:'3 2',on:false,g:'reasons',
+     i:'The same sentence one night later, after a full changed day, so it arrives as an explanation for something already seen. The pair separates being able to notice a change from being able to use one you are handed.'},
+    {id:'r_prior',cfg:'reasons first',arm:'prior_only,_no_notes',fmt:'prior_only_no_notes',
+     n:'the same chooser with its notes taken away',c:'#E69F00',d:'1 4',on:false,g:'reasons',
+     i:'Notes hidden when it picks a room, reason-first.'},
+    {id:'r_rule',cfg:'reasons first',arm:'last_seen,_no_model',fmt:'last_seen_no_model',
+     n:'LastSeen (no model at all)',c:'#808080',d:'5 5',on:false,g:'reasons',
+     i:'Untouched by any of this, because it calls no model: walk back through the rooms the object has been seen in, newest first. It is in both waves, as the fixed point they can be compared through.'},
+    {id:'r_whole',cfg:'reasons first',arm:'memory-guided_search',fmt:'wholesale_rewrite',
+     n:'rewritten whole every night',c:'#5f6b3a',d:'3 3',on:false,g:'reasons',
+     i:'One summary written again from scratch each night, reason-first.'},
+
+    // ---- the main results: twenty four questions a day, three households ----
+    {id:'q_routine',cfg:'overnight, 24 a day',arm:'memory-guided_search',
+     fmt:'the_log_and_notes_about_the_routine',
+     n:'ours: reads its own record, notes hold only reasoning',c:'#009E73',d:null,on:false,g:'now',
+     i:'Ours. When it is asked where something is it is shown every sighting it ever made of that thing, so its notes are forbidden from repeating places and are asked instead for what it has worked out about the household - who is where at what times, what moves with what, what changed and when.'},
+    {id:'q_plain',cfg:'overnight, 24 a day',arm:'memory-guided_search',fmt:'incremental_edits',
+     n:'the plain claim store (the control)',c:'#0072B2',d:'10 4 2 4',on:false,g:'now',
+     i:'The control. A list of numbered notes carried over from yesterday; each night it may add a note, revise one, set one aside or attach evidence. Every other memory arm here is this plus one thing, which is what makes a difference between them attributable to that thing.'},
+    {id:'ace_pub',cfg:'overnight, 24 a day',arm:'memory-guided_search',fmt:'ACE_as_published',
+     n:'ACE',c:'#CC79A7',d:'7 4',on:false,g:'now',
+     i:'ACE (Zhang et al., arXiv 2510.04618), rebuilt from their own shipped code rather than from our reading of the paper: reflection repeated up to three times whenever something went wrong, a merging step every night with candidate pairs proposed by meaning and the merged wording written by the model, and only ADD actually applied. This is the ACE line. Our own earlier attempt at it is in the group below and is no longer part of the results.'},
+    {id:'memgpt_pub',cfg:'overnight, 24 a day',arm:'memory-guided_search',fmt:'MemGPT_as_published',
+     n:'MemGPT',c:'#D55E00',d:'2 3',on:false,g:'now',
+     i:'MemGPT (Packer et al.), rebuilt from their own code: one block of free text of twenty thousand characters always in front of the model, plus an archive of separate passages reached only by searching it. The block is edited by quoting a piece of it and saying what replaces it, and moving something out of it takes two steps, as theirs does. This is the MemGPT line.'},
+    {id:'q_prior',cfg:'overnight, 24 a day',arm:'prior_only,_no_notes',fmt:'prior_only_no_notes',
+     n:'the same chooser with its notes taken away',c:'#E69F00',d:'1 4',on:false,g:'now',
+     i:'Identical to the memory arms except that its notes are hidden when it picks a room. The gap between this and any memory arm is what the notes are worth, as against what the model already guesses about homes.'},
+    {id:'q_ceiling',cfg:'overnight, 24 a day',arm:'memory-guided_search',
+     fmt:'ours_allowance_derived',
+     n:'ours, but allowed more notes a night',c:'#009E73',d:'2 2',on:false,g:'now',
+     i:'Every night each arm is told how many notes it may write or change, and the number is part of the request, so it cannot write more. Ours is a flat sixteen on every night of the month. The control works its number out from what that night saw \u2014 one slot for each thing it saw that its notes do not mention yet, one for each thing it saw somewhere other than where its notes say, and four spare \u2014 which at twenty four questions a day came out between 21 and 97, middling 55. This line is our arm with that counted number in place of the flat sixteen and nothing else changed. It exists because the sixteen BINDS: it was reached on 27% of nights at this resolution and on a third of the disrupted nights, so on those nights our arm was stopped from writing more while the control was not. Same colour as ours because it is the same arm; a dotted line because it is a different setting. If it lands on top of ours the limit cost nothing; if it lands above, our own number was held down by a limit we chose.'},
+    {id:'q_rule',cfg:'overnight, 24 a day',arm:'last_seen,_no_model',fmt:'last_seen_no_model',
+     n:'LastSeen (no model at all)',c:'#808080',d:'5 5',on:false,g:'now',
+     i:'LastSeen. No language model anywhere. It keeps, for each object, every room it has been seen in, most recent first; its first guess is the room it was last seen in, and if that fails it tries the room before that, and the one before that. Only when it runs out does it fall back to where other things of the same kind were last seen, and then to a random room. Rebuilt on 25 September: it used to keep ONE sighting, so from its second guess on it was picking at random and every arm compared against it was flattered. It is free, and a memory that cannot beat it has not earned the tokens it costs.'},
+
+    // ---- our own earlier attempts at those two papers: paused, kept for reference ----
+    {id:'q_ace',cfg:'overnight, 24 a day',arm:'memory-guided_search',
+     fmt:'claim_store_told_if_it_was_right',
+     n:'our earlier ACE: told each night whether its notes worked',c:'#7a3f6b',d:'7 4',on:false,g:'mine',
+     i:'PAUSED and not part of the results. This was our first attempt at ACE, written before the paper was rebuilt properly: it is shown how the day went and says which notes helped and which sent it the wrong way, but it reflects once rather than three times and its merging step sat behind a line budget we invented that almost never fired. It is kept because it is a correct record of what we ran, and because the ACE line above is easier to read next to it.'},
+    {id:'q_memgpt',cfg:'overnight, 24 a day',arm:'memory-guided_search',
+     fmt:'a_small_working_memory_and_an_archive',
+     n:'our earlier MemGPT: a small working memory and an archive',c:'#8a5a2b',d:'2 3',on:false,g:'mine',
+     i:'PAUSED and not part of the results. Our first attempt at MemGPT: numbered notes in both tiers rather than one block of prose, and a working memory of twelve hundred characters rather than their twenty thousand - which is a claim store with a size limit rather than MemGPT.'},
+    {id:'q_whole',cfg:'overnight, 24 a day',arm:'memory-guided_search',fmt:'wholesale_rewrite',
+     n:'rewritten whole every night',c:'#5f6b3a',d:'3 3',on:false,g:'mine',
+     i:'One summary, written again from scratch each night. The published family that recursive summarisation belongs to, and the baseline ACE was written to beat. A reference rather than a contender.'},
+
+    // ---- the completed run at eight questions a day, ten households ----
+    {id:'w_routine',cfg:'overnight',arm:'memory-guided_search',
+     fmt:'the_log_and_notes_about_the_routine',
+     n:'ours: reads its own record, notes hold only reasoning',c:'#009E73',d:null,on:false,g:'eight',
+     i:'The same arm as in the main group, on ten households instead of three, all thirty one days. This is the wave the headline numbers come from; the three-household run is for resolution inside one home.'},
+    {id:'w_plain',cfg:'overnight',arm:'memory-guided_search',fmt:'incremental_edits',
+     n:'the plain claim store (the control)',c:'#0072B2',d:'10 4 2 4',on:false,g:'eight',
+     i:'The control on ten households. Its prompt differs from the arm above by exactly one paragraph.'},
+    {id:'w_rule',cfg:'overnight',arm:'last_seen,_no_model',fmt:'last_seen_no_model',
+     n:'LastSeen (no model at all)',c:'#808080',d:'5 5',on:false,g:'eight',
+     i:'LastSeen on ten households, all thirty one days. It holds no beliefs about the household, so nothing in it changes when the routine does: it is the measure of how much of this task is solvable without noticing anything at all.'},
+    {id:'w_prior',cfg:'overnight',arm:'prior_only,_no_notes',fmt:'prior_only_no_notes',
+     n:'the same chooser with its notes taken away',c:'#E69F00',d:'1 4',on:false,g:'eight',
+     i:'The notes hidden at choice time, on ten households.'},
+    {id:'w_ace',cfg:'overnight',arm:'memory-guided_search',fmt:'claim_store_told_if_it_was_right',
+     n:'our earlier ACE: told each night whether its notes worked',c:'#7a3f6b',d:'7 4',on:false,g:'eight',
+     i:'Our first attempt at ACE, on ten households. Complete, and now superseded by the faithful rebuild.'},
+    {id:'w_memgpt',cfg:'overnight',arm:'memory-guided_search',
+     fmt:'a_small_working_memory_and_an_archive',
+     n:'our earlier MemGPT: a small working memory and an archive',c:'#8a5a2b',d:'2 3',on:false,g:'eight',
+     i:'Our first attempt at MemGPT, on ten households. Complete, and now superseded by the faithful rebuild.'},
+    {id:'w_whole',cfg:'overnight',arm:'memory-guided_search',fmt:'wholesale_rewrite',
+     n:'rewritten whole every night',c:'#5f6b3a',d:'3 3',on:false,g:'eight',
+     i:'One household only, as a reference.'},
+
+    // ---- earlier work, kept so nothing is lost ----
+    {id:'mg_whole',cfg:'no_asked_list',arm:'memory-guided_search',fmt:'wholesale_rewrite',
+     n:'rewritten whole every night',c:'#5f6b3a',d:'3 3',on:false,g:'earlier',
+     i:'An earlier run, before the prompts were made equal between the arms. Its numbers are not comparable with the current ones.'},
+    {id:'mg_incr',cfg:'no_asked_list',arm:'memory-guided_search',fmt:'incremental_edits',
+     n:'notes edited claim by claim',c:'#0072B2',d:'10 4 2 4',on:false,g:'earlier',
+     i:'An earlier run, before the prompts were made equal between the arms.'},
+    {id:'prior',cfg:'no_asked_list',arm:'prior_only,_no_notes',fmt:null,
+     n:'no notes at all',c:'#E69F00',d:'1 4',on:false,g:'earlier',
+     i:'An earlier control with the notes withheld at choice time.'},
+    {id:'lastseen',cfg:'mechanical',arm:'newest_sighting,_no_model',fmt:null,
+     n:'the old one-sighting rule, NOT LastSeen',c:'#b9c1c4',d:'5 5',on:false,g:'earlier',
+     i:'The comparator as it was until 25 September: it kept only the single most recent sighting of each object, so its first guess was the room it was last seen in and every guess after that was effectively random. Kept because it is a correct record of that rule, but it is NOT the LastSeen line above and must never be read as the same arm.'},
+    {id:'ace_smoke',cfg:'smoke',arm:'memory-guided_search',fmt:'ACE_as_published',
+     n:'ACE, the five-day test',c:'#CC79A7',d:'7 4',on:false,g:'earlier',
+     i:'The five-day run that checked the ACE rebuild worked before it was given a full month. Five days is not a result.'},
+    {id:'memgpt_smoke',cfg:'smoke',arm:'memory-guided_search',fmt:'MemGPT_as_published',
+     n:'MemGPT, the five-day test',c:'#D55E00',d:'2 3',on:false,g:'earlier',
+     i:'The five-day run that checked the MemGPT rebuild worked before it was given a full month. Five days is not a result.'}
+  ].filter(function(L){
+    return Q.some(function(r){return r.cfg===L.cfg&&r.arm===L.arm&&(L.fmt===null||r.fmt===L.fmt);});
+  });
+
+  var MEAS={f1:['was the first room it opened the right one','the share of questions where the very first room it tried held the object'],
+            fd:['did it find the object at all','the share of questions where it found the object inside its three-room budget'],
+            n:['how many rooms it opened','rooms opened per question on average; lower is better']};
+  // `cp`, naming the right shelf, was offered here until 2026-09-26 and is gone. When the robot
+  // finds the object by looking it is HANDED the exact shelf, so the measure was mostly a second
+  // copy of "did it find the object at all" with a different name - two estimators wearing one
+  // label, which is how this project has misread its own numbers before. The field is still in
+  // the data; nothing on the page reads it.
+
+  // ANY RUN THE LIST ABOVE DOES NOT MENTION GETS A LINE OF ITS OWN, AUTOMATICALLY.
+  // The list above is written by hand, and three times now a run has been started and shown
+  // nowhere on this page because nobody added its line: first ACE and MemGPT, which appeared to
+  // be stuck on day 7 for a day when in truth they had never been in the runner, and then the
+  // three waves started on 26 September, which the plots and the table both left out entirely
+  // while they were the only thing running. A page whose job is to say what is happening must
+  // not be able to omit what is happening. So every combination of run, sensing arm and memory
+  // format present in the data that no line above matches is given a line here, with a colour
+  // taken by format so the same method keeps its colour across runs.
+  var COLOUR_BY_FMT={
+    'the_log_and_notes_about_the_routine':'#009E73','incremental_edits':'#0072B2',
+    'ACE_as_published':'#CC79A7','MemGPT_as_published':'#D55E00',
+    'last_seen_no_model':'#808080','prior_only_no_notes':'#E69F00',
+    'wholesale_rewrite':'#5f6b3a','the_log_and_notes_told_the_night_before':'#56B4E9',
+    'the_log_and_notes_told_on_the_first_night':'#0f6b62'};
+  var SPARE_COLOURS=['#8c564b','#17becf','#7f5fb0','#b07f2f'];
+  var SPARE_DASHES=[null,'8 4','4 3','2 3','10 4 2 4','6 3'];
+  (function(){
+    var already={}, extra=[], nSpare=0;
+    LINES.forEach(function(l){already[l.cfg+'|'+l.arm+'|'+(l.fmt===null?'*':l.fmt)]=1;});
+    CELLS.forEach(function(c){
+      var exact=c.cfg+'|'+c.arm+'|'+c.fmt, wild=c.cfg+'|'+c.arm+'|*';
+      if(already[exact]||already[wild]) return;
+      already[exact]=1;
+      var colour=COLOUR_BY_FMT[c.fmt]||SPARE_COLOURS[(nSpare++)%SPARE_COLOURS.length];
+      extra.push({id:'auto_'+extra.length, cfg:c.cfg, arm:c.arm, fmt:c.fmt, c:colour,
+        d:SPARE_DASHES[extra.length%SPARE_DASHES.length], on:false, g:'run:'+c.cfg,
+        n:c.fmt.replace(/_/g,' '),
+        i:'Added by the page itself, because this run is in the data and no line was written for '
+          +'it by hand. Run '+c.cfg+', sensing arm '+c.arm.replace(/_/g,' ')+', memory '
+          +c.fmt.replace(/_/g,' ')+'.'});
+    });
+    LINES=LINES.concat(extra);
+    // WHAT IS SWITCHED ON WHEN THE PAGE OPENS. Every line used to start on, which meant forty
+    // lines redrawn on every change of any box and seconds of waiting. These three are the
+    // headline comparison; the seven ready-made comparisons at the top of the page do not depend
+    // on this and are always drawn.
+    var OPEN_WITH=[['five wider homes','the_log_and_notes_about_the_routine'],
+                   ['five wider homes','ACE_as_published'],
+                   ['five wider homes','last_seen_no_model']];
+    OPEN_WITH.forEach(function(w){
+      LINES.forEach(function(l){ if(l.cfg===w[0]&&l.fmt===w[1]) l.on=true; });});
+  })();
+
+  var st={hh:'ALL',slice:'mv',m:'f1',sm:'1'};
+  var pick={line:null,day:null,view:'night'};
+  var hhs=Array.from(new Set(CELLS.map(function(c){return c.hh;}))).sort();
+
+  $('cHh').innerHTML='<option value="ALL">all together</option>'+hhs.map(function(h){
+    return '<option value="'+h+'">'+h.replace('_t03','')+'</option>';}).join('');
+  // A sentence for each run, so a section of the dropdown says what its lines have in common
+  // instead of just repeating a directory name.
+  var RUN_SAYS={
+    'five wider homes':'FIVE NEWER HOMES, 26 September \u2014 a wider spread of objects, 24 questions a day. The headline set.',
+    'the family reads the log':'OUR ARM\u2019S VARIANTS, CORRECTED \u2014 how many notes a night, each one now reading the sighting log as the method does.',
+    'a second illness':'FIFTY DAYS, ILL TWICE \u2014 does a memory that has lived through one spell handle the second better?',
+    'reasons first':'LAST NIGHT, three homes, 24 questions a day \u2014 reasoning before the decision. The cap and told-the-cause arms here read NO sighting log, so they are an ablation of a different arm.',
+    'overnight, 24 a day':'THE ABLATION \u2014 the same arms with the decision named before the reasoning.',
+    'overnight':'FINISHED \u2014 eight questions a day, ten households.'};
+
+  function drawPicker(){
+    var groups=[['reasons','the main results — every schema reasons before it decides'],
+                ['now','the same arms with the DECISION BEFORE THE REASONING — the ablation'],
+                ['mine','set aside — our own earlier attempts at those two papers, and the whole-rewrite reference'],
+                ['eight','finished — eight questions a day, ten households'],
+                ['earlier','earlier work, kept so nothing is lost']];
+    // then one section per run, newest work first, for every line the list above does not name
+    var runs=[];
+    LINES.forEach(function(l){
+      if((l.g||'').slice(0,4)!=='run:') return;
+      if(runs.indexOf(l.cfg)<0) runs.push(l.cfg);});
+    var ORDER=['five wider homes','the family reads the log','a second illness','reasons first',
+               'overnight, 24 a day','overnight'];
+    runs.sort(function(a,b){
+      var i=ORDER.indexOf(a), j=ORDER.indexOf(b);
+      return (i<0?99:i)-(j<0?99:j);});
+    var named=runs.filter(function(r){return RUN_SAYS[r];});
+    var rest=runs.filter(function(r){return !RUN_SAYS[r];});
+    groups=named.map(function(r){return ['run:'+r, r+' — '+RUN_SAYS[r]];})
+      .concat(groups)
+      .concat(rest.map(function(r){return ['run:'+r, r+' — a smaller side run'];}));
+    $('pickDrop').innerHTML=groups.map(function(g){
+      var mine=LINES.filter(function(l){return (l.g||'now')===g[0];});
+      if(!mine.length) return '';
+      return '<div class="grp">'+esc(g[1])+'</div>'+mine.map(function(l){
+        return '<label><input type="checkbox" id="tk_'+l.id+'"'+(l.on?' checked':'')+
+          '>'+swatch(l)+'<span>'+esc(l.n)+'</span></label>';
+      }).join('');
+    }).join('');
+  }
+  drawPicker();
+  LINES.forEach(function(l){$('tk_'+l.id).addEventListener('change',function(){
+    l.on=$('tk_'+l.id).checked; face(); draw(); comparison();});});
+  function face(){
+    var on=LINES.filter(function(l){return l.on;});
+    $('pickDots').innerHTML=on.map(function(l){return '<i style="background:'+l.c+'"></i>';}).join('');
+    $('pickFace').textContent=on.length+' of '+LINES.length+' lines';
+  }
+  function lineById(id){return LINES.filter(function(l){return l.id===id;})[0];}
+
+  // THE INSTRUCTIONS THEMSELVES, not a description of them. The memory format is the key, and a
+  // paragraph that only appears on some nights is labelled with which nights, because an
+  // instruction given twice in a month is not the same as one given every night.
+  function theWordsFor(fmt){
+    var w=WORDS[fmt];
+    if(!w) return '<p class="note">No instructions recorded for this memory format.</p>';
+    return Object.keys(w).map(function(when){
+      return '<div class="entry summary"><div class="lab">'+esc(when)+'</div>'+
+        w[when].map(function(t){return '<div class="said">'+esc(t)+'</div>';}).join('')+'</div>';
+    }).join('');
+  }
+  function match(r,L){return r.cfg===L.cfg&&r.arm===L.arm&&(L.fmt===null||r.fmt===L.fmt);}
+
+  // ROWS GROUPED BY CELL, ONCE. Every line used to filter all of Q, so a redraw cost the number
+  // of lines switched on times the number of questions - and with forty lines on and eighty-eight
+  // thousand questions, changing any box took seconds. Grouping once makes a redraw cost only the
+  // questions of the lines actually asked for.
+  var BY_CELL={};
+  Q.forEach(function(r){ (BY_CELL[r.cfg+'|'+r.arm+'|'+r.fmt]||(BY_CELL[r.cfg+'|'+r.arm+'|'+r.fmt]=[])).push(r); });
+  var CELL_KEYS=Object.keys(BY_CELL);
+  function cellRows(L){
+    if(L.fmt!==null) return BY_CELL[L.cfg+'|'+L.arm+'|'+L.fmt]||[];
+    var out=[];
+    CELL_KEYS.forEach(function(k){
+      var p=k.split('|');
+      if(p[0]===L.cfg&&p[1]===L.arm) out=out.concat(BY_CELL[k]);});
+    return out;
+  }
+  function rowsFor(L){
+    return cellRows(L).filter(function(r){
+      return (st.hh==='ALL'||r.hh===st.hh)&&(st.slice==='all'||r.mv===1)&&r.d!=null;});
+  }
+  function bucket(d){
+    if(st.sm==='0')return d<14?'before':(d<24?'during':'after');
+    if(st.sm==='1')return d;
+    return Math.floor((d-1)/3)*3+2;
+  }
+  function series(L){
+    var g={};
+    rowsFor(L).forEach(function(r){
+      var b=bucket(r.d),v=g[b]||(g[b]=[0,0]);
+      v[0]+=(st.m==='n'?r.n:r[st.m]); v[1]++;});
+    return Object.keys(g).map(function(k){
+      return {x:(st.sm==='0'?k:+k),v:g[k][0]/g[k][1],n:g[k][1]};})
+      .sort(function(a,b){return (a.x>b.x)-(a.x<b.x);});
+  }
+
+  function draw(){
+    var svg=$('ch'),W=900,H=320,L0=52,R=16,T=16,B=44;
+    var S=LINES.filter(function(l){return l.on;}).map(function(l){return {a:l,p:series(l)};})
+               .filter(function(s){return s.p.length;});
+    $('chTitle').textContent=MEAS[st.m][0];
+    $('chNote').textContent=MEAS[st.m][1]+(st.slice==='mv'?' Only the objects whose usual place changes while the person is ill.':' All objects asked about.');
+    if(!S.length){svg.innerHTML='';$('leg').innerHTML='';$('st').textContent='Nothing written yet for this choice.';return;}
+    var isPhase=st.sm==='0',ORD=['before','during','after'];
+    var xs=isPhase?ORD:Array.from(new Set([].concat.apply([],S.map(function(s){
+      return s.p.map(function(p){return p.x;});})))).sort(function(a,b){return a-b;});
+    var maxv=st.m==='n'?3:1;
+    var x=function(v){var i=isPhase?ORD.indexOf(v):xs.indexOf(v);
+      return L0+(xs.length<2?0.5:(i/(xs.length-1)))*(W-L0-R);};
+    var y=function(v){return T+(1-v/maxv)*(H-T-B);};
+    var o=[];
+    if(!isPhase){
+      var ill=xs.filter(function(d){return d>=14&&d<=23;});
+      if(ill.length)o.push('<rect x="'+(x(ill[0])-5).toFixed(1)+'" y="'+T+'" width="'+
+        (x(ill[ill.length-1])-x(ill[0])+10).toFixed(1)+'" height="'+(H-T-B)+'" fill="currentColor" opacity="0.055"/>');
+    }else o.push('<rect x="'+(x('during')-70).toFixed(1)+'" y="'+T+'" width="140" height="'+(H-T-B)+'" fill="currentColor" opacity="0.055"/>');
+    (st.m==='n'?[0,1,2,3]:[0,.25,.5,.75,1]).forEach(function(v){
+      o.push('<line x1="'+L0+'" y1="'+y(v).toFixed(1)+'" x2="'+(W-R)+'" y2="'+y(v).toFixed(1)+'" stroke="currentColor" stroke-width="1" opacity="0.13"/>');
+      o.push('<text x="'+(L0-8)+'" y="'+(y(v)+4).toFixed(1)+'" text-anchor="end" font-size="11" fill="currentColor" opacity="0.62">'+(st.m==='n'?v:Math.round(v*100)+'%')+'</text>');});
+    xs.forEach(function(v,i){
+      if(isPhase||xs.length<=16||i%2===0)
+        o.push('<text x="'+x(v).toFixed(1)+'" y="'+(H-B+18)+'" text-anchor="middle" font-size="11" fill="currentColor" opacity="0.62">'+
+          (isPhase?({before:'before',during:'while ill',after:'after'})[v]:v)+'</text>');});
+    o.push('<text x="'+((L0+W-R)/2).toFixed(1)+'" y="'+(H-8)+'" text-anchor="middle" font-size="11" fill="currentColor" opacity="0.62">'+
+      (isPhase?'':'day of the month — ill from day 14 to 23; click a point to read that day')+'</text>');
+    S.forEach(function(s){
+      o.push('<path d="'+s.p.map(function(p,i){return (i?'L':'M')+x(p.x).toFixed(1)+' '+y(p.v).toFixed(1);}).join(' ')+
+        '" fill="none" stroke="'+s.a.c+'" stroke-width="2.25" stroke-linejoin="round"'+
+        (s.a.d?' stroke-dasharray="'+s.a.d+'"':'')+'/>');
+      s.p.forEach(function(p){
+        var sel=pick.line===s.a.id&&String(pick.day)===String(p.x);
+        o.push('<circle class="pt" data-line="'+s.a.id+'" data-day="'+p.x+'" cx="'+x(p.x).toFixed(1)+
+          '" cy="'+y(p.v).toFixed(1)+'" r="'+(sel?6:3.4)+'" fill="'+s.a.c+'"'+
+          (sel?' stroke="var(--ink)" stroke-width="2"':'')+'><title>'+esc(s.a.n)+' — '+
+          (isPhase?p.x:'day '+p.x)+', '+(st.m==='n'?p.v.toFixed(2)+' rooms':Math.round(p.v*100)+'%')+
+          ' from '+p.n+' questions. Click to read it.</title></circle>');});});
+    svg.innerHTML=o.join('');
+    Array.prototype.forEach.call(svg.querySelectorAll('.pt'),function(el){
+      el.addEventListener('click',function(){
+        pick.line=el.getAttribute('data-line');
+        pick.day=el.getAttribute('data-day');
+        draw(); reader();});});
+    // TWO LINES OVER DIFFERENT HOUSEHOLDS ARE NOT COMPARABLE, and nothing said so until
+    // 2026-09-26, when a one-household line was read beside a three-household line and the
+    // difference between them - 0% against 18% on day 14 for the same arm - was taken for a
+    // difference between runs. The households are the strongest thing in this data: one home's
+    // day-14 point can be 0 of 12 while the average of three is 18%.
+    var homeSets=S.map(function(s){return homesOf(s.a).slice().sort().join(',');});
+    var mixed=homeSets.some(function(h){return h!==homeSets[0];});
+    $('leg').innerHTML =
+      (mixed?'<div class="legrow" style="border-left:3px solid var(--warn-ink,#b06000);padding-left:8px">'
+        +'<b>These lines do not cover the same households.</b> <span class="thin">A difference '
+        +'between them mixes the method with which homes it ran on, and a line over one home '
+        +'swings far more from day to day than a line over five. Compare lines with the same '
+        +'number of homes, or use the seven ready-made comparisons at the top of the page.</span></div>':'')
+      + '<div class="legrow"><span class="thin">The shaded band is the ten days one person is ill. '
+      + 'Click a point to read that day. Click the question mark beside a line to see how that '
+      + 'memory works.</span></div>'
+      + S.map(function(s){
+          return '<div class="legrow">'+swatch(s.a)
+            + '<b>'+esc(s.a.n)+'</b>'
+            + '<button class="why" data-id="'+s.a.id+'" title="what this method is" '
+            + 'aria-label="what this method is">?</button>'
+            + '<span class="thin">'+esc(s.a.cfg)+' · '+homesOf(s.a).length+' homes · '
+            + s.p.reduce(function(k,p){return k+p.n;},0)+' questions</span>'
+            + '<div class="about" id="ab_'+s.a.id+'" hidden>'+esc(s.a.i||'')+'</div></div>';
+        }).join('');
+    Array.prototype.forEach.call($('leg').querySelectorAll('button.why'), function(b){
+      b.addEventListener('click', function(){
+        var box=$('ab_'+b.getAttribute('data-id'));
+        box.hidden=!box.hidden;
+        b.setAttribute('aria-expanded', String(!box.hidden));
+      });
+    });
+    $('st').innerHTML='Whole month so far: '+S.map(function(s){
+      var n=s.p.reduce(function(k,p){return k+p.n;},0);
+      var v=s.p.reduce(function(k,p){return k+p.v*p.n;},0)/n;
+      return '<b style="color:'+s.a.c+'">'+(st.m==='n'?v.toFixed(2):Math.round(v*100)+'%')+'</b> '
+        +esc(s.a.n)+' <span class="thin">('+esc(s.a.cfg)+', '+homesOf(s.a).length
+        +(homesOf(s.a).length===1?' home)':' homes)')+'</span>';
+    }).join(' · ');
+  }
+
+  function statementAsOf(c,day){
+    var h=(c.rh||[]).slice().sort(function(a,b){return a.d-b.d;});
+    for(var i=0;i<h.length;i++) if(h[i].d>day&&h[i].was) return h[i].was;
+    return c.st;
+  }
+  function reader(){
+    var host=$('rdBody');
+    if(!pick.line||pick.day==null){
+      $('rdTitle').textContent='What the model wrote';
+      $('rdNote').textContent='Click a point on the plot above to choose a line and a day.';
+      host.innerHTML=''; return;
+    }
+    var L=lineById(pick.line);
+    if(!L){host.innerHTML='';return;}
+    if(st.sm==='0'){
+      $('rdTitle').textContent='Pick a day, not a phase';
+      $('rdNote').textContent='Set grouping to one day per point, then click a point.';
+      host.innerHTML=''; return;
+    }
+    var day=+pick.day, span=(st.sm==='3'?[day-1,day+1]:[day,day]);
+    $('rdTitle').textContent=(span[0]===span[1]?'Day '+day:'Days '+span[0]+' to '+span[1])+' — '+L.n;
+    $('rdNote').textContent=(day<14?'before anyone is ill':(day<24?'while the person is ill':'after ordinary life returns'))+
+      (st.hh==='ALL'?', all homes together':', home '+st.hh.replace('_t03',''))+
+      '. Each question carries two marks, because the plots above can draw either: whether the '+
+      'FIRST room it opened held the object, and whether the answer it finally gave was right. '+
+      'It often finds a thing on the second or third room, so a day can be all answers right and '+
+      'still well under 100% on first room.';
+    var keys=keysFor(L);
+    var who='<div class="who" style="border-left-color:'+L.c+'"><b>'+esc(L.n)+'</b><br><span class="thin">'+
+      (span[0]===span[1]?'day '+day:'days '+span[0]+'–'+span[1])+' · '+
+      (st.hh==='ALL'?hhs.length+' homes':esc(st.hh.replace('_t03','')))+' · '+
+      (st.slice==='mv'?'objects the illness moved':'all objects')+'</span></div>';
+
+    var waiting=keys.filter(function(k){return !window.TR[k];});
+    if(waiting.length){
+      host.innerHTML=who+'<p class="note">Reading '+waiting.length+' file'+
+        (waiting.length===1?'':'s')+' of reasoning and notes\u2026</p>';
+      loadKeys(keys,function(){reader();});
+      return;
+    }
+    var broken=keys.filter(function(k){return window.TR[k]&&window.TR[k].couldNotLoad;});
+    var warn=broken.length? '<p class="note">'+broken.length+' of '+keys.length+
+      ' files of reasoning could not be loaded, so what follows is incomplete.</p>' : '';
+    who += warn;
+    if(pick.view==='rooms'||pick.view==='why'){
+      var qs=loadedQ(keys).filter(function(r){
+        return match(r,L)&&(st.hh==='ALL'||r.hh===st.hh)&&r.d>=span[0]&&r.d<=span[1]&&
+               (st.slice==='all'||r.mv===1);});
+      if(!qs.length){host.innerHTML=who+'<p class="note">No questions recorded there for this line.</p>';return;}
+      host.innerHTML=who+qs.map(function(r){
+        var steps=(r.ro||[]).map(function(room,i){
+          var why=(r.wy||[])[i];
+          // The whole reason, in its own box, always - not a span inside a line, which is
+          // what let one room's text run into the next.
+          return '<li><b>'+(i+1)+'. '+esc(room)+'</b>'+
+                 (pick.view==='why'&&why?'<div class="quote">'+esc(why)+'</div>':'')+'</li>';}).join('');
+        // TWO DIFFERENT NOTIONS OF WRONG ON ONE PAGE, and until 2026-09-27 only one of them was
+        // shown here. The plot above draws FIRST ROOM RIGHT by default; this list marked each
+        // question by whether the ANSWER was right. On day 14 of the told-and-committed arm that
+        // reads as 24 of 24 right beside a plot saying 83%, because it found everything, often on
+        // the second or third room. Both marks are shown now, and named.
+        var firstRight=(r.f1===1);
+        return '<details class="trow"'+(qs.length<4?' open':'')+'><summary>'+
+          (firstRight?'<span class="pill right">first room right</span>'
+                     :'<span class="pill wrong">first room wrong</span>')+
+          (r.ok?'<span class="pill right">answer right</span>'
+               :'<span class="pill wrong">answer wrong</span>')+
+          '<span class="obj">'+esc(r.o)+'</span><span class="thin">'+
+          (span[0]!==span[1]?'day '+r.d+' · ':'')+(st.hh==='ALL'?esc(r.hh.replace('_t03',''))+' · ':'')+
+          'opened '+((r.ro||[]).length||'?')+(((r.ro||[]).length===1)?' room':' rooms')+' · '+
+          'said '+esc(r.ap||'nothing')+' · truly '+esc(r.tp||'?')+'</span></summary><div class="tbody"><ol>'+
+          steps+'</ol><p class="thin">answered from: '+esc(r.af||'?')+' · notes available: '+
+          (r.nl==null?'?':r.nl)+' lines</p></div></details>';}).join('');
+      return;
+    }
+    if(pick.view==='words'){
+      host.innerHTML=who+'<p class="note">Every word this arm is given about how its memory works, '+
+        'lifted out of the code that writes the prompt rather than described. What is shown to it '+
+        'about the home, the day it just had and its memory as it stands is the same for every arm '+
+        'and is not repeated here.</p>'+theWordsFor(L.fmt);
+      return;
+    }
+    var ns=loadedNotes(keys);
+    if(pick.view==='notes'){
+      var have=ns.filter(function(c){return c.kind==='summary'?(c.day>=span[0]&&c.day<=span[1]):(c.day!=null&&c.day<=span[1]);});
+      if(!have.length){host.innerHTML=who+'<p class="note">Nothing had been written into its memory by then.</p>';return;}
+      host.innerHTML=who+'<p class="note">'+have.length+' entries, as its memory stood at the end of day '+span[1]+
+        '. A claim is shown with the wording it had then, not its final wording.</p>'+have.map(function(c){
+        var ev='';
+        if(c.kind==='claim'){
+          ev='<p class="thin">what it holds under: '+esc(c.holds||'(nothing said)')+
+             ' · '+esc(c.status||'')+'</p>'+
+             '<p class="thin">sightings it cites as support ('+(c.sup||[]).length+')</p>'+
+             '<p class="quote">'+(esc((c.sup||[]).join(', '))||'(none)')+'</p>'+
+             '<p class="thin">sightings it cites as arguing AGAINST it ('+(c.con||[]).length+')</p>'+
+             '<p class="quote">'+(esc((c.con||[]).join(', '))||'(none — it has never recorded evidence against itself)')+'</p>';
+          var h=(c.rh||[]).slice().sort(function(a,b){return a.d-b.d;});
+          if(h.length){
+            ev+='<p class="thin">what it used to say, oldest first ('+h.length+' change'+(h.length===1?'':'s')+')</p>';
+            h.forEach(function(x){
+              ev+='<p class="quote"><b>day '+x.d+'</b> — it said: '+esc(x.was||'(not recorded)')+
+                  (x.why?'<br>its reason for changing: '+esc(x.why):'')+'</p>';});
+          } else {
+            ev+='<p class="thin">it has never been changed</p>';
+          }
+        }
+        return '<details class="trow"><summary><span class="pill n">'+(c.kind==='claim'?'claim':'summary')+
+          '</span><span class="obj">'+esc(c.id)+'</span><span class="thin">'+
+          (st.hh==='ALL'?esc(c.hh.replace('_t03',''))+' · ':'')+'written day '+(c.day==null?'?':c.day)+
+          (c.stand?' · '+esc(c.stand):'')+
+          (c.kind==='claim'?' · '+((c.sup||[]).length)+' for, '+((c.con||[]).length)+' against':'')+
+          '</span></summary><div class="tbody"><p class="quote">'+
+          esc(c.kind==='claim'?statementAsOf(c,span[1]):c.st)+'</p>'+ev+'</div></details>';}).join('');
+      return;
+    }
+    if(pick.view==='night'){
+      // EVERYTHING THE MEMORY DID THAT NIGHT, gathered per household rather than scattered
+      // one line per claim. A night's work is one thing to read: what it added, what it
+      // changed and why, and the summary if the arm writes one.
+      var perHome={};
+      function put(home,kind,obj){ (perHome[home]=perHome[home]||{added:[],changed:[],summary:[],profile:[]})[kind].push(obj); }
+      ns.forEach(function(c){
+        if(st.hh!=='ALL'&&c.hh!==st.hh) return;
+        // A PROFILE IS NOT DATED TO A NIGHT. It is rewritten in full every night and only its
+        // latest wording is kept, so it is shown whenever the arm that keeps one is being read,
+        // with the night it was last written stated beside it rather than pretended away.
+        if(c.kind==='profile'){ put(c.hh,'profile',{c:c}); return; }
+        if(c.kind==='summary'){
+          if(c.day!=null&&c.day>=span[0]&&c.day<=span[1]) put(c.hh,'summary',{c:c});
+          return;
+        }
+        if(c.day!=null&&c.day>=span[0]&&c.day<=span[1]) put(c.hh,'added',{c:c});
+        (c.rh||[]).forEach(function(h){
+          if(h.d>=span[0]&&h.d<=span[1]) put(c.hh,'changed',{c:c,h:h});});
+      });
+      var homes=Object.keys(perHome).sort().filter(function(h){
+        var g=perHome[h];
+        return g.added.length||g.changed.length||g.summary.length||g.profile.length;});
+      if(!homes.length){
+        host.innerHTML=who+'<p class="note">Its memory did nothing on '+
+          (span[0]===span[1]?'day '+day:'days '+span[0]+' to '+span[1])+
+          '. That is recorded rather than missing: some nights it has nothing to add.</p>';
+        return;
+      }
+      host.innerHTML=who+'<p class="note">Everything this memory did, gathered by household. '+
+        'Each home opens on its own and scrolls inside itself; no text is shortened.</p>'+
+        homes.map(function(home){
+          var g=perHome[home], nA=g.added.length, nC=g.changed.length, nS=g.summary.length;
+          var body='';
+          if(g.profile.length){ body+='<h4>who it thinks lives here, as the profile stands</h4>'+
+            g.profile.map(function(x){
+              return '<div class="entry summary"><div class="lab">'+esc(x.c.id)+
+                     (x.c.day!=null?' &middot; last written on night '+x.c.day:'')+'</div>'+
+                     '<div class="said">'+esc(x.c.st)+'</div></div>';}).join(''); }
+          if(nS){ body+='<h4>the summary it wrote that night</h4>'+g.summary.map(function(x){
+            return '<div class="entry summary"><div class="lab">'+esc(x.c.id)+'</div>'+
+                   '<div class="said">'+esc(x.c.st)+'</div></div>';}).join(''); }
+          if(nA){ body+='<h4>notes it added ('+nA+')</h4>'+g.added.map(function(x){
+            var c=x.c;
+            return '<div class="entry added"><div class="lab">'+esc(c.id)+
+              ' · when it is true: '+esc(c.holds||'(nothing said)')+' · '+esc(c.status||'')+
+              (c.stand?' · '+esc(c.stand):'')+'</div>'+
+              '<div class="said">'+esc(statementAsOf(c,span[1]))+'</div>'+
+              '<div class="lab">cites '+((c.sup||[]).length)+' sighting(s) for it, '+
+              ((c.con||[]).length)+' against it</div></div>';}).join(''); }
+          if(nC){ body+='<h4>notes it changed, and its reasoning for each ('+nC+')</h4>'+
+            g.changed.map(function(x){
+              var c=x.c,h=x.h;
+              return '<div class="entry changed"><div class="lab">'+esc(c.id)+' · day '+h.d+'</div>'+
+                '<div class="said">it had said: '+esc(h.was||'(not recorded)')+'</div>'+
+                '<div class="said">it now says: '+esc(statementAsOf(c,span[1]))+'</div>'+
+                (h.why?'<div class="reason">'+esc(h.why)+'</div>'
+                      :'<div class="lab">no reason recorded for this change</div>')+
+                '</div>';}).join(''); }
+          return '<details class="homeblock"'+(homes.length===1?' open':'')+'><summary>'+
+            esc(home.replace('_t03',''))+
+            '<span class="thin">'+nA+' added · '+nC+' changed'+(nS?' · a summary':'')+'</span>'+
+            '</summary><div class="nightbox">'+body+'</div></details>';
+        }).join('');
+      return;
+    }
+    var revs=[];
+    ns.forEach(function(c){(c.rh||[]).forEach(function(h){
+      if(h.d>=span[0]&&h.d<=span[1]) revs.push({c:c,h:h});});});
+    if(!revs.length){host.innerHTML=who+'<p class="note">It changed no note then.</p>';return;}
+    host.innerHTML=who+'<p class="note">'+revs.length+' note'+(revs.length===1?'':'s')+' changed.</p>'+
+      revs.map(function(x){
+        return '<details class="trow" open><summary><span class="pill n">changed</span><span class="obj">'+
+          esc(x.c.id)+'</span><span class="thin">'+(span[0]!==span[1]?'day '+x.h.d+' · ':'')+
+          (st.hh==='ALL'?esc(x.c.hh.replace('_t03',''))+' · ':'')+'</span></summary><div class="tbody">'+
+          '<p class="thin">its reason</p><p class="quote">'+esc(x.h.why||'(none given)')+'</p>'+
+          '<p class="thin">it used to say</p><p class="quote">'+esc(x.h.was||'(not recorded)')+'</p>'+
+          '<p class="thin">it says now</p><p class="quote">'+esc(statementAsOf(x.c,span[1]))+'</p></div></details>';}).join('');
+  }
+  var VIEWS=[['vRooms','rooms'],['vWhy','why'],['vNotes','notes'],['vRevs','revs'],
+             ['vNight','night'],['vWords','words']];
+  VIEWS.forEach(function(p){
+    $(p[0]).addEventListener('click',function(){
+      pick.view=p[1];
+      VIEWS.forEach(function(q){$(q[0]).setAttribute('aria-pressed',String(q[1]===pick.view));});
+      reader();});});
+
+  // Cells that were STOPPED ON PURPOSE. A run that is missing because we chose to stop it must
+  // not read the same as one that is missing because something broke, and the page cannot tell
+  // the two apart from the data - so the choice is written down here, with its date and reason.
+  // Stopped 2026-09-25: Oliver cut our own earlier attempts at ACE and MemGPT from the study in
+  // favour of the faithful rebuilds. These four had not started, so they have no data at all.
+  var STOPPED={
+    'q_memgpt': {'hh_s2_t03':1,'hh_s48_t03':1,'hh_s32_t03':1},
+    'q_ace':    {'hh_s32_t03':1}
+  };
+  // RUNS THAT WERE ONLY EVER MEANT TO BE SHORT. A five-day test that reached day 4 did
+  // everything it was asked to do, and calling it stopped is a false alarm of exactly the kind
+  // this colouring is supposed to remove. The last day each short run was asked to reach:
+  var SHORT_RUNS={'smoke':4,'one_home':5};
+
+  // A cell every day of which has been answered. Every run in this study is 32 days, day 0 to
+  // day 31, so the number is not repeated in each cell of the table.
+  var LAST_DAY=31;
+  // How long a cell may go without writing before it is called stopped rather than still going.
+  // A single nightly write can take twelve minutes on the slowest arm, so anything under about
+  // twenty-five is ordinary work in progress.
+  var QUIET_ENOUGH_TO_BE_STOPPED=25;
+
+
+  // THE WINDOWS THE STUDY IS READ IN, and they are not the three phases the plot groups by.
+  // Day 14 is the first changed day and day 24 the first ordinary one again; both are single
+  // days because every arm's biggest move happens on them, and averaging them into a week of
+  // neighbours is what hid the day-24 effect for two days.
+  var WINDOWS=[['days 1-13, settled',1,13],['day 14, the change',14,14],
+               ['days 15-16',15,16],['days 17-23, still ill',17,23],
+               ['day 24, back to normal',24,24],['days 25-26',25,26],
+               ['days 27-31',27,31]];
+  // What the same arm moves by when it is rerun with nothing changed, measured on this model at
+  // temperature zero. A difference smaller than this is not a difference.
+  var NOISE={f1:1.9,fd:2.2,n:null};
+
+  function valueIn(L,home,lo,hi){
+    var rs=cellRows(L).filter(function(r){
+      return r.hh===home&&(st.slice==='all'||r.mv===1)&&r.d>=lo&&r.d<=hi;});
+    if(rs.length<8) return null;            // fewer than eight questions is not a window
+    var t=0; rs.forEach(function(r){t+=(st.m==='n'?r.n:r[st.m]);});
+    return {v:(st.m==='n'?t/rs.length:100*t/rs.length), n:rs.length};
+  }
+  function homesOf(L){
+    var seen={},out=[];
+    CELLS.forEach(function(c){ if(match(c,L)&&!seen[c.hh]){seen[c.hh]=1;out.push(c.hh);} });
+    return out.sort();
+  }
+  function fmtv(x){return st.m==='n'?x.toFixed(2):x.toFixed(1);}
+
+  function comparison(){
+    var on=LINES.filter(function(l){return l.on;});
+    var byRun={};
+    on.forEach(function(l){(byRun[l.cfg]||(byRun[l.cfg]=[])).push(l);});
+    var runs=Object.keys(byRun).sort();
+    $('cmpNote').textContent=MEAS[st.m][1]+' '+
+      (st.slice==='mv'?'Only the objects whose usual place changes while the person is ill.'
+                      :'All objects asked about.')+
+      ' Only the lines switched on above appear. A blank cell is a window with fewer than eight questions in it.';
+    var h='<thead><tr><th>run</th><th>arm</th><th>homes</th>'+
+      WINDOWS.map(function(w){return '<th>'+esc(w[0])+'</th>';}).join('')+'</tr></thead><tbody>';
+    runs.forEach(function(run){
+      byRun[run].forEach(function(l,i){
+        var homes=homesOf(l);
+        h+='<tr>'+(i===0?'<td rowspan="'+byRun[run].length+'">'+esc(run)+'</td>':'')+
+           '<td><span class="legend" style="margin:0">'+swatch(l)+esc(l.n)+'</span></td>'+
+           '<td>'+homes.length+'</td>';
+        WINDOWS.forEach(function(w){
+          var num=0,den=0;
+          homes.forEach(function(hh){var g=valueIn(l,hh,w[1],w[2]); if(g){num+=g.v;den++;}});
+          h+='<td>'+(den?fmtv(num/den)+(st.m==='n'?'':'%'):'<span class="thin">&mdash;</span>')+'</td>';});
+        h+='</tr>';});});
+    $('cmpLevels').innerHTML=h+'</tbody>';
+
+    var d='<thead><tr><th>run</th><th>pair, second minus first</th><th>window</th>'+
+      '<th>difference</th><th>two standard errors</th><th>homes</th><th>each home</th>'+
+      '<th>does it count</th></tr></thead><tbody>';
+    var floor=NOISE[st.m];
+    runs.forEach(function(run){
+      var ls=byRun[run];
+      for(var a=0;a<ls.length;a++) for(var b=a+1;b<ls.length;b++){
+        var A=ls[a],B=ls[b],rows=[];
+        WINDOWS.forEach(function(w){
+          var per=[];
+          homesOf(A).forEach(function(hh){
+            var x=valueIn(A,hh,w[1],w[2]), y=valueIn(B,hh,w[1],w[2]);
+            if(x&&y) per.push(y.v-x.v);});
+          if(per.length<2) return;
+          var m=per.reduce(function(p,q){return p+q;},0)/per.length;
+          var sd=Math.sqrt(per.reduce(function(p,q){return p+(q-m)*(q-m);},0)/(per.length-1));
+          var tse=2*sd/Math.sqrt(per.length);
+          var agree=per.every(function(q){return q>0;})||per.every(function(q){return q<0;});
+          var big=Math.abs(m)>tse&&(floor===null||Math.abs(m)>floor);
+          var allZero=per.every(function(q){return q===0;});
+          var verdict=allZero?'the same arm in this window':
+                      !agree?'no &mdash; the homes disagree':
+                      (big?'<b>yes</b>':(Math.abs(m)<=tse?'no &mdash; inside two standard errors'
+                                                         :'no &mdash; under the noise floor'));
+          rows.push('<tr><td></td><td></td><td>'+esc(w[0])+'</td><td>'+(m>0?'+':'')+fmtv(m)+
+            '</td><td>'+fmtv(tse)+'</td><td>'+per.length+'</td><td class="thin">'+
+            per.map(function(q){return (q>0?'+':'')+fmtv(q);}).join(', ')+'</td><td>'+verdict+'</td></tr>');});
+        if(!rows.length) continue;
+        rows[0]=rows[0].replace('<td></td><td></td>','<td rowspan="'+rows.length+'">'+esc(run)+
+          '</td><td rowspan="'+rows.length+'"><span class="legend" style="margin:0">'+swatch(A)+
+          esc(A.n)+'</span><br>to<br><span class="legend" style="margin:0">'+swatch(B)+esc(B.n)+'</span></td>');
+        for(var k=1;k<rows.length;k++) rows[k]=rows[k].replace('<td></td><td></td>','');
+        d+=rows.join('');
+      }});
+    $('cmpDiffs').innerHTML=d+'</tbody>'+
+      (floor===null?'<tfoot><tr><td colspan="8" class="thin">No rerun noise floor has been '+
+       'measured for rooms opened, so only the two standard errors apply to this measure.</td></tr></tfoot>':'');
+  }
+
+
+  // SEVEN COMPARISONS, WRITTEN OUT. Each one names the run it lives in, because two arms from
+  // two different runs are not comparable unless the run IS the thing being compared - which
+  // happens once here, and says so. `fmt` is the memory format as the runner writes it; the
+  // sensing arm is looked up from the cells rather than typed, so a wrong guess cannot silently
+  // draw an empty line.
+  var BLOCKS=[
+    {t:'1. Being told helps on the day it is told, and not for long',
+     w:'All four read the sighting log and write sixteen notes a night, on the same three '+
+       'households and the same questions. The first is told nothing. The second is told one '+
+       'sentence on the night before the routine changes: the resident is unwell and is staying '+
+       'at home. The third is told the same sentence AND required, that night and before it has '+
+       'seen any of it, to write what it expects to be different tomorrow - which person will be '+
+       'where and which of their things will move, and to which room. The fourth is told the '+
+       'sentence and keeps a profile of each person to put it in. Day 14 is the whole comparison: '+
+       'it is the one day on which no arm has evidence and only the told arms have information.',
+     pick:[{cfg:'the family reads the log',fmt:'ours_told_and_asked_what_changes',n:'told, AND made to say what will change',c:'#009E73',focus:true},
+           {cfg:'the family reads the log',fmt:'ours_sixteen_notes_a_night',n:'told nothing',c:'#8c564b'},
+           {cfg:'the family reads the log',fmt:'ours_told_the_night_before',n:'told one sentence',c:'#56B4E9'},
+           {cfg:'the family reads the log',fmt:'ours_a_profile_and_told',n:'told, with a profile of each person to put it in',c:'#CC79A7'}],
+     read:[['days 1-13, settled',1,13],['day 14, the change',14,14],['days 15-16',15,16],['day 24, back to normal',24,24]]},
+
+    {t:'2. A second illness is absorbed better than the first',
+     w:'The same household falls ill twice. The question written down before it ran was whether a '+
+       'memory that has already lived through one spell handles the second one better. The '+
+       'prediction on record is that it will not, because nothing in any memory says that anybody '+
+       'was ill — only where things went.',
+     pick:[{cfg:'a second illness',fmt:'the_log_and_notes_about_the_routine',n:'ours',c:'#009E73',focus:true},
+           {cfg:'a second illness',fmt:'last_seen_no_model',n:'the last place it was seen \u2014 no model at all',c:'#808080'},
+           {cfg:'a second illness',fmt:'ACE_as_published',n:'ACE as published',c:'#CC79A7'},
+           {cfg:'a second illness',fmt:'incremental_edits',n:'the plain claim store',c:'#0072B2'}],
+     read:[['first change, day 14',14,14],['first spell, 17-23',17,23],['second change, day 32',32,32],['second spell, 35-41',35,41]]},
+
+    {t:'3. Our method against the published designs, on the five newer homes',
+     w:'Five households built with a wider spread of objects, 24 questions a day, every arm '+
+       'answering the identical questions. The comparison the write-up rests on.',
+     pick:[{cfg:'five wider homes',fmt:'the_log_and_notes_about_the_routine',n:'ours: the sighting log plus notes about the routine'},
+           {cfg:'five wider homes',fmt:'ACE_as_published',n:'ACE as published'},
+           {cfg:'five wider homes',fmt:'last_seen_no_model',n:'the last place it was seen — no model at all'}],
+     read:[['days 1-13, settled',1,13],['day 14, the change',14,14],['day 24, back to normal',24,24],['days 27-31',27,31]]},
+
+    {t:'4. The same comparison on the first three homes, with two more designs',
+     w:'Three households, the same 24 questions a day. This is where MemGPT and the plain claim '+
+       'store exist, so it is the widest set of memory designs side by side.',
+     pick:[{cfg:'reasons first',fmt:'the_log_and_notes_about_the_routine',n:'ours'},
+           {cfg:'reasons first',fmt:'ACE_as_published',n:'ACE as published'},
+           {cfg:'reasons first',fmt:'MemGPT_as_published',n:'MemGPT as published'},
+           {cfg:'reasons first',fmt:'incremental_edits',n:'the plain claim store (the control)'}],
+     read:[['days 1-13, settled',1,13],['day 14, the change',14,14],['day 24, back to normal',24,24]]},
+
+    {t:'5. Does reading the raw sighting log matter, or do the notes carry the work?',
+     w:'Both lines write the same notes under the same limit of sixteen a night. One is also '+
+       'handed every past sighting of the object it is asked about; the other is not. This was '+
+       'not a choice until 26 September, when a test of the arm’s NAME rather than its family '+
+       'was found to be handing the log to one arm and withholding it from its own variants.',
+     pick:[{cfg:'reasons first',fmt:'the_log_and_notes_about_the_routine',n:'notes AND the sighting log'},
+           {cfg:'reasons first',fmt:'ours_sixteen_notes_a_night',n:'the same notes, no log',c:'#8c564b'}],
+     read:[['days 1-13, settled',1,13],['days 17-23, still ill',17,23],['day 24, back to normal',24,24]]},
+
+    {t:'6. How much memory: eight notes a night, sixteen, or as many as the day earns',
+     w:'Our arm with one number changed. Does a smaller memory give up steady accuracy in return '+
+       'for turning faster when the routine changes? These are the runs that read the log, so '+
+       'they are variants of the method rather than of something else.',
+     pick:[{cfg:'the family reads the log',fmt:'ours_eight_notes_a_night',n:'eight notes a night',c:'#D55E00'},
+           {cfg:'the family reads the log',fmt:'ours_sixteen_notes_a_night',n:'sixteen notes a night',c:'#009E73'},
+           {cfg:'the family reads the log',fmt:'ours_allowance_derived',n:'as many as the day earns',c:'#0072B2'}],
+     read:[['days 1-13, settled',1,13],['day 14, the change',14,14],['day 24, back to normal',24,24]]},
+
+    {t:'7. Reasoning before the decision, or after it',
+     w:'THE RUN IS THE TREATMENT HERE, and it is the only comparison on this card where that is '+
+       'true. Both lines are our arm on the same three households and the same questions; they '+
+       'differ in the order of two fields in a schema. Until 25 September the room came first and '+
+       'the explanation after, with the model’s own thinking switched off, so 55,613 of 55,613 '+
+       'rooms were named before any deliberation.',
+     pick:[{cfg:'reasons first',fmt:'the_log_and_notes_about_the_routine',n:'it reasons, then names a room'},
+           {cfg:'overnight, 24 a day',fmt:'the_log_and_notes_about_the_routine',n:'it names a room, then explains',c:'#CC79A7'}],
+     read:[['days 1-13, settled',1,13],['days 17-23, still ill',17,23],['day 24, back to normal',24,24]]},
+
+    {t:'8. A profile of each person, instead of notes about objects only',
+     w:'The memory keeps a short profile of each resident and reads it when it answers. On its '+
+       'first night it is told only who lives here and what each of them does - "Tomas works from '+
+       'home, Ines is retired, they are a couple" - and nothing else. The premise is that a '+
+       'fortnight of somebody being unwell belongs somewhere that can stop being true, rather '+
+       'than in a note about a water bottle where tomorrow\u2019s sighting deletes it.',
+     pick:[{cfg:'the family reads the log',fmt:'ours_sixteen_notes_a_night',n:'notes only',c:'#8c564b'},
+           {cfg:'the family reads the log',fmt:'ours_a_profile_of_each_person',n:'notes and a profile of each person',c:'#0072B2'}],
+     read:[['days 1-13, settled',1,13],['day 14, the change',14,14],['days 15-16',15,16],['day 24, back to normal',24,24]]}
+  ];
+
+  // One paired difference, so the seven comparisons and the big table below cannot disagree.
+  function pairedDiff(A,B,lo,hi){
+    var per=[], homes=homesOf(A);
+    homes.forEach(function(hh){
+      var x=valueIn(A,hh,lo,hi), y=valueIn(B,hh,lo,hi);
+      if(x&&y) per.push(y.v-x.v);});
+    if(per.length<2) return null;
+    var m=per.reduce(function(p,q){return p+q;},0)/per.length;
+    var sd=Math.sqrt(per.reduce(function(p,q){return p+(q-m)*(q-m);},0)/(per.length-1));
+    var tse=2*sd/Math.sqrt(per.length), floor=NOISE[st.m];
+    var agree=per.every(function(q){return q>0;})||per.every(function(q){return q<0;});
+    // A DIFFERENCE OF EXACTLY ZERO IN EVERY HOME IS NOT A DISAGREEMENT, it is two arms that are
+    // the same arm in that window. It happens by construction: an arm told something on night 13
+    // is byte-identical to its untold parent for days 1 to 13, so the settled window must be 0.0
+    // in every home. Printed as "homes disagree" it reads like a failed finding instead of an
+    // identity, which is the same fault as a check that cannot fail being read as a result.
+    var allZero=per.every(function(q){return q===0;});
+    return {m:m,tse:tse,per:per,n:per.length,agree:agree,identical:allZero,
+            counts:!allZero&&agree&&Math.abs(m)>tse&&(floor===null||Math.abs(m)>floor)};
+  }
+
+  // A line for a block entry. The sensing arm comes from the cells, never from a guess.
+  function lineOf(e,i){
+    var hit=null;
+    CELLS.forEach(function(c){ if(!hit&&c.cfg===e.cfg&&c.fmt===e.fmt) hit=c; });
+    var known=null;
+    LINES.forEach(function(l){ if(!known&&l.cfg===e.cfg&&l.fmt===e.fmt) known=l; });
+    // THE ID MATTERS: the reader looks a line up by id, so a block line adopts the id of the
+    // matching line in LINES rather than inventing one. Every combination in the data has a line
+    // there, by hand or added automatically, so this finds one whenever the cell exists - and that
+    // is what makes a point in a small plot clickable through to what the model wrote.
+    return {id:(known?known.id:'blk'), cfg:e.cfg, fmt:e.fmt,
+            arm:(hit?hit.arm:(known?known.arm:'memory-guided_search')),
+            n:e.n, c:e.c||(known?known.c:COLOUR_BY_FMT[e.fmt])||SPARE_COLOURS[i%SPARE_COLOURS.length],
+            d:e.d!==undefined?e.d:(i===0?null:SPARE_DASHES[i%SPARE_DASHES.length]), missing:!hit};
+  }
+
+  // A compact plot of one block's lines. One day per point always, whatever the grouping box
+  // says, because these comparisons are about particular days.
+  function smallPlot(S,lastDay){
+    var W=900,H=236,L0=44,R=12,T=10,B=60;
+    var xs=[]; for(var d=1;d<=lastDay;d++) xs.push(d);
+    var maxv=st.m==='n'?3:1;
+    var x=function(v){return L0+((v-1)/(xs.length-1))*(W-L0-R);};
+    var y=function(v){return T+(1-v/maxv)*(H-T-B);};
+    var o=[];
+    // the shaded bands are the days somebody is ill: one spell in a 32-day run, two in a 50-day one
+    [[14,23]].concat(lastDay>40?[[32,41]]:[]).forEach(function(sp){
+      o.push('<rect x="'+x(sp[0]).toFixed(1)+'" y="'+T+'" width="'+(x(sp[1])-x(sp[0])).toFixed(1)+
+             '" height="'+(H-T-B)+'" fill="currentColor" opacity="0.055"/>');});
+    (st.m==='n'?[0,1,2,3]:[0,.5,1]).forEach(function(v){
+      o.push('<line x1="'+L0+'" y1="'+y(v).toFixed(1)+'" x2="'+(W-R)+'" y2="'+y(v).toFixed(1)+
+             '" stroke="currentColor" stroke-width="1" opacity="0.13"/>');
+      o.push('<text x="'+(L0-8)+'" y="'+(y(v)+4).toFixed(1)+'" text-anchor="end" font-size="11" '+
+             'fill="currentColor" opacity="0.62">'+(st.m==='n'?v:Math.round(v*100)+'%')+'</text>');});
+    [1,14,24,32,41,lastDay].forEach(function(v){
+      if(v>lastDay) return;
+      o.push('<text x="'+x(v).toFixed(1)+'" y="'+(H-B+18)+'" text-anchor="middle" font-size="11" '+
+             'fill="currentColor" opacity="0.62">'+v+'</text>');});
+    o.push('<text x="'+((L0+W-R)/2).toFixed(1)+'" y="'+(H-6)+'" text-anchor="middle" font-size="11" '+
+           'fill="currentColor" opacity="0.62">day of the month; the shaded band is when somebody is ill</text>');
+    S.forEach(function(s){
+      if(!s.p.length) return;
+      o.push('<path d="'+s.p.map(function(p,i){return (i?'L':'M')+x(p.x).toFixed(1)+' '+y(p.v).toFixed(1);}).join(' ')+
+        '" fill="none" stroke="'+s.a.c+'" stroke-width="'+(s.a.focus?3.6:1.8)+'" stroke-linejoin="round"'+
+        (s.a.d&&!s.a.focus?' stroke-dasharray="'+s.a.d+'"':'')+
+        (s.a.focus?'':' opacity="0.8"')+'/>');
+      s.p.forEach(function(p){
+        var sel=pick.line===s.a.id&&String(pick.day)===String(p.x);
+        o.push('<circle class="pt" data-line="'+s.a.id+'" data-day="'+p.x+'" style="cursor:pointer" '+
+          'cx="'+x(p.x).toFixed(1)+'" cy="'+y(p.v).toFixed(1)+'" r="'+(sel?6:4.4)+'" fill="'+s.a.c+'"'+
+          (sel?' stroke="var(--ink)" stroke-width="2"':'')+'><title>'+esc(s.a.n)+' — day '+p.x+', '+
+          (st.m==='n'?p.v.toFixed(2)+' rooms':Math.round(p.v*100)+'%')+' from '+p.n+
+          ' questions. Click to read what it wrote that day.</title></circle>');});});
+    o.push('<text x="'+((L0+W-R)/2).toFixed(1)+'" y="'+(H-20)+'" text-anchor="middle" '+
+           'font-size="11" fill="currentColor" opacity="0.62">click any point to read that '+
+           'day: the rooms it opened, its reasoning for each, and its memory that night</text>');
+    return '<div style="overflow-x:auto"><svg viewBox="0 0 '+W+' '+H+'" width="100%" '+
+      'style="min-width:560px;display:block" role="img"></svg></div>'.replace('></svg>','>'+o.join('')+'</svg>');
+  }
+
+  function oneDayEach(L,lastDay){
+    var g={};
+    cellRows(L).forEach(function(r){
+      if((st.slice!=='all'&&r.mv!==1)||r.d==null||r.d>lastDay) return;
+      var v=g[r.d]||(g[r.d]=[0,0]);
+      v[0]+=(st.m==='n'?r.n:r[st.m]); v[1]++;});
+    return Object.keys(g).map(function(k){return {x:+k,v:g[k][0]/g[k][1],n:g[k][1]};})
+      .sort(function(a,b){return a.x-b.x;});
+  }
+
+  // WHICH LINES A BLOCK DRAWS. The one marked `focus` is always drawn, and drawn thicker; the
+  // others start off and are one click away. A plot with six lines on it is a tool, and these
+  // blocks exist to carry one finding each.
+  var BLOCK_ON={};
+  function blockOn(bi,j,entry){
+    var k=bi+':'+j;
+    if(BLOCK_ON[k]===undefined) BLOCK_ON[k]=!!entry.focus;
+    return BLOCK_ON[k];
+  }
+
+  function blocks(){
+    var out=[];
+    BLOCKS.forEach(function(b,bi){
+      var Ls=b.pick.map(lineOf);
+      Ls.forEach(function(l,j){ l.shown=blockOn(bi,j,b.pick[j]); l.focus=!!b.pick[j].focus; });
+      var present=Ls.filter(function(l){return !l.missing&&l.shown;});
+      var lastDay=1; CELLS.forEach(function(c){
+        Ls.forEach(function(l){ if(c.cfg===l.cfg&&c.fmt===l.fmt&&c.lastday>lastDay) lastDay=c.lastday; });});
+      if(lastDay<2) lastDay=31;
+      var S=present.map(function(l){return {a:l,p:oneDayEach(l,lastDay)};});
+      var h='<div style="margin:26px 0 0;padding-top:18px;border-top:1px solid var(--edge)">'+
+        '<h3 style="margin:0 0 4px;font-size:16px">'+esc(b.t)+'</h3>'+
+        '<p class="note" style="margin:0 0 8px">'+esc(b.w)+'</p>';
+      var absent=Ls.filter(function(l){return l.missing;});
+      if(absent.length) h+='<p class="note" style="margin:0 0 8px"><b>Not run yet:</b> '+
+        absent.map(function(l){return esc(l.n);}).join('; ')+'. Everything below leaves it out.</p>';
+      // The focus line has no toggle: it is the point of the block and is always drawn.
+      var optional=Ls.map(function(l,j){return {l:l,j:j};})
+                     .filter(function(x){return !x.l.missing&&!x.l.focus;});
+      if(optional.length) h+='<div class="legend" style="margin:0 0 10px">'+
+        '<span class="thin" style="margin-right:6px">also show:</span>'+
+        optional.map(function(x){
+          return '<button class="why blk" data-b="'+bi+'" data-j="'+x.j+'" '+
+            'style="border-radius:11px;padding:1px 9px;width:auto;height:auto;'+
+            (x.l.shown?'background:'+x.l.c+';color:#fff;border-color:'+x.l.c:'')+'" '+
+            'aria-pressed="'+(x.l.shown?'true':'false')+'">'+esc(x.l.n)+'</button>';
+        }).join(' ')+'</div>';
+      if(S.every(function(s){return !s.p.length;})){
+        out.push(h+'<p class="note">Nothing written yet for this comparison.</p></div>'); return;}
+      h+=smallPlot(S,lastDay);
+      h+='<div class="legend">'+S.map(function(s){
+        var n=s.p.reduce(function(k,p){return k+p.n;},0);
+        var v=s.p.reduce(function(k,p){return k+p.v*p.n;},0)/n;
+        return '<div class="legrow">'+swatch(s.a)+'<b>'+esc(s.a.n)+'</b>'+
+          '<button class="why words" data-fmt="'+esc(s.a.fmt)+'" title="the instructions it is given, word for word" '+
+          'aria-label="the instructions it is given, word for word">?</button>'+
+          '<span class="thin">'+homesOf(s.a).length+' homes · '+n+' questions · whole run '+
+          (st.m==='n'?v.toFixed(2)+' rooms':Math.round(v*100)+'%')+'</span>'+
+          '<div class="about" id="wd_'+bi+'_'+esc(s.a.fmt)+'" hidden>'+theWordsFor(s.a.fmt)+'</div></div>';}).join('')+'</div>';
+      if(present.length>1){
+        h+='<table style="margin-top:10px"><thead><tr><th>window</th>'+
+          present.slice(1).map(function(l){return '<th>'+esc(present[0].n)+' &rarr; '+esc(l.n)+'</th>';}).join('')+
+          '</tr></thead><tbody>';
+        b.read.forEach(function(w){
+          h+='<tr><td>'+esc(w[0])+'</td>';
+          present.slice(1).forEach(function(l){
+            var d=pairedDiff(present[0],l,w[1],w[2]);
+            if(!d){h+='<td><span class="thin">not enough yet</span></td>'; return;}
+            h+='<td>'+(d.identical?'no difference':(d.m>0?'+':'')+fmtv(d.m)+(st.m==='n'?'':' points'))+
+               '<br><span class="thin">'+(d.identical?'the same arm in this window'
+                 :'2 SE '+fmtv(d.tse)+' · '+d.n+' homes · '+
+                  (d.counts?'<b>counts</b>':(!d.agree?'homes disagree':'does not count')))+'</span></td>';});
+          h+='</tr>';});
+        h+='</tbody></table>';
+      }
+      out.push(h+'</div>');
+    });
+    $('blocks').innerHTML=out.join('');
+    // Clicking a point in a ready-made comparison does exactly what clicking the big chart does:
+    // it chooses that line and that day and the reader below shows everything the memory did.
+    Array.prototype.forEach.call($('blocks').querySelectorAll('button.words'), function(el){
+      el.addEventListener('click', function(){
+        var box=el.parentNode.querySelector('.about');
+        if(box){ box.hidden=!box.hidden; el.setAttribute('aria-expanded', String(!box.hidden)); }
+      });
+    });
+    Array.prototype.forEach.call($('blocks').querySelectorAll('button.blk'), function(el){
+      el.addEventListener('click', function(){
+        var k=el.getAttribute('data-b')+':'+el.getAttribute('data-j');
+        BLOCK_ON[k]=!BLOCK_ON[k];
+        blocks();
+      });
+    });
+    Array.prototype.forEach.call($('blocks').querySelectorAll('.pt'), function(el){
+      el.addEventListener('click', function(){
+        pick.line=el.getAttribute('data-line');
+        pick.day=el.getAttribute('data-day');
+        var l=lineById(pick.line);
+        if(l && !l.on){ l.on=true; var box=$('tk_'+l.id); if(box) box.checked=true; face(); }
+        draw(); reader(); blocks();
+        var host=$('rdTitle'); if(host && host.scrollIntoView) host.scrollIntoView({behavior:'smooth',block:'start'});
+      });
+    });
+  }
+
+  function table(){
+    var h='<thead><tr><th>line</th>'+hhs.map(function(x){return '<th>'+x.replace('_t03','')+'</th>';}).join('')+'</tr></thead><tbody>';
+    LINES.forEach(function(l){
+      h+='<tr><td><span class="legend" style="margin:0">'+swatch(l)+esc(l.n)+'</span></td>';
+      hhs.forEach(function(x){
+        var c=CELLS.filter(function(z){return z.cfg===l.cfg&&z.arm===l.arm&&(l.fmt===null||z.fmt===l.fmt)&&z.hh===x;})[0];
+        var cls='none', txt='<span class="thin">—</span>';
+        if(!c && STOPPED[l.id] && STOPPED[l.id][x]){
+          cls='stopped'; txt='stopped, never started';
+        }else if(c && c.maxday>=(c.lastday==null?LAST_DAY:c.lastday)){
+          cls='done'; txt='all days';
+        }else if(c && SHORT_RUNS[c.cfg]!=null && c.maxday>=SHORT_RUNS[c.cfg]){
+          cls='done'; txt='all '+(SHORT_RUNS[c.cfg]+1)+' days of a short test';
+        }else if(c){
+          var quiet=(c.quiet==null)?null:c.quiet;
+          if(quiet!==null && quiet>QUIET_ENOUGH_TO_BE_STOPPED){
+            cls='stopped'; txt='stopped at day '+c.maxday;
+          }else{
+            cls='going'; txt='day '+c.maxday+' of '+(c.lastday==null?LAST_DAY:c.lastday);
+          }
+        }
+        h+='<td class="'+cls+'">'+txt+'</td>';});
+      h+='</tr>';});
+    $('tbl').innerHTML=h+'</tbody>';
+    var done=CELLS.filter(function(c){return c.maxday>=(c.lastday==null?LAST_DAY:c.lastday);}).length;
+    $('liveTag').textContent=done+' of '+CELLS.length+' runs finished';
+  }
+
+  ['cHh','cSlice','cMeasure','cSmooth'].forEach(function(i){
+    $(i).addEventListener('change',function(){
+      st={hh:$('cHh').value,slice:$('cSlice').value,m:$('cMeasure').value,sm:$('cSmooth').value};
+      draw(); reader(); comparison(); blocks();});});
+  face(); table(); draw(); reader(); comparison(); blocks();
+})();
+</script>

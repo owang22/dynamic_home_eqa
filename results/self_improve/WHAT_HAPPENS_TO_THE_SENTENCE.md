@@ -96,3 +96,28 @@ These six cells read no sighting log, for the reason in
 `wave_reasons_first/THE_FIVE_VARIANTS_READ_NO_LOG.md`, so their accuracy is not comparable with our
 method as published. The reruns with the log are queued. Nothing above depends on accuracy: it is a
 count of what the claims say and when they stopped saying it.
+
+## Written before the profile arm runs: what would make it a dud
+
+Two days of it on hh_s2, before the three real cells started. The profiles fill out fast - 90
+characters on night 0, 400 by night 1 - and they do read like profiles of people:
+
+    Tomas: Works from home. Day: office (08:58-15:55). Evenings: living (18:26), office (22:59).
+           Items: laptop/mouse/notebook/pen on office desk. Charger/water bottle/mug move to
+           bedroom/kitchen in evening. Gym bag on bedroom floor.
+
+But look at the second half of it. The prompt says in as many words that **a profile is not a list
+of where things are**, and by night 1 half of Tomas's profile is a list of where things are. So the
+prediction, written now rather than after the numbers:
+
+**If the profile becomes a second copy of the notes, this arm is our arm with a longer prompt and
+it will measure nothing.** The test is not accuracy. It is whether any profile ever names a state
+that is not a placement - somebody being unwell, away, busy - and whether it stops naming it when
+it stops being true. That is the one behaviour a claim store did once in 361 claims by accident.
+
+This is the third time the same thing has happened in this project: a field is offered, it gets
+filled, and it gets filled with the easiest thing that fits rather than the thing it was for. The
+note limit was spent on places, `holds_under` was spent on times of day, and the profile is being
+spent on placements. If it happens again here, the finding is about the format teaching the model
+what to write, and no amount of clearer instruction is the answer - the memory has to make the
+cheap thing impossible, not merely discouraged.
