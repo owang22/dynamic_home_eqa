@@ -153,7 +153,8 @@ def write_the_notes_about_the_routine(notes: Notes, household: FrozenHousehold, 
                                      a_message_tonight: Optional[str] = None,
                                      max_edits: int = EDITS_A_NIGHT,
                                      keeps_a_profile_of_each_person: bool = False,
-                                     who_lives_here: str = "") -> Dict[str, Any]:
+                                     who_lives_here: str = "",
+                                     ask_it_what_will_change: bool = False) -> Dict[str, Any]:
     """One night. The same claim store and the same edit actions, a different job.
 
     `keeps_a_profile_of_each_person` adds ONE thing and changes nothing else: the model is shown
@@ -175,8 +176,10 @@ def write_the_notes_about_the_routine(notes: Notes, household: FrozenHousehold, 
         a_message_tonight=a_message_tonight,
         how_many_notes=max_edits,
         extra_before_the_instruction=(
-            told.the_profiles(notes.profiles, who_lives_here)
-            if keeps_a_profile_of_each_person else ()))
+            (told.the_profiles(notes.profiles, who_lives_here)
+             if keeps_a_profile_of_each_person else [])
+            + (told.what_to_write_before_you_have_seen_it()
+               if ask_it_what_will_change else [])))
     schema = writing.edits_schema(max_edits)
     if keeps_a_profile_of_each_person:
         # THE PROFILES ARE DECLARED FIRST, and the order is the whole point: the server enforces
@@ -271,6 +274,7 @@ def write_the_notes_about_the_routine(notes: Notes, household: FrozenHousehold, 
     return {"day": day, "model_call_failed": not text,
             "the_completion_did_not_parse": did_not_parse,
             "how_many_edits_it_was_allowed": max_edits,
+            "it_was_asked_what_will_change": ask_it_what_will_change,
             "n_profiles_written": n_profiles,
             "n_characters_of_profile": sum(len(v) for v in notes.profiles.values()),
             "n_edits_offered": len(edits),

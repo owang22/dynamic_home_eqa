@@ -265,6 +265,32 @@ HOW_YOUR_MEMORY_WORKS: Dict[str, List[str]] = {
 }
 
 
+# Told and asked to commit: OUR ARM'S WORDS, UNCHANGED. The paragraph that asks it to commit is not
+# here, because anything here appears on all thirty-two nights and it only has something to do on the
+# two nights a sentence arrives. Put here, the arm would differ from its parent EVERY night and a
+# difference between them could not be attributed to the prediction. It is passed in per night by
+# `what_to_write_before_you_have_seen_it` instead, so on the other thirty nights the prompt is
+# identical to the parent's - which also means those nights replay from the response cache for free.
+HOW_YOUR_MEMORY_WORKS["the log and notes, told and asked what will change"] = (
+    HOW_YOUR_MEMORY_WORKS["the log and notes about the routine"])
+
+
+def what_to_write_before_you_have_seen_it() -> List[str]:
+    """The paragraph for a night a sentence arrives and nothing has been seen of it yet."""
+    return [
+        "IF YOU HAVE BEEN TOLD SOMETHING ABOVE THAT YOU HAVE NOT SEEN FOR YOURSELF, that is the "
+        "one thing tonight that you cannot check and must not wait to confirm. Before anything "
+        "else, write what you expect to be DIFFERENT tomorrow because of it: which person will be "
+        "somewhere other than usual, at which hours, and which of their things will therefore be "
+        "in a different room, and which room. Name the rooms. You have seen none of this, so you "
+        "will be guessing - guess anyway, because tomorrow you will be asked where things are "
+        "before you have had a chance to look, and a guess written down tonight is the only thing "
+        "you will have. Write each expectation as its own note, and say in its condition that it "
+        "holds while the thing you were told is true, so that you can set it aside when it stops.",
+        "",
+    ]
+
+
 # THE SAME WORDS FOR THE ARM THAT IS ALSO TOLD. Set here rather than written into the dict above so
 # that the two arms cannot drift: they are the same list object, and the ONLY difference between the
 # arms is the one sentence delivered on one night. A copy is how arms drift apart, and this project

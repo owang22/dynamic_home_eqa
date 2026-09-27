@@ -56,6 +56,7 @@ from baselines.patrol.llm import LLMClient
 from self_improve import search_driven as sd
 from self_improve.frozen_household import FrozenHousehold
 from self_improve.memory_notes import (A_PROFILE_AND_TOLD, A_PROFILE_OF_EACH_PERSON,
+                                      TOLD_AND_ASKED_WHAT_CHANGES,
                                       ACE_AS_PUBLISHED, MEMGPT_AS_PUBLISHED,
                                       THE_LOG_AND_THE_ROUTINE_DERIVED_ALLOWANCE,
                                       THE_LOG_AND_THE_ROUTINE_EIGHT,
@@ -106,6 +107,8 @@ ARMS: Dict[str, Tuple[str, str, int]] = {
     # The same arm, plus the one sentence on the first changed day. The pair differ only in
     # whether the sentence has a profile to live in.
     "ours, a profile and told": (A_PROFILE_AND_TOLD, MEMORY_GUIDED, 3),
+    # Told the night before AND made to write down what it expects, before it has seen any of it.
+    "ours, told and asked what changes": (TOLD_AND_ASKED_WHAT_CHANGES, MEMORY_GUIDED, 3),
     "ours, eight notes a night": (THE_LOG_AND_THE_ROUTINE_EIGHT, MEMORY_GUIDED, 3),
     "ours, allowance derived": (THE_LOG_AND_THE_ROUTINE_DERIVED_ALLOWANCE, MEMORY_GUIDED, 3),
     # The two told arms. Nobody in this study has ever been told the household changed, and the

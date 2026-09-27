@@ -86,6 +86,13 @@ A_PROFILE_OF_EACH_PERSON = "the log and notes, with a profile of each person"
 # without ever saying why it changed. This arm is the only one where the sentence has somewhere to
 # live that a day's sightings cannot narrow.
 A_PROFILE_AND_TOLD = "the log and notes, a profile of each person, told on the first night"
+# 2026-09-27. Told, and asked to SAY WHAT WILL BE DIFFERENT before it has seen any of it. Reading the
+# told arm's day-14 reasoning showed it recalls the sentence unprompted on seven of 24 questions and
+# then predicts the office anyway - "he is unwell and staying home... however, since he is working in
+# the office" - so the fact was in the prompt and changed nothing. Being told is not the same as being
+# made to commit. This arm is the only one that states, in advance and with no evidence, what it
+# thinks tomorrow will look like, which is the one thing a rule over sightings cannot attempt.
+TOLD_AND_ASKED_WHAT_CHANGES = "the log and notes, told and asked what will change"
 # The fifth way, added 2026-09-25: MemGPT (Packer et al.). A small working memory of fixed
 # size that is always in front of the model, plus an unbounded archive that is only reached
 # by searching it, and the model moves things between the two itself. It is the only
@@ -165,7 +172,8 @@ WAYS_OF_WRITING = (WHOLESALE_REWRITE, INCREMENTAL_EDITS, TOLD_IF_IT_WAS_RIGHT,
                    THE_LOG_AND_THE_ROUTINE_DERIVED_ALLOWANCE,
                    TOLD_THE_NIGHT_BEFORE, TOLD_ON_THE_FIRST_NIGHT,
                    THE_LOG_AND_THE_ROUTINE_EIGHT, THE_LOG_AND_THE_ROUTINE_SIXTEEN,
-                   A_PROFILE_OF_EACH_PERSON, A_PROFILE_AND_TOLD)
+                   A_PROFILE_OF_EACH_PERSON, A_PROFILE_AND_TOLD,
+                   TOLD_AND_ASKED_WHAT_CHANGES)
 
 # How big the working memory is, and this number comes from MemGPT's own source rather than
 # from us. `letta/constants.py` sets CORE_MEMORY_PERSONA_CHAR_LIMIT and
