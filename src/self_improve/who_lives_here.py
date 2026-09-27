@@ -63,3 +63,56 @@ def names_by_resident_id(bank_path: str) -> Dict[str, str]:
             f"{sorted(mapping.values())} but its objects belong to {sorted(owners)}, so "
             f"the rebuild is not this household and the names cannot be trusted")
     return {rid: name.capitalize() for rid, name in mapping.items()}
+
+# What plain words each generator role deserves. The bank carries a role, not a job title, and
+# these are the five it uses. NO AGE EXISTS IN THIS DATA: the households carry a name, a role, a
+# bedroom, a workspace, hobbies and chores, and nothing about how old anybody is. An age would have
+# to be invented, so none is given.
+WHAT_THEY_DO = {"worker_home": "works from home",
+                "worker_out": "goes out to work",
+                "shift_worker": "works shifts, so the hours change",
+                "student": "is a student",
+                "retired": "is retired"}
+
+
+def who_lives_here_in_plain_words(bank_path: str) -> str:
+    """The one paragraph a profile-keeping arm is given on its first night.
+
+    Only what a person would tell a robot on the day it arrived: who lives here, what each of them
+    does, and whether they are a couple or share the place. NOT their hobbies, their chores, their
+    bedroom or their workspace - those are in the household record and they are exactly what the
+    robot is supposed to work out for itself. Checked against the bank by the same rebuild that
+    `names_by_resident_id` uses, so a household that does not match its seed raises instead of
+    handing over somebody else's details.
+    """
+    import re
+    path = pathlib.Path(bank_path)
+    seed = None
+    for line in path.read_text().splitlines():
+        if not line.strip():
+            continue
+        row = json.loads(line)
+        if isinstance(row.get("episode_id"), str):
+            found = re.search(r"seed(\d+)", row["episode_id"])
+            if found:
+                seed = int(found.group(1))
+                break
+    if seed is None:
+        raise CouldNotWorkOutWhoLivesHere(f"{path.name} carries no seed in its episode id")
+    names = names_by_resident_id(bank_path)          # raises if the rebuild is not this household
+    from situation_sim.household import sample_household
+    from situation_sim.run import load_activities
+    household = sample_household(seed, load_activities())
+    bits = []
+    for rid, person in sorted(household.residents.items()):
+        said = WHAT_THEY_DO.get(person.role)
+        if said is None:
+            raise CouldNotWorkOutWhoLivesHere(
+                f"{path.name}: {person.role!r} is a role with no plain words, so the profile "
+                f"would either invent one or leave a person out")
+        bits.append(f"{names[rid]} {said}")
+    together = ("They are a couple." if household.household_type == "couple"
+                else "They share the place." if household.household_type == "flatmates"
+                else "")
+    return " ".join([(", ".join(bits) + "."), together]).strip()
+

@@ -151,8 +151,16 @@ def write_the_notes_about_the_routine(notes: Notes, household: FrozenHousehold, 
                                      tell_the_model_everything_it_saw: bool = True,
                                      name_the_objects_it_will_be_quizzed_on: bool = False,
                                      a_message_tonight: Optional[str] = None,
-                                     max_edits: int = EDITS_A_NIGHT) -> Dict[str, Any]:
-    """One night. The same claim store and the same edit actions, a different job."""
+                                     max_edits: int = EDITS_A_NIGHT,
+                                     keeps_a_profile_of_each_person: bool = False,
+                                     who_lives_here: str = "") -> Dict[str, Any]:
+    """One night. The same claim store and the same edit actions, a different job.
+
+    `keeps_a_profile_of_each_person` adds ONE thing and changes nothing else: the model is shown
+    who lives here and its own profile of each person, and writes each profile again before it
+    writes a single claim edit. It is the same function rather than a copy of it, because the six
+    accidental differences that confounded the first comparison all came from a copy.
+    """
     live = [c for c in notes.claims if c.folded_into is None]
     current = ("\n".join(c.as_plain_words() for c in notes.claims_in_reading_order())
                if live else "(nothing written yet)")
@@ -165,8 +173,25 @@ def write_the_notes_about_the_routine(notes: Notes, household: FrozenHousehold, 
                               tell_the_model_everything_it_saw), current, 240,
         name_the_things_it_is_asked_about=name_the_objects_it_will_be_quizzed_on,
         a_message_tonight=a_message_tonight,
-        how_many_notes=max_edits)
+        how_many_notes=max_edits,
+        extra_before_the_instruction=(
+            told.the_profiles(notes.profiles, who_lives_here)
+            if keeps_a_profile_of_each_person else ()))
     schema = writing.edits_schema(max_edits)
+    if keeps_a_profile_of_each_person:
+        # THE PROFILES ARE DECLARED FIRST, and the order is the whole point: the server enforces
+        # the schema as it generates and thinking is switched off, so a field declared after the
+        # edits would be written after every claim had already been decided. That is the same
+        # fault that had every room chosen before any reasoning.
+        schema = json.loads(json.dumps(schema))
+        schema["properties"] = {
+            "people": {"type": "array", "maxItems": 6,
+                       "items": {"type": "object", "properties": {
+                           "name": {"type": "string", "maxLength": 40},
+                           "profile": {"type": "string", "maxLength": 900}},
+                           "required": ["name", "profile"], "additionalProperties": False}},
+            **schema["properties"]}
+        schema["required"] = ["people"] + [r for r in schema.get("required", [])]
     # No minimum is imposed. The other arms require an edit on a night that saw an
     # asked-about object, because for them every sighting is a fact to record. Here most
     # nights genuinely have nothing new to say about how the household works, and forcing
@@ -179,7 +204,10 @@ def write_the_notes_about_the_routine(notes: Notes, household: FrozenHousehold, 
         # sixteen edits can want about 4,900 tokens against the 4,460 this granted. A cut-off
         # completion does not parse and the night writes nothing, so the arm would have lost
         # nights silently. `write_the_notes` was already corrected; this copy was not.
-        schema, max_tokens=300 + 420 * max_edits)
+        schema, max_tokens=300 + 420 * max_edits
+        # Six profiles of 900 characters is about 1,400 tokens, and a reply cut off in the
+        # middle is not JSON, so the night would write nothing at all.
+        + (1600 if keeps_a_profile_of_each_person else 0))
     edits: List[dict] = []
     did_not_parse = False
     if text:
@@ -189,6 +217,18 @@ def write_the_notes_about_the_routine(notes: Notes, household: FrozenHousehold, 
             edits, did_not_parse = [], True
     applied = {"add": 0, "revise": 0, "record evidence": 0}
     rejected: List[str] = []
+    n_profiles = 0
+    if keeps_a_profile_of_each_person and text:
+        try:
+            for person in (json.loads(text).get("people") or []):
+                name, profile = (person.get("name") or "").strip(), (person.get("profile") or "").strip()
+                if not name or not profile:
+                    rejected.append("a profile with no name or no words")
+                    continue
+                notes.profiles[name] = profile
+                n_profiles += 1
+        except ValueError:
+            pass
     for edit in edits:
         action = edit.get("action")
         try:
@@ -231,6 +271,8 @@ def write_the_notes_about_the_routine(notes: Notes, household: FrozenHousehold, 
     return {"day": day, "model_call_failed": not text,
             "the_completion_did_not_parse": did_not_parse,
             "how_many_edits_it_was_allowed": max_edits,
+            "n_profiles_written": n_profiles,
+            "n_characters_of_profile": sum(len(v) for v in notes.profiles.values()),
             "n_edits_offered": len(edits),
             "the_edits_cap_bit": len(edits) >= max_edits,
             "applied": applied, "rejected": rejected,

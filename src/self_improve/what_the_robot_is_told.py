@@ -138,6 +138,37 @@ WRITING_SYSTEM = ("You are a robot in somebody's home. At the end of each day yo
 # memory, add a key. If you find yourself wanting to change anything outside this dict for
 # one method only, that is the confound coming back - stop and say so instead.
 HOW_YOUR_MEMORY_WORKS: Dict[str, List[str]] = {
+    # The profile-keeping arm. Its notes work exactly as our arm's do - the paragraph below is
+    # word for word the same - and it has one more thing it keeps, described in `the_profiles`.
+    "the log and notes, with a profile of each person": [
+        "YOUR MEMORY has two parts.",
+        "",
+        "THE FIRST is a short PROFILE of each person who lives here. You were told their names "
+        "and what they do, and nothing else; the rest is for you to work out and keep up to "
+        "date. A profile is the place for what is true of a person over days and weeks: what "
+        "they do with their time, what they seem to like, where they spend it, and WHAT IS "
+        "GOING ON WITH THEM AT THE MOMENT if something is - a person can be away, or busy, or "
+        "unwell, and that can last a while and then stop. Say when something started, and say "
+        "when it has stopped. A profile is not a list of where things are.",
+        "",
+        "THE SECOND is a list of separate notes, each with its own number, which carries over "
+        "from yesterday exactly as it was. Tonight you change it by writing edits: you can add "
+        "a note, revise a note by its number, or attach today's sightings to a note as evidence "
+        "for it or against it.",
+        "",
+        "Everything you have ever seen is also kept for you in a record, and you are shown all "
+        "of it about anything you are asked. Repeating your record in a note adds nothing, so "
+        "do not just copy it.",
+        "",
+        "WHY THERE ARE TWO PARTS. A note about where a thing lives gets narrowed every time you "
+        "see that thing somewhere, which is right for a note and wrong for a person. If Tomas is "
+        "unwell for a fortnight, that belongs in his profile, where it can stay true for a "
+        "fortnight and then be written out - not in a note about a water bottle, where tomorrow's "
+        "sighting will quietly delete it.",
+        "",
+        "Write the edits tonight calls for. Revising a note keeps what it said before, so "
+        "nothing you write is ever lost.",
+    ],
 
     "wholesale rewrite": [
         "YOUR MEMORY is one piece of writing about this home. The version you wrote last "
@@ -344,3 +375,26 @@ def the_nightly_prompt(method: str, household, day: int, the_day_in_words: str,
            "",
            WHAT_ONE_PIECE_IS_CALLED[method].format(n=characters_a_note)]
     )
+
+
+def the_profiles(profiles: Dict[str, str], who_lives_here: str) -> List[str]:
+    """What the profile-keeping arm is shown about the people, and what it must do with it.
+
+    On the first night `profiles` is empty and only `who_lives_here` is known - the names and what
+    each person does, which is what somebody would tell a robot on the day it arrived. No age: the
+    households do not carry one, so there is none to give. Nothing about hobbies, chores, bedrooms
+    or workspaces is handed over, because those are what the robot is supposed to work out.
+    """
+    lines = ["WHO LIVES HERE, as you were told on your first day:", "", who_lives_here, ""]
+    if profiles:
+        lines += ["YOUR PROFILE OF EACH PERSON, as it stands:", ""]
+        lines += [f"- {name}: {text}" for name, text in sorted(profiles.items())]
+    else:
+        lines += ["YOUR PROFILE OF EACH PERSON: you have not written one yet."]
+    lines += ["",
+              "First, write each person's profile as it should stand tonight. Give the whole "
+              "profile for each person, not a change to it: what you write replaces what is "
+              "there. Keep it short. If nothing about a person has changed, write theirs again "
+              "as it was.",
+              ""]
+    return lines

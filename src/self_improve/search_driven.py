@@ -65,7 +65,8 @@ from baselines.types import DAY_SECONDS, ON_PERSON, OUT_OF_HOUSE
 from self_improve.frozen_household import (BEYOND_REACH, FROZEN_BANKS, FrozenHousehold,
                                            LookTarget, period_of_day)
 from self_improve.looking import TheHouseAsSeen, describe_look_for_the_model, hours_and_minutes
-from self_improve.memory_notes import (THE_LOG_AND_THE_ROUTINE_DERIVED_ALLOWANCE,
+from self_improve.memory_notes import (A_PROFILE_OF_EACH_PERSON,
+                                      THE_LOG_AND_THE_ROUTINE_DERIVED_ALLOWANCE,
                                       THE_LOG_AND_THE_ROUTINE_EIGHT,
                                       THE_LOG_AND_THE_ROUTINE_SIXTEEN,
                                       TOLD_THE_NIGHT_BEFORE, TOLD_ON_THE_FIRST_NIGHT,
@@ -76,7 +77,8 @@ from self_improve.study_settings import LOCKED
 from self_improve import write_the_notes as write_the_notes_module
 from self_improve import the_log_the_robot_reads
 from self_improve import what_the_robot_is_told as told
-from self_improve.who_lives_here import names_by_resident_id
+from self_improve.who_lives_here import (names_by_resident_id,
+                                         who_lives_here_in_plain_words)
 from self_improve.the_log_the_robot_reads import the_log_block
 from self_improve.write_the_notes import write_the_notes
 from self_improve.write_the_notes_about_the_routine import (
@@ -154,13 +156,15 @@ HOW_MEMORY_IS_WRITTEN = ("wholesale rewrite", "incremental edits",
                          MEMGPT_AS_PUBLISHED, THE_LOG_AND_THE_ROUTINE_DERIVED_ALLOWANCE,
                          TOLD_THE_NIGHT_BEFORE, TOLD_ON_THE_FIRST_NIGHT,
                          THE_LOG_AND_THE_ROUTINE_EIGHT,
-                         THE_LOG_AND_THE_ROUTINE_SIXTEEN)
+                         THE_LOG_AND_THE_ROUTINE_SIXTEEN,
+                         A_PROFILE_OF_EACH_PERSON)
 
 # The arms built on `the log and notes about the routine`: the same prompt, one thing changed.
 THE_LOG_AND_THE_ROUTINE_FAMILY = (THE_LOG_AND_THE_ROUTINE,
                                   THE_LOG_AND_THE_ROUTINE_DERIVED_ALLOWANCE,
                                   THE_LOG_AND_THE_ROUTINE_EIGHT,
                                   THE_LOG_AND_THE_ROUTINE_SIXTEEN,
+                                  A_PROFILE_OF_EACH_PERSON,
                                   TOLD_THE_NIGHT_BEFORE, TOLD_ON_THE_FIRST_NIGHT)
 # How many notes a night each member of that family may write. The flat 16 is the module
 # default; None means counted from what the night saw, the same rule the control uses.
@@ -1093,6 +1097,10 @@ def run_one_cell(household: FrozenHousehold, how_memory_is_written: str,
                     a_message_tonight=(the_sentence_for_tonight(how_memory_is_written,
                                                                household, day)
                                        or pinned.get("a_message_tonight")),
+                    **({"keeps_a_profile_of_each_person": True,
+                        "who_lives_here": who_lives_here_in_plain_words(
+                            str(household.bank_path))}
+                       if how_memory_is_written == A_PROFILE_OF_EACH_PERSON else {}),
                     **({"max_edits": (edits_tonight
                                       if NOTES_A_NIGHT[how_memory_is_written] is None
                                       else NOTES_A_NIGHT[how_memory_is_written])}

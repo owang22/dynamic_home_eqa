@@ -73,6 +73,13 @@ TOLD_IF_IT_WAS_RIGHT = "claim store told if it was right"
 # and 0.3% mentioned any time, condition or change - and answering straight from the
 # record with no model beats all of them by about 25 points outside the disrupted window.
 THE_LOG_AND_THE_ROUTINE = "the log and notes about the routine"
+# 2026-09-26. The same arm, plus a profile of each person that it keeps up to date and is shown
+# when it answers. Why this arm exists: told in one sentence that somebody is unwell, our arm
+# writes it into eight claims on the night it hears it and has reworded seven of them within two
+# nights, because every night's pressure is to make each claim match that day. A claim is the
+# wrong place to keep something about a person that is true for a fortnight and then stops. See
+# results/self_improve/WHAT_HAPPENS_TO_THE_SENTENCE.md.
+A_PROFILE_OF_EACH_PERSON = "the log and notes, with a profile of each person"
 # The fifth way, added 2026-09-25: MemGPT (Packer et al.). A small working memory of fixed
 # size that is always in front of the model, plus an unbounded archive that is only reached
 # by searching it, and the model moves things between the two itself. It is the only
@@ -151,7 +158,8 @@ WAYS_OF_WRITING = (WHOLESALE_REWRITE, INCREMENTAL_EDITS, TOLD_IF_IT_WAS_RIGHT,
                    ACE_AS_PUBLISHED, MEMGPT_AS_PUBLISHED,
                    THE_LOG_AND_THE_ROUTINE_DERIVED_ALLOWANCE,
                    TOLD_THE_NIGHT_BEFORE, TOLD_ON_THE_FIRST_NIGHT,
-                   THE_LOG_AND_THE_ROUTINE_EIGHT, THE_LOG_AND_THE_ROUTINE_SIXTEEN)
+                   THE_LOG_AND_THE_ROUTINE_EIGHT, THE_LOG_AND_THE_ROUTINE_SIXTEEN,
+                   A_PROFILE_OF_EACH_PERSON)
 
 # How big the working memory is, and this number comes from MemGPT's own source rather than
 # from us. `letta/constants.py` sets CORE_MEMORY_PERSONA_CHAR_LIMIT and
@@ -254,6 +262,10 @@ class Notes:
         # MemGPT's core memory: one block of free text, not a list of notes. Only the
         # "MemGPT as published" way of writing uses it; it stays empty for every other arm.
         self.the_block: str = ""
+        # One short profile per person, kept by the arm that keeps profiles and empty for every
+        # other arm. Separate from the claims on purpose: a claim gets narrowed to whatever the
+        # day showed, and what somebody is doing this fortnight must not be narrowed that way.
+        self.profiles: Dict[str, str] = {}
         self.written_up_to_day: int = -1
         self._next_number = 1
 
@@ -266,6 +278,7 @@ class Notes:
         notes.claims = [Claim(**c) for c in raw["claims"]]
         notes.nightly_summaries = raw.get("nightly_summaries", [])
         notes.the_block = raw.get("the_block", "")
+        notes.profiles = raw.get("profiles", {}) or {}
         notes.written_up_to_day = raw.get("written_up_to_day", -1)
         notes._next_number = raw.get("next_claim_number", len(notes.claims) + 1)
         return notes
@@ -281,6 +294,7 @@ class Notes:
             "claims": [asdict(c) for c in self.claims],
             "nightly_summaries": self.nightly_summaries,
             "the_block": self.the_block,
+            "profiles": self.profiles,
         }, indent=1))
 
     def snapshot_to(self, path: pathlib.Path) -> "Notes":
@@ -580,12 +594,25 @@ class Notes:
                 how_chosen="its working memory, plus its archive searched for the object "
                            "it was asked about")
 
+        # THE PROFILES ARE PART OF THE MEMORY, so the arm that keeps them is shown them when it
+        # chooses a room and when it answers. They are NOT counted against the line budget: the
+        # budget exists to make the claim store and the wholesale summary compete on equal terms
+        # for the same number of lines, and spending it on the profiles would make this arm show
+        # fewer claims than every other arm, which is a different experiment.
+        before = ""
+        if self.how_memory_is_written == A_PROFILE_OF_EACH_PERSON and self.profiles:
+            before = "\n".join(["What you know about the people who live here:"]
+                                + [f"- {n}: {t}" for n, t in sorted(self.profiles.items())]
+                                + ["", "Your notes:"]) + "\n"
         if not self.claims:
-            return WhatWasRead("(no notes yet)", 0, 0, False, "nothing written yet")
+            return WhatWasRead(before + "(no notes yet)" if before else "(no notes yet)",
+                               0, 0, False,
+                               "its profiles of the people; no notes written yet" if before
+                               else "nothing written yet")
         ordered = self.claims_in_reading_order(about_object)
         shown = ordered if no_limit else ordered[:read_budget_lines]
         return WhatWasRead(
-            text="\n".join(c.as_plain_words() for c in shown),
+            text=before + "\n".join(c.as_plain_words() for c in shown),
             claim_ids_shown=tuple(c.claim_id for c in shown),
             n_lines_available=len(ordered), n_lines_shown=len(shown),
             budget_bit=(False if no_limit else len(ordered) > read_budget_lines),
