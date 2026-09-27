@@ -227,6 +227,38 @@ def the_allowance_tonight(household: FrozenHousehold, notes: Any,
                                   two_edits_per_change=two_edits_per_change)
 
 
+def the_unwell_spells(household: FrozenHousehold) -> List[Tuple[str, int, int]]:
+    """Every unwell spell in this household, as (resident, first day, first day back).
+
+    `who_is_unwell_and_when` below returns ONE spell and raises if the days have a gap, which was
+    right while every episode had a single illness. The two-illness episodes record both spells
+    under the same cause key - `unwell_spell:resident_1` on days 14-23 AND 32-41 - so that
+    function raises on them, and the told-it arms would have crashed on their first night rather
+    than at launch. Found by reading the bank's own `day_causes` before launching anything.
+
+    This returns them in order and never raises on a gap, because a gap is now meaningful: it is
+    the recovery between two illnesses, which is the thing those episodes exist to measure.
+    """
+    by_resident: Dict[str, List[int]] = {}
+    for day, causes in household.header["day_causes"].items():
+        for cause in causes:
+            if cause.startswith("unwell_spell:"):
+                by_resident.setdefault(cause.split(":", 1)[1], []).append(int(day))
+    spells: List[Tuple[str, int, int]] = []
+    for who, days in by_resident.items():
+        run: List[int] = []
+        for day in sorted(days):
+            if run and day != run[-1] + 1:
+                spells.append((who, run[0], run[-1] + 1))
+                run = []
+            run.append(day)
+        if run:
+            spells.append((who, run[0], run[-1] + 1))
+    if not spells:
+        raise ValueError(f"{household.name}: no unwell spell in its day_causes at all")
+    return sorted(spells, key=lambda s: s[1])
+
+
 def who_is_unwell_and_when(household: FrozenHousehold) -> Tuple[str, int, int]:
     """(resident, first disrupted day, first day back), from the bank's own causes.
 

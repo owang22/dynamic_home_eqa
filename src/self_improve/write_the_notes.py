@@ -233,6 +233,12 @@ EDITS_SCHEMA: Dict[str, Any] = {
                     # "set aside for now" whatever the routine, which destroys the one
                     # measure the study reads off that field. Same shape as the display
                     # teaching the format: a field offered is a field filled.
+                    # WHY FIRST. It used to come last, so the model chose an action, named
+                    # the note and wrote the new wording before saying why - a decision made
+                    # with no tokens spent on it, then justified. Same fault as the room
+                    # chooser, found the same way. 600 characters, not 240: this field is
+                    # reasoning, not memory, and the 240 was the per-note cap borrowed.
+                    "why": {"type": "string", "maxLength": 600},
                     "action": {"type": "string",
                                "enum": ["add", "revise", "record evidence",
                                         "set a note aside", "bring a note back"]},
@@ -245,11 +251,10 @@ EDITS_SCHEMA: Dict[str, Any] = {
                                                    "maxItems": 6},
                     "contradicting_observation_ids": {"type": "array", "items": {"type": "string"},
                                                       "maxItems": 6},
-                    "why": {"type": "string", "maxLength": 240},
                 },
-                "required": ["action", "claim_id", "statement", "holds_under", "status",
+                "required": ["why", "action", "claim_id", "statement", "holds_under", "status",
                              "supporting_observation_ids",
-                             "contradicting_observation_ids", "why"],
+                             "contradicting_observation_ids"],
                 "additionalProperties": False},
         },
     },
@@ -737,7 +742,10 @@ def write_the_notes_incrementally(notes: Notes, household: FrozenHousehold, day:
     elif max_edits is None:
         budget = 1400
     else:
-        budget = 300 + 260 * cap
+        # 260 a slot was sized when `why` was capped at 240 characters. It is 600 now, so a
+        # single edit can carry 240 + 120 + 600 characters of text, about 310 tokens before the
+        # JSON around it. 420 keeps the margin the old number had.
+        budget = 300 + 420 * cap
     text, _ = client.complete(messages, schema, max_tokens=budget)
     edits: List[dict] = []
     # WHETHER IT PARSED IS NOT THE SAME AS WHETHER IT WAS EMPTY. My first version of

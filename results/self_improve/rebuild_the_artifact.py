@@ -10,6 +10,7 @@ a run. Publishing the page is a separate step and stays manual.
 """
 import hashlib
 import json
+from typing import Any, Dict, List, Tuple
 import pathlib
 import re
 import time
@@ -36,9 +37,21 @@ RUNS = [pathlib.Path("results/self_improve/search_driven"),
         pathlib.Path("results/self_improve/overnight_wave"),
         # The higher-resolution run: same shape as overnight_wave, 24 questions a day.
         pathlib.Path("results/self_improve/overnight_wave_24_questions"),
+        # The reason-first wave, 2026-09-25 onward. Same shape and same three households; every
+        # schema now puts the reasoning before the decision. The wave above is its ablation.
+        pathlib.Path("results/self_improve/wave_reasons_first"),
+        # 2026-09-26. Three waves, three output directories, because household names REPEAT
+        # across bank sets and a cell directory is built from the arm and the household only:
+        # the five wider homes carry the names hh_s32 and hh_s48 and are not those homes.
+        pathlib.Path("results/self_improve/wave_wider_five"),
+        pathlib.Path("results/self_improve/wave_the_family_reads_the_log"),
+        pathlib.Path("results/self_improve/wave_the_second_illness"),
         # The faithful rebuilds, one directory each, shaped <run>/<home>/<arm>/<format>/.
         pathlib.Path("results/self_improve/ace_as_published"),
         pathlib.Path("results/self_improve/memgpt_as_published")]
+
+# How many days each run was asked to reach, where it is not the usual 32 (day 0 to day 31).
+LAST_DAY_BY_RUN = {"a second illness": 49}
 
 ARM_ORDER = ["memory-guided_search", "prior_only,_no_notes",
              "newest_sighting,_no_model", "random"]
@@ -60,14 +73,22 @@ def read_cell(f, root):
     if len(parts) < 4 or parts[0].startswith(("superseded", "stopped_early")):
         return None
     run, home, arm, fmt = parts[0], parts[1], parts[2], parts[3]
-    if root.name.startswith("overnight_wave"):
+    if root.name.startswith("overnight_wave") or root.name.startswith("wave_"):
         # <cells>/<arm>/<home>/searches.jsonl. Everything in this wave chooses rooms the same
         # way, so the arm names the memory and the sensing arm is read from the cell's own
         # header rather than guessed from the path.
         if parts[0] != "cells" or len(parts) < 3:
             return None
         fmt, home = parts[1], parts[2]
-        run = "overnight" if root.name == "overnight_wave" else "overnight, 24 a day"
+        run = {"overnight_wave": "overnight",
+               "overnight_wave_24_questions": "overnight, 24 a day",
+               "wave_reasons_first": "reasons first",
+               "wave_wider_five": "five wider homes",
+               "wave_the_family_reads_the_log": "the family reads the log",
+               "wave_the_second_illness": "a second illness",
+               # A wave added without a label here used to fall through to the path's first
+               # part, which for every one of these trees is the word "cells".
+               }.get(root.name, root.name)
         try:
             arm = json.loads(f.open().readline()).get("sensing_arm") or "memory-guided_search"
         except (ValueError, OSError):
@@ -141,8 +162,22 @@ def read_cell(f, root):
         quiet = (time.time() - f.stat().st_mtime) / 60.0
     except OSError:
         quiet = None
+    # THE LAST DAY IS PER CELL, NOT PER STUDY. Every run was 32 days until the two-illness
+    # episodes, which are 50, and the page used one global 31 to decide whether a cell had
+    # finished - so a 50-day cell would have read "still going" at day 31 and for ever after.
+    # Taken from the cell's own record where it has one, and from the run's own length where it
+    # is still writing.
+    last_day = LAST_DAY_BY_RUN.get(run, 31)
+    done_file = f.parent / "cell.json"
+    if done_file.exists():
+        try:
+            said = json.loads(done_file.read_text()).get("last_day")
+            if isinstance(said, int):
+                last_day = said
+        except (ValueError, OSError):
+            pass
     return questions, notes, {"cfg": run, "hh": home, "arm": arm, "fmt": fmt,
-                              "n": n, "maxday": day_max,
+                              "n": n, "maxday": day_max, "lastday": last_day,
                               "quiet": None if quiet is None else round(quiet, 1)}
 
 
@@ -176,11 +211,24 @@ def main():
 
     # The page carries only what the plot needs. Everything the reader shows in full goes
     # into one file per cell, fetched when a point on the plot is clicked.
-    live = json.dumps({"q": [{k: v for k, v in r.items()
-                              if k in ("cfg", "hh", "arm", "fmt", "key",
-                                       "d", "mv", "n", "f1", "fd", "cp")}
-                             for r in questions],
-                       "cells": cells}, separators=(",", ":"))
+    # ONE ROW PER QUESTION, AND THE PAGE HAS A 16 MB CEILING. Written out as objects, the
+    # 73,665 rows came to 16.34 MB and the publish would have been refused: five of the eleven
+    # fields are the cell's name, repeated on every one of its 744 questions, and the field
+    # names themselves were repeated too. The five are 1:1 with each other, so they are listed
+    # once per cell and a row carries the index. 16.3 MB becomes about 1.7 MB, and the page
+    # rebuilds the same objects at load, so nothing downstream of `Q` changes.
+    seen: Dict[Tuple[str, str, str, str, str], int] = {}
+    cellkeys: List[List[str]] = []
+    rows: List[List[Any]] = []
+    for r in questions:
+        name = (r["cfg"], r["hh"], r["arm"], r["fmt"], r["key"])
+        if name not in seen:
+            seen[name] = len(cellkeys)
+            cellkeys.append(list(name))
+        rows.append([seen[name], r["d"], r["mv"], r["n"],
+                     r.get("f1"), r["fd"], r["cp"]])
+    live = json.dumps({"cellkeys": cellkeys, "rows": rows, "cells": cells},
+                      separators=(",", ":"))
     if "</script>" in live:
         print("refusing to write: the page data would break out of its script tag")
         return 2
@@ -222,7 +270,7 @@ def main():
     PAGE.write_text(page)
     after = hashlib.sha256(PAGE.read_bytes()).hexdigest()
 
-    done = sum(1 for c in cells if c["maxday"] >= 31)
+    done = sum(1 for c in cells if c["maxday"] >= c["lastday"])
     runs = sorted({c["cfg"] for c in cells})
     print(f"{len(questions)} questions · {len(notes)} notes entries · "
           f"{len(cells)} cells ({done} finished) · runs: {', '.join(runs)}")

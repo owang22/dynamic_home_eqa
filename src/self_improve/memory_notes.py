@@ -110,6 +110,21 @@ MEMGPT_AS_PUBLISHED = "MemGPT as published"
 # where it is, and either answer is worth an hour of GPU.
 THE_LOG_AND_THE_ROUTINE_DERIVED_ALLOWANCE = (
     "the log and notes about the routine, allowance derived")
+# The eleventh way, added 2026-09-25 late, to make the note limit a CURVE rather than two
+# points. Measured on the closed wave, the flat 16 against the counted allowance: on the day
+# the routine changes back, the arm allowed more notes fell from 89% to 26% and from 85% to
+# 23% on first room right, and when it was wrong it went to the room the object had used
+# DURING the illness 22 times out of 27 against 2 of 7 for the flat cap. It had written 38
+# surviving notes during the illness against 7. So the suggestion is that how much a memory
+# may write trades against how fast it can abandon what it wrote - and two points cannot show
+# a trade, only a difference. Eight is half the flat cap and the same arm in every other word.
+THE_LOG_AND_THE_ROUTINE_EIGHT = "the log and notes about the routine, eight a night"
+# And a middle point, added minutes later once the budget was stated in the prompt. The three
+# flat-16 cells that landed tonight were run BEFORE the model was told its limit, so they are not
+# the middle of this sweep - they are the "budget not stated" condition. Same sixteen, same arm,
+# and now told. Its own name because `cell_dir` is built from the arm name, so reusing the old
+# one would have overwritten three finished cells in place.
+THE_LOG_AND_THE_ROUTINE_SIXTEEN = "the log and notes about the routine, sixteen a night"
 # The ninth and tenth ways, added 2026-09-25, and they exist because of a measurement. On day
 # 31, a week after the resident recovered, 428 notes across the four claim-store arms described
 # where things went WHILE SOMEBODY WAS ILL and not one of them mentioned that anybody was ill.
@@ -135,7 +150,8 @@ WAYS_OF_WRITING = (WHOLESALE_REWRITE, INCREMENTAL_EDITS, TOLD_IF_IT_WAS_RIGHT,
                    THE_LOG_AND_THE_ROUTINE, A_WORKING_MEMORY_AND_AN_ARCHIVE,
                    ACE_AS_PUBLISHED, MEMGPT_AS_PUBLISHED,
                    THE_LOG_AND_THE_ROUTINE_DERIVED_ALLOWANCE,
-                   TOLD_THE_NIGHT_BEFORE, TOLD_ON_THE_FIRST_NIGHT)
+                   TOLD_THE_NIGHT_BEFORE, TOLD_ON_THE_FIRST_NIGHT,
+                   THE_LOG_AND_THE_ROUTINE_EIGHT, THE_LOG_AND_THE_ROUTINE_SIXTEEN)
 
 # How big the working memory is, and this number comes from MemGPT's own source rather than
 # from us. `letta/constants.py` sets CORE_MEMORY_PERSONA_CHAR_LIMIT and

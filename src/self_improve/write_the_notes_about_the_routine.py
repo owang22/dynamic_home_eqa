@@ -164,7 +164,8 @@ def write_the_notes_about_the_routine(notes: Notes, household: FrozenHousehold, 
         the_day_this_arm_sees(looks_today, household.asked_objects,
                               tell_the_model_everything_it_saw), current, 240,
         name_the_things_it_is_asked_about=name_the_objects_it_will_be_quizzed_on,
-        a_message_tonight=a_message_tonight)
+        a_message_tonight=a_message_tonight,
+        how_many_notes=max_edits)
     schema = writing.edits_schema(max_edits)
     # No minimum is imposed. The other arms require an edit on a night that saw an
     # asked-about object, because for them every sighting is a fact to record. Here most
@@ -174,7 +175,11 @@ def write_the_notes_about_the_routine(notes: Notes, household: FrozenHousehold, 
     text, _ = client.complete(
         [{"role": "system", "content": told.WRITING_SYSTEM},
          {"role": "user", "content": "\n".join(lines)}],
-        schema, max_tokens=300 + 260 * max_edits)
+        # 260 a slot was sized when `why` was capped at 240 characters; it is 600 now, so
+        # sixteen edits can want about 4,900 tokens against the 4,460 this granted. A cut-off
+        # completion does not parse and the night writes nothing, so the arm would have lost
+        # nights silently. `write_the_notes` was already corrected; this copy was not.
+        schema, max_tokens=300 + 420 * max_edits)
     edits: List[dict] = []
     did_not_parse = False
     if text:

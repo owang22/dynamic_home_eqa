@@ -129,10 +129,46 @@ destinations live in one event file, so a per-kind effect is a sample of one how
 **Our arm's note limit binds.** A flat 16 notes a night was reached on 27% of nights at 24
 questions a day and a third of the disrupted ones, while the control's limit is counted from what
 the night saw and ran 21 to 97. On those nights our arm could not do what the control did. The
-test - our arm on the counted limit, nothing else changed - is running on three households now.
+test - our arm on the counted limit, nothing else changed - RAN, and "nothing else changed" was
+false: see claim 6. It is running again, correctly, and no cap number is quoted until it lands.
 
 **The questions are narrow.** Eleven object kinds of the 143 the generator knows, 40-55% of them
 drinkware, decided by one line in a scenario file inherited from earlier work. The robot sees 57
 objects a month and is quizzed on 11; a snack bowl seen in eight places and a blanket that moves
 between couch, armchair and bed are in the record and never scored. A wider version exists and
 passes every gate (drinkware 42.1% to 22.9%, asked objects nearly doubled) and has not been run.
+
+## 6. The five variants of our own arm were not variants of it, 2026-09-26
+
+`search_driven.py` decided whether the robot reads the raw log of past sightings of the quizzed
+object - at the choice step and again at the answer step - by testing the arm name with `==`
+against the one name `the log and notes about the routine`. The five arms built on it are named
+differently, so eight-a-night, sixteen-a-night, the counted allowance and both told arms all
+searched and answered **with no log**, while the arm they vary had it.
+
+What that input is worth, paired on three households, 24 a day, first room right:
+
+| window | our arm with the log, minus the same arm without |
+|---|---|
+| days 1-13 | **+17.3** (2 SE 8.1, 3 of 3) |
+| days 17-23 | **+26.0** (2 SE 2.0, 3 of 3) |
+| day 24 | **+20.8** (2 SE 19.2, 3 of 3) |
+
+So every cap and told-arm number from that wave compares two methods rather than ablating one,
+and none of them is quoted as a result. They stand as an ablation of a different arm - notes about
+the routine with no log to read - and under that reading they say something worth keeping: notes
+without the log lose to a mechanical rule over the same log by **16.1 points** in the settled
+window (2 SE 9.1, 3 of 3) and **15.3** on day 24 (2 SE 2.8, 3 of 3), while our arm with the log
+ties that rule everywhere (+1.2 settled, -2.8 on day 24, nothing clearing). The log is carrying
+the work; the notes written on top of it are not adding anything we can measure yet.
+
+Among arms that all lack the log, the one real separation is the day the routine goes back to
+normal: sixteen notes a night holds 70.8% while incremental edits falls to 45.8% (+25.0, 2 SE 8.3,
+3 of 3) and MemGPT to 50.0% (+20.8, 2 SE 19.2). ACE is the mirror image - best of every arm during
+the illness (93.3%, beating sixteen by 16.7) and near the bottom when it ends (55.6%, 30.6 behind
+the mechanical rule). It adapts hardest and cannot get back.
+
+Fixed by testing membership in `THE_LOG_AND_THE_ROUTINE_FAMILY` at `search_driven.py:480` and
+`:590`, and checked rather than assumed: one day of the sixteen-a-night arm rerun after the fix
+made 0 model calls and 34 cache hits, and its day-1 searches became byte-identical to the parent's,
+where before the fix they differed.

@@ -1269,6 +1269,34 @@ def main(argv=None) -> int:
     print("  choose between them. If reachability rises and accuracy does not, this is why.")
 
     # ================== 1c. coverage of the objects the illness moves ==================
+    # ---- the parse rate, from the runs as they FIRST happened ----
+    recorded = args.root / "THE_PARSE_FAILURES.json"
+    if recorded.exists():
+        try:
+            got = json.loads(recorded.read_text())
+        except ValueError:
+            got = None
+        if got:
+            print("\n--- 0b2. COMPLETIONS THAT DID NOT PARSE, from the runs AS THEY FIRST RAN.")
+            print("    Read from THE_PARSE_FAILURES.json, not recomputed, because two cells are")
+            print("    being rerun: reporting only the clean rerun would be selection on outcome.\n")
+            print(f"  {'arm':42s} {'nights with a call':>18s} {'did not parse':>13s} {'share':>7s}  the nights")
+            for arm, row in sorted(got["per_arm"].items()):
+                n = row["nights_with_a_nightly_model_call"]
+                if not n:
+                    continue
+                nights = "; ".join(f"{x['home']} night {x['night']} ({x['wave']})"
+                                   for x in row["the_nights"])
+                share = f"{row['share']:6.1%}" if row["share"] is not None else "     -"
+                print(f"  {arm:42s} {n:18d} {row['nights_whose_completion_did_not_parse']:13d} "
+                      f"{share}  {nights}")
+            for line in (got["the_comparison"], got["what_it_suggests"],
+                         "ACCURACY FOR THAT ARM: " + got["the_accuracy_numbers_for_this_arm"]):
+                print()
+                for i in range(0, len(line), 94):
+                    print(f"  {line[i:i+94]}")
+            print()
+
     print("\n--- 0c. NIGHTS THAT CHANGED THE MEMORY NOT AT ALL, as three numbers.")
     print("    Never as one percentage: for the record-reading arm a night with nothing to add")
     print("    is the designed behaviour - its writer imposes no minimum, so the model is not")

@@ -48,16 +48,39 @@ WHAT_IT_MAY_DO: Dict[str, Any] = {
             "type": "array", "maxItems": 8,
             "items": {
                 "type": "object",
+                # THREE CORRECTIONS ON 2026-09-25, all of them caps of OURS on a method that
+                # does not have them, and the second one was breaking the method.
+                #
+                # `why` FIRST, and 600 rather than 200. Every other schema in this project now
+                # reasons before it decides; this one chose the call and wrote the whole of its
+                # content before saying why.
+                #
+                # `the_piece_to_replace` 600 -> 20,000, THE SIZE OF THE BLOCK. This field has to
+                # quote the block character for character or `replace_part_of_the_block` refuses
+                # the call, and MemGPT puts no limit on it at all - the block's own 20,000 is the
+                # only bound their design has. Ours cut the quote at 600, mid-word, and then the
+                # exact-match test could not pass. Measured on the three landed cells: 19 of 48
+                # replace attempts (40%) were refused because the quoted piece was not in the
+                # block, against 29 applied; the audit measured 64 of 69 quotes (92.8%) sitting
+                # exactly at 600. So the arm was being stopped from editing its own memory by a
+                # number we chose, and every statement about how it maintains its block was
+                # measured through that. What is NOT explained by this: the archive held 0
+                # passages at every point in all three cells, and archive writes use `text`, not
+                # this field.
+                #
+                # `text` 1200 -> 20,000 for the same reason: 44 of 135 (32.6%) sat exactly at
+                # 1,200 and a truncated line entered the block truncated. MemGPT bounds the
+                # block, not one write into it.
                 "properties": {
+                    "why": {"type": "string", "maxLength": 600},
                     "what": {"type": "string",
                              "enum": ["add to the block", "replace part of the block",
                                       "put a passage in the archive",
                                       "search the archive"]},
-                    "text": {"type": ["string", "null"], "maxLength": 1200},
-                    "the_piece_to_replace": {"type": ["string", "null"], "maxLength": 600},
-                    "why": {"type": "string", "maxLength": 200},
+                    "text": {"type": ["string", "null"], "maxLength": 20000},
+                    "the_piece_to_replace": {"type": ["string", "null"], "maxLength": 20000},
                 },
-                "required": ["what", "text", "the_piece_to_replace", "why"],
+                "required": ["why", "what", "text", "the_piece_to_replace"],
                 "additionalProperties": False}}},
     "required": ["calls"], "additionalProperties": False}
 
@@ -149,7 +172,12 @@ def write_the_notes_memgpt_as_published(notes: Notes, household: FrozenHousehold
     text, _ = client.complete(
         [{"role": "system", "content": told.WRITING_SYSTEM},
          {"role": "user", "content": "\n".join(lines)}],
-        WHAT_IT_MAY_DO, max_tokens=2600)
+        # 2,600 was ample while one call could carry at most 1,200 + 600 + 200 characters. With
+        # the caps corrected to MemGPT's own - the block's 20,000 - a single replace can quote a
+        # long passage and supply its replacement, so the token ceiling would become the binding
+        # limit and a cut-off reply does not parse, which loses the night. 12,000 tokens is about
+        # 46,000 characters: more than one quote plus its replacement can be.
+        WHAT_IT_MAY_DO, max_tokens=12000)
     calls: List[dict] = []
     did_not_parse = False
     if text:

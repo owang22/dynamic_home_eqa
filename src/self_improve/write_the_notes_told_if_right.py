@@ -107,13 +107,19 @@ JUDGEMENT_SCHEMA: Dict[str, Any] = {
             "type": "array", "maxItems": 12,
             "items": {
                 "type": "object",
+                # WHAT IT TAUGHT FIRST, THEN THE VERDICT. It used to come last, so `it` -
+                # helped or misled - was produced with nothing spent on it, and that verdict
+                # drives every revision the night makes. This is ACE's Reflector step, used by
+                # two arms. Properties and required are kept in the SAME order: the server
+                # walks one of them and we do not know which, so a fix in one alone could be
+                # inert and look applied.
                 "properties": {
+                    "what_it_taught": {"type": "string", "maxLength": 600},
                     "claim_id": {"type": "string"},
                     "it": {"type": "string", "enum": ["helped", "misled"]},
                     "about": {"type": "string", "maxLength": 80},
-                    "what_it_taught": {"type": "string", "maxLength": 200},
                 },
-                "required": ["claim_id", "it", "about", "what_it_taught"],
+                "required": ["what_it_taught", "claim_id", "it", "about"],
                 "additionalProperties": False}},
         "what_to_change_tonight": {"type": "array", "maxItems": 6,
                                    "items": {"type": "string", "maxLength": 200}},
@@ -128,6 +134,12 @@ EDITS_SCHEMA: Dict[str, Any] = {
             "items": {
                 "type": "object",
                 "properties": {
+                    # WHY FIRST. It used to come last, so the model chose an action, named
+                    # the note and wrote the new wording before saying why - a decision made
+                    # with no tokens spent on it, then justified. Same fault as the room
+                    # chooser, found the same way. 600 characters, not 240: this field is
+                    # reasoning, not memory, and the 240 was the per-note cap borrowed.
+                    "why": {"type": "string", "maxLength": 600},
                     "action": {"type": "string",
                                "enum": ["add", "revise", "record evidence",
                                         "join two claims"]},
@@ -143,9 +155,8 @@ EDITS_SCHEMA: Dict[str, Any] = {
                                                    "items": {"type": "string"}},
                     "contradicting_observation_ids": {"type": "array", "maxItems": 6,
                                                       "items": {"type": "string"}},
-                    "why": {"type": "string", "maxLength": 240},
                 },
-                "required": ["action", "claim_id", "join_in_claim_id", "statement",
+                "required": ["why", "action", "claim_id", "join_in_claim_id", "statement",
                              "holds_under", "status", "standing",
                              "supporting_observation_ids",
                              "contradicting_observation_ids", "why"],
@@ -417,7 +428,7 @@ def change_the_notes(notes: Notes, household: FrozenHousehold, day: int, time: i
         # 260 tokens an edit, not 120: measured on a completion that was cut off
         # mid-array at 120, after which the text does not parse and the whole night
         # writes nothing while the call still looks successful.
-        max_tokens=300 + 260 * cap)
+        max_tokens=300 + 420 * cap)
     edits: List[dict] = []
     # Whether it parsed is not whether it was empty: night 0 has no looks and returns an
     # empty edit list legitimately, and calling that a parse failure refuses every cell.
@@ -499,19 +510,23 @@ def change_the_notes(notes: Notes, household: FrozenHousehold, day: int, time: i
 MERGE_SCHEMA: Dict[str, Any] = {
     "type": "object",
     "properties": {
+        # maxItems WAS 4 AND IT BOUND ON 80.5% OF CALLS - 66 of 82 - in the step whose only job
+        # is merging notes that say the same thing. A cap of ours, on their mechanism, binding
+        # four nights in five: every count of how much ACE merges was a count of our ceiling. 12
+        # matches the number of verdicts a night may carry and has never been approached.
         "merges": {
-            "type": "array", "maxItems": 4,
+            "type": "array", "maxItems": 12,
             "items": {
                 "type": "object",
                 "properties": {
+                    "why": {"type": "string", "maxLength": 600},
                     "keep": {"type": "string"},
                     "fold_in": {"type": "string"},
                     "one_note_instead": {"type": ["string", "null"], "maxLength": 240},
                     "they_say_the_same_thing": {"type": "boolean"},
-                    "why": {"type": "string", "maxLength": 200},
                 },
-                "required": ["keep", "fold_in", "one_note_instead",
-                             "they_say_the_same_thing", "why"],
+                "required": ["why", "keep", "fold_in", "one_note_instead",
+                             "they_say_the_same_thing"],
                 "additionalProperties": False}}},
     "required": ["merges"], "additionalProperties": False}
 

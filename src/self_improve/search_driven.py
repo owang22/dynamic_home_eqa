@@ -66,6 +66,8 @@ from self_improve.frozen_household import (BEYOND_REACH, FROZEN_BANKS, FrozenHou
                                            LookTarget, period_of_day)
 from self_improve.looking import TheHouseAsSeen, describe_look_for_the_model, hours_and_minutes
 from self_improve.memory_notes import (THE_LOG_AND_THE_ROUTINE_DERIVED_ALLOWANCE,
+                                      THE_LOG_AND_THE_ROUTINE_EIGHT,
+                                      THE_LOG_AND_THE_ROUTINE_SIXTEEN,
                                       TOLD_THE_NIGHT_BEFORE, TOLD_ON_THE_FIRST_NIGHT,
                                       ACE_AS_PUBLISHED, MEMGPT_AS_PUBLISHED,
                                        A_WORKING_MEMORY_AND_AN_ARCHIVE, Notes,
@@ -150,12 +152,21 @@ HOW_MEMORY_IS_WRITTEN = ("wholesale rewrite", "incremental edits",
                          TOLD_IF_IT_WAS_RIGHT, THE_LOG_AND_THE_ROUTINE,
                          A_WORKING_MEMORY_AND_AN_ARCHIVE, ACE_AS_PUBLISHED,
                          MEMGPT_AS_PUBLISHED, THE_LOG_AND_THE_ROUTINE_DERIVED_ALLOWANCE,
-                         TOLD_THE_NIGHT_BEFORE, TOLD_ON_THE_FIRST_NIGHT)
+                         TOLD_THE_NIGHT_BEFORE, TOLD_ON_THE_FIRST_NIGHT,
+                         THE_LOG_AND_THE_ROUTINE_EIGHT,
+                         THE_LOG_AND_THE_ROUTINE_SIXTEEN)
 
 # The arms built on `the log and notes about the routine`: the same prompt, one thing changed.
 THE_LOG_AND_THE_ROUTINE_FAMILY = (THE_LOG_AND_THE_ROUTINE,
                                   THE_LOG_AND_THE_ROUTINE_DERIVED_ALLOWANCE,
+                                  THE_LOG_AND_THE_ROUTINE_EIGHT,
+                                  THE_LOG_AND_THE_ROUTINE_SIXTEEN,
                                   TOLD_THE_NIGHT_BEFORE, TOLD_ON_THE_FIRST_NIGHT)
+# How many notes a night each member of that family may write. The flat 16 is the module
+# default; None means counted from what the night saw, the same rule the control uses.
+NOTES_A_NIGHT = {THE_LOG_AND_THE_ROUTINE_EIGHT: 8,
+                 THE_LOG_AND_THE_ROUTINE_SIXTEEN: 16,
+                 THE_LOG_AND_THE_ROUTINE_DERIVED_ALLOWANCE: None}
 # Which night the one sentence arrives on, as an offset from the day the routine changes and the
 # day it changes back. 0 is the first changed day itself; -1 is the night before, when the robot
 # has seen nothing of the change yet.
@@ -251,13 +262,34 @@ def the_movers(household: FrozenHousehold) -> Set[str]:
 
 
 def choice_schema(rooms: Sequence[str]) -> Dict[str, Any]:
+    """REASONING FIRST, THEN THE ROOM, and the order is the whole point.
+
+    Until 2026-09-25 this declared `room` before `why`. The server enforces the schema while it
+    generates, and every call sets `enable_thinking: False`, so there was no thinking channel
+    either: the model named a room after zero tokens of deliberation and then wrote a
+    justification for a decision already made. Measured in the response cache rather than
+    inferred from the schema - **2,206 of 2,206 cached room-choice completions emitted `room`
+    first**. Our own answering schema had it the right way round the whole time, and nobody
+    compared the two.
+
+    It matters beyond reading the traces. Every arm that chooses a room from its notes got one
+    forward pass with no room to think, while the rule with no model needs none - which is
+    exactly the flaw that squashes the differences between memory designs toward the cheapest
+    thing in the comparison.
+
+    The cap is 1,200 characters, not 240. A reasoning field is not a memory field: 240 was the
+    per-note limit that bounds the store, copied onto a field with no store to bound, and it cut
+    **14,308 of 46,537 explanations, 30.7%**, nearly all mid-word. Everything run before this
+    change stands as the ablation: does letting a memory reason before it acts change which
+    memory wins?
+    """
     return {
         "type": "object",
         "properties": {
+            "why": {"type": "string", "maxLength": 1200},
             "room": {"type": "string", "enum": list(rooms)},
-            "why": {"type": "string", "maxLength": 240},
         },
-        "required": ["room", "why"], "additionalProperties": False}
+        "required": ["why", "room"], "additionalProperties": False}
 
 
 def choice_prompt(household: FrozenHousehold, notes: Notes, question: dict,
@@ -348,7 +380,7 @@ def choice_prompt(household: FrozenHousehold, notes: Notes, question: dict,
         # would itself be an instruction.
         pass
     if plainly:
-        lines += [told.how_much_you_may_write(240), ""]
+        lines += [told.how_much_you_may_write(1200), ""]
     lines += ["Rooms you may still choose: " + ", ".join(rooms_left)]
     return [{"role": "system",
              "content": told.CHOOSING_SYSTEM if plainly else CHOOSE_SYSTEM},
@@ -434,8 +466,18 @@ def run_one_search(eyes: TheHouseAsSeen, household: FrozenHousehold, notes: Note
         if not rooms_left:
             break
         if sensing_arm in (MEMORY_GUIDED, PRIOR_ONLY):
+            # MEMBERSHIP, NOT EQUALITY, AND IT WAS EQUALITY UNTIL 2026-09-26. The log block
+            # and the question about what the people are doing are part of what this method IS,
+            # but the test named ONE arm, so the five variants built on it - eight a night,
+            # sixteen a night, the counted allowance, and both told arms - searched and answered
+            # without the log while the arm they vary searched with it. Measured paired on three
+            # homes, first room right: the log is worth +17.3 points in the settled window,
+            # +26.0 during the illness and +20.8 on the day the routine goes back. So every
+            # number from those five was a comparison against a different method, not an
+            # ablation of this one. Anything named in THE_LOG_AND_THE_ROUTINE_FAMILY reads the
+            # record, and a new variant gets it by being added to that tuple and nothing else.
             reads_its_record = (
-                notes.how_memory_is_written == THE_LOG_AND_THE_ROUTINE)
+                notes.how_memory_is_written in THE_LOG_AND_THE_ROUTINE_FAMILY)
             messages = choice_prompt(
                 household, notes, question, rooms_left, record.rooms_opened,
                 notes_on_the_search, eyes.days_since_each_room_was_looked_in(day),
@@ -444,7 +486,15 @@ def run_one_search(eyes: TheHouseAsSeen, household: FrozenHousehold, notes: Note
                     the_log_block(eyes, question["object_id"], at_time)
                     if reads_its_record else None),
                 ask_what_the_people_are_doing=reads_its_record)
-            text, _ = client.complete(messages, choice_schema(rooms_left), max_tokens=250)
+            # 250 UNTIL 2026-09-25 AND IT WOULD HAVE RUINED THE NEXT WAVE. Raising the `why`
+            # cap from 240 to 1,200 characters made this the binding limit: 1,200 characters is
+            # about 385 tokens, and 250 cut it off. A cut-off reply is not valid JSON, and the
+            # code just below hands the room to the FIXED ROTATION when the reply will not
+            # parse - so a memory-guided step would quietly have become the cheapest baseline
+            # in the study, which is the exact fault the reordering was meant to remove. Two
+            # limits, and the one nobody looked at binds. 900 clears 385 with room for the
+            # room name and the JSON around it.
+            text, _ = client.complete(messages, choice_schema(rooms_left), max_tokens=900)
             room, why = None, ""
             if text:
                 try:
@@ -535,8 +585,12 @@ def run_one_search(eyes: TheHouseAsSeen, household: FrozenHousehold, notes: Note
                                          if tell_it_what_it_ruled_out else ()),
             the_record_to_read=(
                 the_log_block(eyes, question["object_id"], at_time)
-                if notes.how_memory_is_written == THE_LOG_AND_THE_ROUTINE else None))
-        text, _ = client.complete(messages, CONF_SCHEMA, max_tokens=400)
+                # The same fault as at the choice step, and the same fix: the whole family
+                # reads the record, not the one arm whose name the test spelled out.
+                if notes.how_memory_is_written in THE_LOG_AND_THE_ROUTINE_FAMILY else None))
+        # 400 until 2026-09-25, for the same reason: CONF_SCHEMA's `reasoning` now allows 1,200
+        # characters, about 385 tokens, and the location and confidence follow it.
+        text, _ = client.complete(messages, CONF_SCHEMA, max_tokens=900)
         place, confidence, _why, status = parse_conf(text, allowed_places)
         record.answer_place = place
         record.answer_room = _room_of(household, place)
@@ -701,7 +755,10 @@ def answer_prompt(household: FrozenHousehold, question: dict, notes_text: str,
         ("Also give a number from 0 to 1 for how sure you are that the spot is right."
          if the_record_to_read else CONF_SCALE),
         "",
-        told.how_much_you_may_write(600) if the_record_to_read else "",
+        # Said to EVERY arm now, not only the record-reading one. It used to appear for that
+        # arm alone, so one arm was verbally capped on a shared field and the others were not -
+        # and it showed: that arm hit the old 240 on 8.8% of choices against 28.6% elsewhere.
+        told.how_much_you_may_write(1200),
     ]
     return [{"role": "system",
              "content": (told.ANSWERING_SYSTEM if the_record_to_read
@@ -863,11 +920,17 @@ def the_sentence_for_tonight(how_memory_is_written: str, household: FrozenHouseh
     offset = WHEN_IT_IS_TOLD.get(how_memory_is_written)
     if offset is None:
         return None
-    from self_improve.three_prompts import who_is_unwell_and_when
-    who, first_disrupted, first_back = who_is_unwell_and_when(household)
-    called = names_by_resident_id(str(household.bank_path))[who]
-    return write_the_notes_module.the_message_for_tonight(
-        day, who, first_disrupted + offset, first_back + offset, called=called)
+    # EVERY spell, not the first. An episode with two illnesses gets told before each of them and
+    # before each recovery, because an arm told only about the first would be a different arm
+    # after day 32 and nothing would say so.
+    from self_improve.three_prompts import the_unwell_spells
+    names = names_by_resident_id(str(household.bank_path))
+    for who, first_disrupted, first_back in the_unwell_spells(household):
+        said = write_the_notes_module.the_message_for_tonight(
+            day, who, first_disrupted + offset, first_back + offset, called=names[who])
+        if said:
+            return said
+    return None
 
 
 def extra_note_writing_settings(name_the_objects_it_will_be_quizzed_on: bool = True,
@@ -1030,9 +1093,10 @@ def run_one_cell(household: FrozenHousehold, how_memory_is_written: str,
                     a_message_tonight=(the_sentence_for_tonight(how_memory_is_written,
                                                                household, day)
                                        or pinned.get("a_message_tonight")),
-                    **({"max_edits": edits_tonight}
-                       if how_memory_is_written == THE_LOG_AND_THE_ROUTINE_DERIVED_ALLOWANCE
-                       else {}))
+                    **({"max_edits": (edits_tonight
+                                      if NOTES_A_NIGHT[how_memory_is_written] is None
+                                      else NOTES_A_NIGHT[how_memory_is_written])}
+                       if how_memory_is_written in NOTES_A_NIGHT else {}))
             elif how_memory_is_written in (TOLD_IF_IT_WAS_RIGHT, ACE_AS_PUBLISHED):
                 # The third arm is the only one that sees how the day went, so it is
                 # the only one handed the day's answers. Everything else about the

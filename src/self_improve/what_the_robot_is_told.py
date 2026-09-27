@@ -247,10 +247,34 @@ WHAT_ONE_PIECE_IS_CALLED: Dict[str, str] = {
 }
 
 
+def how_many_notes_you_may_write(n: int) -> List[str]:
+    """The budget, said out loud, because until 2026-09-26 it never was.
+
+    The schema has always stopped the model at its allowance, and the prompt has never named
+    the number - so a night that wanted more was TRUNCATED rather than rationed. Our own arm sat
+    exactly at its cap of sixteen on 27% of nights at 24 questions a day and on a third of the
+    disrupted nights, and never knew the cap was there.
+
+    That makes a cap sweep measure the wrong thing. "Does a smaller memory trade steady accuracy
+    for faster adaptation" is a question about RATIONING - about a writer choosing what is worth
+    a slot - and blind truncation is not rationing, it is loss. So the number is now said, twice:
+    what the budget is, and that it binds, and that choosing what to spend it on is part of the
+    job.
+    """
+    return [f"TONIGHT YOU MAY WRITE OR CHANGE AT MOST {n} NOTES. That is a hard limit: the "
+            f"{n + 1}th is thrown away, so anything you leave out is lost and anything you write "
+            f"that was not worth a slot has cost you one.",
+            "",
+            "So decide what is worth the space before you write. If more has happened than fits, "
+            "keep what will still be true tomorrow and what you would be most wrong about "
+            "without it."]
+
+
 def the_nightly_prompt(method: str, household, day: int, the_day_in_words: str,
                        memory_as_it_stands: str, characters_a_note: int,
                        name_the_things_it_is_asked_about: bool = False,
                        a_message_tonight: Optional[str] = None,
+                       how_many_notes: Optional[int] = None,
                        extra_before_the_instruction: Sequence[str] = ()) -> List[str]:
     """The whole of what any arm is told at the end of a day.
 
@@ -264,6 +288,7 @@ def the_nightly_prompt(method: str, household, day: int, the_day_in_words: str,
                          f"known: {sorted(HOW_YOUR_MEMORY_WORKS)}")
     return (
         the_people_who_live_here(household.asked_objects, household.resident_ids)
+        + (["", *how_many_notes_you_may_write(how_many_notes)] if how_many_notes else [])
         + ["", f"It is the end of day {day}."]
         + (["", a_message_tonight] if a_message_tonight else [])
         + ["",

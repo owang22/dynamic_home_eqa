@@ -74,7 +74,11 @@ ANSWER_SCHEMA: Dict[str, Any] = {
 CONF_SCHEMA: Dict[str, Any] = {
     "type": "object",
     "properties": {
-        "reasoning": {"type": "string", "maxLength": 600},
+        # 600 until 2026-09-25, raised for the same reason the chooser's 240 went: a reasoning
+        # field is not a memory field and must not bind. The ORDER here was always right -
+        # reasoning before the location - which is what made the chooser's order visible as a
+        # fault rather than a convention.
+        "reasoning": {"type": "string", "maxLength": 1200},
         "location": {"type": "string"},
         "confidence": {"type": "number"},
     },

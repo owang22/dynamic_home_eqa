@@ -57,6 +57,8 @@ from self_improve import search_driven as sd
 from self_improve.frozen_household import FrozenHousehold
 from self_improve.memory_notes import (ACE_AS_PUBLISHED, MEMGPT_AS_PUBLISHED,
                                       THE_LOG_AND_THE_ROUTINE_DERIVED_ALLOWANCE,
+                                      THE_LOG_AND_THE_ROUTINE_EIGHT,
+                                      THE_LOG_AND_THE_ROUTINE_SIXTEEN,
                                       TOLD_THE_NIGHT_BEFORE, TOLD_ON_THE_FIRST_NIGHT)
 from self_improve.study_settings import LOCKED
 from self_improve.three_prompts import PILOT_BANKS, PILOT_TEN, TimedClient, beat, take_the_lock
@@ -96,6 +98,8 @@ ARMS: Dict[str, Tuple[str, str, int]] = {
     # The ceiling test. Our arm on the control's derived allowance, nothing else changed,
     # because the flat 16 binds on 27% of its nights at 24 questions a day. Three homes: it
     # only has to be paired against the cells already run on the same three.
+    "ours, sixteen notes a night": (THE_LOG_AND_THE_ROUTINE_SIXTEEN, MEMORY_GUIDED, 3),
+    "ours, eight notes a night": (THE_LOG_AND_THE_ROUTINE_EIGHT, MEMORY_GUIDED, 3),
     "ours, allowance derived": (THE_LOG_AND_THE_ROUTINE_DERIVED_ALLOWANCE, MEMORY_GUIDED, 3),
     # The two told arms. Nobody in this study has ever been told the household changed, and the
     # measurement that made these worth running is in memory_notes: 428 notes described where
