@@ -83,6 +83,13 @@ by night 21. Verbatim text is in `appendix_material.md`.
 
 ## 2. Did the room-choice schema put the reason before the room?
 
+> **CORRECTED 2026-09-28, see `does_the_chooser_matter.md`.** The measurements below stand: those
+> two waves did name the room first, with a third of their explanations truncated. The conclusions
+> I drew from them - that Table 1 measures a different system, that it cannot sit beside the
+> recurrence figures, and that it might need rebuilding - do NOT stand. Measured paired on the same
+> three homes and arms, with LastSeen as a control that is identical across both waves, the chooser
+> does not move the day curves and every window difference sits inside its own 2 SE.
+
 `python3 results/self_improve/paper/scripts/reason_before_room.py` → `reason_before_room.txt`.
 
 Measured from the rows, not from dates. The old schema named the room first and capped the
