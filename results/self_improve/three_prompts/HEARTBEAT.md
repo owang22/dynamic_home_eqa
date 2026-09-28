@@ -1,6 +1,6 @@
 # three_prompts heartbeat
 
-Written 2026-09-27T22:45:59-07:00 by `watch_the_heartbeats.py`. A cell beats once per completed night. Silence longer than 20 minutes counts as STALLED.
+Written 2026-09-28T01:13:02-07:00 by `watch_the_heartbeats.py`. A cell beats once per completed night. Silence longer than 20 minutes counts as STALLED.
 
 **1 finished, 0 running, 0 STALLED** (of which 0 have no live process at all). One row per CELL, liveness read from `ps` rather than from a pids file.
 
@@ -16,7 +16,7 @@ A cell sharing a session id with the shell that launched it is NOT detached and 
 
 | arm | home | last night | quiet for | alive | finished | pid | sid | wave |
 |---|---|---|---|---|---|---|---|---|
-| control | hh_s2_t03 | 31/31 | 4255.0 | no | yes | 2903543 | 2903543 | (not in any pids.txt) |
+| control | hh_s2_t03 | 31/31 | 4402.0 | no | yes | 2903543 | 2903543 | (not in any pids.txt) |
 
 ## the accounting: 10 homes x 6 arms = 60 cells
 

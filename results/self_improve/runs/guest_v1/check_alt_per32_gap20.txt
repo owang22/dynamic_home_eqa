@@ -1,0 +1,229 @@
+ALTERNATIVE BUILD of guest_v1, saved 2026-09-24 for the record - NOT the committed run.
+Identical households, event rules and object classes; the only differences are
+per_day: 32 (instead of 24) and question_min_gap_min: 20 (instead of 30) - i.e. the robot
+is asked more often, which gives a forgetting learner more feedback to learn the ordinary
+fortnight from. It lifts the settled floor from 69.2% to 72.9% and clears it, and the break
+and the return get better too; but the never-forgetting learner's re-learning leg then falls
+to +4.6 against a +5.0 bar, because with more data it has already converged by the end of the
+settled window and has little left to gain during the disruption. Six of seven either way.
+It is NOT the committed build because per_day 24 / gap 30 is what illness_v1, room_shut_v1,
+wfh_v1 and night_shift_v1 all use, and changing it for one scenario would make the
+cross-scenario table not like for like.
+====================================================================================================
+====================================================================================================
+SCENARIO CHECK: /tmp/claude-1027/-home-oliver-robot-dynamic-home-eqa/f251de4b-be46-424b-b263-ac9df03b04dc/scratchpad/guest_per32
+====================================================================================================
+
+HOUSEHOLDS
+  found 10: hh_s0, hh_s1, hh_s2, hh_s3, hh_s4, hh_s5, hh_s6, hh_s7, hh_s8, hh_s9
+  dropped by the exclusion rule: none
+  kept 10
+
+  windows: settled='lead' days [1]..[13]  disrupted='guest' days [14]..[23]  back-to-normal='return' days [24]..[31]
+  rooms per household: [7, 7, 9, 9, 8, 6, 6, 7, 6, 8]
+  places per household: [39, 37, 42, 47, 47, 34, 33, 37, 33, 43]
+
+CHECK 1  HEADROOM - is there anything for a memory to get right?
+  one fact = answer the commonest place to everything. per object = know each object perfectly.
+  the gap between them is all the room a memory design has to win in.
+
+  window          one fact  per object  headroom   per-household headroom
+  lead             35%      73%       38pts   min   30 max   49
+  guest            33%      75%       42pts   min   31 max   53
+  return           36%      73%       37pts   min   29 max   51
+
+  the same, split by the hour the question was asked (the disrupted window):
+  band            share of Qs  one fact  per object  headroom
+  morning 07-09    18%        43%      79%       37pts
+  daytime 10-17    31%        52%      87%       34pts
+  evening 18-23    51%        33%      74%       40pts
+
+CHECK 2  HETEROGENEITY - do different things move to different places, and does anything stay?
+  household   asked  moved  stays put  destinations  biggest destination takes
+  hh_s0          17      5         12             4    40%   
+  hh_s1          19      6         10             6    17%   
+  hh_s2          15      5         10             5    20%   
+  hh_s3          20      4         15             4    25%   
+  hh_s4          20      3         16             3    33%   
+  hh_s5          18      7         10             7    14%   
+  hh_s6          18      5         12             5    20%   
+  hh_s7          13      2         11             2    50%   
+  hh_s8          16      6         10             4    33%   
+  hh_s9          26      6         19             5    33%   
+
+CHECK 3  INDEPENDENCE - are these separate instances, or one fact repeated?
+  49 moved objects across 10 households, landing on 17 distinct receptacles
+    armchair_l1               13  ######..................
+    wardrobe_b1                9  ####....................
+    bedroom_floor_b1           6  ###.....................
+    kitchen_table_k1           5  ##......................
+    sink_ba_ba1                2  #.......................
+    coffee_table_l1            2  #.......................
+    desk_b1                    2  #.......................
+    bathroom_shelf_ba1         1  ........................
+  the single commonest destination takes 27% of all movers
+
+CHECK 4  VISIBILITY - can a look see the change, at the hours questions are asked?
+  Among the objects that DO move (controls cannot make a look more useful):
+  hour   change visible   questions asked
+  00:00    62%  ############........      0%
+  01:00    62%  ############........      0%
+  02:00    62%  ############........      0%
+  03:00    62%  ############........      0%
+  04:00    62%  ############........      0%
+  05:00    62%  ############........      0%
+  06:00    62%  ############........      0%
+  07:00    62%  ############........      5%
+  08:00    62%  ############........      6%
+  09:00    61%  ############........      7%
+  10:00    60%  ############........      4%
+  11:00    60%  ############........      3%
+  12:00    60%  ############........      4%
+  13:00    60%  ############........      4%
+  14:00    61%  ############........      6%
+  15:00    61%  ############........      4%
+  16:00    61%  ############........      2%
+  17:00    61%  ############........      4%
+  18:00    61%  ############........      4%
+  19:00    61%  ############........      7%
+  20:00    63%  #############.......     13%
+  21:00    59%  ############........     11%
+  22:00    44%  #########...........     17%
+  23:00    52%  ##########..........      0%
+  most visible hour: 20:00 at 63%; quietest: 22:00 at 44%
+  overnight floor (00-06), which any change-detector must clear: 62%
+  (over ALL asked objects, including the controls, the peak is 28% - lower simply because controls never change)
+
+CHECK 5  REVERSION - does the world put things back, or is the return measuring drift?
+  of 48 moved objects with questions after the disruption: 29 go back, 12 stay where the disruption put them, 7 end up somewhere third
+  of 120 objects that never moved, 11 have a different usual place afterwards anyway (ordinary drift, nothing to do with the event)
+  contamination of the reversion test: 40% of movers plus 9% of controls
+
+CHECK 6  POWER - questions is the flattering number, objects is the real one
+  window          questions/hh  of those, a settled memory gets wrong   objects/hh  object-place facts/hh
+  lead                   416         110 (worst household 90)          17.6        44.7
+  guest                  317         139 (worst household 89)          17.8        42.9
+  return                 256          78 (worst household 50)          17.1        39.3
+  effective sample size for the disrupted window: about 49 moved objects across 10 households, NOT 3193 questions. Cluster every interval on household and object.
+
+CHECK 7  THE CLASSICAL CURVE - can a plain counting method be taught by this scenario, then broken by it?
+  No language model is involved. If a counting method shows no break, THE SCENARIO HAS FAILED, NOT THE METHOD:
+  there is then nothing in the data for a language model to notice, and any difference between memory
+  designs measured on it is noise or leakage.
+
+  households: 10 kept
+  phases read from the scenario's own calendar - settled 'lead' days 1-13, upset 'guest' days 14-23, back to normal 'return' days 24-31
+  early settled: days 1-2,  settled: days 11-13,  broken: days 14-15,  re-learnt: days 21-23,  returned: days 24-25
+
+  THE UNDERLYING COUNTS. A suspiciously clean curve is a bug until these look right.
+  phase              questions  per household  households  objects asked  of those, moved by the upset
+  early settled            640             64          10            147            39
+  settled                  958             96          10            156            44
+  broken                   634             63          10            155            42
+  re-learnt                959             96          10            162            44
+  returned                 640             64          10            144            40
+  the effective sample size is objects, not questions: 49 moved objects across 10 households. Every interval below is clustered on household.
+
+  WHAT THE METHODS ACTUALLY ANSWER. A method that says one place to everything has collapsed.
+  method                               window        commonest answer            share  distinct answers
+  a timetable that never forgets       lead          kitchen_table_k1          21.9%        30
+  a timetable that never forgets       guest         kitchen_table_k1          24.3%        30
+  a timetable that never forgets       return        kitchen_table_k1          26.5%        26
+  a timetable with a three-day memory  lead          kitchen_table_k1          19.2%        34
+  a timetable with a three-day memory  guest         kitchen_table_k1          21.9%        37
+  a timetable with a three-day memory  return        kitchen_table_k1          23.6%        33
+
+  THE CURVE. Accuracy at each phase, and the change along each leg. Three slices of the questions:
+    all         every question - the paper's own metric, and the one the thresholds are set on
+    moved       the objects whose usual place differs between the settled and the upset window.
+                Sharper and SELECTION-BIASED - the set is chosen by comparing those windows, so noise
+                puts objects in it and they break by construction. Read it, do not gate on it.
+    stayed put  the control. At the return these recover while the moved ones break, which is how
+                a pooled fourth leg can cancel to nothing.
+
+  a timetable that never forgets
+    all         early settled  57.5%  settled  76.3%  broken  65.8%  re-learnt  70.4%  returned  73.9%
+      learn        +18.8 pts pooled   household mean +18.8 +- 2.1   clears 2 standard errors   shown by 10/10 households
+      break        -10.5 pts pooled   household mean -10.7 +- 4.4   clears 2 standard errors   shown by 6/10 households
+      re-learn      +4.6 pts pooled   household mean  +4.8 +- 3.6   inside 2 standard errors   shown by 7/10 households
+      break again   +3.5 pts pooled   household mean  +3.5 +- 3.0   inside 2 standard errors   shown by 2/10 households
+    moved       early settled  65.5%  settled  67.1%  broken  42.9%  re-learnt  45.6%  returned  54.3%
+      learn         +1.6 pts pooled   household mean  -0.6 +- 6.9   inside 2 standard errors   shown by 4/10 households
+      break        -24.3 pts pooled   household mean -22.8 +- 6.3   clears 2 standard errors   shown by 8/10 households
+      re-learn      +2.8 pts pooled   household mean  +1.6 +- 6.9   inside 2 standard errors   shown by 4/10 households
+      break again   +8.6 pts pooled   household mean  +9.7 +- 5.6   inside 2 standard errors   shown by 2/10 households
+    stayed put  early settled  52.8%  settled  82.1%  broken  81.6%  re-learnt  86.6%  returned  86.3%
+      learn        +29.3 pts pooled   household mean +30.0 +- 2.4   clears 2 standard errors   shown by 10/10 households
+      break         -0.5 pts pooled   household mean  -0.9 +- 3.5   inside 2 standard errors   shown by 2/10 households
+      re-learn      +5.0 pts pooled   household mean  +5.1 +- 2.1   clears 2 standard errors   shown by 5/10 households
+      break again   -0.3 pts pooled   household mean  +0.7 +- 2.4   inside 2 standard errors   shown by 3/10 households
+
+  a timetable with a three-day memory
+    all         early settled  56.9%  settled  72.9%  broken  61.7%  re-learnt  75.9%  returned  67.7%
+      learn        +16.0 pts pooled   household mean +16.0 +- 2.4   clears 2 standard errors   shown by 9/10 households
+      break        -11.2 pts pooled   household mean -11.4 +- 4.6   clears 2 standard errors   shown by 6/10 households
+      re-learn     +14.2 pts pooled   household mean +14.4 +- 5.3   clears 2 standard errors   shown by 8/10 households
+      break again   -8.3 pts pooled   household mean  -8.3 +- 3.0   clears 2 standard errors   shown by 7/10 households
+    moved       early settled  66.4%  settled  67.7%  broken  42.9%  re-learnt  70.2%  returned  50.6%
+      learn         +1.3 pts pooled   household mean  -0.9 +- 6.4   inside 2 standard errors   shown by 4/10 households
+      break        -24.8 pts pooled   household mean -22.7 +- 6.8   clears 2 standard errors   shown by 8/10 households
+      re-learn     +27.3 pts pooled   household mean +25.0 +- 9.0   clears 2 standard errors   shown by 8/10 households
+      break again  -19.6 pts pooled   household mean -16.2 +- 5.9   clears 2 standard errors   shown by 8/10 households
+    stayed put  early settled  51.4%  settled  76.1%  broken  74.7%  re-learnt  79.7%  returned  78.4%
+      learn        +24.8 pts pooled   household mean +25.3 +- 2.5   clears 2 standard errors   shown by 10/10 households
+      break         -1.5 pts pooled   household mean  -2.9 +- 3.8   inside 2 standard errors   shown by 1/10 households
+      re-learn      +5.0 pts pooled   household mean  +6.9 +- 2.8   clears 2 standard errors   shown by 5/10 households
+      break again   -1.3 pts pooled   household mean  -0.7 +- 3.1   inside 2 standard errors   shown by 3/10 households
+
+  PER HOUSEHOLD, on every question. A pooled curve can look perfect when two households carry it
+  and eight are flat, so the summary that matters is how many households show the whole shape.
+  a timetable that never forgets
+    household   learn   break  re-learn  break again   questions per leg   full shape
+    hh_s0       +16.1   +8.9  -12.0      -2.1              64          no 
+    hh_s1       +20.5  -29.8  +16.2     +24.4              59          no 
+    hh_s2       +23.4  -12.5  +13.5      +5.2              64          no 
+    hh_s3        +8.3   -5.2   +8.3      +4.2              64          no 
+    hh_s4       +10.9   +4.7   -4.7      -6.2              64          no 
+    hh_s5       +31.1  -31.1   +6.2      -7.8              64          yes
+    hh_s6       +25.5   -2.5  -15.2      +9.4              63          no 
+    hh_s7       +17.7  -13.0   +7.8      -4.7              64          no 
+    hh_s8       +15.1  -24.5  +16.1      +5.7              64          no 
+    hh_s9       +19.3   -2.1  +11.5      +7.3              64          no 
+    households showing all four legs by at least 5 points: 1/10  (hh_s5)
+    (the fourth leg is not expected of this method: a learner that never forgets still believes the settled
+     routine, so the return confirms it rather than breaking it.)
+
+  a timetable with a three-day memory
+    household   learn   break  re-learn  break again   questions per leg   full shape
+    hh_s0       +15.6   +9.4  -12.5      -9.4              64          no 
+    hh_s1       +10.5  -26.5  +40.2      -5.5              59          yes
+    hh_s2       +24.0  -14.6  +18.8      -1.6              64          no 
+    hh_s3        +4.2   +5.2   +6.2      +0.0              64          no 
+    hh_s4        +6.2   -1.6   +9.9     -14.6              64          no 
+    hh_s5       +30.1  -31.6  +15.1     -12.0              64          yes
+    hh_s6       +18.2   -4.7   +3.7     -12.5              63          no 
+    hh_s7       +16.1  -11.5   +5.2      +7.3              64          no 
+    hh_s8       +17.7  -30.2  +42.7     -27.1              64          yes
+    hh_s9       +17.2   -7.8  +15.1      -7.3              64          yes
+    households showing all four legs by at least 5 points: 4/10  (hh_s1, hh_s5, hh_s8, hh_s9)
+
+  THE GATE. Each threshold is applied to the pooled 'all questions' curve.
+  leg            method                                 measured   needed   verdict
+  settled level  a timetable that never forgets         +76.3   +70.0   pass
+  learn          a timetable that never forgets         +18.8   +10.0   pass
+  break          a timetable that never forgets         -10.5    -8.0   pass
+  re-learn       a timetable that never forgets          +4.6    +5.0   FAIL
+  settled level  a timetable with a three-day memory    +72.9   +70.0   pass
+  learn          a timetable with a three-day memory    +16.0   +10.0   pass
+  break          a timetable with a three-day memory    -11.2    -8.0   pass
+  re-learn       a timetable with a three-day memory    +14.2    +5.0   pass
+  break again    a timetable with a three-day memory     -8.3    -5.0   pass
+
+----------------------------------------------------------------------------------------------------
+VERDICT: DO NOT RUN. 1 check(s) failed.
+  1. 'a timetable that never forgets' recovers only +4.6 points across the rest of the upset (need +5) - the upset is a shock rather than a new routine, so there is nothing in it for a memory to learn
+
+Warnings (2) - not disqualifying, but say them in the paper:
+  1. 'a timetable that never forgets' re-learn is +4.8 points with a household-clustered error of 3.6, inside two standard errors of nothing; this null only excludes a change larger than about 12 points, it does not show there is none
+  2. 'a timetable that never forgets' break again is +3.5 points with a household-clustered error of 3.0, inside two standard errors of nothing; this null only excludes a change larger than about 10 points, it does not show there is none
+----------------------------------------------------------------------------------------------------

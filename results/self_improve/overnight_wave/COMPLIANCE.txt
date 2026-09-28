@@ -1,0 +1,314 @@
+
+####################################################################################################
+# WHAT IS IN THIS FILE: COMPLIANCE, the gate that runs before any outcome, QUESTIONS A DAY: 8, generated 2026-09-25 15:54. All arms complete.
+####################################################################################################
+#   COMPLETE: a small working memory and an archive (10), claim store told if it was right (10), incremental edits (10), last seen, no model (10), prior only, no notes (10), the log and notes about the routine (10), wholesale rewrite (1)
+#   BEING RERUN: the cells listed in superseded_ran_under_the_600s_socket_2026-09-25/WHY.md, moved aside after a socket-timeout bug was fixed. Not counted above.
+####################################################################################################
+
+==============================================================================
+COMPLIANCE, before any outcome. 51 cells, 10 homes.
+==============================================================================
+
+--- 0. SET ASIDE AND BROUGHT BACK, as their own actions
+
+  Until 2026-09-25 `standing` was an optional field on every edit, so it got filled
+  while the model was doing something else: 23 of 24 set-asides in one household
+  and 30 of 30 in another happened in the same edit as a rewording, with stated
+  reasons that were reasons for KEEPING the note. About 85% of notes ended up
+  flagged as not currently true whatever the routine was doing.
+  ANY SET-ASIDE COUNT FROM BEFORE THAT CHANGE IS VOID, IN EVERY ARM - the same
+  footnote the condition field carries, and for the same reason.
+
+  arm                    cells  set aside  brought back nights that moved one
+  a small working memory and an archive    10          0             0                     0
+  claim store told if it was right    10          0             0                     0
+  incremental edits         10         35             0                    12
+  prior only, no notes      10        127             0                    30
+  the log and notes about the routine    10         20             0                    14
+  wholesale rewrite          1          0             0                     0
+
+  Both directions matter: the study's question is whether a belief written for the
+  ordinary routine survives the disrupted one AND is used again when it returns, so
+  'brought back' is half the measure and the old field could not express it at all.
+
+--- 0b. MEMGPT: its four numbers, and what they do and do not support
+
+  cells: 10
+  writes refused for want of room:          2
+  refusals still unresolved after one retry: 0
+  actions: add 0, attach evidence 0, bring a note back 0, move into working memory 65, move out to the archive 24, record evidence 0, revise 0, revise a note 535, set a note aside 0, write a new note 101
+  revises in place and never preserves: False
+  the nights the overflow refusal FIRED, per cell: hh_s151_t03 day(s) [20]; hh_s19_t03 day(s) [3]
+  cites nothing (attach evidence unused): True
+
+  WHAT THIS ARM'S NUMBERS SUPPORT: 'does a 1,200-character working memory plus an archive search
+   help', and NOT 'does an overflow-driven eviction loop help'. The overflow refusal is the mech
+  anism that makes this arm MemGPT rather than a small claim store with a search, and the refusa
+  l count printed above is how often it fired - read it there rather than here, because a restat
+  ed number goes stale and this one has: it was written as 'zero over sixteen nights on one home
+  ' when that was all there was. The model keeps its window nearly full and revises what is alre
+  ady there rather than adding, so it rarely asks for room it does not have. A mechanism that do
+  es not fire is a finding about the workload, not missing data, which is why the count is repor
+  ted rather than omitted. It also parks rather than answers whether our one-retry limit holds t
+  he method back. NOT 'cut for time': ten cells were launched like every other arm's; how many h
+  ave landed is in the header at the top of this file.
+
+--- 1. RIVAL BELIEFS: what every revision actually did (whole month)
+
+arm                    homes  claims  revis  KEPT old  set-aside BUT  overwrote  reworded  kept share  +ADD same nt
+                                            wording kept   wording gone   honestly
+a small working memory and an archive    10     101    535         0              0        108       285        0.0%             0
+claim store told if it was right    10     441   4000         0              0        731      2432        0.0%             0
+incremental edits         10     595   3332        34              0        674      2099        4.8%             0
+prior only, no notes      10     759   4740        87              0        804      2979        9.8%             5
+the log and notes about the routine    10     471   2020        16              0        241      1415        6.2%             3
+wholesale rewrite          1       0      0         0              0          0         0         n/a             0
+
+  'set-aside BUT wording gone' is the deceptive case: the standing says the claim was
+  set aside while the readable text has been replaced, so an audit that counts standings
+  reads as compliant while the old belief is gone. It is counted with the overwrites in
+  the denominator of 'kept share', never with the real set-asides.
+  '+ADD same nt' counts set-asides where a NEW claim about the same object was added
+  the same night - which is the whole of what variant 1 asked for. A set-aside with no
+  add is half-compliance: the old belief survives and the new one was never written.
+
+  per home, share of belief changes that KEPT the old claim readable:
+
+--- 2. DESCRIBE THE PERSON: what the lines are, and the trade (notes at the end of day 23)
+
+arm                     lines  obj+place  routine  routine only  facts  facts in 8  routine in 8
+a small working memory and an archive    9.8        2.6      9.2           6.9    3.3        2.92         19.09
+claim store told if it was right   30.6       12.0     23.5          14.7   10.8        6.49         13.40
+incremental edits        50.3       16.6     44.2          28.8   11.8        3.30         15.81
+prior only, no notes     64.8       19.7     53.3          36.6   14.5        3.05         18.85
+the log and notes about the routine   36.9       11.4     36.2          25.1    9.7        3.11         19.48
+wholesale rewrite        23.0        0.0     14.0          14.0    0.0        0.00          4.00
+
+  paired within home against the control, day 23:
+
+--- 1a. WHAT THE TWO PROMPTS BEING COMPARED ACTUALLY DIFFER BY
+
+  `the log and notes about the routine` against `incremental edits` is the
+  comparison the paper turns on, so what separates their prompts is part of the
+  result and not a footnote. As of 2026-09-25 they differ by EXACTLY ONE
+  PARAGRAPH - the one telling the record-reading arm that everything it has ever
+  seen is kept for it and shown on request, so copying the record into a note
+  adds nothing. Verified by diffing the two method blocks: one paragraph added,
+  none removed, and the 2,278-character shared part byte-identical across all
+  five methods.
+
+  It was not so a few hours ago, and both differences were in the direction that
+  would have flattered this arm or handicapped it rather than left it alone:
+    * its block carried four extra pieces of advice about HOW TO THINK that its
+      control never saw. Those are now in the shared part and every arm gets them.
+    * its day description LEFT OUT what each look did not find, costing it about
+      15% of the characters and evidence its control was given. Absence is
+      evidence; it now sees exactly what its control sees.
+  Any earlier number comparing these two arms is not a comparison of the method.
+
+  THE PROMPT PARAGRAPH IS NOT THE ONLY DIFFERENCE, and the other one is measured
+  rather than described: the two arms are given different NIGHTLY EDIT ALLOWANCES,
+  which is a sentence in the same prompt. Deliberate - a record-reading arm's notes
+  may not name places, so an allowance derived from the objects it saw would make no
+  sense for it - but it is a second variable, and it does not fall evenly across the
+  windows the headline row reads:
+
+  arm                    window          nights  allowed fixed? offered cap bit
+  claim store told if it was right settled            140     45.2     no    10.3  11 (  8%)
+  claim store told if it was right disrupted          100     44.3     no    16.1  13 ( 13%)
+  claim store told if it was right back to normal      80     41.3     no    15.9  10 ( 12%)
+  incremental edits      settled            140     44.3     no     9.6   2 (  1%)
+  incremental edits      disrupted          100     42.9     no    13.8   6 (  6%)
+  incremental edits      back to normal      80     40.2     no    15.1   4 (  5%)
+  prior only, no notes   settled            140     52.9     no    12.0   0 (  0%)
+  prior only, no notes   disrupted          100     49.2     no    20.2   3 (  3%)
+  prior only, no notes   back to normal      80     48.0     no    22.6  11 ( 14%)
+  the log and notes about the routine settled            140     16.0    yes     5.6   1 (  1%)
+  the log and notes about the routine disrupted          100     16.0    yes     9.6  16 ( 16%)
+  the log and notes about the routine back to normal      80     16.0    yes     9.3  11 ( 14%)
+
+  A bound cap means the writer had more it wanted to change than it was allowed to,
+  on a night when the routine was changing. Which way it cuts is stated with the
+  outcome, not here: fewer edits allowed when there is most to change can only
+  handicap the arm it binds, so it cannot manufacture a win for that arm - but it
+  can manufacture a loss.
+
+--- 1b. COVERAGE AND DUPLICATION. Under the nightly allowance the store
+    describes the whole house on night 1, so the settled period no longer has a
+    coverage ramp. Two consequences are measured here.
+
+  arm                     day  covered  >1 claim claims/object most on one live lines
+  a small working memory and an archive   13   16.6%     2.7%          0.19         1.0        6.8
+  a small working memory and an archive   23   23.0%     4.9%          0.29         1.3        9.8
+  claim store told if it was right   13   46.9%     6.3%          0.54         1.7       23.9
+  claim store told if it was right   23   67.8%    16.6%          0.90         2.5       30.6
+  incremental edits        13   55.6%    22.6%          0.88         2.8       35.6
+  incremental edits        23   68.5%    32.1%          1.27         3.7       50.3
+  prior only, no notes     13   65.6%    20.6%          1.04         3.4       45.5
+  prior only, no notes     23   78.1%    36.1%          1.54         4.7       64.8
+  the log and notes about the routine   13   39.8%    10.7%          0.53         2.2       23.9
+  the log and notes about the routine   23   56.6%    17.5%          0.83         2.9       36.9
+  wholesale rewrite        13    9.1%     9.1%          0.18         2.0       19.0
+  wholesale rewrite        23    9.1%     9.1%          0.18         2.0       23.0
+
+  If coverage at day 13 is near 100% in every arm, reachability cannot
+  discriminate between arms in the settled period and only the disrupted window
+  can - and no reachability figure from an earlier wave is like-for-like.
+  A second claim about an object is evidence of keeping a rival belief only as a
+  CHANGE from day 13 to day 23, never as its level at day 23.
+
+--- 2a. DOES THE CONDITION FIELD HOLD A CONDITION? Baseline: zero, every arm.
+
+  The 99% 'current' figure from every earlier arm was measuring our own display,
+  not the model - notes were shown as one run-together line and the model copied it
+  back into the field. Any earlier reading of this field is void in EVERY arm, so
+  this wave is the first in which it means anything. It matters most for the
+  rival-beliefs question, which is asked entirely of this field.
+
+  arm                    cells  notes a real condition  nothing  rendering  date only distinct
+  a small working memory and an archive    10    101           81.2%       11          0          8       53
+  claim store told if it was right    10    441           52.2%      211          0          0       41
+  incremental edits         10    595           58.8%      190          0         55       44
+  prior only, no notes      10    759           82.5%      119          0         14       50
+  the log and notes about the routine    10    471           87.0%       61          0          0       55
+
+  'distinct' counts how many DIFFERENT real conditions were written, because one
+  condition repeated on every note is 'current' with more words. Examples per arm:
+    a small working memory and an archive After 15:00; Afternoon and Evening; Aisha is preparing for the next day or has a; Aisha's morning routine.
+    claim store told if it was right Afternoon and evening. Morning: location unk; Afternoon hours (approx 13:00-16:00).; Afternoon/Evening; Afternoon: kitchen cupboard. Evening: dining
+    incremental edits      After meals or use; Afternoon; Afternoon (approx 13:00-18:00); Afternoon and evening of Day 18
+    prior only, no notes   After meals or use; Afternoon; Afternoon and Evening; Afternoon to evening
+    the log and notes about the routine After eating/drinking; After meals; Afternoon; Afternoon (approx 13:00-17:00)
+
+--- 2b. THE CONDITION FIELD: can two kept rivals even be told apart?
+
+  `holds_under` records WHICH ROUTINE a claim is claimed for. It is the only
+  thing that can distinguish an ordinary-routine belief from a disrupted one, so
+  a rival-beliefs result has to be read next to this.
+
+  arm                    cells  claims distinct a real condition  commonest condition
+  a small working memory and an archive    10     101       42           81.2%  'always', 'day 1'
+  claim store told if it was right    10     441       36           52.2%  'always', 'evening'
+  incremental edits         10     595       33           58.8%  'always', 'general observation'
+  prior only, no notes      10     759       42           82.5%  'always', 'current state'
+  the log and notes about the routine    10     471       44           87.0%  'always', 'evening'
+
+  A condition of 'current' on every claim means two kept rivals carry the same
+  condition, so the reader is handed two contradictory claims with nothing to
+  choose between them. If reachability rises and accuracy does not, this is why.
+
+--- 0c. NIGHTS THAT CHANGED THE MEMORY NOT AT ALL, as three numbers.
+    Never as one percentage: for the record-reading arm a night with nothing to add
+    is the designed behaviour - its writer imposes no minimum, so the model is not
+    forced to invent a routine - and for the MemGPT-style arm the same nights are
+    unaccounted for. Day 0 is excluded: it has no looks, so every arm changes
+    nothing and counting it made three arms look alike at 3.1%.
+
+  arm                                      nights changed nothing it SAID so UNEXPLAINED  estimator
+  a small working memory and an archive       310              60          0          60  applied
+  claim store told if it was right            310               0          0           0  applied
+  incremental edits                           310               0          0           0  applied
+  prior only, no notes                        310               0          0           0  applied
+  the log and notes about the routine         310               9          9           0  applied
+  wholesale rewrite                            31               6          0           6  identical_to_last_night
+
+  The estimator column matters: `wholesale rewrite` is measured by
+  `identical_to_last_night`, a byte comparison of the whole summary, which is a
+  THIRD estimator and a stricter test than 'no edit was applied'. Its 6 nights of
+  31 are not interchangeable with the other arms' numbers, and they are
+  consecutive (days 8 to 13) rather than scattered.
+
+
+--- 1c. COVERAGE OF THE OBJECTS THE ILLNESS MOVES. The headline row rests on
+    these objects only, so whole-house coverage is not the number that matters.
+
+  arm                    cells movers covered d13    d23    d31   never covered by day 23
+  a small working memory and an archive    10     75       20.0%  26.7%  30.7%   book_ines, book_leo, book_marco ...
+  claim store told if it was right    10     75       49.3%  74.7%  74.7%   book_dana, book_priya, charger_dana ...
+  incremental edits         10     75       64.0%  78.7%  82.7%   book_leo, book_marco, book_yuki ...
+  prior only, no notes      10     75       68.0%  85.3%  88.0%   book_dana, book_leo, book_priya ...
+  the log and notes about the routine    10     75       45.3%  70.7%  77.3%   book_marco, book_priya, charger_dana ...
+  wholesale rewrite          1      8       12.5%  12.5%  37.5%   book_tomas, charger_tomas, glass_ines ...
+
+  Pooled over homes, so a home with more movers weighs more; the per-home spread
+  is in compliance.json. An arm cannot be read as answering about an object whose
+  place its notes never mention - that is what 'never covered' names.
+
+--- 4. DOES A NOTE EVER CITE THE OBSERVATION THAT DISCONFIRMED IT?
+
+  arm                    cells live notes  CITE IT said so and rewrote set aside unchanged was a negation
+  a small working memory and an archive    10        101        0                   7         0         0              7
+  claim store told if it was right    10        334        0                 101         0        11             22
+  incremental edits         10        595        0                 152         4        17             15
+  prior only, no notes      10        759        0                 160         4        17             40
+  the log and notes about the routine    10        471        0                 105         6        18             12
+  wholesale rewrite          1          0        0                   0         0         0              0
+
+  WHAT THE ZERO MEANS, and what it does not. `contradicting_observation_ids` is
+  the field a READER of the notes sees: at answer time a note with four sightings
+  for and none against reads as a well-supported belief. Zero there does NOT mean
+  the arms never look for disconfirmation - the 'said so and rewrote' column is
+  the model identifying a refutation and acting on it correctly. The gap is
+  between noticing and RECORDING, and it is the recording that a later night, or
+  a reader, or an answer step can use.
+  'unchanged' is an UPPER BOUND and the whole column is a regex over prose: some
+  of those notes were dealt with at a later edit than the one carrying the phrase.
+  'was a negation' is the regex's own false-positive rate, counted rather than
+  estimated: 'No sightings today contradicted this' matches the word and means the
+  opposite. Those are excluded from every other column here. An earlier version of
+  this measure did not exclude them and reported a third of notes as carrying an
+  invisible refutation.
+
+  a small working memory and an archive - one example of each kind:
+    REWROTE (correct), day 27:
+      was: Kitchen evening (20:13): Both present. Dishes (cutting board, knife, pan, spatula, mug_sam) moved to sink. Bowls/pots/recipe book moved to pantry shel
+      now: Kitchen evening: Dishes (cutting board, knife, pan, spatula) stay at sink. Bowls/mugs on cupboard. Plates/water bottle move from table to sink/pantry 
+      its reason: Updates claim_0008 with specific item movements observed between 20:10 and 21:27, noting that Sam's mug is no longer in the kitchen but in the office.
+
+  claim store told if it was right - one example of each kind:
+    REWROTE (correct), day 9:
+      was: Felix sleeps in bedroom_2. At night, his book, charger, glasses, and headphones are on the nightstand. Laptop and other work items are not in the bedr
+      now: Felix sleeps in bedroom_2. At night, his book, charger, and glasses are on the nightstand. Headphones are NOT in the bedroom; they remain in the offic
+      its reason: Day 9 20:31 shows book, charger, glasses on nightstand in bedroom_2. Headphones were found in the office at 20:31, contradicting the previous belief t
+    LEFT AS IT WAS, day 19, standing now 'still standing', 3 sightings for and 0 against on the face of it:
+      the note: Felix takes a break from the office around midday. His work items stay in the office, but some are moved or taken with him. He does not necessarily mo
+      its reason: Contradicted by today's 13:15 sighting where all work items were on the desk. Felix was present in the office, suggesting he did not take a break that
+
+  incremental edits - one example of each kind:
+    REWROTE (correct), day 16:
+      was: Felix sleeps in bedroom_2. At night, his book and glasses are on the nightstand. His charger is on the dresser. His headphones remain in the office. H
+      now: Felix sleeps in bedroom_2. His charger, glasses, and water bottle are on the office desk in the evening, not moved to the bedroom. His laptop, mouse, 
+      its reason: At 16:47 (late afternoon/evening), charger, glasses, and water bottle are still on the office desk. This contradicts the previous belief that they mov
+    LEFT AS IT WAS, day 23, standing now 'still standing', 6 sightings for and 0 against on the face of it:
+      the note: In the morning, Felix's water bottle is in the kitchen dish rack. Yuki's bowl, Felix's glass, and Felix's plate are in the kitchen cupboard. Felix's b
+      its reason: Day 23 09:30 shows Felix's glass and plate in kitchen. Water bottle in office, not kitchen dish rack. This contradicts the claim about water bottle lo
+
+  prior only, no notes - one example of each kind:
+    REWROTE (correct), day 25:
+      was: Felix works in the office during the day. His laptop, charger, glasses, headphones, mouse, mug, notebook, pen, and water bottle are on the office desk
+      now: Felix works in the office in the evening. His laptop, charger, glasses, headphones, mouse, mug, notebook, pen, and water bottle are on the office desk
+      its reason: Saw Felix in the office at 18:21 with all his work items on the desk. This contradicts the previous 'daytime' timing, suggesting his work hours are in
+    LEFT AS IT WAS, day 18, standing now 'still standing', 4 sightings for and 0 against on the face of it:
+      the note: Felix's work items are moved from the office desk to the bedroom_2 nightstand at the end of the day.
+      its reason: Work items seen on office desk at 18:21, not in bedroom_2. This contradicts the claim that they are moved to bedroom_2 at the end of the day.
+
+  the log and notes about the routine - one example of each kind:
+    REWROTE (correct), day 15:
+      was: Felix works from the office during the day. His laptop, mouse, notebook, and pen remain on the office desk. He takes his charger, glasses, headphones,
+      now: Felix works from the office during the day. His laptop, mouse, notebook, and pen remain on the office desk. He keeps his charger, glasses, headphones,
+      its reason: Today's sightings at 11:18, 12:23, 12:57, and 15:37 show Felix's charger, glasses, headphones, mug, and water bottle consistently on the office desk w
+    LEFT AS IT WAS, day 7, standing now 'set aside for now', 6 sightings for and 0 against on the face of it:
+      the note: Felix leaves his work peripherals (charger, glasses, headphones, water bottle) in the office when he goes to bed, but moves his notebook to the floor.
+      its reason: Contradicted by Day 7. Felix moved his charger, glasses, and headphones to bedroom_2 nightstand. He did not leave them in the office.
+
+--- 3. THE MESSAGE: exactly two nights and nowhere else
+
+  a small working memory and an archive 10 homes, message nights: none, on any night, which is correct for this arm -- PASS
+  claim store told if it was right 10 homes, message nights: none, on any night, which is correct for this arm -- PASS
+  incremental edits      10 homes, message nights: none, on any night, which is correct for this arm -- PASS
+  prior only, no notes   10 homes, message nights: none, on any night, which is correct for this arm -- PASS
+  the log and notes about the routine 10 homes, message nights: none, on any night, which is correct for this arm -- PASS
+  wholesale rewrite      1 homes, message nights: none, on any night, which is correct for this arm -- PASS
+
+written to results/self_improve/overnight_wave/compliance.json

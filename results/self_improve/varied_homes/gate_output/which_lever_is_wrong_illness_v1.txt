@@ -1,0 +1,44 @@
+WHICH LEVER IS WRONG. Every column is a property of the world, never of a method's score.
+
+the bars: rooms >= 7; movers >= 3; of the movers, >= 50% land outside the busiest three rooms;
+          the busiest three hold <= 88% of all answers; >= 3 control objects that do not move;
+          of the questions about moved objects during the illness, <= 50% are answered by a busiest-three room;
+          and EVERY mover has leak < 10% and switch > 70%.
+
+household   rooms  top-3  asked  movers    OUT  ctrl  q inside  worst leak  worst switch  step  lever
+-----------------------------------------------------------------------------------------------------
+hh_s0           7    92%     13       3    2/3    10       62%         14%           52%     0  questions_inside
+hh_s1           7    89%     17       5    3/5    11       66%         50%           44%     0  questions_inside
+hh_s2           9    73%     11       7    7/7     4       19%         38%           42%     1  leak
+hh_s3           9    76%     19       4    4/4    11       30%          0%           58%     0  switch
+hh_s4           8    91%     17       1    1/1    14       52%         25%           48%     0  movers
+hh_s5           6    82%     16       2    0/2    11       88%         30%           40%     0  rooms
+hh_s6           6    84%     15       6    2/6     7       89%         38%           33%     1  rooms
+hh_s7           7    77%     12       4    4/4     8       37%         21%           40%     0  leak
+hh_s8           6    88%     12       5    2/5     7       71%         26%           44%     0  rooms
+hh_s9           8    84%     21       6    6/6    14       28%         40%           33%     1  leak
+
+0 of 10 homes have every lever in range.
+failing lever, counted: leak x3, rooms x3, questions_inside x2, switch x1, movers x1
+share of movers landing outside the busiest three: median 83%, range 0-100%
+per-object leak:   median 6%, 23 of 43 objects under 10%
+per-object switch: median 57%, 7 of 43 objects over 70%
+
+THE STEP, DAY BY DAY (nothing passed)
+  of the questions asked about moved objects on that day, the share already answered by
+  that object's illness place. The illness begins on day 14.
+  home           d10    d11    d12    d13    d14    d15    d16    d17    d18    d19   step (d14-16 mean minus d10-13 mean)
+  -------------------------------------------------------------------------------------------------------------------------
+  hh_s0           0%     0%    22%    20%    60%    60%    67%    38%    50%    71%     +52 points
+  hh_s1          17%    14%     0%    56%    50%    53%    67%    67%    58%    60%     +35 points
+  hh_s2           0%    21%    36%    14%    33%    62%    75%    38%    67%    69%     +39 points
+  hh_s3            -     0%     0%     0%    56%    67%    33%   100%    33%    67%     +52 points
+  hh_s4          50%   100%     0%     0%    20%    67%    67%     0%    25%   100%     +14 points
+  hh_s5           0%    25%    50%    50%    40%     0%    60%    25%    57%     0%      +2 points
+  hh_s6          40%     0%    14%    17%    38%    57%    57%    88%    44%    80%     +33 points
+  hh_s7           0%     0%    11%     0%    58%    46%    47%    50%    33%    42%     +48 points
+  hh_s8          50%    40%    25%     0%    67%    75%    75%    40%     0%    67%     +43 points
+  hh_s9           0%    20%    14%     0%    50%    67%    80%    78%   100%    17%     +57 points
+
+  step over homes: median +41 points, range +2 to +57
+wrote results/self_improve/varied_homes/levers_illness_v1.json

@@ -1,0 +1,875 @@
+{
+ "days": [
+  14,
+  23
+ ],
+ "movers_only": true,
+ "per_arm": {
+  "fixed rotation / incremental edits": {
+   "n_first_room_failures": 33,
+   "n_questions_in_scope": 41,
+   "counts": {
+    "never saw the object there": 4,
+    "saw it there once and still got it wrong": 1,
+    "saw it there repeatedly and still got it wrong": 28
+   },
+   "shares": {
+    "never saw the object there": 0.12121212121212122,
+    "saw it there once and still got it wrong": 0.030303030303030304,
+    "saw it there repeatedly and still got it wrong": 0.8484848484848485
+   },
+   "per_household_never_saw": [
+    0.06666666666666667,
+    0.18181818181818182,
+    0.14285714285714285
+   ]
+  },
+  "fixed rotation / wholesale rewrite": {
+   "n_first_room_failures": 115,
+   "n_questions_in_scope": 126,
+   "counts": {
+    "never saw the object there": 6,
+    "saw it there once and still got it wrong": 5,
+    "saw it there repeatedly and still got it wrong": 104
+   },
+   "shares": {
+    "never saw the object there": 0.05217391304347826,
+    "saw it there once and still got it wrong": 0.043478260869565216,
+    "saw it there repeatedly and still got it wrong": 0.9043478260869565
+   },
+   "per_household_never_saw": [
+    0.05405405405405406,
+    0.06976744186046512,
+    0.02857142857142857
+   ]
+  },
+  "memory-guided search / incremental edits": {
+   "n_first_room_failures": 12,
+   "n_questions_in_scope": 19,
+   "counts": {
+    "never saw the object there": 5,
+    "saw it there once and still got it wrong": 2,
+    "saw it there repeatedly and still got it wrong": 5
+   },
+   "shares": {
+    "never saw the object there": 0.4166666666666667,
+    "saw it there once and still got it wrong": 0.16666666666666666,
+    "saw it there repeatedly and still got it wrong": 0.4166666666666667
+   },
+   "per_household_never_saw": [
+    0.5,
+    0.375,
+    0.5
+   ]
+  },
+  "memory-guided search / wholesale rewrite": {
+   "n_first_room_failures": 56,
+   "n_questions_in_scope": 126,
+   "counts": {
+    "never saw the object there": 13,
+    "saw it there once and still got it wrong": 3,
+    "saw it there repeatedly and still got it wrong": 40
+   },
+   "shares": {
+    "never saw the object there": 0.23214285714285715,
+    "saw it there once and still got it wrong": 0.05357142857142857,
+    "saw it there repeatedly and still got it wrong": 0.7142857142857143
+   },
+   "per_household_never_saw": [
+    0.05263157894736842,
+    0.2631578947368421,
+    0.3888888888888889
+   ]
+  },
+  "random / incremental edits": {
+   "n_first_room_failures": 34,
+   "n_questions_in_scope": 36,
+   "counts": {
+    "never saw the object there": 6,
+    "saw it there once and still got it wrong": 2,
+    "saw it there repeatedly and still got it wrong": 26
+   },
+   "shares": {
+    "never saw the object there": 0.17647058823529413,
+    "saw it there once and still got it wrong": 0.058823529411764705,
+    "saw it there repeatedly and still got it wrong": 0.7647058823529411
+   },
+   "per_household_never_saw": [
+    0.0625,
+    0.3,
+    0.25
+   ]
+  },
+  "random / wholesale rewrite": {
+   "n_first_room_failures": 109,
+   "n_questions_in_scope": 126,
+   "counts": {
+    "never saw the object there": 5,
+    "saw it there once and still got it wrong": 8,
+    "saw it there repeatedly and still got it wrong": 96
+   },
+   "shares": {
+    "never saw the object there": 0.045871559633027525,
+    "saw it there once and still got it wrong": 0.07339449541284404,
+    "saw it there repeatedly and still got it wrong": 0.8807339449541285
+   },
+   "per_household_never_saw": [
+    0.027777777777777776,
+    0.075,
+    0.030303030303030304
+   ]
+  }
+ },
+ "per_cell": [
+  {
+   "household": "hh_s0_t03",
+   "n_questions_in_scope": 20,
+   "n_first_room_failures": 15,
+   "share_of_questions_that_failed": 0.75,
+   "at_the_exact_shelf": {
+    "never saw the object there": 1,
+    "saw it there once and still got it wrong": 0,
+    "saw it there repeatedly and still got it wrong": 14
+   },
+   "at_the_exact_shelf_shares": {
+    "never saw the object there": 0.06666666666666667,
+    "saw it there once and still got it wrong": 0.0,
+    "saw it there repeatedly and still got it wrong": 0.9333333333333333
+   },
+   "at_the_room_level": {
+    "never saw the object there": 1,
+    "saw it there once and still got it wrong": 0,
+    "saw it there repeatedly and still got it wrong": 14
+   },
+   "at_the_room_level_shares": {
+    "never saw the object there": 0.06666666666666667,
+    "saw it there once and still got it wrong": 0.0,
+    "saw it there repeatedly and still got it wrong": 0.9333333333333333
+   },
+   "examples": {
+    "saw it there repeatedly and still got it wrong": [
+     "day 14 mug_yuki: was on coffee_table_l1 in living, went to bathroom, had seen it there 2x (in that room 2x)",
+     "day 14 glass_yuki: was on kitchen_table_k1 in kitchen, went to entry, had seen it there 5x (in that room 37x)",
+     "day 14 water_bottle_yuki: was on kitchen_table_k1 in kitchen, went to bedroom_1, had seen it there 3x (in that room 18x)"
+    ],
+    "never saw the object there": [
+     "day 15 mug_nora: was on coffee_table_l1 in living, went to bathroom, had seen it there 0x (in that room 0x)"
+    ]
+   },
+   "sensing_arm": "fixed rotation",
+   "how_memory_is_written": "incremental edits"
+  },
+  {
+   "household": "hh_s0_t03",
+   "n_questions_in_scope": 42,
+   "n_first_room_failures": 37,
+   "share_of_questions_that_failed": 0.8809523809523809,
+   "at_the_exact_shelf": {
+    "never saw the object there": 2,
+    "saw it there once and still got it wrong": 0,
+    "saw it there repeatedly and still got it wrong": 35
+   },
+   "at_the_exact_shelf_shares": {
+    "never saw the object there": 0.05405405405405406,
+    "saw it there once and still got it wrong": 0.0,
+    "saw it there repeatedly and still got it wrong": 0.9459459459459459
+   },
+   "at_the_room_level": {
+    "never saw the object there": 2,
+    "saw it there once and still got it wrong": 0,
+    "saw it there repeatedly and still got it wrong": 35
+   },
+   "at_the_room_level_shares": {
+    "never saw the object there": 0.05405405405405406,
+    "saw it there once and still got it wrong": 0.0,
+    "saw it there repeatedly and still got it wrong": 0.9459459459459459
+   },
+   "examples": {
+    "saw it there repeatedly and still got it wrong": [
+     "day 14 mug_yuki: was on coffee_table_l1 in living, went to bathroom, had seen it there 2x (in that room 2x)",
+     "day 14 glass_yuki: was on kitchen_table_k1 in kitchen, went to entry, had seen it there 5x (in that room 37x)",
+     "day 14 water_bottle_yuki: was on kitchen_table_k1 in kitchen, went to bedroom_1, had seen it there 3x (in that room 18x)"
+    ],
+    "never saw the object there": [
+     "day 15 mug_nora: was on coffee_table_l1 in living, went to bathroom, had seen it there 0x (in that room 0x)",
+     "day 21 mug_nora: was on coffee_table_l1 in living, went to bedroom_1, had seen it there 0x (in that room 0x)"
+    ]
+   },
+   "sensing_arm": "fixed rotation",
+   "how_memory_is_written": "wholesale rewrite"
+  },
+  {
+   "household": "hh_s0_t03",
+   "n_questions_in_scope": 3,
+   "n_first_room_failures": 2,
+   "share_of_questions_that_failed": 0.6666666666666666,
+   "at_the_exact_shelf": {
+    "never saw the object there": 1,
+    "saw it there once and still got it wrong": 0,
+    "saw it there repeatedly and still got it wrong": 1
+   },
+   "at_the_exact_shelf_shares": {
+    "never saw the object there": 0.5,
+    "saw it there once and still got it wrong": 0.0,
+    "saw it there repeatedly and still got it wrong": 0.5
+   },
+   "at_the_room_level": {
+    "never saw the object there": 1,
+    "saw it there once and still got it wrong": 0,
+    "saw it there repeatedly and still got it wrong": 1
+   },
+   "at_the_room_level_shares": {
+    "never saw the object there": 0.5,
+    "saw it there once and still got it wrong": 0.0,
+    "saw it there repeatedly and still got it wrong": 0.5
+   },
+   "examples": {
+    "saw it there repeatedly and still got it wrong": [
+     "day 14 mug_yuki: was on coffee_table_l1 in living, went to bedroom_1, had seen it there 5x (in that room 5x)"
+    ],
+    "never saw the object there": [
+     "day 14 book_yuki: was on couch_l1 in living, went to bedroom_1, had seen it there 0x (in that room 0x)"
+    ]
+   },
+   "sensing_arm": "memory-guided search",
+   "how_memory_is_written": "incremental edits"
+  },
+  {
+   "household": "hh_s0_t03",
+   "n_questions_in_scope": 42,
+   "n_first_room_failures": 19,
+   "share_of_questions_that_failed": 0.4523809523809524,
+   "at_the_exact_shelf": {
+    "never saw the object there": 1,
+    "saw it there once and still got it wrong": 1,
+    "saw it there repeatedly and still got it wrong": 17
+   },
+   "at_the_exact_shelf_shares": {
+    "never saw the object there": 0.05263157894736842,
+    "saw it there once and still got it wrong": 0.05263157894736842,
+    "saw it there repeatedly and still got it wrong": 0.8947368421052632
+   },
+   "at_the_room_level": {
+    "never saw the object there": 1,
+    "saw it there once and still got it wrong": 1,
+    "saw it there repeatedly and still got it wrong": 17
+   },
+   "at_the_room_level_shares": {
+    "never saw the object there": 0.05263157894736842,
+    "saw it there once and still got it wrong": 0.05263157894736842,
+    "saw it there repeatedly and still got it wrong": 0.8947368421052632
+   },
+   "examples": {
+    "saw it there repeatedly and still got it wrong": [
+     "day 14 mug_yuki: was on coffee_table_l1 in living, went to bedroom_1, had seen it there 3x (in that room 3x)",
+     "day 14 water_bottle_yuki: was on kitchen_table_k1 in kitchen, went to bedroom_1, had seen it there 4x (in that room 19x)",
+     "day 15 mug_yuki: was on kitchen_table_k1 in kitchen, went to bedroom_1, had seen it there 2x (in that room 13x)"
+    ],
+    "never saw the object there": [
+     "day 14 book_yuki: was on couch_l1 in living, went to bedroom_1, had seen it there 0x (in that room 0x)"
+    ],
+    "saw it there once and still got it wrong": [
+     "day 15 mug_nora: was on coffee_table_l1 in living, went to kitchen, had seen it there 1x (in that room 1x)"
+    ]
+   },
+   "sensing_arm": "memory-guided search",
+   "how_memory_is_written": "wholesale rewrite"
+  },
+  {
+   "household": "hh_s0_t03",
+   "n_questions_in_scope": 17,
+   "n_first_room_failures": 16,
+   "share_of_questions_that_failed": 0.9411764705882353,
+   "at_the_exact_shelf": {
+    "never saw the object there": 1,
+    "saw it there once and still got it wrong": 1,
+    "saw it there repeatedly and still got it wrong": 14
+   },
+   "at_the_exact_shelf_shares": {
+    "never saw the object there": 0.0625,
+    "saw it there once and still got it wrong": 0.0625,
+    "saw it there repeatedly and still got it wrong": 0.875
+   },
+   "at_the_room_level": {
+    "never saw the object there": 1,
+    "saw it there once and still got it wrong": 0,
+    "saw it there repeatedly and still got it wrong": 15
+   },
+   "at_the_room_level_shares": {
+    "never saw the object there": 0.0625,
+    "saw it there once and still got it wrong": 0.0,
+    "saw it there repeatedly and still got it wrong": 0.9375
+   },
+   "examples": {
+    "saw it there once and still got it wrong": [
+     "day 14 charger_yuki: was on bed_b1 in bedroom_1, went to entry, had seen it there 1x (in that room 40x)"
+    ],
+    "never saw the object there": [
+     "day 14 mug_yuki: was on coffee_table_l1 in living, went to kitchen, had seen it there 0x (in that room 0x)"
+    ],
+    "saw it there repeatedly and still got it wrong": [
+     "day 14 glass_yuki: was on kitchen_table_k1 in kitchen, went to balcony, had seen it there 6x (in that room 35x)",
+     "day 14 water_bottle_yuki: was on kitchen_table_k1 in kitchen, went to balcony, had seen it there 4x (in that room 19x)",
+     "day 15 mug_yuki: was on kitchen_table_k1 in kitchen, went to bedroom_1, had seen it there 2x (in that room 16x)"
+    ]
+   },
+   "sensing_arm": "random",
+   "how_memory_is_written": "incremental edits"
+  },
+  {
+   "household": "hh_s0_t03",
+   "n_questions_in_scope": 42,
+   "n_first_room_failures": 36,
+   "share_of_questions_that_failed": 0.8571428571428571,
+   "at_the_exact_shelf": {
+    "never saw the object there": 1,
+    "saw it there once and still got it wrong": 2,
+    "saw it there repeatedly and still got it wrong": 33
+   },
+   "at_the_exact_shelf_shares": {
+    "never saw the object there": 0.027777777777777776,
+    "saw it there once and still got it wrong": 0.05555555555555555,
+    "saw it there repeatedly and still got it wrong": 0.9166666666666666
+   },
+   "at_the_room_level": {
+    "never saw the object there": 1,
+    "saw it there once and still got it wrong": 2,
+    "saw it there repeatedly and still got it wrong": 33
+   },
+   "at_the_room_level_shares": {
+    "never saw the object there": 0.027777777777777776,
+    "saw it there once and still got it wrong": 0.05555555555555555,
+    "saw it there repeatedly and still got it wrong": 0.9166666666666666
+   },
+   "examples": {
+    "saw it there repeatedly and still got it wrong": [
+     "day 14 charger_yuki: was on bed_b1 in bedroom_1, went to living, had seen it there 2x (in that room 37x)",
+     "day 14 mug_yuki: was on coffee_table_l1 in living, went to balcony, had seen it there 2x (in that room 3x)",
+     "day 14 glass_yuki: was on kitchen_table_k1 in kitchen, went to balcony, had seen it there 4x (in that room 41x)"
+    ],
+    "never saw the object there": [
+     "day 14 book_yuki: was on couch_l1 in living, went to bathroom, had seen it there 0x (in that room 0x)"
+    ],
+    "saw it there once and still got it wrong": [
+     "day 15 mug_nora: was on coffee_table_l1 in living, went to bedroom_2, had seen it there 1x (in that room 1x)",
+     "day 21 mug_nora: was on coffee_table_l1 in living, went to entry, had seen it there 1x (in that room 1x)"
+    ]
+   },
+   "sensing_arm": "random",
+   "how_memory_is_written": "wholesale rewrite"
+  },
+  {
+   "household": "hh_s1_t03",
+   "n_questions_in_scope": 14,
+   "n_first_room_failures": 11,
+   "share_of_questions_that_failed": 0.7857142857142857,
+   "at_the_exact_shelf": {
+    "never saw the object there": 2,
+    "saw it there once and still got it wrong": 1,
+    "saw it there repeatedly and still got it wrong": 8
+   },
+   "at_the_exact_shelf_shares": {
+    "never saw the object there": 0.18181818181818182,
+    "saw it there once and still got it wrong": 0.09090909090909091,
+    "saw it there repeatedly and still got it wrong": 0.7272727272727273
+   },
+   "at_the_room_level": {
+    "never saw the object there": 2,
+    "saw it there once and still got it wrong": 1,
+    "saw it there repeatedly and still got it wrong": 8
+   },
+   "at_the_room_level_shares": {
+    "never saw the object there": 0.18181818181818182,
+    "saw it there once and still got it wrong": 0.09090909090909091,
+    "saw it there repeatedly and still got it wrong": 0.7272727272727273
+   },
+   "examples": {
+    "never saw the object there": [
+     "day 14 water_bottle_felix: was on nightstand_b1 in bedroom_1, went to bathroom, had seen it there 0x (in that room 0x)",
+     "day 14 tablet_felix: was on balcony_table_y1 in balcony, went to kitchen, had seen it there 0x (in that room 0x)"
+    ],
+    "saw it there repeatedly and still got it wrong": [
+     "day 14 book_felix: was on bookshelf_l1 in living, went to entry, had seen it there 22x (in that room 22x)",
+     "day 14 mug_felix: was on coffee_table_l1 in living, went to office, had seen it there 2x (in that room 2x)",
+     "day 15 mug_felix: was on kitchen_table_k1 in kitchen, went to living, had seen it there 6x (in that room 37x)"
+    ],
+    "saw it there once and still got it wrong": [
+     "day 15 tablet_felix: was on balcony_table_y1 in balcony, went to bedroom_1, had seen it there 1x (in that room 1x)"
+    ]
+   },
+   "sensing_arm": "fixed rotation",
+   "how_memory_is_written": "incremental edits"
+  },
+  {
+   "household": "hh_s1_t03",
+   "n_questions_in_scope": 47,
+   "n_first_room_failures": 43,
+   "share_of_questions_that_failed": 0.9148936170212766,
+   "at_the_exact_shelf": {
+    "never saw the object there": 3,
+    "saw it there once and still got it wrong": 3,
+    "saw it there repeatedly and still got it wrong": 37
+   },
+   "at_the_exact_shelf_shares": {
+    "never saw the object there": 0.06976744186046512,
+    "saw it there once and still got it wrong": 0.06976744186046512,
+    "saw it there repeatedly and still got it wrong": 0.8604651162790697
+   },
+   "at_the_room_level": {
+    "never saw the object there": 2,
+    "saw it there once and still got it wrong": 2,
+    "saw it there repeatedly and still got it wrong": 39
+   },
+   "at_the_room_level_shares": {
+    "never saw the object there": 0.046511627906976744,
+    "saw it there once and still got it wrong": 0.046511627906976744,
+    "saw it there repeatedly and still got it wrong": 0.9069767441860465
+   },
+   "examples": {
+    "never saw the object there": [
+     "day 14 water_bottle_felix: was on nightstand_b1 in bedroom_1, went to bathroom, had seen it there 0x (in that room 0x)",
+     "day 14 tablet_felix: was on balcony_table_y1 in balcony, went to kitchen, had seen it there 0x (in that room 0x)",
+     "day 17 book_felix: was on side_table_l1 in living, went to bathroom, had seen it there 0x (in that room 31x)"
+    ],
+    "saw it there repeatedly and still got it wrong": [
+     "day 14 book_felix: was on bookshelf_l1 in living, went to entry, had seen it there 22x (in that room 22x)",
+     "day 14 mug_felix: was on coffee_table_l1 in living, went to office, had seen it there 2x (in that room 2x)",
+     "day 15 mug_felix: was on kitchen_table_k1 in kitchen, went to living, had seen it there 6x (in that room 37x)"
+    ],
+    "saw it there once and still got it wrong": [
+     "day 15 tablet_felix: was on balcony_table_y1 in balcony, went to bedroom_1, had seen it there 1x (in that room 1x)",
+     "day 16 charger_felix: was on nightstand_b1 in bedroom_1, went to balcony, had seen it there 1x (in that room 16x)",
+     "day 17 tablet_felix: was on balcony_table_y1 in balcony, went to entry, had seen it there 1x (in that room 1x)"
+    ]
+   },
+   "sensing_arm": "fixed rotation",
+   "how_memory_is_written": "wholesale rewrite"
+  },
+  {
+   "household": "hh_s1_t03",
+   "n_questions_in_scope": 11,
+   "n_first_room_failures": 8,
+   "share_of_questions_that_failed": 0.7272727272727273,
+   "at_the_exact_shelf": {
+    "never saw the object there": 3,
+    "saw it there once and still got it wrong": 2,
+    "saw it there repeatedly and still got it wrong": 3
+   },
+   "at_the_exact_shelf_shares": {
+    "never saw the object there": 0.375,
+    "saw it there once and still got it wrong": 0.25,
+    "saw it there repeatedly and still got it wrong": 0.375
+   },
+   "at_the_room_level": {
+    "never saw the object there": 3,
+    "saw it there once and still got it wrong": 2,
+    "saw it there repeatedly and still got it wrong": 3
+   },
+   "at_the_room_level_shares": {
+    "never saw the object there": 0.375,
+    "saw it there once and still got it wrong": 0.25,
+    "saw it there repeatedly and still got it wrong": 0.375
+   },
+   "examples": {
+    "never saw the object there": [
+     "day 14 water_bottle_felix: was on nightstand_b1 in bedroom_1, went to kitchen, had seen it there 0x (in that room 0x)",
+     "day 14 tablet_felix: was on balcony_table_y1 in balcony, went to kitchen, had seen it there 0x (in that room 0x)",
+     "day 15 tablet_felix: was on balcony_table_y1 in balcony, went to kitchen, had seen it there 0x (in that room 0x)"
+    ],
+    "saw it there repeatedly and still got it wrong": [
+     "day 14 mug_felix: was on coffee_table_l1 in living, went to kitchen, had seen it there 4x (in that room 4x)",
+     "day 15 mug_felix: was on kitchen_table_k1 in kitchen, went to living, had seen it there 7x (in that room 46x)",
+     "day 15 book_felix: was on bed_b1 in bedroom_1, went to living, had seen it there 3x (in that room 16x)"
+    ],
+    "saw it there once and still got it wrong": [
+     "day 15 water_bottle_felix: was on nightstand_b1 in bedroom_1, went to kitchen, had seen it there 1x (in that room 1x)",
+     "day 15 water_bottle_felix: was on nightstand_b1 in bedroom_1, went to kitchen, had seen it there 1x (in that room 1x)"
+    ]
+   },
+   "sensing_arm": "memory-guided search",
+   "how_memory_is_written": "incremental edits"
+  },
+  {
+   "household": "hh_s1_t03",
+   "n_questions_in_scope": 47,
+   "n_first_room_failures": 19,
+   "share_of_questions_that_failed": 0.40425531914893614,
+   "at_the_exact_shelf": {
+    "never saw the object there": 5,
+    "saw it there once and still got it wrong": 0,
+    "saw it there repeatedly and still got it wrong": 14
+   },
+   "at_the_exact_shelf_shares": {
+    "never saw the object there": 0.2631578947368421,
+    "saw it there once and still got it wrong": 0.0,
+    "saw it there repeatedly and still got it wrong": 0.7368421052631579
+   },
+   "at_the_room_level": {
+    "never saw the object there": 4,
+    "saw it there once and still got it wrong": 0,
+    "saw it there repeatedly and still got it wrong": 15
+   },
+   "at_the_room_level_shares": {
+    "never saw the object there": 0.21052631578947367,
+    "saw it there once and still got it wrong": 0.0,
+    "saw it there repeatedly and still got it wrong": 0.7894736842105263
+   },
+   "examples": {
+    "never saw the object there": [
+     "day 14 water_bottle_felix: was on nightstand_b1 in bedroom_1, went to kitchen, had seen it there 0x (in that room 0x)",
+     "day 14 tablet_felix: was on balcony_table_y1 in balcony, went to bedroom_1, had seen it there 0x (in that room 0x)",
+     "day 15 tablet_felix: was on balcony_table_y1 in balcony, went to bedroom_1, had seen it there 0x (in that room 0x)"
+    ],
+    "saw it there repeatedly and still got it wrong": [
+     "day 14 mug_felix: was on coffee_table_l1 in living, went to kitchen, had seen it there 3x (in that room 3x)",
+     "day 15 mug_felix: was on kitchen_table_k1 in kitchen, went to living, had seen it there 6x (in that room 43x)",
+     "day 15 book_felix: was on bed_b1 in bedroom_1, went to living, had seen it there 3x (in that room 15x)"
+    ]
+   },
+   "sensing_arm": "memory-guided search",
+   "how_memory_is_written": "wholesale rewrite"
+  },
+  {
+   "household": "hh_s1_t03",
+   "n_questions_in_scope": 11,
+   "n_first_room_failures": 10,
+   "share_of_questions_that_failed": 0.9090909090909091,
+   "at_the_exact_shelf": {
+    "never saw the object there": 3,
+    "saw it there once and still got it wrong": 0,
+    "saw it there repeatedly and still got it wrong": 7
+   },
+   "at_the_exact_shelf_shares": {
+    "never saw the object there": 0.3,
+    "saw it there once and still got it wrong": 0.0,
+    "saw it there repeatedly and still got it wrong": 0.7
+   },
+   "at_the_room_level": {
+    "never saw the object there": 3,
+    "saw it there once and still got it wrong": 0,
+    "saw it there repeatedly and still got it wrong": 7
+   },
+   "at_the_room_level_shares": {
+    "never saw the object there": 0.3,
+    "saw it there once and still got it wrong": 0.0,
+    "saw it there repeatedly and still got it wrong": 0.7
+   },
+   "examples": {
+    "never saw the object there": [
+     "day 14 water_bottle_felix: was on nightstand_b1 in bedroom_1, went to entry, had seen it there 0x (in that room 0x)",
+     "day 14 tablet_felix: was on balcony_table_y1 in balcony, went to bedroom_1, had seen it there 0x (in that room 0x)",
+     "day 15 tablet_felix: was on balcony_table_y1 in balcony, went to office, had seen it there 0x (in that room 0x)"
+    ],
+    "saw it there repeatedly and still got it wrong": [
+     "day 14 book_felix: was on bookshelf_l1 in living, went to balcony, had seen it there 20x (in that room 20x)",
+     "day 14 towel_felix: was on towel_rack_ba1 in bathroom, went to bedroom_1, had seen it there 33x (in that room 38x)",
+     "day 14 mug_felix: was on coffee_table_l1 in living, went to balcony, had seen it there 3x (in that room 3x)"
+    ]
+   },
+   "sensing_arm": "random",
+   "how_memory_is_written": "incremental edits"
+  },
+  {
+   "household": "hh_s1_t03",
+   "n_questions_in_scope": 47,
+   "n_first_room_failures": 40,
+   "share_of_questions_that_failed": 0.851063829787234,
+   "at_the_exact_shelf": {
+    "never saw the object there": 3,
+    "saw it there once and still got it wrong": 1,
+    "saw it there repeatedly and still got it wrong": 36
+   },
+   "at_the_exact_shelf_shares": {
+    "never saw the object there": 0.075,
+    "saw it there once and still got it wrong": 0.025,
+    "saw it there repeatedly and still got it wrong": 0.9
+   },
+   "at_the_room_level": {
+    "never saw the object there": 2,
+    "saw it there once and still got it wrong": 0,
+    "saw it there repeatedly and still got it wrong": 38
+   },
+   "at_the_room_level_shares": {
+    "never saw the object there": 0.05,
+    "saw it there once and still got it wrong": 0.0,
+    "saw it there repeatedly and still got it wrong": 0.95
+   },
+   "examples": {
+    "never saw the object there": [
+     "day 14 water_bottle_felix: was on nightstand_b1 in bedroom_1, went to kitchen, had seen it there 0x (in that room 0x)",
+     "day 14 tablet_felix: was on balcony_table_y1 in balcony, went to office, had seen it there 0x (in that room 0x)",
+     "day 17 book_felix: was on side_table_l1 in living, went to bedroom_1, had seen it there 0x (in that room 31x)"
+    ],
+    "saw it there repeatedly and still got it wrong": [
+     "day 14 book_felix: was on bookshelf_l1 in living, went to balcony, had seen it there 21x (in that room 21x)",
+     "day 14 towel_felix: was on towel_rack_ba1 in bathroom, went to living, had seen it there 35x (in that room 38x)",
+     "day 14 mug_felix: was on coffee_table_l1 in living, went to kitchen, had seen it there 5x (in that room 5x)"
+    ],
+    "saw it there once and still got it wrong": [
+     "day 16 charger_felix: was on nightstand_b1 in bedroom_1, went to entry, had seen it there 1x (in that room 13x)"
+    ]
+   },
+   "sensing_arm": "random",
+   "how_memory_is_written": "wholesale rewrite"
+  },
+  {
+   "household": "hh_s2_t03",
+   "n_questions_in_scope": 7,
+   "n_first_room_failures": 7,
+   "share_of_questions_that_failed": 1.0,
+   "at_the_exact_shelf": {
+    "never saw the object there": 1,
+    "saw it there once and still got it wrong": 0,
+    "saw it there repeatedly and still got it wrong": 6
+   },
+   "at_the_exact_shelf_shares": {
+    "never saw the object there": 0.14285714285714285,
+    "saw it there once and still got it wrong": 0.0,
+    "saw it there repeatedly and still got it wrong": 0.8571428571428571
+   },
+   "at_the_room_level": {
+    "never saw the object there": 0,
+    "saw it there once and still got it wrong": 0,
+    "saw it there repeatedly and still got it wrong": 7
+   },
+   "at_the_room_level_shares": {
+    "never saw the object there": 0.0,
+    "saw it there once and still got it wrong": 0.0,
+    "saw it there repeatedly and still got it wrong": 1.0
+   },
+   "examples": {
+    "saw it there repeatedly and still got it wrong": [
+     "day 14 mug_ines: was on kitchen_table_k1 in kitchen, went to office, had seen it there 8x (in that room 30x)",
+     "day 14 glass_tomas: was on kitchen_table_k1 in kitchen, went to dining, had seen it there 3x (in that room 28x)",
+     "day 14 mug_tomas: was on coffee_table_l1 in living, went to office, had seen it there 4x (in that room 4x)"
+    ],
+    "never saw the object there": [
+     "day 14 mug_ines: was on armchair_l1 in living, went to office, had seen it there 0x (in that room 2x)"
+    ]
+   },
+   "sensing_arm": "fixed rotation",
+   "how_memory_is_written": "incremental edits"
+  },
+  {
+   "household": "hh_s2_t03",
+   "n_questions_in_scope": 37,
+   "n_first_room_failures": 35,
+   "share_of_questions_that_failed": 0.9459459459459459,
+   "at_the_exact_shelf": {
+    "never saw the object there": 1,
+    "saw it there once and still got it wrong": 2,
+    "saw it there repeatedly and still got it wrong": 32
+   },
+   "at_the_exact_shelf_shares": {
+    "never saw the object there": 0.02857142857142857,
+    "saw it there once and still got it wrong": 0.05714285714285714,
+    "saw it there repeatedly and still got it wrong": 0.9142857142857143
+   },
+   "at_the_room_level": {
+    "never saw the object there": 0,
+    "saw it there once and still got it wrong": 1,
+    "saw it there repeatedly and still got it wrong": 34
+   },
+   "at_the_room_level_shares": {
+    "never saw the object there": 0.0,
+    "saw it there once and still got it wrong": 0.02857142857142857,
+    "saw it there repeatedly and still got it wrong": 0.9714285714285714
+   },
+   "examples": {
+    "saw it there repeatedly and still got it wrong": [
+     "day 14 mug_ines: was on kitchen_table_k1 in kitchen, went to office, had seen it there 8x (in that room 30x)",
+     "day 14 glass_tomas: was on kitchen_table_k1 in kitchen, went to dining, had seen it there 3x (in that room 28x)",
+     "day 14 mug_tomas: was on coffee_table_l1 in living, went to office, had seen it there 4x (in that room 4x)"
+    ],
+    "never saw the object there": [
+     "day 14 mug_ines: was on armchair_l1 in living, went to office, had seen it there 0x (in that room 2x)"
+    ],
+    "saw it there once and still got it wrong": [
+     "day 16 book_tomas: was on couch_l1 in living, went to kitchen, had seen it there 1x (in that room 1x)",
+     "day 22 water_bottle_tomas: was on bedroom_floor_b1 in bedroom_1, went to dining, had seen it there 1x (in that room 17x)"
+    ]
+   },
+   "sensing_arm": "fixed rotation",
+   "how_memory_is_written": "wholesale rewrite"
+  },
+  {
+   "household": "hh_s2_t03",
+   "n_questions_in_scope": 5,
+   "n_first_room_failures": 2,
+   "share_of_questions_that_failed": 0.4,
+   "at_the_exact_shelf": {
+    "never saw the object there": 1,
+    "saw it there once and still got it wrong": 0,
+    "saw it there repeatedly and still got it wrong": 1
+   },
+   "at_the_exact_shelf_shares": {
+    "never saw the object there": 0.5,
+    "saw it there once and still got it wrong": 0.0,
+    "saw it there repeatedly and still got it wrong": 0.5
+   },
+   "at_the_room_level": {
+    "never saw the object there": 1,
+    "saw it there once and still got it wrong": 0,
+    "saw it there repeatedly and still got it wrong": 1
+   },
+   "at_the_room_level_shares": {
+    "never saw the object there": 0.5,
+    "saw it there once and still got it wrong": 0.0,
+    "saw it there repeatedly and still got it wrong": 0.5
+   },
+   "examples": {
+    "saw it there repeatedly and still got it wrong": [
+     "day 14 mug_ines: was on kitchen_table_k1 in kitchen, went to living, had seen it there 7x (in that room 30x)"
+    ],
+    "never saw the object there": [
+     "day 14 water_bottle_tomas: was on dining_table_d1 in dining, went to kitchen, had seen it there 0x (in that room 0x)"
+    ]
+   },
+   "sensing_arm": "memory-guided search",
+   "how_memory_is_written": "incremental edits"
+  },
+  {
+   "household": "hh_s2_t03",
+   "n_questions_in_scope": 37,
+   "n_first_room_failures": 18,
+   "share_of_questions_that_failed": 0.4864864864864865,
+   "at_the_exact_shelf": {
+    "never saw the object there": 7,
+    "saw it there once and still got it wrong": 2,
+    "saw it there repeatedly and still got it wrong": 9
+   },
+   "at_the_exact_shelf_shares": {
+    "never saw the object there": 0.3888888888888889,
+    "saw it there once and still got it wrong": 0.1111111111111111,
+    "saw it there repeatedly and still got it wrong": 0.5
+   },
+   "at_the_room_level": {
+    "never saw the object there": 7,
+    "saw it there once and still got it wrong": 2,
+    "saw it there repeatedly and still got it wrong": 9
+   },
+   "at_the_room_level_shares": {
+    "never saw the object there": 0.3888888888888889,
+    "saw it there once and still got it wrong": 0.1111111111111111,
+    "saw it there repeatedly and still got it wrong": 0.5
+   },
+   "examples": {
+    "never saw the object there": [
+     "day 14 mug_tomas: was on coffee_table_l1 in living, went to office, had seen it there 0x (in that room 0x)",
+     "day 14 water_bottle_tomas: was on dining_table_d1 in dining, went to kitchen, had seen it there 0x (in that room 0x)",
+     "day 14 mug_ines: was on armchair_l1 in living, went to bedroom_1, had seen it there 0x (in that room 0x)"
+    ],
+    "saw it there once and still got it wrong": [
+     "day 15 glass_tomas: was on nightstand_b1 in bedroom_1, went to kitchen, had seen it there 1x (in that room 1x)",
+     "day 16 book_tomas: was on couch_l1 in living, went to bedroom_1, had seen it there 1x (in that room 1x)"
+    ],
+    "saw it there repeatedly and still got it wrong": [
+     "day 16 mug_ines: was on kitchen_table_k1 in kitchen, went to living, had seen it there 9x (in that room 34x)",
+     "day 16 mug_tomas: was on coffee_table_l1 in living, went to kitchen, had seen it there 2x (in that room 2x)",
+     "day 17 water_bottle_tomas: was on pantry_shelf_k1 in kitchen, went to bedroom_1, had seen it there 3x (in that room 13x)"
+    ]
+   },
+   "sensing_arm": "memory-guided search",
+   "how_memory_is_written": "wholesale rewrite"
+  },
+  {
+   "household": "hh_s2_t03",
+   "n_questions_in_scope": 8,
+   "n_first_room_failures": 8,
+   "share_of_questions_that_failed": 1.0,
+   "at_the_exact_shelf": {
+    "never saw the object there": 2,
+    "saw it there once and still got it wrong": 1,
+    "saw it there repeatedly and still got it wrong": 5
+   },
+   "at_the_exact_shelf_shares": {
+    "never saw the object there": 0.25,
+    "saw it there once and still got it wrong": 0.125,
+    "saw it there repeatedly and still got it wrong": 0.625
+   },
+   "at_the_room_level": {
+    "never saw the object there": 1,
+    "saw it there once and still got it wrong": 2,
+    "saw it there repeatedly and still got it wrong": 5
+   },
+   "at_the_room_level_shares": {
+    "never saw the object there": 0.125,
+    "saw it there once and still got it wrong": 0.25,
+    "saw it there repeatedly and still got it wrong": 0.625
+   },
+   "examples": {
+    "saw it there repeatedly and still got it wrong": [
+     "day 14 mug_ines: was on kitchen_table_k1 in kitchen, went to storage, had seen it there 6x (in that room 31x)",
+     "day 14 glass_tomas: was on kitchen_table_k1 in kitchen, went to balcony, had seen it there 2x (in that room 30x)",
+     "day 14 mug_tomas: was on coffee_table_l1 in living, went to dining, had seen it there 3x (in that room 3x)"
+    ],
+    "never saw the object there": [
+     "day 14 mug_ines: was on armchair_l1 in living, went to storage, had seen it there 0x (in that room 1x)",
+     "day 15 glass_tomas: was on nightstand_b1 in bedroom_1, went to balcony, had seen it there 0x (in that room 0x)"
+    ],
+    "saw it there once and still got it wrong": [
+     "day 15 mug_ines: was on coffee_table_l1 in living, went to kitchen, had seen it there 1x (in that room 1x)"
+    ]
+   },
+   "sensing_arm": "random",
+   "how_memory_is_written": "incremental edits"
+  },
+  {
+   "household": "hh_s2_t03",
+   "n_questions_in_scope": 37,
+   "n_first_room_failures": 33,
+   "share_of_questions_that_failed": 0.8918918918918919,
+   "at_the_exact_shelf": {
+    "never saw the object there": 1,
+    "saw it there once and still got it wrong": 5,
+    "saw it there repeatedly and still got it wrong": 27
+   },
+   "at_the_exact_shelf_shares": {
+    "never saw the object there": 0.030303030303030304,
+    "saw it there once and still got it wrong": 0.15151515151515152,
+    "saw it there repeatedly and still got it wrong": 0.8181818181818182
+   },
+   "at_the_room_level": {
+    "never saw the object there": 0,
+    "saw it there once and still got it wrong": 3,
+    "saw it there repeatedly and still got it wrong": 30
+   },
+   "at_the_room_level_shares": {
+    "never saw the object there": 0.0,
+    "saw it there once and still got it wrong": 0.09090909090909091,
+    "saw it there repeatedly and still got it wrong": 0.9090909090909091
+   },
+   "examples": {
+    "saw it there repeatedly and still got it wrong": [
+     "day 14 mug_ines: was on kitchen_table_k1 in kitchen, went to bathroom, had seen it there 13x (in that room 33x)",
+     "day 14 mug_tomas: was on coffee_table_l1 in living, went to storage, had seen it there 2x (in that room 2x)",
+     "day 14 water_bottle_tomas: was on dining_table_d1 in dining, went to living, had seen it there 2x (in that room 2x)"
+    ],
+    "saw it there once and still got it wrong": [
+     "day 14 glass_tomas: was on kitchen_table_k1 in kitchen, went to bathroom, had seen it there 1x (in that room 29x)",
+     "day 15 glass_tomas: was on nightstand_b1 in bedroom_1, went to kitchen, had seen it there 1x (in that room 1x)",
+     "day 16 book_tomas: was on couch_l1 in living, went to kitchen, had seen it there 1x (in that room 1x)"
+    ],
+    "never saw the object there": [
+     "day 14 mug_ines: was on armchair_l1 in living, went to kitchen, had seen it there 0x (in that room 1x)"
+    ]
+   },
+   "sensing_arm": "random",
+   "how_memory_is_written": "wholesale rewrite"
+  }
+ ],
+ "on_wrong_answers": {
+  "n_cells_with_answers": 17,
+  "n_wrong_answers_in_scope": 42,
+  "counts": {
+   "never saw the object there": 3,
+   "saw it there once and still got it wrong": 1,
+   "saw it there repeatedly and still got it wrong": 38
+  },
+  "shares": {
+   "never saw the object there": 0.07142857142857142,
+   "saw it there once and still got it wrong": 0.023809523809523808,
+   "saw it there repeatedly and still got it wrong": 0.9047619047619048
+  }
+ }
+}

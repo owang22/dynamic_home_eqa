@@ -1,0 +1,74 @@
+{
+ "what_this_is": "The share of nights whose completion did not parse, counted from every cell as it FIRST ran - held cells included, since their cell_HELD_FOR_REVIEW.json is the original run's record. Recorded in a file rather than computed at report time because two of these cells are being rerun: rerunning until it parses and then reporting the clean run is selection on outcome unless the original failure is reported as a number.",
+ "per_arm": {
+  "ACE_as_published": {
+   "nights_with_a_nightly_model_call": 64,
+   "nights_whose_completion_did_not_parse": 0,
+   "share": 0.0,
+   "the_nights": []
+  },
+  "MemGPT_as_published": {
+   "nights_with_a_nightly_model_call": 96,
+   "nights_whose_completion_did_not_parse": 2,
+   "share": 0.020833333333333332,
+   "the_nights": [
+    {
+     "wave": "24 a day",
+     "home": "hh_s32_t03",
+     "night": 8
+    },
+    {
+     "wave": "24 a day",
+     "home": "hh_s48_t03",
+     "night": 6
+    }
+   ]
+  },
+  "a_small_working_memory_and_an_archive": {
+   "nights_with_a_nightly_model_call": 320,
+   "nights_whose_completion_did_not_parse": 0,
+   "share": 0.0,
+   "the_nights": []
+  },
+  "claim_store_told_if_it_was_right": {
+   "nights_with_a_nightly_model_call": 352,
+   "nights_whose_completion_did_not_parse": 0,
+   "share": 0.0,
+   "the_nights": []
+  },
+  "incremental_edits": {
+   "nights_with_a_nightly_model_call": 416,
+   "nights_whose_completion_did_not_parse": 0,
+   "share": 0.0,
+   "the_nights": []
+  },
+  "last_seen_no_model": {
+   "nights_with_a_nightly_model_call": 0,
+   "nights_whose_completion_did_not_parse": 0,
+   "share": null,
+   "the_nights": []
+  },
+  "prior_only_no_notes": {
+   "nights_with_a_nightly_model_call": 320,
+   "nights_whose_completion_did_not_parse": 0,
+   "share": 0.0,
+   "the_nights": []
+  },
+  "the_log_and_notes_about_the_routine": {
+   "nights_with_a_nightly_model_call": 416,
+   "nights_whose_completion_did_not_parse": 0,
+   "share": 0.0,
+   "the_nights": []
+  },
+  "wholesale_rewrite": {
+   "nights_with_a_nightly_model_call": 32,
+   "nights_whose_completion_did_not_parse": 0,
+   "share": 0.0,
+   "the_nights": []
+  }
+ },
+ "the_comparison": "MemGPT as published: 2 of 96 nights, 2.1%. Every other arm that makes a nightly call: 0 of 1,920. `last seen, no model` makes no nightly call at all and is excluded from that denominator rather than counted as 640 clean nights.",
+ "what_it_suggests": "Both failures are in the one arm that asks the model to edit a 20,000-character block by quoting substrings of it, and the same three cells quoted a piece of the block that was not there 9, 7 and 3 times. A malformed completion on one night in fifty reads as a property of that editing interface rather than of the model.",
+ "the_accuracy_numbers_for_this_arm": "come from RERUNS of MemGPT as published / hh_s32_t03 and hh_s48_t03. The original runs are kept under superseded_the_night_that_did_not_parse_2026-09-25/. If a rerun fails to parse on the same night, that is reported instead of rerun again: two failures on one night would make it a property of that night's prompt rather than noise.",
+ "recorded_at": "2026-09-25T18:31:52-07:00"
+}

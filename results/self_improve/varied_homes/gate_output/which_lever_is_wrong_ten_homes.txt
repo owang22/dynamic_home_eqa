@@ -1,0 +1,43 @@
+WHICH LEVER IS WRONG. Every column is a property of the world, never of a method's score.
+
+the bars: rooms >= 7; movers >= 3; of the movers, >= 50% land outside the busiest three rooms;
+          the busiest three hold <= 88% of all answers; >= 3 control objects that do not move;
+          of the questions about moved objects during the illness, <= 50% are answered by a busiest-three room;
+          and EVERY mover has leak < 10% and switch > 70%.
+
+household   rooms  top-3  asked  movers    OUT  ctrl  q inside  worst leak  worst switch  step  lever
+-----------------------------------------------------------------------------------------------------
+hh_s2           9    86%     11       5    5/5     5        0%          0%           83%     5  ok
+hh_s19          9    88%     13       4    4/4     6        3%          0%           90%     4  ok
+hh_s20          8    79%     16       6    6/6     8        2%          0%           75%     6  ok
+hh_s32          8    87%     20       5    5/5    13        2%          0%           86%     5  ok
+hh_s48          8    80%     15       4    4/4     8        0%          0%           85%     4  ok
+hh_s63          9    86%     16       4    2/4     9       42%          0%           90%     4  ok
+hh_s93          8    79%     14       7    7/7     7        2%          0%           88%     7  ok
+hh_s109         9    88%     15       4    4/4     9        0%          0%           89%     4  ok
+hh_s123         8    87%     12       3    3/3     7        2%          0%           89%     3  ok
+hh_s151         8    84%     13       5    5/5     6        0%          0%           89%     5  ok
+
+10 of 10 homes have every lever in range.
+share of movers landing outside the busiest three: median 100%, range 50-100%
+per-object leak:   median 0%, 47 of 47 objects under 10%
+per-object switch: median 94%, 47 of 47 objects over 70%
+
+THE STEP, DAY BY DAY (the homes that pass)
+  of the questions asked about moved objects on that day, the share already answered by
+  that object's illness place. The illness begins on day 14.
+  home           d10    d11    d12    d13    d14    d15    d16    d17    d18    d19   step (d14-16 mean minus d10-13 mean)
+  -------------------------------------------------------------------------------------------------------------------------
+  hh_s2           0%     0%     0%     0%    91%    89%    90%    75%   100%   100%     +90 points
+  hh_s19          0%      -     0%     0%   100%    80%   100%   100%   100%   100%     +93 points
+  hh_s20          0%     0%     0%     0%    73%   100%    92%   100%   100%   100%     +88 points
+  hh_s32          0%     0%     0%     0%    83%   100%   100%   100%   100%   100%     +94 points
+  hh_s48          0%     0%     0%     0%    78%    88%    88%    78%    89%    75%     +84 points
+  hh_s63          0%     0%     0%     0%    88%   100%   100%   100%   100%    67%     +96 points
+  hh_s93          0%     0%     0%     0%    71%   100%   100%   100%    88%    94%     +90 points
+  hh_s109         0%     0%     0%     0%    75%   100%   100%   100%   100%    86%     +92 points
+  hh_s123         0%     0%     0%     0%    60%   100%   100%   100%   100%   100%     +87 points
+  hh_s151         0%     0%     0%     0%   100%    83%   100%   100%   100%    83%     +94 points
+
+  step over homes: median +91 points, range +84 to +96
+wrote results/self_improve/varied_homes/levers_ten_homes.json

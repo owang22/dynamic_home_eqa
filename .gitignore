@@ -103,3 +103,50 @@ results/room_change_cost/**/questions/
 results/conformal_sweep_v2/**/run.log
 results/conformal_sweep_v2/**/demo_bank.jsonl
 results/oracle_lookahead/questions.jsonl
+
+# --- the self-improve study's run outputs, ignored WHERE THEY LIE ------------
+# One cell is four streams - searches, looks, notes, call times - and there are several
+# hundred cells: about 12 GB, all of it regenerable from the runner, the banks and the
+# response cache. `rebuild_the_artifact.py` and everything under `results/self_improve/paper`
+# read these in place, so they must not be moved into archive/; they are ignored instead.
+# What stays in git is the small stuff beside them, and that is the point of listing the
+# outputs by shape rather than by wave: the launchers, the gate output, the compliance
+# reports, the VERDICT and CLAIMS files and every queue's pids.txt keep showing up in
+# `git status` when they change.
+results/**/cells/
+results/self_improve/search_driven/hh_s*/
+results/self_improve/search_driven/*/hh_s*/
+results/self_improve/search_driven/frozen/
+results/self_improve/*/logs/**/*.log
+results/self_improve/*/logs/*.log
+results/self_improve/*/heartbeats.jsonl
+results/self_improve/*/*/heartbeats.jsonl
+
+# The generated households: the simulator's day-by-day dumps and the question banks built
+# from them. Every one is reproducible from the config.yaml and the seed that sit beside it,
+# and both of those ARE in git.
+# The simulator's day-by-day dumps for this study's scenarios, named one by one rather than
+# by their parent. `data/situation_sim/` shadowed confshift/, which belongs to another study
+# and is in git; `data/situation_sim/self_improve/` shadowed illness_v1/, which is in git too.
+# A scenario generated in future shows up as untracked, which is the right prompt to decide.
+data/situation_sim/self_improve/varied_v1/
+data/situation_sim/self_improve/varied_v2/
+data/situation_sim/self_improve/guest_v1/
+data/situation_sim/self_improve/night_shift_v1/
+data/situation_sim/self_improve/room_shut_v1/
+data/situation_sim/self_improve/wfh_v1/
+results/self_improve/varied_homes/**/sims/
+results/self_improve/varied_homes/**/banks/
+results/self_improve/runs/*/banks/
+results/self_improve/*/*/logs/
+# The three small published-method runs have the shape <run>/<variant>/<home>/<arm>/<format>,
+# so the `cells/` rule above misses them. Same principle: the streams stay out, the writing
+# about them stays in.
+results/self_improve/ace_as_published/*/
+results/self_improve/memgpt_as_published/*/
+results/self_improve/told_if_right/*/
+# Derived dumps a script regenerates. Their readable summaries - COMPLIANCE.txt,
+# OUTCOMES_*.txt, accuracy_by_day.csv - are in git beside them.
+results/self_improve/**/compliance.json
+results/self_improve/**/outcomes_*.json
+results/self_improve/**/accuracy_by_day.jsonl

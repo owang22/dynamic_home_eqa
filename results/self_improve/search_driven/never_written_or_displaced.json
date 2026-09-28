@@ -1,0 +1,334 @@
+{
+ "days": [
+  14,
+  23
+ ],
+ "min_sightings": 2,
+ "per_format": {
+  "wholesale rewrite": {
+   "n_errors": 101,
+   "n_cells": 8,
+   "of_the_written_and_gone_was_it_true_when_written": {
+    "only became true later": 28,
+    "true when written": 24
+   },
+   "share_of_all_errors_that_were_dropped_while_true": 0.2376237623762376,
+   "n_households": 3,
+   "counts": {
+    "never written: a selection failure, no budget helps": 14,
+    "written and gone: the artifact lost it": 52,
+    "in the notes but outside the read window": 31,
+    "in the read window and the answer was still wrong": 4
+   },
+   "shares": {
+    "never written: a selection failure, no budget helps": 0.13861386138613863,
+    "written and gone: the artifact lost it": 0.5148514851485149,
+    "in the notes but outside the read window": 0.3069306930693069,
+    "in the read window and the answer was still wrong": 0.039603960396039604
+   },
+   "at_most_this_share_is_selection": 0.13861386138613863,
+   "at_least_this_share_is_capacity": 0.8217821782178217
+  }
+ },
+ "per_cell": [
+  {
+   "household": "hh_s0_t03",
+   "sensing_arm": "fixed rotation",
+   "how_memory_is_written": "wholesale rewrite",
+   "n_wrong_on_things_it_had_seen_at_least_twice": 18,
+   "counts": {
+    "never written: a selection failure, no budget helps": 2,
+    "written and gone: the artifact lost it": 7,
+    "in the notes but outside the read window": 8,
+    "in the read window and the answer was still wrong": 1
+   },
+   "shares": {
+    "never written: a selection failure, no budget helps": 0.1111111111111111,
+    "written and gone: the artifact lost it": 0.3888888888888889,
+    "in the notes but outside the read window": 0.4444444444444444,
+    "in the read window and the answer was still wrong": 0.05555555555555555
+   },
+   "of_the_written_and_gone_was_it_true_when_written": {
+    "only became true later": 6,
+    "true when written": 1
+   },
+   "examples": {
+    "never written: a selection failure, no budget helps": [
+     "day 14 mug_yuki on coffee_table_l1, seen there 2x, answered sink_k1",
+     "day 16 charger_yuki on bed_b1, seen there 5x, answered desk_b1"
+    ],
+    "in the notes but outside the read window": [
+     "day 15 glass_yuki on kitchen_table_k1, seen there 6x, answered counter_k1",
+     "day 15 glass_yuki on kitchen_table_k1, seen there 6x, answered counter_k1",
+     "day 17 water_bottle_yuki on nightstand_b1, seen there 8x, answered counter_k1"
+    ],
+    "written and gone: the artifact lost it": [
+     "day 16 water_bottle_nora on kitchen_table_k1, seen there 2x, answered counter_k1",
+     "day 16 mug_yuki on coffee_table_l1, seen there 6x, answered counter_k1",
+     "day 18 glass_yuki on kitchen_table_k1, seen there 8x, answered counter_k1"
+    ],
+    "in the read window and the answer was still wrong": [
+     "day 18 book_yuki on nightstand_b1, seen there 41x, answered couch_l1"
+    ]
+   },
+   "where": "results/self_improve/search_driven/hh_s0_t03/fixed_rotation/wholesale_rewrite"
+  },
+  {
+   "household": "hh_s0_t03",
+   "sensing_arm": "memory-guided search",
+   "how_memory_is_written": "wholesale rewrite",
+   "n_wrong_on_things_it_had_seen_at_least_twice": 2,
+   "counts": {
+    "never written: a selection failure, no budget helps": 0,
+    "written and gone: the artifact lost it": 2,
+    "in the notes but outside the read window": 0,
+    "in the read window and the answer was still wrong": 0
+   },
+   "shares": {
+    "never written: a selection failure, no budget helps": 0.0,
+    "written and gone: the artifact lost it": 1.0,
+    "in the notes but outside the read window": 0.0,
+    "in the read window and the answer was still wrong": 0.0
+   },
+   "of_the_written_and_gone_was_it_true_when_written": {
+    "only became true later": 2
+   },
+   "examples": {
+    "written and gone: the artifact lost it": [
+     "day 14 mug_yuki on coffee_table_l1, seen there 3x, answered desk_b1",
+     "day 14 water_bottle_yuki on kitchen_table_k1, seen there 4x, answered desk_b1"
+    ]
+   },
+   "where": "results/self_improve/search_driven/hh_s0_t03/memory-guided_search/wholesale_rewrite"
+  },
+  {
+   "household": "hh_s0_t03",
+   "sensing_arm": "random",
+   "how_memory_is_written": "wholesale rewrite",
+   "n_wrong_on_things_it_had_seen_at_least_twice": 20,
+   "counts": {
+    "never written: a selection failure, no budget helps": 5,
+    "written and gone: the artifact lost it": 12,
+    "in the notes but outside the read window": 3,
+    "in the read window and the answer was still wrong": 0
+   },
+   "shares": {
+    "never written: a selection failure, no budget helps": 0.25,
+    "written and gone: the artifact lost it": 0.6,
+    "in the notes but outside the read window": 0.15,
+    "in the read window and the answer was still wrong": 0.0
+   },
+   "of_the_written_and_gone_was_it_true_when_written": {
+    "only became true later": 8,
+    "true when written": 4
+   },
+   "examples": {
+    "never written: a selection failure, no budget helps": [
+     "day 14 charger_yuki on bed_b1, seen there 2x, answered desk_b1",
+     "day 14 mug_yuki on coffee_table_l1, seen there 2x, answered nightstand_b1",
+     "day 16 water_bottle_yuki on nightstand_b1, seen there 2x, answered sink_k1"
+    ],
+    "written and gone: the artifact lost it": [
+     "day 14 water_bottle_yuki on kitchen_table_k1, seen there 2x, answered counter_k1",
+     "day 16 water_bottle_yuki on kitchen_table_k1, seen there 3x, answered counter_k1",
+     "day 17 water_bottle_yuki on kitchen_table_k1, seen there 3x, answered counter_k1"
+    ],
+    "in the notes but outside the read window": [
+     "day 15 glass_yuki on nightstand_b1, seen there 2x, answered sink_ba_ba1",
+     "day 15 glass_yuki on kitchen_table_k1, seen there 5x, answered counter_k1",
+     "day 23 glass_yuki on kitchen_table_k1, seen there 10x, answered counter_k1"
+    ]
+   },
+   "where": "results/self_improve/search_driven/hh_s0_t03/random/wholesale_rewrite"
+  },
+  {
+   "household": "hh_s1_t03",
+   "sensing_arm": "fixed rotation",
+   "how_memory_is_written": "wholesale rewrite",
+   "n_wrong_on_things_it_had_seen_at_least_twice": 13,
+   "counts": {
+    "never written: a selection failure, no budget helps": 3,
+    "written and gone: the artifact lost it": 7,
+    "in the notes but outside the read window": 3,
+    "in the read window and the answer was still wrong": 0
+   },
+   "shares": {
+    "never written: a selection failure, no budget helps": 0.23076923076923078,
+    "written and gone: the artifact lost it": 0.5384615384615384,
+    "in the notes but outside the read window": 0.23076923076923078,
+    "in the read window and the answer was still wrong": 0.0
+   },
+   "of_the_written_and_gone_was_it_true_when_written": {
+    "true when written": 3,
+    "only became true later": 4
+   },
+   "examples": {
+    "never written: a selection failure, no budget helps": [
+     "day 14 mug_felix on coffee_table_l1, seen there 2x, answered sink_k1",
+     "day 15 water_bottle_felix on nightstand_b1, seen there 2x, answered sink_k1",
+     "day 15 mug_felix on coffee_table_l1, seen there 2x, answered sink_k1"
+    ],
+    "in the notes but outside the read window": [
+     "day 16 charger_felix on bed_b1, seen there 5x, answered nightstand_b1",
+     "day 17 towel_felix on bathroom_shelf_ba1, seen there 3x, answered towel_rack_ba1",
+     "day 17 charger_felix on bed_b1, seen there 8x, answered desk_o1"
+    ],
+    "written and gone: the artifact lost it": [
+     "day 18 glass_felix on kitchen_table_k1, seen there 7x, answered coffee_table_l1",
+     "day 20 mug_felix on kitchen_table_k1, seen there 8x, answered sink_k1",
+     "day 20 book_felix on bed_b1, seen there 3x, answered bedroom_floor_b1"
+    ]
+   },
+   "where": "results/self_improve/search_driven/hh_s1_t03/fixed_rotation/wholesale_rewrite"
+  },
+  {
+   "household": "hh_s1_t03",
+   "sensing_arm": "memory-guided search",
+   "how_memory_is_written": "wholesale rewrite",
+   "n_wrong_on_things_it_had_seen_at_least_twice": 2,
+   "counts": {
+    "never written: a selection failure, no budget helps": 0,
+    "written and gone: the artifact lost it": 2,
+    "in the notes but outside the read window": 0,
+    "in the read window and the answer was still wrong": 0
+   },
+   "shares": {
+    "never written: a selection failure, no budget helps": 0.0,
+    "written and gone: the artifact lost it": 1.0,
+    "in the notes but outside the read window": 0.0,
+    "in the read window and the answer was still wrong": 0.0
+   },
+   "of_the_written_and_gone_was_it_true_when_written": {
+    "only became true later": 1,
+    "true when written": 1
+   },
+   "examples": {
+    "written and gone: the artifact lost it": [
+     "day 19 glass_felix on nightstand_b1, seen there 13x, answered bedroom_floor_b1",
+     "day 19 water_bottle_felix on nightstand_b1, seen there 10x, answered bedroom_floor_b1"
+    ]
+   },
+   "where": "results/self_improve/search_driven/hh_s1_t03/memory-guided_search/wholesale_rewrite"
+  },
+  {
+   "household": "hh_s1_t03",
+   "sensing_arm": "random",
+   "how_memory_is_written": "wholesale rewrite",
+   "n_wrong_on_things_it_had_seen_at_least_twice": 12,
+   "counts": {
+    "never written: a selection failure, no budget helps": 0,
+    "written and gone: the artifact lost it": 6,
+    "in the notes but outside the read window": 5,
+    "in the read window and the answer was still wrong": 1
+   },
+   "shares": {
+    "never written: a selection failure, no budget helps": 0.0,
+    "written and gone: the artifact lost it": 0.5,
+    "in the notes but outside the read window": 0.4166666666666667,
+    "in the read window and the answer was still wrong": 0.08333333333333333
+   },
+   "of_the_written_and_gone_was_it_true_when_written": {
+    "only became true later": 3,
+    "true when written": 3
+   },
+   "examples": {
+    "in the notes but outside the read window": [
+     "day 15 water_bottle_felix on nightstand_b1, seen there 2x, answered sink_ba_ba1",
+     "day 15 water_bottle_felix on nightstand_b1, seen there 2x, answered counter_k1",
+     "day 19 water_bottle_felix on kitchen_table_k1, seen there 12x, answered counter_k1"
+    ],
+    "written and gone: the artifact lost it": [
+     "day 15 mug_felix on coffee_table_l1, seen there 5x, answered bathroom_shelf_ba1",
+     "day 17 towel_felix on bathroom_shelf_ba1, seen there 3x, answered towel_rack_ba1",
+     "day 18 water_bottle_felix on dish_rack_k1, seen there 19x, answered counter_k1"
+    ],
+    "in the read window and the answer was still wrong": [
+     "day 21 book_felix on bed_b1, seen there 4x, answered couch_l1"
+    ]
+   },
+   "where": "results/self_improve/search_driven/hh_s1_t03/random/wholesale_rewrite"
+  },
+  {
+   "household": "hh_s2_t03",
+   "sensing_arm": "fixed rotation",
+   "how_memory_is_written": "wholesale rewrite",
+   "n_wrong_on_things_it_had_seen_at_least_twice": 19,
+   "counts": {
+    "never written: a selection failure, no budget helps": 2,
+    "written and gone: the artifact lost it": 9,
+    "in the notes but outside the read window": 6,
+    "in the read window and the answer was still wrong": 2
+   },
+   "shares": {
+    "never written: a selection failure, no budget helps": 0.10526315789473684,
+    "written and gone: the artifact lost it": 0.47368421052631576,
+    "in the notes but outside the read window": 0.3157894736842105,
+    "in the read window and the answer was still wrong": 0.10526315789473684
+   },
+   "of_the_written_and_gone_was_it_true_when_written": {
+    "true when written": 8,
+    "only became true later": 1
+   },
+   "examples": {
+    "written and gone: the artifact lost it": [
+     "day 14 mug_ines on kitchen_table_k1, seen there 8x, answered counter_k1",
+     "day 14 glass_tomas on kitchen_table_k1, seen there 3x, answered counter_k1",
+     "day 14 mug_tomas on coffee_table_l1, seen there 4x, answered counter_k1"
+    ],
+    "in the notes but outside the read window": [
+     "day 16 glass_tomas on nightstand_b1, seen there 4x, answered counter_k1",
+     "day 18 book_tomas on couch_l1, seen there 5x, answered desk_o1",
+     "day 20 glass_tomas on nightstand_b1, seen there 11x, answered kitchen_table_k1"
+    ],
+    "in the read window and the answer was still wrong": [
+     "day 22 water_bottle_tomas on nightstand_b1, seen there 15x, answered kitchen_table_k1",
+     "day 23 water_bottle_tomas on nightstand_b1, seen there 17x, answered kitchen_table_k1"
+    ],
+    "never written: a selection failure, no budget helps": [
+     "day 22 mug_ines on coffee_table_l1, seen there 3x, answered counter_k1",
+     "day 23 mug_ines on coffee_table_l1, seen there 4x, answered dining_table_d1"
+    ]
+   },
+   "where": "results/self_improve/search_driven/hh_s2_t03/fixed_rotation/wholesale_rewrite"
+  },
+  {
+   "household": "hh_s2_t03",
+   "sensing_arm": "random",
+   "how_memory_is_written": "wholesale rewrite",
+   "n_wrong_on_things_it_had_seen_at_least_twice": 15,
+   "counts": {
+    "never written: a selection failure, no budget helps": 2,
+    "written and gone: the artifact lost it": 7,
+    "in the notes but outside the read window": 6,
+    "in the read window and the answer was still wrong": 0
+   },
+   "shares": {
+    "never written: a selection failure, no budget helps": 0.13333333333333333,
+    "written and gone: the artifact lost it": 0.4666666666666667,
+    "in the notes but outside the read window": 0.4,
+    "in the read window and the answer was still wrong": 0.0
+   },
+   "of_the_written_and_gone_was_it_true_when_written": {
+    "only became true later": 3,
+    "true when written": 4
+   },
+   "examples": {
+    "written and gone: the artifact lost it": [
+     "day 14 water_bottle_tomas on dining_table_d1, seen there 2x, answered counter_k1",
+     "day 16 mug_ines on kitchen_table_k1, seen there 14x, answered counter_k1",
+     "day 19 mug_ines on kitchen_table_k1, seen there 15x, answered counter_k1"
+    ],
+    "never written: a selection failure, no budget helps": [
+     "day 15 mug_tomas on coffee_table_l1, seen there 3x, answered counter_k1",
+     "day 16 mug_tomas on coffee_table_l1, seen there 3x, answered cupboard_k1"
+    ],
+    "in the notes but outside the read window": [
+     "day 17 mug_tomas on cupboard_k1, seen there 7x, answered sink_k1",
+     "day 18 water_bottle_tomas on nightstand_b1, seen there 9x, answered counter_k1",
+     "day 19 mug_tomas on coffee_table_l1, seen there 6x, answered counter_k1"
+    ]
+   },
+   "where": "results/self_improve/search_driven/hh_s2_t03/random/wholesale_rewrite"
+  }
+ ]
+}
