@@ -1,0 +1,79 @@
+# A NIGHT SHIFT, BUILT AS A DELIBERATE NEGATIVE CONTROL.
+#
+# One resident moves onto a late shift for ten days: home in the morning, out from
+# early afternoon until eleven at night. We expect this to produce essentially NO
+# break in the robot's beliefs, because the objects still end up in the same places -
+# the same bathroom shelf, the same kitchen table, the same nightstand - only at
+# different hours, and the robot is asked its questions between seven in the morning
+# and eleven at night either way. THIS SCENARIO IS SUPPOSED TO FAIL THE GATE. Its
+# purpose is to test the validator: if a night shift passes every check, the validator
+# is measuring something other than what we think it is, and that is a more valuable
+# finding than a fourth working disruption.
+#
+# It is built as carefully as the other three, which here means built with the LEAST
+# machinery, not the most. There is no new event, no new activity and no placement
+# rule, on purpose:
+#
+#   * the mechanism is the simulator's own `roles` calendar override, which swaps the
+#     resident's daily schedule template for the ten days and nothing else. Every
+#     activity keeps its room and its surface, so by construction nothing is told to
+#     go anywhere new. make_scenario.py already passes calendar role overrides to
+#     compute_allowed, so the resident's objects are allowed everywhere the new
+#     schedule takes them;
+#   * adding a placement rule would be putting the break in by hand. A night shift
+#     that needed a rule to show up would not be a night shift, it would be the rule.
+#
+# So every difference the gate finds has to come from the shift itself: the shift
+# worker's day has no cook_dinner and no dinner on a weekday and gains a late snack,
+# so their dishes and their evening things are handled at different hours - and, where
+# the gate finds a break, from that rather than from a change of place.
+#
+# PRIOR ART, and why this is not a duplicate. results/regime_search/nightshift is an
+# earlier 28-day version of the same idea, and check_classical_curve.py's thresholds
+# were partly calibrated against it (it reads a break of 6.0 and 4.1 points, which is
+# weak but not nothing). This one is on the self_improve pipeline instead: 32 days, the
+# same ten households, the same three-window calendar and the same per_day and question
+# protocol as illness_v1, room_shut_v1, guest_v1 and wfh_v1, so it sits in the same
+# summary table as a like-for-like floor rather than as a differently-built aside.
+#
+# CONTROL OBJECTS. Every object in the home is a control here, which is the point: if
+# the checks are working, nothing should separate from anything. The class list is the
+# union of what the other four scenarios ask about, so the shift is given every chance
+# to disturb the same things they disturb.
+name: night_shift_v1
+sim_dir: ../../../data/situation_sim/self_improve/night_shift_v1
+events_file: events_v2.yaml
+activities_file: activities_v3.yaml
+
+day0: Monday
+days: 32
+calendar:
+  - {name: lead,   days: [0, 13],  day_kind: weekday, suppress_random_events: true}
+  - {name: nights, days: [14, 23], day_kind: weekday, suppress_random_events: true,
+     roles: {resident_1: shift_worker}}
+  - {name: return, days: [24, 31], day_kind: weekday, suppress_random_events: true}
+
+# no background events at all, and no forced event either: the role swap IS the change
+events:
+  rain:              {weekday: 0.0, weekend: 0.0}
+  guest_visit:       {weekday: 0.0, weekend: 0.0}
+  late_work:         {weekday: 0.0, weekend: 0.0}
+  grocery_delivery:  {weekday: 0.0, weekend: 0.0}
+  laundry_day:       {weekday: 0.0, weekend: 0.0}
+  sick_day:          {weekday: 0.0, weekend: 0.0}
+  unwell_spell:      {weekday: 0.0, weekend: 0.0}
+
+question_owners: null
+questions: activity
+question_moment: during
+question_min_gap_min: 30
+per_day: 24
+oversample: 1024
+classes: [towel, blanket, razor, skincare, glasses, toiletry_bag, remote, magazine,
+          snack_bowl, dog_toy, laptop, charger, notebook, pen, headphones, tablet,
+          mug, glass, plate, water_bottle, book]
+
+patrol_hours: 0
+patrol_times: "03:00"
+feedback_delay_min: 10
+shift_focus: 0.0

@@ -1,0 +1,66 @@
+# varied_v2_twice: varied_v2's month, UNCHANGED, with 18 days added on the end in which the
+# SAME resident falls ill a second time.
+#
+# WHY IT IS BUILT THIS WAY. The point of the case study is whether a memory that has been
+# through one illness handles the second better. That comparison needs the first illness to
+# be the same illness the current runs already went through - so the first 32 days must be
+# the same world, not a new month that happens to contain two spells. If they are the same
+# world then every prompt of days 1-31 is the same string, and the response cache in
+# baselines/patrol/llm.py (keyed on sha256 of model + messages + schema + max_tokens +
+# temperature 0 + seed 0) serves them without touching the GPU.
+#
+# EVERYTHING here is varied_v2.yaml except the two lines marked CHANGED. Same events file,
+# same activities file, same day0, same calendar stages for days 0-31, same class list,
+# same protocol, same per-day question count, same patrol time and the same seeds - so the
+# bank files are named hh_s<seed>_t03.jsonl as before, which matters because the arm seeds
+# its room rotation from the bank's file stem.
+#
+# THE SECOND SPELL. The first return window (days 24-31) is eight days of ordinary life, so
+# it already serves as the "has it settled back" evidence and no extra settling window is
+# needed before the second spell. Hence:
+#     lead          days 0-13   14 days   as now
+#     sick          days 14-23  10 days   as now, resident_1
+#     return        days 24-31   8 days   as now
+#     sick_again    days 32-41  10 days   NEW, resident_1, the same illness again
+#     return_again  days 42-49   8 days   NEW
+# 50 days in total, 18 of them new.
+name: varied_v2_thrice
+sim_dir: ../all_generated_v2_thrice/sims
+events_file: events_varied.yaml
+activities_file: activities_varied.yaml
+
+day0: Monday
+days: 68
+calendar:
+  - {name: lead,   days: [0, 13],  day_kind: weekday, suppress_random_events: true}
+  - {name: sick,   days: [14, 23], day_kind: weekday, suppress_random_events: true,
+     force_events: [{event: unwell_spell, resident: resident_1}]}
+  - {name: return, days: [24, 31], day_kind: weekday, suppress_random_events: true}
+  - {name: sick_again, days: [32, 41], day_kind: weekday, suppress_random_events: true,
+     force_events: [{event: unwell_spell, resident: resident_1}]}
+  - {name: return_again, days: [42, 49], day_kind: weekday, suppress_random_events: true}
+  - {name: sick_other, days: [50, 59], day_kind: weekday, suppress_random_events: true,
+     force_events: [{event: unwell_spell, resident: resident_2}]}
+  - {name: return_other, days: [60, 67], day_kind: weekday, suppress_random_events: true}
+
+events:
+  rain:              {weekday: 0.0, weekend: 0.0}
+  guest_visit:       {weekday: 0.0, weekend: 0.0}
+  late_work:         {weekday: 0.0, weekend: 0.0}
+  grocery_delivery:  {weekday: 0.0, weekend: 0.0}
+  laundry_day:       {weekday: 0.0, weekend: 0.0}
+  sick_day:          {weekday: 0.0, weekend: 0.0}
+  unwell_spell:      {weekday: 0.0, weekend: 0.0}
+
+question_owners: null
+questions: activity
+question_moment: during
+question_min_gap_min: 30
+per_day: 24
+oversample: 1024
+classes: [book, water_bottle, tablet, mug, charger, glasses, glass, razor, medication, towel, notebook]
+
+patrol_hours: 0
+patrol_times: "03:00"
+feedback_delay_min: 10
+shift_focus: 0.0

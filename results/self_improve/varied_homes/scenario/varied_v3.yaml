@@ -1,0 +1,99 @@
+# varied_v3: varied_v2 with a WIDER set of asked-about object kinds.
+#
+# WHY. Measured on varied_v2's ten pilot banks, 2026-09-25
+# (results/self_improve/why_the_movers_are_drinkware/WHAT_I_FOUND.md): 42.1% of the
+# asked-about objects and 53.3% of the movers are a mug, a glass or a water bottle, and in
+# hh_s2_t03 six of the eight movers are ONE pattern - all six belong to resident_1, the ill
+# one, and all six switch on day 14 or 15. The cause is this list: eleven classes, every one
+# of them `per: resident`, of which the only two certain to exist (p = 1.0) are the mug and
+# the glass. Nothing about the illness had to be drinkware-heavy; the question list was.
+#
+# WHAT CHANGES FROM varied_v2, and nothing else:
+#   * `classes` goes from 11 kinds to 21.
+#   * `events_file` points at events_varied_v3.yaml, which is events_varied.yaml plus
+#     exactly two placement rules (plate -> coffee_table, remote -> coffee_table).
+#   * the activities file, the calendar, the households, the protocol, the per-day question
+#     count and the patrol time are IDENTICAL to varied_v2, so days 0-13 of every
+#     simulation are the same world as varied_v2's: the illness is the only live event and
+#     it does nothing before day 14.
+#
+# WHY EACH ADDED KIND IS THERE. Numbers are over varied_v2's ten pilot homes: instances /
+# homes that have one / truth rows / distinct places it was seen in over the month.
+#   plate      21/10/2261/13  per resident. MOVER, rule -> coffee_table. Supper comes on a
+#                             tray, so the MEAL relocates to the sofa - a different reason
+#                             from a drink kept by the bed. Its ordinary place is the
+#                             dining table.
+#   remote     10/10/1164/7   SHARED. MOVER, rule -> coffee_table. The first mover in this
+#                             scenario that belongs to NOBODY rather than to the ill person.
+#   bowl       21/10/1386/11  per resident. No rule: an ill resident uses it on two
+#                             surfaces (the tray and the late-breakfast table), so a rule
+#                             would split its answer.
+#   blanket    10/10/976/8    SHARED, no rule, two surfaces (the bed in nap_bed, the couch
+#                             in doze_couch). A shared thing that moves for its own reasons.
+#   laptop     17/10/1143/22  per resident, role-gated. The most travelled thing on the
+#                             list. CONTROL: nobody works while ill, so the ill resident's
+#                             laptop should not move, and the well residents keep using
+#                             theirs. The sharpest test of a memory that wrongly spreads
+#                             the illness across the whole house.
+#   headphones 15/9/1654/20   per resident. CONTROL, and owned by whoever works or calls,
+#                             not necessarily the ill resident.
+#   pen        15/9/762/16    per resident. CONTROL.
+#   pan        10/10/877/7    SHARED. CONTROL: the ill resident stops cooking, the others
+#                             do not, so the pan stays in the kitchen.
+#   pot        9/9/796/7      SHARED. CONTROL, same reason.
+#   snack_bowl 8/8/1104/10    SHARED. CONTROL: a genuinely mobile shared object - ten
+#                             distinct places in a month - that the illness does not touch.
+#
+# WHY NOT THE REST, each with the number it was rejected on:
+#   phone         `pocket: true`, so it is beyond the reach of any look much of the day, and
+#                 an ill resident uses it on EIGHT surfaces.
+#   gym_bag       NO activity in activities_varied.yaml uses it: 0 questions would be drawn.
+#   lunchbox      the same, 0 activities.
+#   serving_dish  4 instances in 4 of the ten homes. Too rare for a control line.
+#   dog_bowl      pet-gated, 107 truth rows over 7 homes; dog_toy 28 over 7. They barely move.
+#   magazine      6 truth rows and ONE distinct place over all ten homes. It cannot move.
+#   vitamins      the dose_medicine bout already uses it on the nightstand, so it would be a
+#                 fourth nightstand mover beside the glass, the bottle and the medicine.
+#
+# HONEST LIMIT, stated before the banks were generated. A wider class list fixes the
+# drinkware share. It cannot by itself fix the correlation, because every mover this
+# scenario has is caused by ONE event that starts on ONE day for ONE person, so they all
+# switch together whatever kind of object they are. Breaking that needs a second cause at a
+# different time, not a longer list. Measured either way and reported.
+name: varied_v3
+sim_dir: ../all_generated_v3/sims
+events_file: events_varied_v3.yaml
+activities_file: activities_varied.yaml
+
+day0: Monday
+days: 32
+calendar:
+  - {name: lead,   days: [0, 13],  day_kind: weekday, suppress_random_events: true}
+  - {name: sick,   days: [14, 23], day_kind: weekday, suppress_random_events: true,
+     force_events: [{event: unwell_spell, resident: resident_1}]}
+  - {name: return, days: [24, 31], day_kind: weekday, suppress_random_events: true}
+
+# no background events: the only thing that changes is the illness
+events:
+  rain:              {weekday: 0.0, weekend: 0.0}
+  guest_visit:       {weekday: 0.0, weekend: 0.0}
+  late_work:         {weekday: 0.0, weekend: 0.0}
+  grocery_delivery:  {weekday: 0.0, weekend: 0.0}
+  laundry_day:       {weekday: 0.0, weekend: 0.0}
+  sick_day:          {weekday: 0.0, weekend: 0.0}
+  unwell_spell:      {weekday: 0.0, weekend: 0.0}
+
+# questions: everyone's things, so the well residents' objects are controls
+question_owners: null
+questions: activity
+question_moment: during
+question_min_gap_min: 30
+per_day: 24
+oversample: 1024
+classes: [book, water_bottle, tablet, mug, charger, glasses, glass, razor, medication, towel, notebook,
+          plate, bowl, remote, blanket, laptop, headphones, pen, pan, pot, snack_bowl]
+
+patrol_hours: 0
+patrol_times: "03:00"
+feedback_delay_min: 10
+shift_focus: 0.0

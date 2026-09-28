@@ -1,0 +1,51 @@
+# WORKING FROM HOME: every resident who normally commutes or goes to campus stops for
+# ten days. Same ten households, same 32-day calendar and same question protocol as
+# illness_v1, so the disruptions can be put side by side. The mechanism, the three
+# venues and the control objects are documented in events_wfh.yaml under
+# `works_from_home`, including the honest note that this is the closest of the four
+# disruptions to the illness.
+name: wfh_v1
+sim_dir: ../../../data/situation_sim/self_improve/wfh_v1
+events_file: events_wfh.yaml
+activities_file: activities_v3.yaml
+
+day0: Monday
+days: 32
+calendar:
+  - {name: lead,   days: [0, 13],  day_kind: weekday, suppress_random_events: true}
+  # `resident: all` = every resident whose role is in the event's `roles` list
+  # (worker_out or student), so this hits about half the residents of each home rather
+  # than one named person.
+  - {name: wfh,    days: [14, 23], day_kind: weekday, suppress_random_events: true,
+     force_events: [{event: works_from_home, resident: all}]}
+  - {name: return, days: [24, 31], day_kind: weekday, suppress_random_events: true}
+
+# no background events: the only thing that changes is the commute stopping
+events:
+  rain:              {weekday: 0.0, weekend: 0.0}
+  guest_visit:       {weekday: 0.0, weekend: 0.0}
+  late_work:         {weekday: 0.0, weekend: 0.0}
+  grocery_delivery:  {weekday: 0.0, weekend: 0.0}
+  laundry_day:       {weekday: 0.0, weekend: 0.0}
+  sick_day:          {weekday: 0.0, weekend: 0.0}
+  unwell_spell:      {weekday: 0.0, weekend: 0.0}
+  works_from_home:   {weekday: 0.0, weekend: 0.0}
+
+question_owners: null
+questions: activity
+question_moment: during
+question_min_gap_min: 30
+per_day: 24
+oversample: 1024
+# Movers (a rule in events_wfh.yaml): laptop, charger, notebook, pen, textbook, glasses,
+# book, headphones, tablet, water_bottle.
+# Controls (no rule, activity untouched): mug, glass, plate, remote, blanket, snack_bowl,
+# razor, towel.
+classes: [laptop, charger, notebook, pen, textbook, glasses, book, headphones, tablet,
+          water_bottle,
+          mug, glass, plate, remote, blanket, snack_bowl, razor, towel]
+
+patrol_hours: 0
+patrol_times: "03:00"
+feedback_delay_min: 10
+shift_focus: 0.0

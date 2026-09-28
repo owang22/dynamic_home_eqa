@@ -1,0 +1,79 @@
+activities_file: activities_v3.yaml
+calendar:
+- day_kind: weekday
+  days:
+  - 0
+  - 13
+  name: lead
+  suppress_random_events: true
+- day_kind: weekday
+  days:
+  - 14
+  - 23
+  force_events:
+  - event: bathroom_shut
+  name: shut
+  suppress_random_events: true
+- day_kind: weekday
+  days:
+  - 24
+  - 31
+  name: return
+  suppress_random_events: true
+classes:
+- towel
+- blanket
+- razor
+- skincare
+- glasses
+- toiletry_bag
+- mug
+- glass
+- water_bottle
+- book
+- notebook
+- charger
+- remote
+- tablet
+- plate
+- snack_bowl
+day0: Monday
+days: 32
+events:
+  bathroom_shut:
+    weekday: 0.0
+    weekend: 0.0
+  grocery_delivery:
+    weekday: 0.0
+    weekend: 0.0
+  guest_visit:
+    weekday: 0.0
+    weekend: 0.0
+  late_work:
+    weekday: 0.0
+    weekend: 0.0
+  laundry_day:
+    weekday: 0.0
+    weekend: 0.0
+  rain:
+    weekday: 0.0
+    weekend: 0.0
+  sick_day:
+    weekday: 0.0
+    weekend: 0.0
+  unwell_spell:
+    weekday: 0.0
+    weekend: 0.0
+events_file: events_room_shut.yaml
+feedback_delay_min: 10
+name: room_shut_v1
+oversample: 1024
+patrol_hours: 0
+patrol_times: 03:00
+per_day: 24
+question_min_gap_min: 30
+question_moment: during
+question_owners: null
+questions: activity
+shift_focus: 0.0
+sim_dir: ../../../data/situation_sim/self_improve/room_shut_v1
