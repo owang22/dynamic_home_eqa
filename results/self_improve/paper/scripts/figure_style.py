@@ -32,13 +32,21 @@ SIZES = {"font.size": 8.5, "axes.titlesize": 9, "axes.labelsize": 8.5,
          "xtick.labelsize": 8, "ytick.labelsize": 8, "legend.fontsize": 8,
          "figure.titlesize": 9}
 
+# ONE COLOUR AND ONE MARKER PER METHOD, IN EVERY FIGURE OF THE PAPER. A reader who learns that
+# orange-with-a-circle is our arm in Figure 2 must not have to relearn it in Figure 4.
+MARKER = {"LastSeen": "o", "log and notes": "s", "claim store": "^", "ACE": "D",
+          "reduced ACE": "v", "small working memory": "P", "notes hidden": "X",
+          "household mode": "*", "room first": "o", "reason first": "s"}
+
 COLOUR = {"LastSeen": "#0072B2",
           "log and notes": "#D55E00",
           "claim store": "#009E73",
           "ACE": "#785EF0",
           "reduced ACE": "#E69F00",
           "small working memory": "#56B4E9",
-          "notes hidden": "#CC79A7"}
+          "notes hidden": "#CC79A7",
+          "household mode": "#117733",
+          "room first": "#6b6b68", "reason first": "#D55E00"}
 
 ILLNESS_SHADE = "#e8e8e6"        # light grey, the same for every illness spell
 GRID = "#d8d8d4"
@@ -68,3 +76,51 @@ def apply(plt):
         "figure.constrained_layout.h_pad": 0.02, "figure.constrained_layout.w_pad": 0.02,
         "figure.dpi": 150,
     })
+
+
+def regimes(ax, spans, top=None, letters=True):
+    """Name the regimes inside the axes and mark each transition, as F2_relearning does.
+
+    `spans` is [(first_day, last_day, "normal"|"sick"), ...] in order. The words go above the
+    stretch they describe, each change of regime gets a dotted vertical line, and the lines are
+    lettered A, B, C so a caption can point at one. Nothing is shaded: with two or three lines and
+    a zoomed y axis the words carry it, and shading competes with the data.
+    """
+    # ABOVE THE AXES, NOT INSIDE THEM. Written inside, the word "sick" lands on whichever line
+    # happens to be high that week - it did, on the first draft.
+    names = "ABCDEFG"
+    edge = 0
+    for i, (first, last, name) in enumerate(spans):
+        ax.annotate(name, xy=((first + last) / 2, 1.015), xycoords=("data", "axes fraction"),
+                    ha="center", va="bottom", fontsize=8.5, color=MUTED,
+                    fontweight="bold" if name == "sick" else "normal", annotation_clip=False)
+        if i:
+            ax.axvline(first - 0.5, color=INK, lw=0.9, ls=(0, (1.5, 1.8)), zorder=1)
+            if letters:
+                # INSIDE the axes, at the top, beside its own line. Above the axes they sat on the
+                # regime words: with four transitions the words and the letters ran together into
+                # "normalC" and "B normal".
+                ax.annotate(names[edge], xy=(first - 0.5, 0.985),
+                            xycoords=("data", "axes fraction"), ha="left", va="top",
+                            fontsize=8.5, color="#b03020", fontweight="bold",
+                            xytext=(2, 0), textcoords="offset points")
+            edge += 1
+
+
+def legend_below(fig, ax, entries, ncol=None):
+    """One legend under the plot: a line-and-marker swatch and bold text, per method."""
+    handles = [ax.plot([], [], color=COLOUR[name], marker=MARKER[name], lw=2.0, ms=5,
+                       markeredgecolor="white", markeredgewidth=0.6, label=name)[0]
+               for name in entries]
+    leg = fig.legend(handles=handles, loc="lower center", ncol=ncol or len(entries),
+                     fontsize=8.5, frameon=False, handlelength=1.8,
+                     columnspacing=1.4, borderpad=0.0, handletextpad=0.5)
+    for text in leg.get_texts():
+        text.set_fontweight("bold")
+    return leg
+
+
+def line(ax, x, y, name, lw=2.0):
+    """One method's average line, drawn the same way everywhere."""
+    return ax.plot(x, y, color=COLOUR[name], marker=MARKER[name], lw=lw, ms=4.2,
+                   markeredgecolor="white", markeredgewidth=0.6, zorder=4, label=name)[0]
