@@ -386,9 +386,19 @@ def main():
         print("refusing to write: the page still expects its traces inline. Update "
               "live_runs.html to load them from the trace files instead.")
         return 3
-    before = hashlib.sha256(PAGE.read_bytes()).hexdigest() if PAGE.exists() else ""
+    # THE VERDICT IGNORES THE "minutes quiet" CLOCK, and it did not until 2026-09-27. Every cell
+    # carries how long since it last wrote, which ticks up whether or not anything happened - so
+    # two builds of identical data always differed and the page always said CHANGED. On an idle
+    # machine that made the check publish a new version every time, with nothing in it but larger
+    # numbers in a staleness field. Diffed to be sure: between two builds of the same data, the
+    # `quiet` values were the ONLY difference.
+    def what_it_says_apart_from_how_stale_it_is(text: str) -> str:
+        return re.sub(r'"quiet":[0-9.]+', '"quiet":0', text)
+
+    before = (what_it_says_apart_from_how_stale_it_is(PAGE.read_text())
+              if PAGE.exists() else "")
     PAGE.write_text(page)
-    after = hashlib.sha256(PAGE.read_bytes()).hexdigest()
+    after = what_it_says_apart_from_how_stale_it_is(PAGE.read_text())
 
     done = sum(1 for c in cells if c["maxday"] >= c["lastday"])
     runs = sorted({c["cfg"] for c in cells})
