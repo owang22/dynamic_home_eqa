@@ -293,99 +293,104 @@ def figure_A1(style_name):
 def figure_3(style_name):
     """Told the cause: the prediction, the day that confirmed it, the night that retracted it.
 
-    Every quote is read from the claim's own revision history at the night in question. The history
-    stores the text a revision REPLACED, under `was`, as a whole prior state - so the night-13
-    wording is the `was` of the first revision after night 13, not `statement`, which is what the
-    claim says on night 31.
+    REBUILT after a reader could not decode the first version: the card text overran its boxes, it
+    was set at 5.8 pt, the arrows were hairlines, and the middle panel printed "11 of 11" with no
+    statement of what was being counted. Now the boxes are sized to the text they hold rather than
+    the text crammed into a fixed box, nothing is below 7 pt, the arrows are drawn thick between
+    the panels, and every number is written out in words next to the bar.
+
+    Every quote is read from the claim's own revision history at the night in question - the
+    history stores the text a revision REPLACED, under `was`, so night 13's wording is the `was` of
+    the first revision after night 13, not `statement`, which is what the claim says on night 31.
     """
     style = dict(STYLES[style_name])
     apply(style)
     night13 = ("Tomas is unwell and staying home. Expect him in bedroom_1 or living room "
                "during day/evening, not office. His laptop/mug/charger likely in bedroom_1 "
                "or living, not office desk.")
-    night14 = ("Tomas works from the office during the day (seen 14:08)… The 'unwell' "
+    night14 = ("Tomas works from the office during the day (seen 14:08)\u2026 The 'unwell' "
                "hypothesis from Day 13 is not supported by Day 14 activity.")
     glass = "Tomas's glass is on the bedroom nightstand during the day (seen 08:07-15:12)."
     bedroom, living, office, total = 7, 4, 0, 11
     note(f"  figure 3 [{style_name}] day 14, Tomas's moved objects: {total} questions, "
          f"bedroom_1 {bedroom}, living {living}, office {office}")
-    note(f"  figure 3 [{style_name}] night 13 quote: {night13!r}")
-    note(f"  figure 3 [{style_name}] night 14 quote: {night14!r}")
-    note(f"  figure 3 [{style_name}] night 14 glass note (a night-13 claim revised): {glass!r}")
+    for label, q in (("night 13", night13), ("night 14", night14), ("night 14 glass", glass)):
+        note(f"  figure 3 [{style_name}] {label} quote: {q!r}")
 
-    fig = plt.figure(figsize=(WIDTH_IN, 2.45))
-    gs = fig.add_gridspec(1, 3, width_ratios=[1.05, 0.92, 1.25], wspace=0.30)
-    ours = COLOUR["log and notes"]
+    fig = plt.figure(figsize=(WIDTH_IN, 3.75))
+    gs = fig.add_gridspec(1, 3, width_ratios=[1, 1, 1], wspace=0.42)
+    ours, grey = COLOUR["log and notes"], "#7a7a76"
+    SIZE = 7.2
 
-    def card(ax, text, x, y, w, h, colour, size=6.2, italic=True):
-        ax.add_patch(plt.Rectangle((x, y), w, h, facecolor="#fbfbfa", edgecolor=colour, lw=0.9))
-        ax.text(x + 0.045, y + h - 0.055, text, ha="left", va="top", fontsize=size,
-                color=INK, wrap=True, style="italic" if italic else "normal",
-                linespacing=1.45, transform=ax.transData)
+    # 27 characters was a guess and it was wrong: a panel is about 1.15 in wide and 27 characters
+    # of 7.2 pt serif is about 1.5 in, so every card overran its own border on the right. 21 fits
+    # with a margin, measured on the rendered page rather than estimated again.
+    def card(ax, text, colour, top, width_chars=21, size=SIZE, label=None):
+        """A note card sized to its own text, top-aligned at `top`. Returns its bottom edge."""
+        body = _wrap(text, width_chars)
+        lines = body.count("\n") + 1
+        height = 0.052 * lines + 0.075
+        ax.add_patch(plt.Rectangle((0.0, top - height), 1.0, height, facecolor="#fbfbfa",
+                                   edgecolor=colour, lw=1.1))
+        ax.text(0.045, top - 0.042, body, ha="left", va="top", fontsize=size, color=INK,
+                style="italic", linespacing=1.5)
+        if label:
+            ax.text(0.5, top - height - 0.022, label, ha="center", va="top", fontsize=6.8,
+                    color=grey, fontweight=style["weight"])
+        return top - height
 
-    # --- panel 1: the prediction
+    # --- panel 1
     ax = fig.add_subplot(gs[0])
     ax.set_axis_off()
     ax.set_xlim(0, 1)
     ax.set_ylim(0, 1)
-    ax.set_title("Night 13: told one sentence,\nwrites a prediction", fontsize=8,
-                 fontweight=style["weight"], pad=4, linespacing=1.3)
-    card(ax, _wrap(night13, 30), 0.02, 0.06, 0.96, 0.78, ours)
+    ax.set_title("Night 13\ntold one sentence,\nwrites a prediction", fontsize=8.4,
+                 fontweight=style["weight"], pad=6, linespacing=1.35)
+    card(ax, night13, ours, 0.88)
 
-    # --- panel 2: the day that confirmed it
+    # --- panel 2
     ax = fig.add_subplot(gs[1])
-    ax.set_title("Day 14: the prediction is right", fontsize=8,
-                 fontweight=style["weight"], pad=4)
-    left = 0
-    for count, colour, label in ((bedroom + living, ours, "predicted rooms"),
-                                 (office, "#c0392b", "office"),
-                                 (total - bedroom - living - office, "#cfcfca", "other")):
-        if count == 0 and label != "office":
-            continue
-        ax.barh([0], [count], left=left, height=0.5, color=colour, lw=0)
-        if count:
-            ax.text(left + count / 2, 0, f"{count} of {total}\n{100*count/total:.0f}%",
-                    ha="center", va="center", fontsize=7, color="white",
-                    fontweight=style["weight"], linespacing=1.2)
-        left += count
-    ax.text(total, 0, "  office: 0", ha="left", va="center", fontsize=7, color="#c0392b",
+    ax.set_axis_off()
+    ax.set_xlim(0, 1)
+    ax.set_ylim(0, 1)
+    ax.set_title("Day 14\nthe prediction is\nright", fontsize=8.4,
+                 fontweight=style["weight"], pad=6, linespacing=1.35)
+    ax.text(0.5, 0.88, f"all {total} questions about Tomas's\nmoved objects, day 14",
+            ha="center", va="top", fontsize=7.0, color=INK, linespacing=1.4,
             fontweight=style["weight"])
-    ax.set_xlim(0, total * 1.42)
-    ax.set_ylim(-0.75, 0.75)
-    ax.set_yticks([])
-    ax.set_xticks([])
-    ax.grid(False)
-    for side in ("left", "bottom"):
-        ax.spines[side].set_visible(False)
-    ax.text(0, -0.52, f"bedroom_1 {bedroom} · living {living} · office {office}",
-            ha="left", va="center", fontsize=6.4, color=MUTED)
+    y, h = 0.50, 0.11
+    ax.add_patch(plt.Rectangle((0.0, y), (bedroom + living) / total, h, facecolor=ours, lw=0))
+    ax.text((bedroom + living) / total / 2, y + h / 2, f"{bedroom + living} of {total}",
+            ha="center", va="center", fontsize=8.2, color="white", fontweight="bold")
+    ax.text(0.0, y - 0.045, f"in a room the note named:\nbedroom_1 {bedroom}, living {living}",
+            ha="left", va="top", fontsize=7.0, color=ours, linespacing=1.4,
+            fontweight=style["weight"])
+    ax.add_patch(plt.Rectangle((0.0, y - 0.30), 1.0, h, facecolor="none", edgecolor="#c0392b",
+                               lw=1.1))
+    ax.text(0.5, y - 0.30 + h / 2, f"{office} of {total}", ha="center", va="center",
+            fontsize=8.2, color="#c0392b", fontweight="bold")
+    ax.text(0.0, y - 0.355, "in the office, the room\nthe note ruled out", ha="left", va="top",
+            fontsize=7.0, color="#c0392b", linespacing=1.4, fontweight=style["weight"])
 
-    # --- panel 3: the retraction, beside the note written the same night
+    # --- panel 3
     ax = fig.add_subplot(gs[2])
     ax.set_axis_off()
     ax.set_xlim(0, 1)
     ax.set_ylim(0, 1)
-    ax.set_title("Night 14: the update retracts it", fontsize=8,
-                 fontweight=style["weight"], pad=4)
-    # WRAPPED TO THE CARD, NOT TO A GUESS. At 30 characters the two cards' text ran straight
-    # through each other and the panel was unreadable; the cards are half the width of panel 1's,
-    # so the wrap has to be too.
-    card(ax, _wrap(night14, 19), 0.01, 0.06, 0.47, 0.78, ours, size=5.8)
-    card(ax, _wrap(glass, 19), 0.52, 0.06, 0.47, 0.78, MUTED, size=5.8)
-    ax.text(0.755, 0.035, "revised the same night", ha="center", va="top", fontsize=5.9,
-            color=MUTED, fontweight=style["weight"])
-    ax.annotate("written the same night", xy=(0.5, 0.905), ha="center", va="bottom",
-                fontsize=6.4, color=INK, fontweight=style["weight"])
-    ax.plot([0.04, 0.96], [0.885, 0.885], color=MUTED, lw=0.6)
-    for x in (0.04, 0.96):
-        ax.plot([x, x], [0.858, 0.885], color=MUTED, lw=0.6)
+    ax.set_title("Night 14\nthe update\nretracts it", fontsize=8.4,
+                 fontweight=style["weight"], pad=6, linespacing=1.35)
+    bottom = card(ax, night14, ours, 0.88)
+    card(ax, glass, grey, bottom - 0.085, label="revised the same night")
+    ax.text(0.5, bottom - 0.045, "and, the same night:", ha="center", va="center",
+            fontsize=6.9, color=grey, fontweight=style["weight"])
 
-    fig.subplots_adjust(left=0.015, right=0.985, top=0.80, bottom=0.04)
-    # the arrows that make it a strip rather than three pictures
-    for x in (0.345, 0.635):
+    fig.subplots_adjust(left=0.025, right=0.975, top=0.82, bottom=0.055)
+    # the arrows: thick, dark, and clear of the panels
+    for x in (0.345, 0.663):
         fig.add_artist(matplotlib.patches.FancyArrowPatch(
-            (x, 0.42), (x + 0.022, 0.42), transform=fig.transFigure,
-            arrowstyle="-|>", mutation_scale=8, color=MUTED, lw=0.9))
+            (x, 0.40), (x + 0.028, 0.40), transform=fig.transFigure,
+            arrowstyle="-|>,head_width=3.2,head_length=4.5", mutation_scale=2.2,
+            color="#4a4a48", lw=2.2))
     out = OUT / style_name / "figure3_told_the_cause.pdf"
     fig.savefig(out)
     plt.close(fig)
