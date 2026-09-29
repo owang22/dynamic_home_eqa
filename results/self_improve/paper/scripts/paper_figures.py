@@ -49,10 +49,9 @@ COLOUR = {"last seen": "#000000", "log and notes": "#EE6100", "claim store": "#0
           # says must be called the tight variant and never MemGPT. They keep the published
           # methods' colours, because they are those methods' cousins, and different names.
           "reduced ACE": "#8A3FFC", "tight working memory": "#882255"}
-# the baseline is a BLACK DOTTED line: it is the yardstick, not one of the methods being
-# compared, and a dash pattern separates it from every colour at once - including in print and
-# for a reader who cannot tell two hues apart. Every other method is solid.
-LINESTYLE = collections.defaultdict(lambda: "-", {"last seen": ":"})
+# EVERY line is dashed, the baseline included. The table stays so a method can be given its own
+# pattern later; today they all share one.
+LINESTYLE = collections.defaultdict(lambda: "--")
 MARKER = {"last seen": "o", "log and notes": "s", "claim store": "^", "ACE-style": "D",
           "MemGPT-style": "v", "notes hidden": "X",
           "reduced ACE": "D", "tight working memory": "v"}
