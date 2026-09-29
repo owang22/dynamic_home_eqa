@@ -331,17 +331,16 @@ def figure_A1(style_name):
 
 
 def figure_3(style_name):
-    """Told the cause: the prediction, the day that confirmed it, the night that retracted it.
+    """Told the cause, then retracting it: two notes, and one line about the day between them.
 
-    REBUILT after a reader could not decode the first version: the card text overran its boxes, it
-    was set at 5.8 pt, the arrows were hairlines, and the middle panel printed "11 of 11" with no
-    statement of what was being counted. Now the boxes are sized to the text they hold rather than
-    the text crammed into a fixed box, nothing is below 7 pt, the arrows are drawn thick between
-    the panels, and every number is written out in words next to the bar.
+    THE MIDDLE PANEL IS GONE. It was a stacked bar of eleven questions that said one thing - they
+    were all in a predicted room - and a bar chart of a single 11-of-11 count tells a reader
+    nothing a sentence does not. It is a sentence now, on the arrow between the two nights.
+    "bedroom_1 7" also read as "bedroom_17", so the counts are written out in words.
 
-    Every quote is read from the claim's own revision history at the night in question - the
-    history stores the text a revision REPLACED, under `was`, so night 13's wording is the `was` of
-    the first revision after night 13, not `statement`, which is what the claim says on night 31.
+    Every quote comes from the claim's own revision history at the night in question: the history
+    stores the text a revision REPLACED, under `was`, so night 13's wording is the `was` of the
+    first revision after night 13, not `statement`, which is what the claim says on night 31.
     """
     style = dict(STYLES[style_name])
     apply(style)
@@ -357,83 +356,60 @@ def figure_3(style_name):
     for label, q in (("night 13", night13), ("night 14", night14), ("night 14 glass", glass)):
         note(f"  figure 3 [{style_name}] {label} quote: {q!r}")
 
-    fig = plt.figure(figsize=(WIDTH_IN, 3.7))
-    gs = fig.add_gridspec(1, 3, width_ratios=[1, 1, 1], wspace=0.42)
-    # ONE COLOUR. Orange for the note under test and grey for the other said nothing a reader
-    # could decode - they are both the same memory's notes - so both cards are the method's colour
-    # and the labels carry the difference.
-    ours, grey = COLOUR["log and notes"], COLOUR["log and notes"]
-    SIZE = 7.2
+    fig = plt.figure(figsize=(WIDTH_IN, 3.25))
+    gs = fig.add_gridspec(1, 3, width_ratios=[1.06, 0.88, 1.06], wspace=0.14)
+    ours = COLOUR["log and notes"]
+    SIZE = 7.4
 
-    # 27 characters was a guess and it was wrong: a panel is about 1.15 in wide and 27 characters
-    # of 7.2 pt serif is about 1.5 in, so every card overran its own border on the right. 21 fits
-    # with a margin, measured on the rendered page rather than estimated again.
-    def card(ax, text, colour, top, width_chars=21, size=SIZE, label=None):
-        """A note card sized to its own text, top-aligned at `top`. Returns its bottom edge."""
+    def card(ax, text, top, width_chars=24, size=SIZE, label=None):
         body = _wrap(text, width_chars)
         lines = body.count("\n") + 1
-        height = 0.052 * lines + 0.075
+        height = 0.055 * lines + 0.085
         ax.add_patch(plt.Rectangle((0.0, top - height), 1.0, height, facecolor="#fbfbfa",
-                                   edgecolor=colour, lw=1.1))
-        ax.text(0.045, top - 0.042, body, ha="left", va="top", fontsize=size, color=INK,
+                                   edgecolor=ours, lw=1.1))
+        ax.text(0.05, top - 0.048, body, ha="left", va="top", fontsize=size, color=INK,
                 style="italic", linespacing=1.5)
         if label:
-            ax.text(0.5, top - height - 0.022, label, ha="center", va="top", fontsize=6.8,
-                    color=grey, fontweight=style["weight"])
+            ax.text(0.5, top - height - 0.024, label, ha="center", va="top", fontsize=6.9,
+                    color=MUTED, fontweight=style["weight"], linespacing=1.3)
         return top - height
 
-    # --- panel 1
     ax = fig.add_subplot(gs[0])
     ax.set_axis_off()
     ax.set_xlim(0, 1)
     ax.set_ylim(0, 1)
-    ax.set_title("Night 13\ntold one sentence,\nwrites a prediction", fontsize=8.4,
+    ax.set_title("Night 13\nTold One Sentence,\nWrites a Prediction", fontsize=8.4,
                  fontweight=style["weight"], pad=6, linespacing=1.35)
-    card(ax, night13, ours, 0.88)
+    card(ax, night13, 0.94)
 
-    # --- panel 2
-    ax = fig.add_subplot(gs[1])
-    ax.set_axis_off()
-    ax.set_xlim(0, 1)
-    ax.set_ylim(0, 1)
-    ax.set_title("Day 14\nthe prediction is\nright", fontsize=8.4,
-                 fontweight=style["weight"], pad=6, linespacing=1.35)
-    ax.text(0.5, 0.88, f"all {total} questions about Tomas's\nmoved objects, day 14",
-            ha="center", va="top", fontsize=7.0, color=INK, linespacing=1.4,
-            fontweight=style["weight"])
-    y, h = 0.50, 0.11
-    ax.add_patch(plt.Rectangle((0.0, y), (bedroom + living) / total, h, facecolor=ours, lw=0))
-    ax.text((bedroom + living) / total / 2, y + h / 2, f"{bedroom + living} of {total}",
-            ha="center", va="center", fontsize=8.2, color="white", fontweight="bold")
-    ax.text(0.0, y - 0.045, f"in a room the note named:\nbedroom_1 {bedroom}, living {living}",
-            ha="left", va="top", fontsize=7.0, color=ours, linespacing=1.4,
-            fontweight=style["weight"])
-    ax.add_patch(plt.Rectangle((0.0, y - 0.30), 1.0, h, facecolor="none", edgecolor="#c0392b",
-                               lw=1.1))
-    ax.text(0.5, y - 0.30 + h / 2, f"{office} of {total}", ha="center", va="center",
-            fontsize=8.2, color="#c0392b", fontweight="bold")
-    ax.text(0.0, y - 0.355, "in the office, the room\nthe note ruled out", ha="left", va="top",
-            fontsize=7.0, color="#c0392b", linespacing=1.4, fontweight=style["weight"])
+    # the middle is an arrow and a sentence, not a chart
+    mid = fig.add_subplot(gs[1])
+    mid.set_axis_off()
+    mid.set_xlim(0, 1)
+    mid.set_ylim(0, 1)
+    mid.set_title("Day 14\nEvery Prediction\nHolds", fontsize=8.4,
+                  fontweight=style["weight"], pad=6, linespacing=1.35)
+    mid.annotate("", xy=(0.97, 0.60), xytext=(0.03, 0.60),
+                 arrowprops=dict(arrowstyle="-|>,head_width=3.4,head_length=5.0",
+                                 mutation_scale=2.2, color="#4a4a48", lw=2.2))
+    mid.text(0.5, 0.545, _wrap(f"all {total} questions about his moved objects were answered in "
+                               f"a room the note named: {bedroom} in bedroom_1, {living} in the "
+                               f"living room, none in the office", 26),
+             ha="center", va="top", fontsize=7.2, color=INK, linespacing=1.45,
+             fontweight=style["weight"])
 
-    # --- panel 3
     ax = fig.add_subplot(gs[2])
     ax.set_axis_off()
     ax.set_xlim(0, 1)
     ax.set_ylim(0, 1)
-    ax.set_title("Night 14\nthe update\nretracts it", fontsize=8.4,
+    ax.set_title("Night 14\nThe Update\nRetracts It", fontsize=8.4,
                  fontweight=style["weight"], pad=6, linespacing=1.35)
-    bottom = card(ax, night14, ours, 0.88)
-    card(ax, glass, grey, bottom - 0.085, label="revised the same night\n(it was written on night 13)")
-    ax.text(0.5, bottom - 0.045, "and, the same night:", ha="center", va="center",
-            fontsize=6.9, color=grey, fontweight=style["weight"])
+    bottom = card(ax, night14, 0.94)
+    card(ax, glass, bottom - 0.105, label="revised the same night")
+    ax.text(0.5, bottom - 0.052, "and, the same night:", ha="center", va="center",
+            fontsize=7.0, color=MUTED, fontweight=style["weight"])
 
-    fig.subplots_adjust(left=0.025, right=0.975, top=0.83, bottom=0.085)
-    # the arrows: thick, dark, and clear of the panels
-    for x in (0.345, 0.663):
-        fig.add_artist(matplotlib.patches.FancyArrowPatch(
-            (x, 0.40), (x + 0.028, 0.40), transform=fig.transFigure,
-            arrowstyle="-|>,head_width=3.2,head_length=4.5", mutation_scale=2.2,
-            color="#4a4a48", lw=2.2))
+    fig.subplots_adjust(left=0.025, right=0.975, top=0.80, bottom=0.03)
     out = _place(style_name, "figure3_told_the_cause")
     fig.savefig(out)
     plt.close(fig)
