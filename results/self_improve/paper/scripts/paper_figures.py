@@ -172,7 +172,7 @@ def figure_2(style_name):
              + "/".join(f"{per[h][14]:.0f}" for h in D.HOMES_50) + ", day 32 "
              + "/".join(f"{per[h][32]:.0f}" for h in D.HOMES_50) + ")")
     style["_legend_y"] = 0.235
-    height = 3.3 if style_name == "spec" else 3.5
+    height = 3.6 if style_name == "spec" else 3.8
     fig, (ax, strip) = plt.subplots(2, 1, figsize=(WIDTH_IN, height), sharex=True,
                                     gridspec_kw={"height_ratios": [5, 1]})
     draw_lines(ax, days, names, curves, style)
@@ -194,37 +194,56 @@ def figure_2(style_name):
     first = [f for f, _ in falls.values()]
     raw = [falls[n][1] for n in names if n in ("LastSeen", "log and notes")]
     rest = [falls[n][1] for n in names if n not in ("LastSeen", "log and notes")]
-    ax.annotate(f"first illness:\nall {'four' if len(names) == 4 else 'three'} fall "
-                f"{min(first):.0f}-{max(first):.0f} points",
-                xy=(13.2, 120), ha="left", va="top",
-                fontsize=7.2, color=INK, fontweight=style["weight"], linespacing=1.2)
+    # THE ANNOTATIONS NAME THE LINES THE LEGEND NAMES. They used to say "the trail and our notes",
+    # a second naming scheme that appears nowhere else, so a reader could not tell which lines the
+    # headline number was about - which is the one thing this figure exists to deliver. They also
+    # state the estimator, because "falls 51-59 points" could not be checked against the plot
+    # without knowing it is measured from each line's own mean over the four days before.
+    raw_names = [n for n in names if n in ("LastSeen", "log and notes")]
+    rest_names = [n for n in names if n not in ("LastSeen", "log and notes")]
+    ax.annotate(f"day 14: all {len(names)} fall\n{min(first):.0f}-{max(first):.0f} points",
+                xy=(14.4, 138), ha="left", va="top",
+                fontsize=7.0, color=INK, fontweight=style["weight"], linespacing=1.2)
     # right-aligned at the axis edge: left-aligned from day 31 it ran off the canvas, and the
     # canvas is fixed so it was simply cut.
-    ax.annotate(f"second illness: the trail and our notes\nfall {min(raw):.0f}-{max(raw):.0f} "
-                f"points, the rest {min(rest):.0f}-{max(rest):.0f}",
-                xy=(49.3, 120), ha="right", va="top", fontsize=7.2, color=INK,
+    ax.annotate(f"day 32: {', '.join(raw_names)} fall {min(raw):.0f}-{max(raw):.0f};\n"
+                f"{', '.join(rest_names)} fall {min(rest):.0f}-{max(rest):.0f}",
+                xy=(49.2, 138), ha="right", va="top", fontsize=7.0, color=INK,
                 fontweight=style["weight"], linespacing=1.2)
     strip.bar(days, [counts[d] for d in days], color="#9a9a96", width=0.8, lw=0)
-    strip.set_ylabel("questions/day", fontsize=7, fontweight=style["weight"])
-    strip.set_yticks([])
+    strip.set_ylabel("questions\na day", fontsize=6.6, fontweight=style["weight"],
+                     linespacing=1.2)
+    # two ticks with numbers: without them a reader cannot tell whether these bars are 10 or 30
+    strip.set_yticks([0, max(counts.values())])
+    strip.set_yticklabels(["0", str(max(counts.values()))], fontsize=6.4)
     strip.grid(False)
     strip.set_xlabel("day", fontweight=style["weight"])
-    ax.set_ylim(0, 122)
+    ax.set_ylim(0, 140)
     ax.set_yticks([0, 25, 50, 75, 100])
     ax.set_xlim(0.5, 49.5)
+    strip.set_xticks([1, 14, 24, 32, 42, 49])
     ax.set_ylabel("first room right (%)", fontweight=style["weight"])
+    # ONE footnote, not four floating notes. Answering the reviewer's questions separately put
+    # three grey sentences on top of each other at the foot of the plot.
+    band = "band is 1 SE across them; " if style["band"] else ""
+    fig.text(0.135, 0.012,
+             f"first room right: the object was in the first of up to three rooms opened. Mean "
+             f"over 3 households; {band}a fall is\nmeasured from that line's own mean over the "
+             f"four days before. A zero is real, not a missing day.",
+             ha="left", va="bottom", fontsize=6.0, color=MUTED, linespacing=1.35)
     ax.grid(axis="x", visible=False)
     if style["title"]:
         ax.set_title("The same illness, twice", fontweight=style["weight"], pad=14)
     handles = [plt.Line2D([], [], color=COLOUR[n], marker=MARKER[n], lw=1.6, ms=4.5,
                           markeredgecolor="white", markeredgewidth=0.5, label=n) for n in names]
     if style["legend"] == "inside":
-        ax.legend(handles=handles, loc="lower right", fontsize=7.6, handlelength=1.6,
-                  labelspacing=0.28, borderpad=0.3, facecolor="white", framealpha=0.9,
-                  frameon=True, edgecolor="none")
-        fig.subplots_adjust(left=0.10, right=0.985, top=0.90, bottom=0.11, hspace=0.12)
+        # ABOVE THE AXES, not inside: at lower right it sat on top of the days 40 to 49 data.
+        fig.subplots_adjust(left=0.115, right=0.985, top=0.82, bottom=0.20, hspace=0.12)
+        leg = fig.legend(handles=handles, loc="upper center", ncol=len(names), fontsize=7.6,
+                         frameon=False, handlelength=1.5, columnspacing=1.3,
+                         bbox_to_anchor=(0.56, 0.995))
     else:
-        fig.subplots_adjust(left=0.10, right=0.985, top=0.88, bottom=0.30, hspace=0.12)
+        fig.subplots_adjust(left=0.115, right=0.985, top=0.86, bottom=0.345, hspace=0.12)
         leg = fig.legend(handles=handles, loc="upper center", ncol=len(names), fontsize=8,
                          frameon=False, handlelength=1.5, columnspacing=1.2,
                          bbox_to_anchor=(0.54, 0.185))
