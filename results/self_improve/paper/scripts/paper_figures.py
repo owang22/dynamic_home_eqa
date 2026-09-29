@@ -60,9 +60,11 @@ ARM_DIR = {"LastSeen": "last_seen_no_model", "log and notes": "the_log_and_notes
 # axis labels and titles are capitalised, every piece of text is bold, and anything that needs a
 # sentence to explain lives in the caption file beside the figure, not on the figure.
 STYLES = {"spec": {"weight": "bold", "band": True, "title": True, "legend": "inside",
-                   "letters": False, "lines": 5},
+                   "letters": False, "lines": 5, "annotate": True},
+          # no boxed accuracy numbers on the plot: the caption carries them and they are clutter
+          # on a figure whose lines already show the gap.
           "oliver": {"weight": "bold", "band": False, "title": True, "legend": "below",
-                     "letters": True, "lines": 3}}
+                     "letters": True, "lines": 3, "annotate": False}}
 NUMBERS = []          # everything drawn, for FIGURES.md
 
 
@@ -192,16 +194,19 @@ def figure_2(style_name):
         note(f"  figure 2 [{style_name}] {n:15s} day 14 {line[13]:5.1f}  days 15-17 "
              f"{statistics.mean(line[14:17]):5.1f}  day 32 {line[31]:5.1f}  days 33-35 "
              f"{statistics.mean(line[32:35]):5.1f}")
-    height = 3.1 if style_name == "spec" else 3.3
+    height = 3.1 if style["annotate"] else 2.65
     fig, ax = plt.subplots(figsize=(WIDTH_IN, height))
     draw_lines(ax, days, names, curves, style)
     shade_sick(ax, [(14, 23), (32, 41)], style, top=100)
-    ax.set_ylim(0, 140)
+    # only enough headroom for what is actually drawn above the data
+    ax.set_ylim(0, 140 if style["annotate"] else 112)
     ax.set_yticks([0, 25, 50, 75, 100])
     ax.set_xlim(0.5, 49.5)
     ax.set_xticks([1, 14, 24, 32, 42, 49])
     ax.set_ylabel("First Room Right (%)", fontweight=style["weight"])
-    ax.set_xlabel("Day", fontweight=style["weight"])
+    # the label sits close to its own axis, which widens the gap to the legend below without
+    # spending any more of the canvas on white
+    ax.set_xlabel("Day", fontweight=style["weight"], labelpad=1.5)
     ax.grid(axis="x", visible=False)
 
     def three_days_after(start_day):
@@ -209,10 +214,11 @@ def figure_2(style_name):
 
     for start_day, x, ha in ((14, 14.6, "left"), (32, 32.6, "left")):
         after = three_days_after(start_day)
-        ours, rule = after["log and notes"], after["LastSeen"]
-        ax.annotate(f"three days in:\nlog and notes {ours:.0f}%\nLastSeen {rule:.0f}%",
-                    xy=(x, 138), ha=ha, va="top", fontsize=7.0, color=INK, bbox=BOX,
-                    fontweight=style["weight"], linespacing=1.25)
+        if style["annotate"]:
+            ax.annotate(f"three days in:\nlog and notes {after['log and notes']:.0f}%\n"
+                        f"LastSeen {after['LastSeen']:.0f}%",
+                        xy=(x, 138), ha=ha, va="top", fontsize=7.0, color=INK, bbox=BOX,
+                        fontweight=style["weight"], linespacing=1.25)
         note(f"  figure 2 [{style_name}] three days after day {start_day}: "
              + ", ".join(f"{n} {v:.1f}" for n, v in after.items()))
     if style["title"]:
@@ -225,10 +231,12 @@ def figure_2(style_name):
                   frameon=True, edgecolor="#d8d8d4")
         fig.subplots_adjust(left=0.115, right=0.985, top=0.855, bottom=0.125)
     else:
-        fig.subplots_adjust(left=0.115, right=0.985, top=0.855, bottom=0.30)
-        leg = fig.legend(handles=handles, loc="upper center", ncol=len(names), fontsize=8,
-                         frameon=False, handlelength=1.5, columnspacing=1.2,
-                         bbox_to_anchor=(0.56, 0.20))
+        # AT THE FOOT OF THE FIGURE, with the axes lifted to leave room. Both an axes-relative
+        # and a figure-relative anchor landed on the "Day" label; letting matplotlib place it at
+        # the bottom and reserving the space is the one that cannot collide.
+        fig.subplots_adjust(left=0.105, right=0.99, top=0.885, bottom=0.26)
+        leg = fig.legend(handles=handles, loc="lower center", ncol=len(names), fontsize=8,
+                         frameon=False, handlelength=1.5, columnspacing=1.2)
         for txt in leg.get_texts():
             txt.set_fontweight("bold")
     out = _place(style_name, "figure2_both_illnesses")
@@ -329,93 +337,134 @@ def _wrap(text, width):
     return "\n".join(textwrap.wrap(text, width))
 
 
+def figure_A1(style_name):
+    """The first illness on the ten households, five methods."""
+    style = dict(STYLES[style_name])
+    apply(style)
+    names = ["LastSeen", "log and notes", "claim store", "reduced ACE", "tight working memory"]
+    cells = "results/self_improve/overnight_wave/cells"
+    banks = pathlib.Path("results/self_improve/varied_homes/ten_homes/banks")
+    movers = lambda h: sd.the_movers(FrozenHousehold(banks / f"{h}.jsonl"))
+    have = [n for n in names if (pathlib.Path(cells) / ARM_DIR[n]).exists()]
+    if style["lines"] == 3:
+        have = [n for n in have if n in ("LastSeen", "log and notes", "reduced ACE")]
+    days = list(range(1, 32))
+    curves = {}
+    for n in have:
+        line, band, counts, per = by_day(cells, ARM_DIR[n], D.HOMES_10, days, movers)
+        curves[n] = (line, band)
+        note(f"  figure A1 [{style_name}] {n:15s} days 10-13 "
+             f"{statistics.mean(line[9:13]):5.1f}  day 14 {line[13]:5.1f}  day 24 {line[23]:5.1f}")
+    fig, ax = plt.subplots(figsize=(WIDTH_IN, 3.1))
+    draw_lines(ax, days, have, curves, style)
+    ax.set_ylim(0, 132)
+    ax.set_yticks([0, 25, 50, 75, 100])
+    ax.set_xlim(0.5, 31.5)
+    ax.set_xticks([1, 5, 10, 14, 20, 24, 31])
+    shade_sick(ax, [(14, 23)], style, top=100)
+    lo = min(curves[n][0][13] for n in have)
+    hi = max(curves[n][0][13] for n in have)
+    # A LEADER LINE, because the reader could not tell which dip the number described and read
+    # 30-42% off the axis for it.
+    # one annotation to the LEFT of its dip and one to the RIGHT of its own, because side by side
+    # above the middle they overlapped each other and ran off the canvas
+    ax.annotate(f"day 14: all methods\nfall to {lo:.0f}-{hi:.0f}%",
+                xy=(14, hi + 2), xytext=(1.2, 130), ha="left", va="top", fontsize=7.2,
+                color=INK, fontweight=style["weight"], bbox=BOX,
+                arrowprops=dict(arrowstyle="-", color=MUTED, lw=0.7,
+                                connectionstyle="angle,angleA=0,angleB=90,rad=3"))
+    # the second dip, which the reader noticed was nearly as deep and went unmentioned
+    d24lo = min(curves[n][0][23] for n in have)
+    d24hi = max(curves[n][0][23] for n in have)
+    ax.annotate(f"day 24, back to normal:\nthey fall again, to {d24lo:.0f}-{d24hi:.0f}%",
+                xy=(24, d24hi + 2), xytext=(31.2, 130), ha="right", va="top", fontsize=7.2,
+                color=INK, fontweight=style["weight"], linespacing=1.25, bbox=BOX,
+                arrowprops=dict(arrowstyle="-", color=MUTED, lw=0.7,
+                                connectionstyle="angle,angleA=0,angleB=90,rad=3"))
+    ax.set_ylabel("First Room Right (%)", fontweight=style["weight"])
+    ax.set_xlabel("Day", fontweight=style["weight"])
+    ax.grid(axis="x", visible=False)
+    if style["title"]:
+        ax.set_title("Adapting Inside the First Illness", fontweight=style["weight"], pad=12)
+    handles = [plt.Line2D([], [], color=COLOUR[n], marker=MARKER[n], lw=1.6, ms=4.5,
+                          markeredgecolor="white", markeredgewidth=0.5, label=n) for n in have]
+    # ABOVE THE AXES: at lower right it covered the lower part of the tight-working-memory line.
+    fig.subplots_adjust(left=0.115, right=0.985, top=0.76, bottom=0.135)
+    # three across, not five: five entries in one row is wider than a 396 pt canvas
+    leg = fig.legend(handles=handles, loc="upper center", ncol=3, fontsize=7.4,
+                     frameon=False, handlelength=1.4, columnspacing=1.4,
+                     bbox_to_anchor=(0.56, 1.0))
+    if style["legend"] != "inside":
+        for txt in leg.get_texts():
+            txt.set_fontweight("bold")
+    out = _place(style_name, "figureA1_first_illness")
+    fig.savefig(out)
+    plt.close(fig)
+    note(f"  wrote {out}")
+
+
 def figure_A2(style_name):
-    """Two panels, each labelled and captioned: what the notes held, and what "evening" came to mean.
+    """One panel: what the notes written on night 31 make an object's room depend on.
 
-    REBUILT after a reader with no context could not say what the right half claimed. It was two
-    unrelated charts under one caption that named a night only the left one shows; "mentions
-    illness" sat on an axis whose other entries were methods; and the four greys could not be told
-    apart at this size.
+    REBUILT TWICE. First after a reader with no context could not say what it claimed - it was two
+    unrelated charts under one caption. Now the second panel, about the hour one note called
+    "evening", is gone: it was a detail about one note and not what this figure is for.
 
-    The four conditions are ORDERED, from the most general to the least, so they are drawn as a
-    single-hue ramp with monotone lightness rather than four categorical colours - every
-    four-colour categorical set tried failed the checker's lightness band. The count is printed on
-    every segment big enough to hold it, so nothing depends on telling two steps apart.
+    The four conditions get four separate colours, checked with the palette checker for the light
+    surface (all six checks pass; the contrast warning is answered by the count printed on every
+    segment). The tight-working-memory arm is dropped - it wrote 101 notes to the claim store's
+    595, so its bar carried almost nothing.
     """
     style = dict(STYLES[style_name])
     apply(style)
     audit = json.load(open("results/self_improve/paper/night31_audit.json"))
-    thresh = json.load(open("results/self_improve/paper/evening_threshold.json"))
-    order = ["claim store", "log and notes", "reduced ACE", "tight working memory"]
-    conds = [("always", "#08306b"), ("a time of day", "#2b7bba"),
-             ("a person home or away", "#7fb8da"), ("other", "#cfe1f2")]
-    fig, (ax, bx) = plt.subplots(1, 2, figsize=(WIDTH_IN, 2.9),
-                                 gridspec_kw={"width_ratios": [1.0, 1.0], "wspace": 0.34})
-    # ---------------------------------------------------------------- (a)
+    order = ["claim store", "log and notes", "reduced ACE"]
+    # (key in the audit file, what the legend calls it, fill, ink for the count printed on it)
+    conds = [("always", "always true", "#4053A3", "white"),
+             ("a time of day", "a time of day", "#E69F00", INK),
+             ("a person home or away", "a person home or away", "#CC79A7", INK),
+             ("other", "other", "#56B4E9", INK)]
+    fig, ax = plt.subplots(figsize=(WIDTH_IN, 2.75))
     xs = list(range(len(order)))
     bottoms = [0] * len(order)
-    for name, colour in conds:
-        vals = [audit["by_arm"][m].get(name, 0) for m in order]
-        ax.bar(xs, vals, bottom=bottoms, color=colour, width=0.66, lw=0, label=name)
+    for key, label, colour, ink in conds:
+        vals = [audit["by_arm"][m].get(key, 0) for m in order]
+        ax.bar(xs, vals, bottom=bottoms, color=colour, width=0.52, lw=0, label=label)
         for x, v, b in zip(xs, vals, bottoms):
             if v >= 12:
-                ax.text(x, b + v / 2, str(v), ha="center", va="center", fontsize=6.4,
-                        color="white" if colour in ("#08306b", "#2b7bba") else INK)
+                ax.text(x, b + v / 2, str(v), ha="center", va="center", fontsize=7.0, color=ink,
+                        fontweight=style["weight"])
         bottoms = [b + v for b, v in zip(bottoms, vals)]
     for x, total in zip(xs, bottoms):
-        ax.text(x, total + 4, str(total), ha="center", va="bottom", fontsize=7.6,
+        ax.text(x, total + 4, str(total), ha="center", va="bottom", fontsize=8.0,
                 color=INK, fontweight=style["weight"])
     ax.set_xticks(xs)
-    ax.set_xticklabels(["claim\nstore", "log and\nnotes", "reduced\nACE", "tight\nmemory"],
-                       fontsize=6.8)
-    ax.set_ylabel("Live Notes (count)", fontweight=style["weight"])
+    ax.set_xlim(-0.62, len(order) - 0.38)
+    ax.set_xticklabels(["Claim Store", "Log and Notes", "Reduced ACE"], fontsize=8.0,
+                       fontweight=style["weight"])
+    ax.set_ylabel("Notes (count)", fontweight=style["weight"])
     # ROOM RATHER THAN BOXES. Boxing the legend and the red note only made their collisions
-    # visible; the panel needed headroom so the two could sit side by side above the tallest bar.
-    ax.set_ylim(0, max(bottoms) * 1.60)
+    # visible; the panel needs headroom so the two can sit side by side above the tallest bar.
+    ax.set_ylim(0, max(bottoms) * 1.42)
     ax.grid(axis="x", visible=False)
-    # NOT a fifth bar on the method axis: it is a fact about all four, so it is written as one.
-    # over the shortest bar, where there is room: at the top it sat on the legend
-    # over the shortest bar and inside the axes: at the top right it crowded the "114" label and
-    # its first line was clipped by the axis edge
-    # ABOVE THE AXES, NOT IN THEM. This is a sentence, and a sentence is 22 characters wide in a
-    # 2.2 inch panel: wherever it was put inside, it covered a bar or a total. Above the axes it
-    # has the full width of the panel and covers nothing.
+    # NOT a fourth bar on the method axis: it is a fact about all three, so it is written as one,
+    # and ABOVE the axes, where it covers no bar and no total.
     ax.text(0.5, 1.012, f"none of these {sum(bottoms)} notes mentions the illness",
-            transform=ax.transAxes, ha="center", va="bottom", fontsize=7.2,
+            transform=ax.transAxes, ha="center", va="bottom", fontsize=7.6,
             color="#b03020", fontweight="bold")
-    leg = ax.legend(loc="upper right", fontsize=6.3, handlelength=0.9, labelspacing=0.22,
-                    borderpad=0.4, frameon=True, facecolor="white", framealpha=0.95,
-                    edgecolor="#d8d8d4", title="the condition the note carries")
-    leg.get_title().set_fontsize(6.3)
-    ax.set_title("(a)  night 31: notes naming an object\nand a room it moves to when ill",
-                 fontsize=7.4, fontweight=style["weight"], pad=17, linespacing=1.3)
-    note(f"  figure A2 [{style_name}] (a) totals " +
+    leg = ax.legend(loc="upper right", fontsize=7.2, handlelength=1.0, labelspacing=0.26,
+                    borderpad=0.45, frameon=True, facecolor="white", framealpha=0.95,
+                    edgecolor="#d8d8d4", title="Object Location Conditioned On")
+    leg.get_title().set_fontsize(7.2)
+    leg.get_title().set_fontweight(style["weight"])
+    for txt in leg.get_texts():
+        txt.set_fontweight(style["weight"])
+    if style["title"]:
+        ax.set_title("Notes About Object Rules on Night 31",
+                     fontsize=9.5, fontweight=style["weight"], pad=16)
+    note(f"  figure A2 [{style_name}] totals " +
          ", ".join(f"{m} {b}" for m, b in zip(order, bottoms)) + f", grand total {sum(bottoms)}")
-
-    # ---------------------------------------------------------------- (b)
-    nights = [n for n, _ in thresh]
-    hours = [h for _, h in thresh]
-    bx.plot(nights, hours, color=COLOUR["ACE-style"], marker="D", ms=4.4, lw=1.8,
-            markeredgecolor="white", markeredgewidth=0.5, zorder=3)
-    plateau = min(hours)
-    first_plateau = nights[hours.index(plateau)]
-    bx.annotate(f"from night {first_plateau} on,\n\u2018evening\u2019 starts at 11:47",
-                xy=(max(nights) + 0.3, plateau - 0.6), ha="right", va="top", fontsize=7.0,
-                color=INK, fontweight=style["weight"], linespacing=1.25, bbox=BOX)
-    bx.set_ylim(6, 24)
-    bx.set_yticks([6, 9, 12, 15, 18, 21, 24])
-    bx.set_yticklabels([f"{h:02d}:00" for h in (6, 9, 12, 15, 18, 21, 24)], fontsize=7)
-    bx.set_xlim(min(nights) - 0.5, max(nights) + 0.5)
-    bx.set_xticks([13, 15, 17, 19, 21])
-    bx.set_xlabel("Night", fontweight=style["weight"])
-    bx.set_ylabel("\u2018Evening\u2019 Begins At", fontweight=style["weight"], fontsize=7.8)
-    bx.grid(axis="x", visible=False)
-    bx.set_title("(b)  one ACE-style note:\nwhen it says \u2018evening\u2019 begins",
-                 fontsize=7.4, fontweight=style["weight"], pad=5, linespacing=1.3)
-    # the shaded band spanned the whole panel, so it marked nothing. It is a sentence now.
-    note(f"  figure A2 [{style_name}] (b) threshold by night: "
-         + ", ".join(f"n{n} {int(h):02d}:{int(round((h % 1) * 60)):02d}" for n, h in thresh))
-    fig.subplots_adjust(left=0.105, right=0.985, top=0.76, bottom=0.135)
+    fig.subplots_adjust(left=0.105, right=0.985, top=0.835, bottom=0.115)
     out = _place(style_name, "figureA2_what_the_notes_held")
     fig.savefig(out)
     plt.close(fig)
