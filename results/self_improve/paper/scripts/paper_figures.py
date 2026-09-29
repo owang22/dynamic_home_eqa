@@ -56,11 +56,21 @@ ARM_DIR = {"LastSeen": "last_seen_no_model", "log and notes": "the_log_and_notes
            "reduced ACE": "claim_store_told_if_it_was_right",
            "tight working memory": "a_small_working_memory_and_an_archive"}
 
-STYLES = {"spec": {"weight": "normal", "band": True, "title": False, "legend": "inside",
+# STANDING RULES, applied to BOTH styles and overriding the written spec where they disagree:
+# axis labels and titles are capitalised, every piece of text is bold, and anything that needs a
+# sentence to explain lives in the caption file beside the figure, not on the figure.
+STYLES = {"spec": {"weight": "bold", "band": True, "title": True, "legend": "inside",
                    "letters": False, "lines": 5},
           "oliver": {"weight": "bold", "band": False, "title": True, "legend": "below",
                      "letters": True, "lines": 3}}
 NUMBERS = []          # everything drawn, for FIGURES.md
+
+
+def _place(style_name, stem):
+    """Each figure gets a directory of its own, so its caption sits beside it."""
+    folder = OUT / style_name / stem
+    folder.mkdir(parents=True, exist_ok=True)
+    return folder / f"{stem}.pdf"
 
 
 def note(text):
@@ -124,7 +134,7 @@ def finish(fig, ax, style, names, title, ylab, days, counts_strip=None):
     ax.set_ylim(0, 100)
     ax.set_xlim(days[0] - 0.5, days[-1] + 0.5)
     ax.set_ylabel(ylab, fontweight=style["weight"])
-    ax.set_xlabel("day", fontweight=style["weight"])
+    ax.set_xlabel("Day", fontweight=style["weight"])
     ax.grid(axis="x", visible=False)
     if style["title"] and title:
         ax.set_title(title, fontweight=style["weight"], pad=14)
@@ -172,7 +182,7 @@ def figure_2(style_name):
              + "/".join(f"{per[h][14]:.0f}" for h in D.HOMES_50) + ", day 32 "
              + "/".join(f"{per[h][32]:.0f}" for h in D.HOMES_50) + ")")
     style["_legend_y"] = 0.235
-    height = 3.6 if style_name == "spec" else 3.8
+    height = 3.3 if style_name == "spec" else 3.5
     fig, (ax, strip) = plt.subplots(2, 1, figsize=(WIDTH_IN, height), sharex=True,
                                     gridspec_kw={"height_ratios": [5, 1]})
     draw_lines(ax, days, names, curves, style)
@@ -211,45 +221,37 @@ def figure_2(style_name):
                 xy=(49.2, 138), ha="right", va="top", fontsize=7.0, color=INK,
                 fontweight=style["weight"], linespacing=1.2)
     strip.bar(days, [counts[d] for d in days], color="#9a9a96", width=0.8, lw=0)
-    strip.set_ylabel("questions\na day", fontsize=6.6, fontweight=style["weight"],
+    strip.set_ylabel("Questions\na Day", fontsize=6.6, fontweight=style["weight"],
                      linespacing=1.2)
     # two ticks with numbers: without them a reader cannot tell whether these bars are 10 or 30
     strip.set_yticks([0, max(counts.values())])
     strip.set_yticklabels(["0", str(max(counts.values()))], fontsize=6.4)
     strip.grid(False)
-    strip.set_xlabel("day", fontweight=style["weight"])
+    strip.set_xlabel("Day", fontweight=style["weight"])
     ax.set_ylim(0, 140)
     ax.set_yticks([0, 25, 50, 75, 100])
     ax.set_xlim(0.5, 49.5)
     strip.set_xticks([1, 14, 24, 32, 42, 49])
-    ax.set_ylabel("first room right (%)", fontweight=style["weight"])
-    # ONE footnote, not four floating notes. Answering the reviewer's questions separately put
-    # three grey sentences on top of each other at the foot of the plot.
-    band = "band is 1 SE across them; " if style["band"] else ""
-    fig.text(0.135, 0.012,
-             f"first room right: the object was in the first of up to three rooms opened. Mean "
-             f"over 3 households; {band}a fall is\nmeasured from that line's own mean over the "
-             f"four days before. A zero is real, not a missing day.",
-             ha="left", va="bottom", fontsize=6.0, color=MUTED, linespacing=1.35)
+    ax.set_ylabel("First Room Right (%)", fontweight=style["weight"])
     ax.grid(axis="x", visible=False)
     if style["title"]:
-        ax.set_title("The same illness, twice", fontweight=style["weight"], pad=14)
+        ax.set_title("The Same Illness, Twice", fontweight=style["weight"], pad=14)
     handles = [plt.Line2D([], [], color=COLOUR[n], marker=MARKER[n], lw=1.6, ms=4.5,
                           markeredgecolor="white", markeredgewidth=0.5, label=n) for n in names]
     if style["legend"] == "inside":
         # ABOVE THE AXES, not inside: at lower right it sat on top of the days 40 to 49 data.
-        fig.subplots_adjust(left=0.115, right=0.985, top=0.82, bottom=0.20, hspace=0.12)
+        fig.subplots_adjust(left=0.115, right=0.985, top=0.80, bottom=0.115, hspace=0.12)
         leg = fig.legend(handles=handles, loc="upper center", ncol=len(names), fontsize=7.6,
                          frameon=False, handlelength=1.5, columnspacing=1.3,
                          bbox_to_anchor=(0.56, 0.995))
     else:
-        fig.subplots_adjust(left=0.115, right=0.985, top=0.86, bottom=0.345, hspace=0.12)
+        fig.subplots_adjust(left=0.115, right=0.985, top=0.84, bottom=0.27, hspace=0.12)
         leg = fig.legend(handles=handles, loc="upper center", ncol=len(names), fontsize=8,
                          frameon=False, handlelength=1.5, columnspacing=1.2,
                          bbox_to_anchor=(0.54, 0.185))
         for t in leg.get_texts():
             t.set_fontweight("bold")
-    out = OUT / style_name / "figure2_both_illnesses.pdf"
+    out = _place(style_name, "figure2_both_illnesses")
     fig.savefig(out)
     plt.close(fig)
     note(f"  wrote {out}   both-illness-mover questions a day: "
@@ -274,7 +276,7 @@ def figure_A1(style_name):
         curves[n] = (line, band)
         note(f"  figure A1 [{style_name}] {n:15s} days 10-13 "
              f"{statistics.mean(line[9:13]):5.1f}  day 14 {line[13]:5.1f}  day 24 {line[23]:5.1f}")
-    fig, ax = plt.subplots(figsize=(WIDTH_IN, 3.5))
+    fig, ax = plt.subplots(figsize=(WIDTH_IN, 3.1))
     draw_lines(ax, days, have, curves, style)
     ax.set_ylim(0, 132)
     ax.set_yticks([0, 25, 50, 75, 100])
@@ -300,23 +302,15 @@ def figure_A1(style_name):
                 color=INK, fontweight=style["weight"], linespacing=1.25,
                 arrowprops=dict(arrowstyle="-", color=MUTED, lw=0.7,
                                 connectionstyle="angle,angleA=0,angleB=90,rad=3"))
-    ax.set_ylabel("first room right (%)", fontweight=style["weight"])
-    ax.set_xlabel("day", fontweight=style["weight"])
+    ax.set_ylabel("First Room Right (%)", fontweight=style["weight"])
+    ax.set_xlabel("Day", fontweight=style["weight"])
     ax.grid(axis="x", visible=False)
     if style["title"]:
-        ax.set_title("Adapting inside the first illness", fontweight=style["weight"], pad=12)
+        ax.set_title("Adapting Inside the First Illness", fontweight=style["weight"], pad=12)
     handles = [plt.Line2D([], [], color=COLOUR[n], marker=MARKER[n], lw=1.6, ms=4.5,
                           markeredgecolor="white", markeredgewidth=0.5, label=n) for n in have]
-    band = "band is 1 SE across them; " if style["band"] else ""
-    fig.text(0.115, 0.012,
-             f"first room right: the object was in the first of up to three rooms opened, on the "
-             f"objects the illness moves.\nMean over 10 households; {band}\u201creduced ACE\u201d "
-             f"and \u201ctight working memory\u201d are this run\u2019s\nconstrained versions of "
-             f"the designs Figure 2 runs as published.",
-             ha="left", va="bottom", fontsize=6.0, color=MUTED, linespacing=1.35)
     # ABOVE THE AXES: at lower right it covered the lower part of the tight-working-memory line.
-    fig.subplots_adjust(left=0.115, right=0.985, top=0.80 if not style["title"] else 0.76,
-                        bottom=0.255)
+    fig.subplots_adjust(left=0.115, right=0.985, top=0.76, bottom=0.135)
     # three across, not five: five entries in one row is wider than a 396 pt canvas
     leg = fig.legend(handles=handles, loc="upper center", ncol=3, fontsize=7.4,
                      frameon=False, handlelength=1.4, columnspacing=1.4,
@@ -324,7 +318,7 @@ def figure_A1(style_name):
     if style["legend"] != "inside":
         for txt in leg.get_texts():
             txt.set_fontweight("bold")
-    out = OUT / style_name / "figureA1_first_illness.pdf"
+    out = _place(style_name, "figureA1_first_illness")
     fig.savefig(out)
     plt.close(fig)
     note(f"  wrote {out}")
@@ -357,7 +351,7 @@ def figure_3(style_name):
     for label, q in (("night 13", night13), ("night 14", night14), ("night 14 glass", glass)):
         note(f"  figure 3 [{style_name}] {label} quote: {q!r}")
 
-    fig = plt.figure(figsize=(WIDTH_IN, 3.95))
+    fig = plt.figure(figsize=(WIDTH_IN, 3.7))
     gs = fig.add_gridspec(1, 3, width_ratios=[1, 1, 1], wspace=0.42)
     # ONE COLOUR. Orange for the note under test and grey for the other said nothing a reader
     # could decode - they are both the same memory's notes - so both cards are the method's colour
@@ -427,16 +421,14 @@ def figure_3(style_name):
     ax.text(0.5, bottom - 0.045, "and, the same night:", ha="center", va="center",
             fontsize=6.9, color=grey, fontweight=style["weight"])
 
-    fig.text(0.5, 0.965, "log and notes, told one sentence on night 13 and asked what would "
-             "change \u00b7 one household", ha="center", va="top", fontsize=7.0, color=MUTED)
-    fig.subplots_adjust(left=0.025, right=0.975, top=0.78, bottom=0.085)
+    fig.subplots_adjust(left=0.025, right=0.975, top=0.83, bottom=0.085)
     # the arrows: thick, dark, and clear of the panels
     for x in (0.345, 0.663):
         fig.add_artist(matplotlib.patches.FancyArrowPatch(
             (x, 0.40), (x + 0.028, 0.40), transform=fig.transFigure,
             arrowstyle="-|>,head_width=3.2,head_length=4.5", mutation_scale=2.2,
             color="#4a4a48", lw=2.2))
-    out = OUT / style_name / "figure3_told_the_cause.pdf"
+    out = _place(style_name, "figure3_told_the_cause")
     fig.savefig(out)
     plt.close(fig)
     note(f"  wrote {out}")
@@ -486,7 +478,7 @@ def figure_A2(style_name):
     ax.set_xticks(xs)
     ax.set_xticklabels(["claim\nstore", "log and\nnotes", "reduced\nACE", "tight\nmemory"],
                        fontsize=6.8)
-    ax.set_ylabel("live notes (count)", fontweight=style["weight"])
+    ax.set_ylabel("Live Notes (count)", fontweight=style["weight"])
     ax.set_ylim(0, max(bottoms) * 1.55)
     ax.grid(axis="x", visible=False)
     # NOT a fifth bar on the method axis: it is a fact about all four, so it is written as one.
@@ -517,20 +509,17 @@ def figure_A2(style_name):
     bx.set_yticklabels([f"{h:02d}:00" for h in (6, 9, 12, 15, 18, 21, 24)], fontsize=7)
     bx.set_xlim(min(nights) - 0.5, max(nights) + 0.5)
     bx.set_xticks([13, 15, 17, 19, 21])
-    bx.set_xlabel("night", fontweight=style["weight"])
-    bx.set_ylabel("the hour the note says\n\u2018evening\u2019 begins", fontweight=style["weight"],
+    bx.set_xlabel("Night", fontweight=style["weight"])
+    bx.set_ylabel("The Hour the Note Says\n\u2018Evening\u2019 Begins", fontweight=style["weight"],
                   fontsize=7.4, linespacing=1.3)
     bx.grid(axis="x", visible=False)
     bx.set_title("(b)  one ACE-style note, one household:\nwhen it says \u2018evening\u2019 begins",
                  fontsize=7.4, fontweight=style["weight"], pad=5, linespacing=1.3)
     # the shaded band spanned the whole panel, so it marked nothing. It is a sentence now.
-    bx.annotate("Tomas was in the house every hour\nof every one of these days",
-                xy=(min(nights) - 0.3, 23.5), ha="left", va="top", fontsize=6.4, color=MUTED,
-                linespacing=1.3)
     note(f"  figure A2 [{style_name}] (b) threshold by night: "
          + ", ".join(f"n{n} {int(h):02d}:{int(round((h % 1) * 60)):02d}" for n, h in thresh))
     fig.subplots_adjust(left=0.105, right=0.985, top=0.79, bottom=0.135)
-    out = OUT / style_name / "figureA2_what_the_notes_held.pdf"
+    out = _place(style_name, "figureA2_what_the_notes_held")
     fig.savefig(out)
     plt.close(fig)
     note(f"  wrote {out}")
