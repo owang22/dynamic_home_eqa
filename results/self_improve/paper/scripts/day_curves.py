@@ -111,6 +111,32 @@ def main() -> int:
           (42, 49, "normal")], (0, 105),
          note=None)
 
+    # --- the mode memory against the trail and our arm, ten households, moved objects
+    saved = pathlib.Path("results/self_improve/paper/household_mode")
+
+    def mode_curve(run, homes, days, objects_of):
+        got = {d: 0 for d in days}
+        tot = {d: 0 for d in days}
+        for home in homes:
+            rows = json.loads((saved / f"{run}~{home}~a1.0~s0.9.json").read_text())["rows"]
+            keep = objects_of(home)
+            for r in rows:
+                if r["day"] in tot and r["object_id"] in keep:
+                    tot[r["day"]] += 1
+                    got[r["day"]] += r.get("found_at_step") == 1
+        return [100 * got[d] / tot[d] if tot[d] else float("nan") for d in days]
+
+    series = []
+    for arm, label in (("last_seen_no_model", "LastSeen"),
+                       ("the_log_and_notes_about_the_routine", "log and notes")):
+        values, _ = pooled(cells, arm, D.HOMES_10, days, movers)
+        series.append((label, values))
+    series.append(("household mode",
+                   mode_curve("ten_homes_8_a_day", D.HOMES_10, days, movers)))
+    draw("household_mode.pdf", "A mode memory, no language model", series, days,
+         [(1, 13, "normal"), (14, 23, "sick"), (24, 31, "normal")], (20, 100), note=None,
+         width=0.70)
+
     # --- the chooser, two lines, one panel
     days31 = list(range(1, 32))
     series = []

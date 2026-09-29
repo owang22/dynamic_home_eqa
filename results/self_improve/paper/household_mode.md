@@ -60,6 +60,15 @@ cannot detect a regime change that touches a minority of objects, however surpri
 are individually. A model that could would have to assign per object, or weight by surprise, or
 score the day against what it predicted rather than against everything it saw.
 
+## The figure
+
+`figures/household_mode.pdf` - first-guess accuracy by day on the ten households, moved objects
+only, against LastSeen and our arm. Caption material: the mode memory sits 15 to 20 points below
+both through the settled fortnight, falls to 20% on the first day of the illness, and then **stays
+between 28 and 40 for the whole spell** while both others climb back above 80 within three days.
+It is the only one of the three that never recovers inside the illness, which is what having a
+single month-long average looks like from the outside.
+
 ## What it scores, given one mode
 
 With one mode the memory is a per-object room-frequency table averaged over the whole month. That

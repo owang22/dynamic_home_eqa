@@ -36,7 +36,8 @@ SIZES = {"font.size": 8.5, "axes.titlesize": 9, "axes.labelsize": 8.5,
 # orange-with-a-circle is our arm in Figure 2 must not have to relearn it in Figure 4.
 MARKER = {"LastSeen": "o", "log and notes": "s", "claim store": "^", "ACE": "D",
           "reduced ACE": "v", "small working memory": "P", "notes hidden": "X",
-          "household mode": "*", "room first": "o", "reason first": "s"}
+          # a star reads as a broken line at 4 pt, so the mode memory gets a hexagon
+          "household mode": "h", "room first": "o", "reason first": "s"}
 
 COLOUR = {"LastSeen": "#0072B2",
           "log and notes": "#D55E00",
@@ -45,7 +46,8 @@ COLOUR = {"LastSeen": "#0072B2",
           "reduced ACE": "#E69F00",
           "small working memory": "#56B4E9",
           "notes hidden": "#CC79A7",
-          "household mode": "#117733",
+          "household mode": "#882255",   # NOT a green: #117733 failed CVD separation against
+          # the vermilion of "log and notes" at dE 3.4 for protanopia - the classic red-green pair.
           "room first": "#6b6b68", "reason first": "#D55E00"}
 
 ILLNESS_SHADE = "#e8e8e6"        # light grey, the same for every illness spell
