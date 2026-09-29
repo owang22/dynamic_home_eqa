@@ -1,96 +1,77 @@
-# The four figures: what each one draws, and what to write under it
+# The figures, in two versions, and every number drawn
 
-`PYTHONPATH=src python3 results/self_improve/paper/scripts/make_figures.py`, which prints every
-number it drew. Style, colours and the text width are in `scripts/figure_style.py`.
+Built 2026-09-28. Two complete sets, because the written specification and the guidance given
+verbally disagree on four points and neither is a subset of the other:
 
-## Before these go in the document
+| | `figures/spec/` | `figures/oliver/` |
+|---|---|---|
+| lines on one axis | four or five | two, at most three |
+| uncertainty | ±1 SE band behind each line | none |
+| text | regular weight, no title | bold throughout, with a title |
+| legend | inside the plot | below it, one entry a row |
 
-**The width is a guess.** `corl_2026.sty` is not in this repository and not anywhere under the
-home directory, so the text width could not be read from it. Every figure is drawn on a canvas
-**5.5 in (396 pt) wide** and is **not cropped to its content**, so all four are exactly the same
-width and the type is exactly 8 to 9 pt — but only if 5.5 in is right. Put `\showthe\textwidth` in
-the draft and re-run:
+They agree on the rest: first-room-right on y labelled in words, day on x, the illness shaded with
+"sick" over the band, one fixed colour per method, 396 pt canvas, vector PDF.
 
-    CORL_TEXTWIDTH_IN=<inches> PYTHONPATH=src python3 results/self_improve/paper/scripts/make_figures.py
+    PYTHONPATH=src python3 results/self_improve/paper/scripts/paper_figures.py
 
-Include them with `\includegraphics{...}` and **no width argument**. A `width=\textwidth` would
-rescale and change the type size.
+Every number below is printed by that script into `figures/NUMBERS_DRAWN.txt` as it draws.
 
-**The colours were checked, not chosen by eye**, with the dataviz validator: the four methods that
-share an axis (LastSeen `#0072B2`, log and notes `#D55E00`, claim store `#009E73`, ACE `#785EF0`)
-pass every check including the strict all-pairs test with no warning. The full seven-method set
-passes as an ordered legend. Every line is also labelled directly, so nothing is told apart by hue
-alone.
+## Done
 
-## Figure 1, `overview.pdf` — the schematic
+**Figure 2, both illnesses** — `figure2_both_illnesses.pdf`. 50-day run, three households, first
+room right on the 14 both-illness movers, averaged over households, by day, with a strip of
+questions-per-day underneath (12 to 29 a day).
 
-The calendar with both illnesses shaded alike; one mug's share of the day per room under normal
-life and under the illness, showing the weight moving rather than the object teleporting; and the
-five-step loop, with the return leg drawn below the row and labelled "every day for a month". The
-illness is marked as hidden from the robot in the line above the calendar. No data.
+| method | days 10-13 | day 14 | fall | days 28-31 | day 32 | fall |
+|---|---|---|---|---|---|---|
+| LastSeen | 79.3 | **20.5** | 58.8 | 84.8 | **53.4** | 31.4 |
+| log and notes | 84.6 | 27.4 | 57.3 | 84.9 | 55.7 | 29.2 |
+| claim store | 57.6 | 6.4 | 51.3 | 60.6 | 12.8 | 47.8 |
+| ACE-style | 61.7 | 8.6 | 53.1 | 67.7 | 12.8 | 54.9 |
 
-## Figure 2, `recurrence_first_day.pdf` — main text
+Per household, LastSeen: day 14 10 / 33 / 18, day 32 56 / 50 / 55.
 
-Found within 3 rooms on the 14 **both-spell movers**, day 14 against day 32, one panel per method,
-one line per household, the question count printed at each end.
+**Figure A1, the first illness** — `figureA1_first_illness.pdf`. Ten-household run, moved objects,
+days 1 to 31.
 
-| method | hh_s2 | hh_s32 | hh_s48 | mean change | 2 SE |
-|---|---|---|---|---|---|
-| LastSeen | 10 → 78 | 33 → 100 | 27 → 64 | **+56.9** | 20.6 |
-| log and notes | 40 → 78 | 50 → 100 | 82 → 82 | +29.3 | 30.1 |
-| claim store | 20 → 33 | 50 → 25 | 73 → 36 | −16.0 | 30.1 |
-| ACE | 10 → 44 | 83 → 25 | 91 → 45 | −23.1 | 58.0 |
+| method | days 10-13 | day 14 | day 24 |
+|---|---|---|---|
+| LastSeen | 81.6 | 33.5 | 42.2 |
+| log and notes | 85.3 | 34.0 | 63.5 |
+| claim store | 68.2 | 36.0 | 31.3 |
+| reduced ACE | 69.1 | 31.5 | 24.4 |
+| tight working memory | 63.8 | 36.8 | 39.1 |
 
-Two things the caption has to say. **The day-32 column rests on 4 to 11 questions per household**
-(hh_s32 has 4, below this project's own eight-per-window minimum), which is why the 2 SE runs from
-21 to 58 points. And these are the objects that move in **both** illnesses — the spell-1 mover set
-would put 8 objects in here that the second illness leaves where they normally are, and flatter
-every method's day-32 column.
+## Three places the specification and the data disagree
 
-The draft's Table 2 quotes LastSeen +45.1 (2 SE 14.6) and log and notes +21.1 (2 SE 20.1) on the
-spell-1 set; on the both-spell set they are +56.9 (20.6) and +29.3 (30.1). Report whichever set the
-paper defines, and say which.
+**1. The day-32 annotation was not true as written.** It asked for "second illness: only
+summary-only memories drop". Measured against each line's own days-28-to-31 level, the trail falls
+31.4 points on day 32 and our notes 29.2 — not "barely". What is true is that they fall about half
+as far as the summary-only memories (47.8 and 54.9), whereas on day 14 all four fell within eight
+points of each other. The figures carry the true version, computed from the lines actually drawn so
+the three-line and four-line versions cannot disagree with each other.
 
-## Figure 3, `recurrence_timeline.pdf` — appendix
+**2. Figure A1 cannot show ACE-style or MemGPT-style, because the ten-household run has neither.**
+Its ACE-shaped arm is `claim_store_told_if_it_was_right`, the constrained version, and its
+MemGPT-shaped arm is `a_small_working_memory_and_an_archive`, which ran on a **1,200-character**
+block — a sixteenth of MemGPT's own smallest, which `memory_notes.py:196-200` says must be called
+the tight variant and never MemGPT. They are drawn under the names **reduced ACE** and **tight
+working memory**, keeping the published methods' colours because they are those methods' cousins.
+The published pair exist only at 24 questions a day on three households.
 
-The same measure every day, averaged over the three households with a ±1 SE band, both spells
-shaded, days 14 and 32 marked, and a strip underneath with the number of both-spell-mover questions
-each day (12 to 29 across the three homes).
+**3. The expected day-14 range was 29-37%; it is 31.5-36.8%.** Close, and the claim is unaffected.
 
-| method | settled | day 14 | spell 1 | day 32 | spell 2 |
-|---|---|---|---|---|---|
-| LastSeen | 98 | **24** | 71 | **80** | 83 |
-| log and notes | 95 | 57 | 95 | 87 | 99 |
-| claim store | 77 | 48 | 87 | **32** | 90 |
-| ACE | 76 | 61 | 94 | **38** | 90 |
+## Still to build
 
-The shape worth pointing at: LastSeen falls furthest on day 14 (98 → 24) and barely falls the
-second time (80), while the two written memories fall **further** on day 32 than on day 14. A trail
-gets the repeat for free; a memory that has been rewritten across the recovery does not.
+Figure 1 (the schematic), Figure 3 (the three-panel comic strip) and Figure A2 (the night-31 notes
+and the sliding threshold). Figure 3's two blocking questions are in
+`FIGURE_CHECKS_BEFORE_DRAWING.md` and are still open: which denominator the "86% predicted" panel
+means, and whether Table 2's day-32 value of 54 or the measured 53.4 is right.
 
-## Figure 4, `first_illness_adaptation.pdf` — appendix
+## The palette, as validated
 
-First room right on spell-1 movers, ten-household run, days 1 to 31, one panel per method with the
-other five behind it in grey, ±1 SE across households, days 14 to 23 shaded.
-
-Six lines on one axis would not have been legible: seven method colours cannot all clear the
-validator's normal-vision floor at once, and the rule for that case is to facet rather than cycle
-hues. Identity here is colour **and** position.
-
-| method | days 8-13 | day 14 | day 17 | day 24 |
-|---|---|---|---|---|
-| log and notes | 83 | 34 | 78 | 64 |
-| LastSeen | 79 | 34 | 60 | 42 |
-| claim store | 64 | 36 | 69 | 31 |
-| reduced ACE | 65 | 32 | 73 | 24 |
-| small working memory | 63 | 37 | 53 | 39 |
-| notes hidden | 31 | 31 | 33 | 21 |
-
-Caption material: every method that writes anything falls to about a third on day 14 and climbs
-back inside the spell; the arm with no notes at search time is flat at about 31 throughout, which
-is what the fall is measured against; and the second dip at day 24 — the day ordinary life returns —
-is deepest for the memories that had adapted most.
-
-**This figure is the honest version of the "recovery by day 17" numbers**, which cannot be quoted:
-day 17 carries 2 to 5 mover questions per household, and the draft's 91% against 58% recomputes as
-100% (2 SE 23) against 80% (2 SE 31). See `numbers_check.md` §4.
+`#0072B2` LastSeen, `#D55E00` log and notes, `#009E73` claim store, `#785EF0` ACE-style and reduced
+ACE, `#882255` MemGPT-style and tight working memory, `#BBBBBB` notes hidden. Grey-green and brown,
+which the specification suggests, both fail the colour-blindness checker — see
+`FIGURE_CHECKS_BEFORE_DRAWING.md`.
