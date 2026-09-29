@@ -2,7 +2,7 @@
 
 One household, the *log and notes* memory, told a single sentence on the night before the
 illness begins and asked to write down what will change. **Night 13**: the note it wrote, before it
-had seen anything. **Day 14**: all eleven questions asked about that resident's moved objects, and
+had seen anything. **Day 14**: eleven questions asked about that resident's moved objects, and
 where the answers actually were - every one in a room the note had named, none in the office, the
 room the note ruled out. **Night 14**: the same memory's next update, beside the other note it
 revised on the same night. Both quotes are verbatim; the ellipsis marks one omitted sentence.
