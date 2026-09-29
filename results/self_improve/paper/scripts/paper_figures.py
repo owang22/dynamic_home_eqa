@@ -171,7 +171,13 @@ def draw_lines(ax, days, names, curves, style):
 
 
 def figure_2(style_name):
-    """Both illnesses, day by day, on the objects that move in both."""
+    """Both illnesses, day by day, on the objects that move in both.
+
+    NO QUESTIONS-A-DAY STRIP. It cluttered the figure to carry a fact that belongs in a sentence,
+    and the figure is about how fast each memory comes back, not about the sample behind each point.
+    The annotations say that: three days after each illness begins, where each of the two leading
+    lines has got back to.
+    """
     style = dict(STYLES[style_name])
     apply(style)
     names = ["LastSeen", "log and notes", "claim store", "ACE-style"]
@@ -183,151 +189,53 @@ def figure_2(style_name):
         line, band, counts, per = by_day(D.WAVE_50, ARM_DIR[n], D.HOMES_50, days,
                                          D.both_spell_movers)
         curves[n] = (line, band)
-        note(f"  figure 2 [{style_name}] {n:15s} day 14 {line[13]:5.1f}  day 32 {line[31]:5.1f}"
-             f"  (per home day 14 "
-             + "/".join(f"{per[h][14]:.0f}" for h in D.HOMES_50) + ", day 32 "
-             + "/".join(f"{per[h][32]:.0f}" for h in D.HOMES_50) + ")")
-    style["_legend_y"] = 0.235
-    height = 3.3 if style_name == "spec" else 3.5
-    fig, (ax, strip) = plt.subplots(2, 1, figsize=(WIDTH_IN, height), sharex=True,
-                                    gridspec_kw={"height_ratios": [5, 1]})
+        note(f"  figure 2 [{style_name}] {n:15s} day 14 {line[13]:5.1f}  days 15-17 "
+             f"{statistics.mean(line[14:17]):5.1f}  day 32 {line[31]:5.1f}  days 33-35 "
+             f"{statistics.mean(line[32:35]):5.1f}")
+    height = 3.1 if style_name == "spec" else 3.3
+    fig, ax = plt.subplots(figsize=(WIDTH_IN, height))
     draw_lines(ax, days, names, curves, style)
     shade_sick(ax, [(14, 23), (32, 41)], style, top=100)
-    for first, last in ((14, 23), (32, 41)):
-        strip.axvspan(first - 0.5, last + 0.5, color=SHADE, lw=0, zorder=0)
-    # THE SPECIFIED WORDING IS NOT WHAT THE DATA SAYS. It asks for "second illness: only
-    # summary-only memories drop", but measured against each line's own level on days 28-31 the
-    # trail falls 31.4 points on day 32 and our notes 29.2 - not "barely". What is true is that
-    # they fall about HALF as far as the summary-only memories, which fall 47.8 and 54.9, whereas
-    # on day 14 all four fell within eight points of each other. The numbers are in FIGURES.md.
-    # The axis is LABELLED 0 to 100 and drawn to 122, because the specification asks for these two
-    # notes "in the empty space above the lines" and there is none - the lines reach 100. The
-    # headroom is the empty space; the ticks stop at 100 so the scale still reads 0 to 100.
-    # THE WORDING IS COMPUTED FROM THE LINES ACTUALLY DRAWN, because the two styles draw a
-    # different number of them and a fixed "all four" was wrong in the three-line version.
-    falls = {n: (statistics.mean(curves[n][0][9:13]) - curves[n][0][13],
-                 statistics.mean(curves[n][0][27:31]) - curves[n][0][31]) for n in names}
-    first = [f for f, _ in falls.values()]
-    raw = [falls[n][1] for n in names if n in ("LastSeen", "log and notes")]
-    rest = [falls[n][1] for n in names if n not in ("LastSeen", "log and notes")]
-    # THE ANNOTATIONS NAME THE LINES THE LEGEND NAMES. They used to say "the trail and our notes",
-    # a second naming scheme that appears nowhere else, so a reader could not tell which lines the
-    # headline number was about - which is the one thing this figure exists to deliver. They also
-    # state the estimator, because "falls 51-59 points" could not be checked against the plot
-    # without knowing it is measured from each line's own mean over the four days before.
-    raw_names = [n for n in names if n in ("LastSeen", "log and notes")]
-    rest_names = [n for n in names if n not in ("LastSeen", "log and notes")]
-    ax.annotate(f"day 14: all {len(names)} fall\n{min(first):.0f}-{max(first):.0f} points",
-                xy=(14.4, 138), ha="left", va="top", bbox=BOX,
-                fontsize=7.0, color=INK, fontweight=style["weight"], linespacing=1.2)
-    # right-aligned at the axis edge: left-aligned from day 31 it ran off the canvas, and the
-    # canvas is fixed so it was simply cut.
-    ax.annotate(f"day 32: {', '.join(raw_names)} fall {min(raw):.0f}-{max(raw):.0f};\n"
-                f"{', '.join(rest_names)} fall {min(rest):.0f}-{max(rest):.0f}",
-                xy=(49.2, 138), ha="right", va="top", fontsize=7.0, color=INK, bbox=BOX,
-                fontweight=style["weight"], linespacing=1.2)
-    strip.bar(days, [counts[d] for d in days], color="#9a9a96", width=0.8, lw=0)
-    strip.set_ylabel("Questions\na Day", fontsize=6.6, fontweight=style["weight"],
-                     linespacing=1.2)
-    # two ticks with numbers: without them a reader cannot tell whether these bars are 10 or 30
-    strip.set_yticks([0, max(counts.values())])
-    strip.set_yticklabels(["0", str(max(counts.values()))], fontsize=6.4)
-    strip.grid(False)
-    strip.set_xlabel("Day", fontweight=style["weight"])
     ax.set_ylim(0, 140)
     ax.set_yticks([0, 25, 50, 75, 100])
     ax.set_xlim(0.5, 49.5)
-    strip.set_xticks([1, 14, 24, 32, 42, 49])
+    ax.set_xticks([1, 14, 24, 32, 42, 49])
     ax.set_ylabel("First Room Right (%)", fontweight=style["weight"])
+    ax.set_xlabel("Day", fontweight=style["weight"])
     ax.grid(axis="x", visible=False)
+
+    def three_days_after(start_day):
+        return {n: statistics.mean(curves[n][0][start_day:start_day + 3]) for n in names}
+
+    for start_day, x, ha in ((14, 14.6, "left"), (32, 32.6, "left")):
+        after = three_days_after(start_day)
+        ours, rule = after["log and notes"], after["LastSeen"]
+        ax.annotate(f"three days in:\nlog and notes {ours:.0f}%\nLastSeen {rule:.0f}%",
+                    xy=(x, 138), ha=ha, va="top", fontsize=7.0, color=INK, bbox=BOX,
+                    fontweight=style["weight"], linespacing=1.25)
+        note(f"  figure 2 [{style_name}] three days after day {start_day}: "
+             + ", ".join(f"{n} {v:.1f}" for n, v in after.items()))
     if style["title"]:
         ax.set_title("The Same Illness, Twice", fontweight=style["weight"], pad=14)
     handles = [plt.Line2D([], [], color=COLOUR[n], marker=MARKER[n], lw=1.6, ms=4.5,
                           markeredgecolor="white", markeredgewidth=0.5, label=n) for n in names]
     if style["legend"] == "inside":
-        # ABOVE THE AXES, not inside: at lower right it sat on top of the days 40 to 49 data.
-        fig.subplots_adjust(left=0.115, right=0.985, top=0.80, bottom=0.115, hspace=0.12)
-        leg = fig.legend(handles=handles, loc="upper center", ncol=len(names), fontsize=7.6,
-                         frameon=False, handlelength=1.5, columnspacing=1.3,
-                         bbox_to_anchor=(0.56, 0.995))
+        ax.legend(handles=handles, loc="lower right", fontsize=7.4, handlelength=1.5,
+                  labelspacing=0.26, borderpad=0.4, facecolor="white", framealpha=0.9,
+                  frameon=True, edgecolor="#d8d8d4")
+        fig.subplots_adjust(left=0.115, right=0.985, top=0.855, bottom=0.125)
     else:
-        fig.subplots_adjust(left=0.115, right=0.985, top=0.84, bottom=0.27, hspace=0.12)
+        fig.subplots_adjust(left=0.115, right=0.985, top=0.855, bottom=0.30)
         leg = fig.legend(handles=handles, loc="upper center", ncol=len(names), fontsize=8,
                          frameon=False, handlelength=1.5, columnspacing=1.2,
-                         bbox_to_anchor=(0.54, 0.185))
-        for t in leg.get_texts():
-            t.set_fontweight("bold")
+                         bbox_to_anchor=(0.56, 0.20))
+        for txt in leg.get_texts():
+            txt.set_fontweight("bold")
     out = _place(style_name, "figure2_both_illnesses")
     fig.savefig(out)
     plt.close(fig)
     note(f"  wrote {out}   both-illness-mover questions a day: "
          f"{min(counts.values())} to {max(counts.values())}")
-
-
-def figure_A1(style_name):
-    """The first illness on the ten households, five methods."""
-    style = dict(STYLES[style_name])
-    apply(style)
-    names = ["LastSeen", "log and notes", "claim store", "reduced ACE", "tight working memory"]
-    cells = "results/self_improve/overnight_wave/cells"
-    banks = pathlib.Path("results/self_improve/varied_homes/ten_homes/banks")
-    movers = lambda h: sd.the_movers(FrozenHousehold(banks / f"{h}.jsonl"))
-    have = [n for n in names if (pathlib.Path(cells) / ARM_DIR[n]).exists()]
-    if style["lines"] == 3:
-        have = [n for n in have if n in ("LastSeen", "log and notes", "reduced ACE")]
-    days = list(range(1, 32))
-    curves = {}
-    for n in have:
-        line, band, counts, per = by_day(cells, ARM_DIR[n], D.HOMES_10, days, movers)
-        curves[n] = (line, band)
-        note(f"  figure A1 [{style_name}] {n:15s} days 10-13 "
-             f"{statistics.mean(line[9:13]):5.1f}  day 14 {line[13]:5.1f}  day 24 {line[23]:5.1f}")
-    fig, ax = plt.subplots(figsize=(WIDTH_IN, 3.1))
-    draw_lines(ax, days, have, curves, style)
-    ax.set_ylim(0, 132)
-    ax.set_yticks([0, 25, 50, 75, 100])
-    ax.set_xlim(0.5, 31.5)
-    ax.set_xticks([1, 5, 10, 14, 20, 24, 31])
-    shade_sick(ax, [(14, 23)], style, top=100)
-    lo = min(curves[n][0][13] for n in have)
-    hi = max(curves[n][0][13] for n in have)
-    # A LEADER LINE, because the reader could not tell which dip the number described and read
-    # 30-42% off the axis for it.
-    # one annotation to the LEFT of its dip and one to the RIGHT of its own, because side by side
-    # above the middle they overlapped each other and ran off the canvas
-    ax.annotate(f"day 14: all methods\nfall to {lo:.0f}-{hi:.0f}%",
-                xy=(14, hi + 2), xytext=(1.2, 130), ha="left", va="top", fontsize=7.2,
-                color=INK, fontweight=style["weight"], bbox=BOX,
-                arrowprops=dict(arrowstyle="-", color=MUTED, lw=0.7,
-                                connectionstyle="angle,angleA=0,angleB=90,rad=3"))
-    # the second dip, which the reader noticed was nearly as deep and went unmentioned
-    d24lo = min(curves[n][0][23] for n in have)
-    d24hi = max(curves[n][0][23] for n in have)
-    ax.annotate(f"day 24, back to normal:\nthey fall again, to {d24lo:.0f}-{d24hi:.0f}%",
-                xy=(24, d24hi + 2), xytext=(31.2, 130), ha="right", va="top", fontsize=7.2,
-                color=INK, fontweight=style["weight"], linespacing=1.25, bbox=BOX,
-                arrowprops=dict(arrowstyle="-", color=MUTED, lw=0.7,
-                                connectionstyle="angle,angleA=0,angleB=90,rad=3"))
-    ax.set_ylabel("First Room Right (%)", fontweight=style["weight"])
-    ax.set_xlabel("Day", fontweight=style["weight"])
-    ax.grid(axis="x", visible=False)
-    if style["title"]:
-        ax.set_title("Adapting Inside the First Illness", fontweight=style["weight"], pad=12)
-    handles = [plt.Line2D([], [], color=COLOUR[n], marker=MARKER[n], lw=1.6, ms=4.5,
-                          markeredgecolor="white", markeredgewidth=0.5, label=n) for n in have]
-    # ABOVE THE AXES: at lower right it covered the lower part of the tight-working-memory line.
-    fig.subplots_adjust(left=0.115, right=0.985, top=0.76, bottom=0.135)
-    # three across, not five: five entries in one row is wider than a 396 pt canvas
-    leg = fig.legend(handles=handles, loc="upper center", ncol=3, fontsize=7.4,
-                     frameon=False, handlelength=1.4, columnspacing=1.4,
-                     bbox_to_anchor=(0.56, 1.0))
-    if style["legend"] != "inside":
-        for txt in leg.get_texts():
-            txt.set_fontweight("bold")
-    out = _place(style_name, "figureA1_first_illness")
-    fig.savefig(out)
-    plt.close(fig)
-    note(f"  wrote {out}")
 
 
 def figure_3(style_name):

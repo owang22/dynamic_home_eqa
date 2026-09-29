@@ -1,22 +1,32 @@
 # Figure 2. The same illness, twice.
 
-First room right by day on the fourteen objects whose usual room changes in **both**
-illnesses, over the fifty-day run. *First room right* is the share of questions where the object was in the first of the up to three rooms the robot opened. Each line is the mean of three households; the band
-behind it is one standard error across them. The strip beneath counts the questions those fourteen
-objects carried each day, 12 to 29. Shaded spans are the two illnesses, days 14 to 23 and 32 to 41.
+**Every memory collapses on the day a change begins. They separate on how fast they come
+back.** Three days into the first illness the memory that keeps both a log and a summary is at 88%,
+the trail at 62% and the plain claim store at 61%. The same gap opens at the other two changes:
+three days after ordinary life returns it is at 85% against the trail's 78%, and three days into
+the second illness at 91% against 81%.
 
-A fall is measured from that line's own mean over the four days before the illness starts, which is
-what the two annotations report. Zeros are real: on the days the lines touch zero, every question
-was answered with the wrong first room, not lost.
+**The advantage is not in guessing the new room.** On the questions where neither memory has yet
+seen an object in the place it now occupies, the two are exactly level - 15.9% each. Neither can
+predict where the illness put things.
 
-Method names are as in the text. Objects are counted as moving in both illnesses because the mover
-set is otherwise fixed from the first illness alone, and eight of its twenty-two objects do not
-move the second time.
+**It is in what happens after the first guess fails.** On day 14 both guess the first room about
+equally, 27% against 21%; but given its three rooms the log-and-summary memory *finds* the object
+57% of the time against the trail's 24%. When its first guess is wrong it reasons about where else
+the thing could be, while the trail walks back through the rooms that object used to be in. One
+day of that is decisive: by days 15 to 17 it has already seen the moved objects in their new places
+on 95% of questions, where the trail has on 59%.
+
+Seeing is necessary and not sufficient - the claim store reaches the same 96% exposure and still
+answers 62%, because it has rewritten the sightings into summaries it cannot re-read.
+
+Three households, the fourteen objects that move in both illnesses.
 
 ## The claim this figure is here to make
 
-On the first illness all four memories fall together, by 51 to 59 points. On the second they
-do not: the trail and the memory that reads the raw log fall about half as far as the two that keep
-only summaries, and the summary-only memories fall as far the second time as the first. Repeating a
-condition helps the memories that kept the observations and does not help the memories that
-rewrote them away.
+The value of a language model here is not prediction and not steady-state accuracy, where the
+trail matches it. It is recovery from a wrong guess: with three looks and a readable record, a
+wrong first room becomes a found object the same day, and a found object becomes a right first
+guess for the rest of the week. That compounding is what "faster adaptation" means mechanically,
+and it is why the advantage grows when the robot gets fewer looks a day - every look has to
+count.
