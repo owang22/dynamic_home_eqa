@@ -288,3 +288,191 @@ def figure_A1(style_name):
     fig.savefig(out)
     plt.close(fig)
     note(f"  wrote {out}")
+
+
+def figure_3(style_name):
+    """Told the cause: the prediction, the day that confirmed it, the night that retracted it.
+
+    Every quote is read from the claim's own revision history at the night in question. The history
+    stores the text a revision REPLACED, under `was`, as a whole prior state - so the night-13
+    wording is the `was` of the first revision after night 13, not `statement`, which is what the
+    claim says on night 31.
+    """
+    style = dict(STYLES[style_name])
+    apply(style)
+    night13 = ("Tomas is unwell and staying home. Expect him in bedroom_1 or living room "
+               "during day/evening, not office. His laptop/mug/charger likely in bedroom_1 "
+               "or living, not office desk.")
+    night14 = ("Tomas works from the office during the day (seen 14:08)… The 'unwell' "
+               "hypothesis from Day 13 is not supported by Day 14 activity.")
+    glass = "Tomas's glass is on the bedroom nightstand during the day (seen 08:07-15:12)."
+    bedroom, living, office, total = 7, 4, 0, 11
+    note(f"  figure 3 [{style_name}] day 14, Tomas's moved objects: {total} questions, "
+         f"bedroom_1 {bedroom}, living {living}, office {office}")
+    note(f"  figure 3 [{style_name}] night 13 quote: {night13!r}")
+    note(f"  figure 3 [{style_name}] night 14 quote: {night14!r}")
+    note(f"  figure 3 [{style_name}] night 14 glass note (a night-13 claim revised): {glass!r}")
+
+    fig = plt.figure(figsize=(WIDTH_IN, 2.45))
+    gs = fig.add_gridspec(1, 3, width_ratios=[1.05, 0.92, 1.25], wspace=0.30)
+    ours = COLOUR["log and notes"]
+
+    def card(ax, text, x, y, w, h, colour, size=6.2, italic=True):
+        ax.add_patch(plt.Rectangle((x, y), w, h, facecolor="#fbfbfa", edgecolor=colour, lw=0.9))
+        ax.text(x + 0.045, y + h - 0.055, text, ha="left", va="top", fontsize=size,
+                color=INK, wrap=True, style="italic" if italic else "normal",
+                linespacing=1.45, transform=ax.transData)
+
+    # --- panel 1: the prediction
+    ax = fig.add_subplot(gs[0])
+    ax.set_axis_off()
+    ax.set_xlim(0, 1)
+    ax.set_ylim(0, 1)
+    ax.set_title("Night 13: told one sentence,\nwrites a prediction", fontsize=8,
+                 fontweight=style["weight"], pad=4, linespacing=1.3)
+    card(ax, _wrap(night13, 30), 0.02, 0.06, 0.96, 0.78, ours)
+
+    # --- panel 2: the day that confirmed it
+    ax = fig.add_subplot(gs[1])
+    ax.set_title("Day 14: the prediction is right", fontsize=8,
+                 fontweight=style["weight"], pad=4)
+    left = 0
+    for count, colour, label in ((bedroom + living, ours, "predicted rooms"),
+                                 (office, "#c0392b", "office"),
+                                 (total - bedroom - living - office, "#cfcfca", "other")):
+        if count == 0 and label != "office":
+            continue
+        ax.barh([0], [count], left=left, height=0.5, color=colour, lw=0)
+        if count:
+            ax.text(left + count / 2, 0, f"{count} of {total}\n{100*count/total:.0f}%",
+                    ha="center", va="center", fontsize=7, color="white",
+                    fontweight=style["weight"], linespacing=1.2)
+        left += count
+    ax.text(total, 0, "  office: 0", ha="left", va="center", fontsize=7, color="#c0392b",
+            fontweight=style["weight"])
+    ax.set_xlim(0, total * 1.42)
+    ax.set_ylim(-0.75, 0.75)
+    ax.set_yticks([])
+    ax.set_xticks([])
+    ax.grid(False)
+    for side in ("left", "bottom"):
+        ax.spines[side].set_visible(False)
+    ax.text(0, -0.52, f"bedroom_1 {bedroom} · living {living} · office {office}",
+            ha="left", va="center", fontsize=6.4, color=MUTED)
+
+    # --- panel 3: the retraction, beside the note written the same night
+    ax = fig.add_subplot(gs[2])
+    ax.set_axis_off()
+    ax.set_xlim(0, 1)
+    ax.set_ylim(0, 1)
+    ax.set_title("Night 14: the update retracts it", fontsize=8,
+                 fontweight=style["weight"], pad=4)
+    # WRAPPED TO THE CARD, NOT TO A GUESS. At 30 characters the two cards' text ran straight
+    # through each other and the panel was unreadable; the cards are half the width of panel 1's,
+    # so the wrap has to be too.
+    card(ax, _wrap(night14, 19), 0.01, 0.06, 0.47, 0.78, ours, size=5.8)
+    card(ax, _wrap(glass, 19), 0.52, 0.06, 0.47, 0.78, MUTED, size=5.8)
+    ax.text(0.755, 0.035, "revised the same night", ha="center", va="top", fontsize=5.9,
+            color=MUTED, fontweight=style["weight"])
+    ax.annotate("written the same night", xy=(0.5, 0.905), ha="center", va="bottom",
+                fontsize=6.4, color=INK, fontweight=style["weight"])
+    ax.plot([0.04, 0.96], [0.885, 0.885], color=MUTED, lw=0.6)
+    for x in (0.04, 0.96):
+        ax.plot([x, x], [0.858, 0.885], color=MUTED, lw=0.6)
+
+    fig.subplots_adjust(left=0.015, right=0.985, top=0.80, bottom=0.04)
+    # the arrows that make it a strip rather than three pictures
+    for x in (0.345, 0.635):
+        fig.add_artist(matplotlib.patches.FancyArrowPatch(
+            (x, 0.42), (x + 0.022, 0.42), transform=fig.transFigure,
+            arrowstyle="-|>", mutation_scale=8, color=MUTED, lw=0.9))
+    out = OUT / style_name / "figure3_told_the_cause.pdf"
+    fig.savefig(out)
+    plt.close(fig)
+    note(f"  wrote {out}")
+
+
+def _wrap(text, width):
+    import textwrap
+    return "\n".join(textwrap.wrap(text, width))
+
+
+def figure_A2(style_name):
+    """Night 31: what the notes held, and the hour "evening" slid to."""
+    style = dict(STYLES[style_name])
+    apply(style)
+    audit = json.load(open("results/self_improve/paper/night31_audit.json"))
+    thresh = json.load(open("results/self_improve/paper/evening_threshold.json"))
+    order = ["claim store", "log and notes", "reduced ACE", "tight working memory"]
+    conds = [("always", "#4a4a48"), ("a time of day", "#8a8a86"),
+             ("a person home or away", "#b9b9b4"), ("other", "#dcdcd8")]
+    fig, (ax, bx) = plt.subplots(1, 2, figsize=(WIDTH_IN, 2.5),
+                                 gridspec_kw={"width_ratios": [1.05, 1.0], "wspace": 0.32})
+    # --- left: the notes, by the condition attached
+    xs = list(range(len(order)))
+    bottoms = [0] * len(order)
+    for name, colour in conds:
+        vals = [audit["by_arm"][m].get(name, 0) for m in order]
+        ax.bar(xs, vals, bottom=bottoms, color=colour, width=0.62, lw=0, label=name)
+        bottoms = [b + v for b, v in zip(bottoms, vals)]
+    for x, total in zip(xs, bottoms):
+        ax.text(x, total + 5, str(total), ha="center", va="bottom", fontsize=7.5,
+                color=INK, fontweight=style["weight"])
+    ax.bar([len(order)], [0], color="none", edgecolor="#c0392b", lw=1.0, width=0.62)
+    ax.plot([len(order) - 0.31, len(order) + 0.31], [0, 0], color="#c0392b", lw=1.2)
+    ax.text(len(order), 5, "0", ha="center", va="bottom", fontsize=10, color="#c0392b",
+            fontweight="bold")
+    ax.set_xticks(xs + [len(order)])
+    # the full names collided at this width; these are the same methods, shortened, and the
+    # caption carries the full ones
+    ax.set_xticklabels(["claim\nstore", "log and\nnotes", "reduced\nACE", "tight\nmemory",
+                        "mentions\nillness"], fontsize=6.4)
+    ax.set_ylabel("live notes naming an object\nand one of its illness places",
+                  fontweight=style["weight"], fontsize=7.6)
+    ax.set_ylim(0, max(bottoms) * 1.22)
+    ax.grid(axis="x", visible=False)
+    leg = ax.legend(loc="upper right", fontsize=6.4, handlelength=1.0, labelspacing=0.22,
+                    borderpad=0.25, frameon=False, title="the condition attached")
+    leg.get_title().set_fontsize(6.4)
+    note(f"  figure A2 [{style_name}] totals " +
+         ", ".join(f"{m} {t}" for m, t in zip(order, bottoms)) +
+         f"; grand total {sum(bottoms)}; mentioning illness 0")
+    for name, _ in conds:
+        note(f"  figure A2 [{style_name}] condition '{name}': "
+             + ", ".join(f"{m} {audit['by_arm'][m].get(name, 0)}" for m in order))
+
+    # --- right: the hour "evening" slid to
+    nights = [n for n, _ in thresh]
+    hours = [h for _, h in thresh]
+    bx.axhspan(6, 23, color=SHADE, lw=0, zorder=0)
+    bx.text(nights[-1], 22.4, "he was in the house every one of these hours",
+            ha="right", va="top", fontsize=6.2, color=MUTED)
+    bx.plot(nights, hours, color=COLOUR["ACE-style"], marker="D", ms=4.2, lw=1.6,
+            markeredgecolor="white", markeredgewidth=0.5, zorder=3)
+    # anchored inside the axes rather than offset from the point, which ran off the right edge
+    bx.annotate("'evening' now starts at 11:47", xy=(min(nights) + 0.4, 8.4), ha="left",
+                va="center", fontsize=6.8, color=INK, fontweight=style["weight"])
+    bx.annotate("", xy=(nights[hours.index(min(hours))], min(hours) - 0.35),
+                xytext=(min(nights) + 3.2, 8.9),
+                arrowprops=dict(arrowstyle="-", color=MUTED, lw=0.6))
+    bx.set_ylim(6, 24)
+    bx.set_yticks([6, 9, 12, 15, 18, 21, 24])
+    bx.set_yticklabels([f"{h:02d}:00" for h in (6, 9, 12, 15, 18, 21, 24)], fontsize=7)
+    bx.set_xlim(min(nights) - 0.5, max(nights) + 0.5)
+    bx.set_xlabel("night", fontweight=style["weight"])
+    bx.set_ylabel("the hour it says ‘evening’ begins", fontweight=style["weight"],
+                  fontsize=7.6)
+    bx.grid(axis="x", visible=False)
+    note(f"  figure A2 [{style_name}] threshold by night: "
+         + ", ".join(f"n{n} {int(h):02d}:{int(round((h%1)*60)):02d}" for n, h in thresh))
+    if style["title"]:
+        ax.set_title("What the notes held on night 31", fontsize=8,
+                     fontweight=style["weight"], pad=6)
+        bx.set_title("and what 'evening' came to mean", fontsize=8,
+                     fontweight=style["weight"], pad=6)
+    fig.subplots_adjust(left=0.115, right=0.985, top=0.86 if style["title"] else 0.95,
+                        bottom=0.20)
+    out = OUT / style_name / "figureA2_what_the_notes_held.pdf"
+    fig.savefig(out)
+    plt.close(fig)
+    note(f"  wrote {out}")

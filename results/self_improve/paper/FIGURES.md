@@ -62,12 +62,63 @@ The published pair exist only at 24 questions a day on three households.
 
 **3. The expected day-14 range was 29-37%; it is 31.5-36.8%.** Close, and the claim is unaffected.
 
+**Figure 3, told the cause** — `figure3_told_the_cause.pdf`. Three panels joined by arrows.
+Night 13 carries all three sentences, as decided. Day 14 prints the denominator on the bar:
+**11 of 11, 100%** — bedroom_1 7, living 4, office 0. Night 14 puts the retraction beside the glass
+note under the bracket "written the same night", with the glass card marked "revised the same
+night" because it is a night-13 claim revised, not a new one.
+
+**Figure A2, what the notes held on night 31** — `figureA2_what_the_notes_held.pdf`. Left, live
+notes naming an object and one of its illness-time places, split by the condition attached; right,
+the hour the ACE-style playbook says "evening" begins.
+
+| method | total | "always" | a time of day | a person home or away | other |
+|---|---|---|---|---|---|
+| claim store | 170 | 65 | 77 | 0 | 28 |
+| log and notes | 142 | 19 | 115 | 0 | 8 |
+| reduced ACE | 114 | 49 | 46 | 12 | 7 |
+| tight working memory | 27 | 4 | 10 | 3 | 10 |
+| **total** | **453** | 137 | 248 | 15 | 53 |
+
+**Mentioning the illness: 0, in all four methods.** Out of 1,501 live notes, 453 describe a place
+an object went to *because* someone was ill, and not one of them says so.
+
+The threshold, `overnight_wave_24_questions/ACE_as_published/hh_s2_t03`, claim_0006:
+
+| night | "evening" begins at |
+|---|---|
+| 13 | 20:00 |
+| 14 | 13:00 |
+| 15 to 18 | **11:47** |
+| 19 to 22 | 11:00 |
+| 23 | no time stated |
+
+Behind it, the hours the ill resident was actually in the house on days 14 to 23: **every hour from
+06:00 to 23:00, on 10 days out of 10** (one hour, 20:00, on 9 of 10). That is the point of the
+panel — he is home all day, so "evening" has stopped distinguishing anything, and the playbook's
+threshold slides to late morning chasing a distinction that no longer exists.
+
+## Two recomputed numbers that differ from earlier notes
+
+**The night-31 count is 453, not 428**, and per method 170 / 142 / 114 / 27 against the earlier
+156 / 131 / 103 / 38. The rule used here is stated so it can be checked: a note counts when the
+structural matcher `write_the_notes.where_an_object_is_named` finds the object AND the note's text
+contains one of the plain-word places or rooms that object occupied during daytime hours on days 14
+to 23, taken from the bank rather than from text. The "0 mention the illness" agrees exactly.
+
+**The "always" count is 137, not 74**, under the condition rule stated in `night31_audit.py`: a
+condition counts as "always" when it is empty or one of always / any time / all day / current /
+general; as "a person home or away" when it names someone being at home, out or away; as "a time of
+day" when it names a part of the day or a clock time; otherwise "other".
+
+**And the threshold nights are one earlier than previously reported**: 20:00 on night 13, 13:00 on
+night 14, 11:47 from night 15. My earlier report said 14, 15, 16 because that check had not been
+given the fix for reading a claim's history - `revision_history` stores the text a revision
+REPLACED, so the wording on night N is the `was` of the first revision after it.
+
 ## Still to build
 
-Figure 1 (the schematic), Figure 3 (the three-panel comic strip) and Figure A2 (the night-31 notes
-and the sliding threshold). Figure 3's two blocking questions are in
-`FIGURE_CHECKS_BEFORE_DRAWING.md` and are still open: which denominator the "86% predicted" panel
-means, and whether Table 2's day-32 value of 54 or the measured 53.4 is right.
+Figure 1, the schematic. It needs no data decisions.
 
 ## The palette, as validated
 
