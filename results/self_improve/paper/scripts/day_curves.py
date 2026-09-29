@@ -81,7 +81,7 @@ def main() -> int:
     days = list(range(1, 32))
     movers = lambda h: sd.the_movers(FrozenHousehold(banks / f"{h}.jsonl"))
     series, counts = [], None
-    for arm, label in (("last_seen_no_model", "last seen"),
+    for arm, label in (("last_seen_no_model", "last-seen"),
                        ("the_log_and_notes_about_the_routine", "log and notes"),
                        ("ACE_as_published", "ACE")):
         if not (cells / arm).exists():
@@ -99,7 +99,7 @@ def main() -> int:
     # --- the two illnesses, three households, the objects that move in both
     days50 = list(range(1, 50))
     series = []
-    for arm, label in (("last_seen_no_model", "last seen"),
+    for arm, label in (("last_seen_no_model", "last-seen"),
                        ("the_log_and_notes_about_the_routine", "log and notes"),
                        ("ACE_as_published", "ACE")):
         values, counts = pooled(D.WAVE_50, arm, D.HOMES_50, days50, D.both_spell_movers)
@@ -127,7 +127,7 @@ def main() -> int:
         return [100 * got[d] / tot[d] if tot[d] else float("nan") for d in days]
 
     series = []
-    for arm, label in (("last_seen_no_model", "last seen"),
+    for arm, label in (("last_seen_no_model", "last-seen"),
                        ("the_log_and_notes_about_the_routine", "log and notes")):
         values, _ = pooled(cells, arm, D.HOMES_10, days, movers)
         series.append((label, values))

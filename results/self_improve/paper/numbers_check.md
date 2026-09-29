@@ -10,7 +10,7 @@ is not edited. Arm directories are the mapping in `questions_answered.md`.
 Both are defined on every row: `found_at_step == 1` and `found_it`. In the ten-household run that
 is **2,480 rows per method** (10 homes x 31 question-days x 8), every home exactly 248, so pooling
 and averaging over households give the same number to one decimal. Exact-place accuracy has a
-smaller and arm-dependent denominator (2,443 to 2,480) because an unparsed answer or last seen never
+smaller and arm-dependent denominator (2,443 to 2,480) because an unparsed answer or last-seen never
 having seen the object leaves no place to score — see `scored_counts.py`.
 
 Script for §1 to §4: `python3 results/self_improve/paper/scripts/table1_ten_homes.py` and
@@ -21,7 +21,7 @@ Script for §1 to §4: `python3 results/self_improve/paper/scripts/table1_ten_ho
 | method | draft | recomputed | difference |
 |---|---|---|---|
 | log and notes | 85.5 / 96.6 | **85.6 / 96.6** | +0.1 / 0 |
-| last seen | 82.0 / 95.0 | **82.1 / 95.0** | +0.1 / 0 |
+| last-seen | 82.0 / 95.0 | **82.1 / 95.0** | +0.1 / 0 |
 | claim store | 76.8 / 86.8 | **77.0 / 86.9** | +0.2 / +0.1 |
 | reduced ACE | 75.9 / 85.3 | **76.0 / 85.3** | +0.1 / 0 |
 | small working memory | 70.9 / 82.0 | **71.0 / 82.1** | +0.1 / +0.1 |
@@ -37,18 +37,18 @@ claim and too systematic to be rounding, so name the estimator in the caption.
 
 | comparison | draft | recomputed | 2 SE | same sign in |
 |---|---|---|---|---|
-| last seen − claim store | +5.1 / +8.2 | **+5.1 / +8.2** | 5.7 / 4.3 | 7 of 10 / **10 of 10** |
-| last seen − reduced ACE | +6.1 / +9.7 | **+6.0 / +9.7** | 6.1 / 6.1 | 7 of 10 / 9 of 10 |
-| last seen − small working memory | +11.1 / +12.9 | **+11.1 / +12.9** | 7.1 / 6.9 | 8 of 10 / 10 of 10 |
-| log and notes − last seen | +3.5 / +1.5 | **+3.5 / +1.5** | 4.2 / 2.0 | 9 of 10 / 8 of 10 |
+| last-seen − claim store | +5.1 / +8.2 | **+5.1 / +8.2** | 5.7 / 4.3 | 7 of 10 / **10 of 10** |
+| last-seen − reduced ACE | +6.1 / +9.7 | **+6.0 / +9.7** | 6.1 / 6.1 | 7 of 10 / 9 of 10 |
+| last-seen − small working memory | +11.1 / +12.9 | **+11.1 / +12.9** | 7.1 / 6.9 | 8 of 10 / 10 of 10 |
+| log and notes − last-seen | +3.5 / +1.5 | **+3.5 / +1.5** | 4.2 / 2.0 | 9 of 10 / 8 of 10 |
 
 The point estimates reproduce exactly. **The significance does not.** On first room right, only
-last seen − small working memory clears 2 SE and the noise floor; last seen − claim store (+5.1
-against 2 SE 5.7) and last seen − reduced ACE (+6.0 against 6.1) do not, and neither does log and
-notes − last seen (+3.5 against 4.2). On found within 3 rooms all three last seen differences clear
-and log and notes − last seen does not (+1.5, under the 2.2 floor as the draft already says).
+last-seen − small working memory clears 2 SE and the noise floor; last-seen − claim store (+5.1
+against 2 SE 5.7) and last-seen − reduced ACE (+6.0 against 6.1) do not, and neither does log and
+notes − last-seen (+3.5 against 4.2). On found within 3 rooms all three last-seen differences clear
+and log and notes − last-seen does not (+1.5, under the 2.2 floor as the draft already says).
 
-So the sentence that all three last seen-beats-a-memory differences clear is true for
+So the sentence that all three last-seen-beats-a-memory differences clear is true for
 found-within-3 and not for first-room-right. Cluster is household, ten of them, 2 SE = 2 x sd/√10.
 
 ## 3. Day 14 on spell-1 movers, first room right
@@ -61,7 +61,7 @@ across the ten homes:
 | claim store | **37.2** | 70.9 |
 | small working memory | 36.8 | 60.4 |
 | log and notes | 34.0 | 81.1 |
-| last seen | 33.5 | 77.5 |
+| last-seen | 33.5 | 77.5 |
 | reduced ACE | 31.5 | 64.9 |
 | notes hidden | **28.8** | 45.3 |
 
@@ -73,14 +73,14 @@ log and notes starts at 81.1 and falls to 34.0.
 
 ## 4. Recovery by day 17 — **not reproducible, and the measure has no power**
 
-Draft: 91% for log and notes, 58% for last seen, each against its own days 8 to 13 level.
+Draft: 91% for log and notes, 58% for last-seen, each against its own days 8 to 13 level.
 
-Recomputed at day 17: **log and notes 100% (2 SE 23), last seen 80% (2 SE 31)**. The 20-point gap is
+Recomputed at day 17: **log and notes 100% (2 SE 23), last-seen 80% (2 SE 31)**. The 20-point gap is
 well inside either interval. The reason is the denominator: **day 17 carries 2 to 5 mover questions
 per household** (2, 3, 3, 2, 5, 3, 4, 4, 3, 4), far below the eight-per-window minimum this project
 set. Widening the window does not rescue it:
 
-| window | log and notes | last seen | claim store | reduced ACE | small working memory | notes hidden |
+| window | log and notes | last-seen | claim store | reduced ACE | small working memory | notes hidden |
 |---|---|---|---|---|---|---|
 | day 17 | 100% (2 SE 23) | 80% (31) | 98% (36) | 135% (52) | 116% (69) | 105% (47) |
 | days 17-19 | 111% (13) | 100% (24) | 119% (37) | 142% (49) | 128% (94) | 149% (92) |
@@ -96,7 +96,7 @@ the trail does not", it needs a measure with a denominator — the day-by-day cu
 
 ## 5. Budget sweep, five wider homes
 
-`python3 results/self_improve/paper/scripts/budget_sweep.py`. Log and notes minus last seen, paired
+`python3 results/self_improve/paper/scripts/budget_sweep.py`. Log and notes minus last-seen, paired
 within household, whole month, first room right / found within 3 rooms:
 
 | questions a day | draft | recomputed | 2 SE | same sign in |

@@ -1,4 +1,4 @@
-"""Our arm against last seen at 4, 8 and 24 questions a day, the same five wider homes."""
+"""Our arm against last-seen at 4, 8 and 24 questions a day, the same five wider homes."""
 import json, pathlib, statistics
 HOMES=["hh_s32_t03","hh_s48_t03","hh_s63_t03","hh_s93_t03","hh_s151_t03"]
 WAVES={4:"wave_the_budget_sweep_q4",8:"wave_the_budget_sweep_q8",24:"wave_wider_five"}
@@ -19,7 +19,7 @@ for movers_only in (False,True):
     tag="MOVED OBJECTS ONLY" if movers_only else "EVERY QUESTION"
     print(f"\n################ {tag}")
     for m in ("first","found"):
-        print(f"\n=== {m}: ours minus last seen, paired on home, 2 SE across the five homes, floor {FLOOR[m]}")
+        print(f"\n=== {m}: ours minus last-seen, paired on home, 2 SE across the five homes, floor {FLOOR[m]}")
         print(f"{'window':16s}" + "".join(f"{f'{q} a day':>34s}" for q in (4,8,24)))
         for w in WIN:
             line=f"{w:16s}"
@@ -41,5 +41,5 @@ for movers_only in (False,True):
     for q in (4,8,24):
         print(f"  {q} a day, whole month level: ours " + " ".join(
             f"{100*sum(1 for r in rows(q,OURS,h,movers_only) if MEAS['first'](r))/len(rows(q,OURS,h,movers_only)):.0f}" for h in HOMES)
-            + " | last seen " + " ".join(
+            + " | last-seen " + " ".join(
             f"{100*sum(1 for r in rows(q,RULE,h,movers_only) if MEAS['first'](r))/len(rows(q,RULE,h,movers_only)):.0f}" for h in HOMES))

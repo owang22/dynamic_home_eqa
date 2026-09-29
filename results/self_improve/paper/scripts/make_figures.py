@@ -59,7 +59,7 @@ def shade(ax, days, label=None):
 # ------------------------------------------------------------------ figure 2 --
 def recurrence_first_day():
     """Found within 3 rooms on both-spell movers: the first day of each illness."""
-    arms = ["last seen", "log and notes", "claim store", "ACE"]
+    arms = ["last-seen", "log and notes", "claim store", "ACE"]
     by_arm = {a: {} for a in arms}
     for directory, label in D.ARM_50.items():
         for home in D.HOMES_50:
@@ -120,7 +120,7 @@ def recurrence_timeline():
             movers = D.both_spell_movers(home)
             rs = [r for r in D.rows(D.WAVE_50, directory, home) if r["object_id"] in movers]
             per_home[home] = rs
-            if label == "last seen":
+            if label == "last-seen":
                 for r in rs:
                     counts[r["day"]] = counts.get(r["day"], 0) + 1
         line, band = [], []

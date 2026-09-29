@@ -41,7 +41,7 @@ INK, MUTED = "#1a1a1a", "#6b6b68"
 # where the older #D55E00 against #785EF0 only just cleared the contrast one. The five that share
 # an axis in Figure A1 pass on all pairs, not only adjacent ones. Grey-green and brown, which the
 # specification suggests, both fail - see FIGURE_CHECKS_BEFORE_DRAWING.md.
-COLOUR = {"last seen": "#000000", "log and notes": "#EE6100", "claim store": "#009E73",
+COLOUR = {"last-seen": "#000000", "log and notes": "#EE6100", "claim store": "#009E73",
           "ACE-style": "#8A3FFC", "MemGPT-style": "#882255", "notes hidden": "#BBBBBB",
           # THE TEN-HOUSEHOLD RUN HAS NEITHER PUBLISHED METHOD IN IT. Its ACE-shaped and
           # MemGPT-shaped arms are the CONSTRAINED ones, and the MemGPT-shaped arm ran on a
@@ -52,10 +52,10 @@ COLOUR = {"last seen": "#000000", "log and notes": "#EE6100", "claim store": "#0
 # EVERY line is dashed, the baseline included. The table stays so a method can be given its own
 # pattern later; today they all share one.
 LINESTYLE = collections.defaultdict(lambda: "--")
-MARKER = {"last seen": "o", "log and notes": "s", "claim store": "^", "ACE-style": "D",
+MARKER = {"last-seen": "o", "log and notes": "s", "claim store": "^", "ACE-style": "D",
           "MemGPT-style": "v", "notes hidden": "X",
           "reduced ACE": "D", "tight working memory": "v"}
-ARM_DIR = {"last seen": "last_seen_no_model", "log and notes": "the_log_and_notes_about_the_routine",
+ARM_DIR = {"last-seen": "last_seen_no_model", "log and notes": "the_log_and_notes_about_the_routine",
            "claim store": "incremental_edits", "ACE-style": "ACE_as_published",
            "MemGPT-style": "MemGPT_as_published", "notes hidden": "prior_only_no_notes",
            "reduced ACE": "claim_store_told_if_it_was_right",
@@ -188,9 +188,9 @@ def figure_2(style_name):
     """
     style = dict(STYLES[style_name])
     apply(style)
-    names = ["last seen", "log and notes", "claim store", "ACE-style"]
+    names = ["last-seen", "log and notes", "claim store", "ACE-style"]
     if style["lines"] == 3:
-        names = ["last seen", "log and notes", "ACE-style"]
+        names = ["last-seen", "log and notes", "ACE-style"]
     days = list(range(1, 50))
     curves, counts = {}, None
     for n in names:
@@ -222,7 +222,7 @@ def figure_2(style_name):
         after = three_days_after(start_day)
         if style["annotate"]:
             ax.annotate(f"three days in:\nlog and notes {after['log and notes']:.0f}%\n"
-                        f"last seen {after['last seen']:.0f}%",
+                        f"last-seen {after['last-seen']:.0f}%",
                         xy=(x, 138), ha=ha, va="top", fontsize=7.0, color=INK, bbox=BOX,
                         fontweight=style["weight"], linespacing=1.25)
         note(f"  figure 2 [{style_name}] three days after day {start_day}: "
@@ -348,13 +348,13 @@ def figure_A1(style_name):
     """The first illness on the ten households, five methods."""
     style = dict(STYLES[style_name])
     apply(style)
-    names = ["last seen", "log and notes", "claim store", "reduced ACE", "tight working memory"]
+    names = ["last-seen", "log and notes", "claim store", "reduced ACE", "tight working memory"]
     cells = "results/self_improve/overnight_wave/cells"
     banks = pathlib.Path("results/self_improve/varied_homes/ten_homes/banks")
     movers = lambda h: sd.the_movers(FrozenHousehold(banks / f"{h}.jsonl"))
     have = [n for n in names if (pathlib.Path(cells) / ARM_DIR[n]).exists()]
     if style["lines"] == 3:
-        have = [n for n in have if n in ("last seen", "log and notes", "reduced ACE")]
+        have = [n for n in have if n in ("last-seen", "log and notes", "reduced ACE")]
     days = list(range(1, 32))
     curves = {}
     for n in have:

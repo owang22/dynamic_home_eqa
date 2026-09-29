@@ -16,7 +16,7 @@ day) were already running when this work started and were left alone.
 `python3 results/self_improve/paper/scripts/run_inventory.py` → `run_inventory.txt`.
 
 **Read this first: the cell directory is the arm, not the `how_memory_is_written` field.** The
-last seen arm and the notes-hidden arm both record `how_memory_is_written = "incremental edits"`
+last-seen arm and the notes-hidden arm both record `how_memory_is_written = "incremental edits"`
 (`src/self_improve/overnight_wave.py:124-125`), because they change how a room is *chosen*, not
 how notes are written. Any inventory keyed on that field merges three different arms.
 
@@ -45,7 +45,7 @@ identify a household — the queue's own header says so
 | draft name | cell directory | what settles it |
 |---|---|---|
 | log and notes | `the_log_and_notes_about_the_routine` | line 11 |
-| last seen | `last_seen_no_model` | lines 14-21 |
+| last-seen | `last_seen_no_model` | lines 14-21 |
 | claim store | `incremental_edits` | line 14: "the plain claim store both are forks of" |
 | constrained ACE | `claim_store_told_if_it_was_right` | line 13: "claim store told if it was right — ten homes. **ACE.** TWO model calls a night" |
 | constrained MemGPT | `a_small_working_memory_and_an_archive` | lines 86-90: "MemGPT. … a write that would overflow the working memory is REFUSED" |
@@ -59,7 +59,7 @@ There are **two** such runs, not one, and they are different waves on the same b
 
 | wave | households | days | memory methods |
 |---|---|---|---|
-| `overnight_wave_24_questions` | hh_s2, hh_s32, hh_s48 (MemGPT as published: hh_s2 only) | 31 | ACE as published, MemGPT as published, log and notes, claim store told if right, incremental edits, ours allowance derived, prior only, last seen (last seen on ten homes) |
+| `overnight_wave_24_questions` | hh_s2, hh_s32, hh_s48 (MemGPT as published: hh_s2 only) | 31 | ACE as published, MemGPT as published, log and notes, claim store told if right, incremental edits, ours allowance derived, prior only, last-seen (last-seen on ten homes) |
 | `wave_reasons_first` | hh_s2, hh_s32, hh_s48 | 31 | the same list plus eight-a-night, sixteen-a-night, told the night before, told on the first night; MemGPT as published on all three |
 
 Both used `varied_homes/ten_homes/banks` (`overnight_wave_24_questions/launch.sh:8` passes no
@@ -71,7 +71,7 @@ in both; `THE_TWO_ACE_RUNS_ARE_THE_SAME_RUN.md` is about a different pair.
 
 There is also `wave_wider_five` (five wider homes: hh_s32, hh_s48, hh_s63, hh_s93, hh_s151, on
 `varied_homes/headline_five/banks`, 31 days, 24 a day) carrying ACE as published, log and notes
-and last seen.
+and last-seen.
 
 ### The 50-day second-illness run
 `results/self_improve/wave_the_second_illness/`
@@ -175,7 +175,7 @@ did not find it (`looking.py:216-235`).
 Those incidental sightings reach all three consumers, with no filter for "was this the object I
 was asked about":
 
-- **last seen's trail** — `search_driven.py:551-556` loops over *every* sighting in the look and
+- **last-seen's trail** — `search_driven.py:551-556` loops over *every* sighting in the look and
   calls `_remember_where_it_was_seen`.
 - **The search-time log block** — built from `eyes.sightings_of(object_id)`
   (`the_log_the_robot_reads.py:83`), which is the same stream.
@@ -214,7 +214,7 @@ in each room; and the rooms it may still choose. Nothing about the simulator's g
 
 | arm | notes shown | log shown | log limited to the asked object | rooms already opened this question | what those rooms held |
 |---|---|---|---|---|---|
-| last seen | — no model call at all | — | — | it is excluded from the rooms left (line 547) | — |
+| last-seen | — no model call at all | — | — | it is excluded from the rooms left (line 547) | — |
 | claim store (`incremental_edits`) | yes | **no** | — | yes | yes |
 | claim store told if right (constrained ACE) | yes | **no** | — | yes | yes |
 | ACE as published | yes | **no** | — | yes | yes |
@@ -291,7 +291,7 @@ written every night and still used to answer; they are withheld at the choice st
 **No.** The log is gated on `notes.how_memory_is_written` being in
 `THE_LOG_AND_THE_ROUTINE_FAMILY` (`search_driven.py:490-497`), and every member of that tuple is
 a memory-guided arm that is also shown its notes. `prior_only_no_notes` records
-`how_memory_is_written = "incremental edits"` (`overnight_wave.py:125`, and the same for last seen at 124), which is not in the
+`how_memory_is_written = "incremental edits"` (`overnight_wave.py:125`, and the same for last-seen at 124), which is not in the
 tuple, so it gets neither. The "log alone, no notes" cell does not exist.
 
 ---
@@ -399,14 +399,14 @@ nothing was dropped.
 
 **2,456 does not match any arm.** What varies is the denominator of *exact-place* accuracy:
 `correct_place` is None when the arm produced no place at all — an unparsed completion, or
-last seen having never seen the object:
+last-seen having never seen the object:
 
 | arm | rows | no place answered | place-scored |
 |---|---|---|---|
 | log and notes | 2,480 | 0 | **2,480** |
 | claim store (`incremental_edits`) | 2,480 | 10 | 2,470 |
 | claim store told if right | 2,480 | 21 | 2,459 |
-| last seen | 2,480 | 26 | **2,454** |
+| last-seen | 2,480 | 26 | **2,454** |
 | constrained MemGPT | 2,480 | 36 | 2,444 |
 | notes hidden | 2,480 | 37 | 2,443 |
 | wholesale rewrite (hh_s2 only) | 248 | 5 | 243 |
@@ -414,7 +414,7 @@ last seen having never seen the object:
 First-room-right and found-within-3 use all 2,480 for every arm, because `found_at_step` and
 `found_it` are always filled. So the draft's single "2,456 scored questions" should become two
 numbers: 2,480 for the two headline measures, and 2,443–2,480 per arm for exact place. I could
-not reproduce 2,456 from this run by any filter I tried; it is closest to last seen's 2,454.
+not reproduce 2,456 from this run by any filter I tried; it is closest to last-seen's 2,454.
 
 ---
 
@@ -441,7 +441,7 @@ out of 11 to 20 asked objects (75 movers over ten homes).
 
 ---
 
-## 15. last seen's order and ties
+## 15. last-seen's order and ties
 
 `_remember_where_it_was_seen` (`search_driven.py:635-658`) keeps **one entry per room**: seeing a
 thing again in a room it has already been seen in moves that room to the front instead of adding

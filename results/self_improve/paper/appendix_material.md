@@ -111,7 +111,7 @@ different arms in two different waves:
   and an archive**, and it ran on the ten households in `overnight_wave`. The paper must call this
   the tight variant and never MemGPT.
 - **The three-household 50-day run has no MemGPT arm of any size.** Its cells are
-  `last seen`, `the log and notes`, `incremental edits`, `ACE as published` and
+  `last-seen`, `the log and notes`, `incremental edits`, `ACE as published` and
   `ours told the night before`.
 
 Counted from the cells' own nightly records - the cap is recovered by dividing the characters held

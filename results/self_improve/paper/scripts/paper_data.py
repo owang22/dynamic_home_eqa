@@ -30,12 +30,12 @@ HOMES_10 = ("hh_s2_t03", "hh_s19_t03", "hh_s20_t03", "hh_s32_t03", "hh_s48_t03",
             "hh_s63_t03", "hh_s93_t03", "hh_s109_t03", "hh_s123_t03", "hh_s151_t03")
 
 # cell directory -> the name the paper uses
-ARM_50 = {"last_seen_no_model": "last seen",
+ARM_50 = {"last_seen_no_model": "last-seen",
           "the_log_and_notes_about_the_routine": "log and notes",
           "incremental_edits": "claim store",
           "ACE_as_published": "ACE"}
 ARM_10 = {"the_log_and_notes_about_the_routine": "log and notes",
-          "last_seen_no_model": "last seen",
+          "last_seen_no_model": "last-seen",
           "incremental_edits": "claim store",
           "claim_store_told_if_it_was_right": "reduced ACE",
           "a_small_working_memory_and_an_archive": "small working memory",

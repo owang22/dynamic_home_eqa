@@ -12,7 +12,7 @@ def held(cell):
         for s in json.loads(l).get("sightings",[]): seen[s["object_id"]].append(s["time"])
     return {r["question_id"]: sum(1 for t in seen.get(r["object_id"],[]) if t<=r["time"]) for r in rows(cell).values()}
 for measure,fn in MEAS.items():
-    print(f"\n=== {measure}: our arm minus last seen, five wider homes, paired, floor {FLOOR[measure]}")
+    print(f"\n=== {measure}: our arm minus last-seen, five wider homes, paired, floor {FLOOR[measure]}")
     print(f"{'questions a day':>16s}{'every question':>28s}{'only where nothing was cut':>34s}")
     for q,wave in RUNS:
         root=pathlib.Path("results/self_improve")/wave/"cells"

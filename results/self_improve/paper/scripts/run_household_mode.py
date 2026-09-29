@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Run the mode memory in the loop, exactly as last seen runs, and check the loop first.
+"""Run the mode memory in the loop, exactly as last-seen runs, and check the loop first.
 
 NOTHING HERE IS TRUSTED UNTIL THE REPLAY MATCHES. This driver rebuilds the environment the runner
 builds - the same household, the same `TheHouseAsSeen`, the same question schedule, the same
-budget, the same seeds - and then reruns last seen through the runner's own `run_one_search`. If
+budget, the same seeds - and then reruns last-seen through the runner's own `run_one_search`. If
 every field of every row does not equal the recorded cell, the environment is not the one the
 results came from and the new arm's numbers would be measuring the difference.
 
@@ -110,7 +110,7 @@ def run_modes(banks, home, last_day, qpd, out_dir, alpha, stay):
                     break
             true_place = household.true_place_for_question(question)
             # answered from the search when it found it; otherwise the newest place on the trail,
-            # which is exactly what last seen answers with
+            # which is exactly what last-seen answers with
             place = found_here
             if place is None:
                 mine = (trail.get(question["object_id"]) or (None,))[0]
@@ -143,7 +143,7 @@ def main(argv=None) -> int:
     scratch = pathlib.Path(tempfile.mkdtemp())
 
     if args.check:
-        print("replaying last seen through the runner's own search, and comparing every field\n")
+        print("replaying last-seen through the runner's own search, and comparing every field\n")
         ok = True
         for label, (wave, banks, last_day, qpd, homes) in RUNS.items():
             for home in homes:

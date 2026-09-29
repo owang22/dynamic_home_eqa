@@ -14,7 +14,7 @@ the told ones ever receives the cause.
 access to the raw sightings closes that gap: this memory is competitive with the rule and pulls
 ahead when the robot observes little."
 
-- competitive: log and notes minus last seen over ten households is **+3.5 first room right (2 SE
+- competitive: log and notes minus last-seen over ten households is **+3.5 first room right (2 SE
   4.2, 9 of 10) and +1.5 found within 3 (2 SE 2.0)** — neither clears, which is what "competitive"
   should mean.
 - pulls ahead when it observes little: on the five wider homes, **+4.4 / +5.0 at four questions a
@@ -34,7 +34,7 @@ Framed as one case, which is what it is.
 
 **1. "before, during and after the illness" — not during.**
 
-last seen minus each summary-only memory, ten households, first room right:
+last-seen minus each summary-only memory, ten households, first room right:
 
 | window | claim store | reduced ACE | MemGPT-shaped |
 |---|---|---|---|
@@ -70,7 +70,7 @@ Day 14 against day 32, both-illness movers, first room right: claim store 6.4 �
 
 | method | falls on day 14 | falls on day 32 |
 |---|---|---|
-| last seen | 58.8 | **31.4** |
+| last-seen | 58.8 | **31.4** |
 | log and notes | 57.3 | **29.2** |
 | claim store | 51.3 | **47.8** |
 | ACE-style | 53.1 | **54.9** |

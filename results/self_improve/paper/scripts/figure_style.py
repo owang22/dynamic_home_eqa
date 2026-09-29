@@ -34,12 +34,12 @@ SIZES = {"font.size": 8.5, "axes.titlesize": 9, "axes.labelsize": 8.5,
 
 # ONE COLOUR AND ONE MARKER PER METHOD, IN EVERY FIGURE OF THE PAPER. A reader who learns that
 # orange-with-a-circle is our arm in Figure 2 must not have to relearn it in Figure 4.
-MARKER = {"last seen": "o", "log and notes": "s", "claim store": "^", "ACE": "D",
+MARKER = {"last-seen": "o", "log and notes": "s", "claim store": "^", "ACE": "D",
           "reduced ACE": "v", "small working memory": "P", "notes hidden": "X",
           # a star reads as a broken line at 4 pt, so the mode memory gets a hexagon
           "household mode": "h", "room first": "o", "reason first": "s"}
 
-COLOUR = {"last seen": "#0072B2",
+COLOUR = {"last-seen": "#0072B2",
           "log and notes": "#D55E00",
           "claim store": "#009E73",
           "ACE": "#785EF0",

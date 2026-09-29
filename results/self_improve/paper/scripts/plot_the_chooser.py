@@ -6,7 +6,7 @@ after each transition - day 14, when the illness starts, and day 24, when it end
 every day, pools the three households (they are the same households in both waves), and marks the
 two transitions.
 
-last seen is drawn in both panels' background as the fixed reference: it makes no model call, so its
+last-seen is drawn in both panels' background as the fixed reference: it makes no model call, so its
 curve is identical in the two waves by construction.
 
     PYTHONPATH=src python3 results/self_improve/paper/scripts/plot_the_chooser.py
@@ -69,7 +69,7 @@ def main() -> int:
             ax.plot(DAYS, a, color=st.MUTED, lw=1.1, ls=(0, (2.5, 1.5)), zorder=3)
             ax.plot(DAYS, b, color=st.COLOUR["log and notes"] if col == 0 else
                     ["", st.COLOUR["claim store"], st.COLOUR["ACE"],
-                     st.COLOUR["last seen"]][col], lw=1.4, zorder=4)
+                     st.COLOUR["last-seen"]][col], lw=1.4, zorder=4)
             for day in (14, 24):
                 ax.axvline(day, color=st.INK, lw=0.5, ls=(0, (1, 2)), zorder=1)
             ax.set_xlim(1, 31)
@@ -79,7 +79,7 @@ def main() -> int:
                 ax.set_title(label, fontsize=8, pad=3,
                              color=st.COLOUR["log and notes"] if col == 0 else
                              ["", st.COLOUR["claim store"], st.COLOUR["ACE"],
-                              st.COLOUR["last seen"]][col])
+                              st.COLOUR["last-seen"]][col])
             if row == 1:
                 ax.set_xlabel("day")
             if col == 0:
@@ -87,7 +87,7 @@ def main() -> int:
                               else "moved objects\nfirst room right (%)")
     axes[0][0].plot([], [], color=st.MUTED, lw=1.1, ls=(0, (2.5, 1.5)), label="room first")
     axes[0][0].plot([], [], color=st.COLOUR["log and notes"], lw=1.4, label="reason first")
-    axes[0][0].plot([], [], color="#b9b9b4", lw=0.9, label="last seen (same in both)")
+    axes[0][0].plot([], [], color="#b9b9b4", lw=0.9, label="last-seen (same in both)")
     axes[0][0].legend(loc="lower left", fontsize=6.5, handlelength=1.5, borderpad=0.1,
                       labelspacing=0.25)
     out = pathlib.Path("results/self_improve/paper/figures/the_chooser_by_day.pdf")

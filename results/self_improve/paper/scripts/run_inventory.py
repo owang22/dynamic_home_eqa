@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Every finished cell on disk: wave, arm directory, household, questions a day, last day,
-scored rows. Keyed on the CELL DIRECTORY, never on `how_memory_is_written`: the last seen and
+scored rows. Keyed on the CELL DIRECTORY, never on `how_memory_is_written`: the last-seen and
 prior-only arms both record `how_memory_is_written = "incremental edits"`
 (src/self_improve/overnight_wave.py:124-125), so keying on that field silently merges three
 different arms into one row.

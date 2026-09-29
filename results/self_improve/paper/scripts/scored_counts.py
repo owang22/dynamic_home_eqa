@@ -2,7 +2,7 @@
 """How many questions each arm of one wave actually scored, and on which measure.
 
 `found_at_step` and `found_it` exist for every row. `correct_place`/`correct_room` are None
-when the arm produced no place at all - an unparsed completion, or last seen never having seen
+when the arm produced no place at all - an unparsed completion, or last-seen never having seen
 the object - so the denominator of exact-place accuracy is smaller than the denominator of
 first-room-right, and it differs per arm.
 

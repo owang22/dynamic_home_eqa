@@ -12,7 +12,7 @@ import statistics
 
 WAVE = "results/self_improve/overnight_wave/cells"
 NAME = {"the_log_and_notes_about_the_routine": "log and notes",
-        "last_seen_no_model": "last seen",
+        "last_seen_no_model": "last-seen",
         "incremental_edits": "claim store",
         "claim_store_told_if_it_was_right": "reduced ACE",
         "a_small_working_memory_and_an_archive": "small working memory",

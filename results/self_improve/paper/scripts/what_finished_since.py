@@ -17,9 +17,9 @@ import sys
 
 def chooser(cell, sensing_arm):
     # THE MECHANICAL ARMS ALSO FILL `why_each_room`, with the rule's own words - "the room it was
-    # last seen in" - so a length test alone calls last seen "room before reason". It made no model
+    # last-seen in" - so a length test alone calls last-seen "room before reason". It made no model
     # call at all and has no schema, so the arm has to be read first.
-    if sensing_arm in ("last seen, no model", "fixed rotation", "random"):
+    if sensing_arm in ("last-seen, no model", "fixed rotation", "random"):
         return "no model call (mechanical)"
     longest = 0
     for line in (cell / "searches.jsonl").open():

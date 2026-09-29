@@ -13,12 +13,12 @@ seconds; the nine-setting grid took 3 minutes 16 seconds.
 The model is `src/self_improve/household_mode.py`, built exactly to the specification: modes
 holding object → room counts under a Dirichlet prior of 0.5, hard CRP assignment of each whole day,
 a within-day posterior started from yesterday's mode, rooms ranked by P(room | object) summed over
-modes, last seen's rule as the fallback for an object no mode has seen, and the answer taken from
+modes, last-seen's rule as the fallback for an object no mode has seen, and the answer taken from
 the most recent sighting in the room where it is found.
 
 ## The loop was checked before the arm was trusted
 
-last seen rerun through the runner's own `run_one_search`, in the environment this driver builds,
+last-seen rerun through the runner's own `run_one_search`, in the environment this driver builds,
 reproduces **every recorded row of all 28 cells** — question by question, on the rooms opened, the
 step it was found at, the place answered and both correctness flags. So the environment is the one
 the results came from, and any difference below belongs to the arm.
@@ -63,7 +63,7 @@ score the day against what it predicted rather than against everything it saw.
 ## The figure
 
 `figures/household_mode.pdf` - first-guess accuracy by day on the ten households, moved objects
-only, against last seen and our arm. Caption material: the mode memory sits 15 to 20 points below
+only, against last-seen and our arm. Caption material: the mode memory sits 15 to 20 points below
 both through the settled fortnight, falls to 20% on the first day of the illness, and then **stays
 between 28 and 40 for the whole spell** while both others climb back above 80 within three days.
 It is the only one of the three that never recovers inside the illness, which is what having a
@@ -72,7 +72,7 @@ single month-long average looks like from the outside.
 ## What it scores, given one mode
 
 With one mode the memory is a per-object room-frequency table averaged over the whole month. That
-is strictly worse than a recency trail, and the numbers say so — first room right, against last seen,
+is strictly worse than a recency trail, and the numbers say so — first room right, against last-seen,
 paired within household:
 
 | run | log and notes | household mode |
@@ -89,7 +89,7 @@ Day 14 against day 32 on the objects that move in both illnesses, first room rig
 
 | method | hh_s2 | hh_s32 | hh_s48 | mean change | 2 SE |
 |---|---|---|---|---|---|
-| last seen | 10 → 56 | 33 → 50 | 18 → 55 | +32.9 | 17.0 |
+| last-seen | 10 → 56 | 33 → 50 | 18 → 55 | +32.9 | 17.0 |
 | log and notes | 20 → 44 | 17 → 50 | 45 → 73 | +28.4 | 5.2 |
 | household mode | 10 → 33 | 17 → 0 | 0 → 18 | +8.3 | 25.1 |
 
@@ -102,7 +102,7 @@ A negative result with a mechanism, and it closes a hole a reviewer would otherw
 obvious objection to the whole study is that a language model is unnecessary — that a small latent
 state model would find the regime for free. Built to a reasonable specification and given its own
 searches, it finds one mode and scores 15 to 26 points below a rule that just walks back through
-where the thing was last seen.
+where the thing was last-seen.
 
 It is one specification, not the family. What it licenses is: *hard whole-day assignment under a
 CRP does not find this shift, because the shift is a minority of the evidence on the day it starts.*
