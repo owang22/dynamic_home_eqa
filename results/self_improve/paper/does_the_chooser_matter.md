@@ -16,7 +16,7 @@ From it I concluded that "Table 1 and the recurrence figures are not the same sy
 comparing across them is comparing across a change in the chooser, and that Table 1 should perhaps
 be rebuilt. **I never measured the chooser's effect before saying that.** I inferred it from a
 mechanism - no thinking channel, so the field order is the reasoning order - and from the fact that
-the two groups of waves disagree about whether a written memory beats LastSeen.
+the two groups of waves disagree about whether a written memory beats last seen.
 
 ## The test I should have run first
 
@@ -25,7 +25,7 @@ banks, the same 24 questions a day, and the same arms**. They differ in the room
 nothing else. That is a paired test of the chooser; comparing either with the ten-household run is
 not, because that also changes the households, the question budget and the object list.
 
-**The control passes.** LastSeen makes no model call, so its rows must be identical across the two
+**The control passes.** last seen makes no model call, so its rows must be identical across the two
 waves, and they are: 744 of 744 rows in each of the three homes, matching on the rooms opened, the
 step it was found at and the place answered. So the chooser is the only thing that moved.
 
@@ -63,7 +63,7 @@ the paper as one.
 Does not stand: that Table 1 measures a different system, that its numbers cannot sit beside the
 recurrence figures, or that it should be rebuilt. The chooser does not move the day curves.
 
-And the thing I attributed to it - that a written memory beats LastSeen on the 50-day homes while
-LastSeen leads in Table 1 - has to be explained by what else differs between those runs: different
+And the thing I attributed to it - that a written memory beats last seen on the 50-day homes while
+last seen leads in Table 1 - has to be explained by what else differs between those runs: different
 households, 24 questions a day against 8, and the wide object list against the narrow one. Not the
 chooser.

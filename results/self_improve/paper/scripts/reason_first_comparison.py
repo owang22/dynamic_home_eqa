@@ -34,9 +34,9 @@ def report(title, wave, arms, homes, movers_of, days):
     for measure, fn in MEAS.items():
         for which, index in (("every question", 0), ("moved objects", 1)):
             print(f"\n  --- {measure}, {which}")
-            print(f"  {'method':22s}{'level':>8s}{'vs LastSeen':>13s}{'2 SE':>7s}"
+            print(f"  {'method':22s}{'level':>8s}{'vs last seen':>13s}{'2 SE':>7s}"
                   f"{'same sign':>11s}{'questions':>11s}")
-            base = {h: rows["LastSeen"][h][index] for h in homes}
+            base = {h: rows["last seen"][h][index] for h in homes}
             for label in arms.values():
                 per_home, diffs, n = [], [], 0
                 for home in homes:
@@ -53,14 +53,14 @@ def report(title, wave, arms, homes, movers_of, days):
                     continue
                 tse = 2 * statistics.stdev(diffs) / len(diffs) ** 0.5 if len(diffs) > 1 else 0.0
                 mark = ""
-                if label != "LastSeen":
+                if label != "last seen":
                     clears = abs(statistics.mean(diffs)) > tse and \
                         abs(statistics.mean(diffs)) > FLOOR[measure]
                     mark = "  clears" if clears else ""
                 print(f"  {label:22s}{statistics.mean(per_home):8.1f}"
                       + (f"{statistics.mean(diffs):+13.1f}{tse:7.1f}"
                          f"{sum(1 for v in diffs if v > 0):>6d} of {len(diffs)}{n:11d}{mark}"
-                         if label != "LastSeen" else f"{'-':>13s}{'-':>7s}{'-':>11s}{n:11d}"))
+                         if label != "last seen" else f"{'-':>13s}{'-':>7s}{'-':>11s}{n:11d}"))
 
 
 def main() -> int:
@@ -70,7 +70,7 @@ def main() -> int:
     wider = pathlib.Path("results/self_improve/wave_wider_five/cells")
     banks = pathlib.Path("results/self_improve/varied_homes/headline_five/banks")
     report("wave_wider_five, 31 days, 24 a day (five wider homes)",
-           wider, {"last_seen_no_model": "LastSeen",
+           wider, {"last_seen_no_model": "last seen",
                    "the_log_and_notes_about_the_routine": "log and notes",
                    "ACE_as_published": "ACE"},
            ("hh_s32_t03", "hh_s48_t03", "hh_s63_t03", "hh_s93_t03", "hh_s151_t03"),

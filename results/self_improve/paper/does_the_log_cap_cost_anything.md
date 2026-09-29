@@ -2,7 +2,7 @@
 
 Written 2026-09-28, after finding that the cap bites 5% of questions at four a day and 86% at 24
 a day on the 50-day run, and worrying out loud that it might be what closes our arm's advantage
-over LastSeen at high budgets. **It is not.** No new runs; everything below is on the same
+over last seen at high budgets. **It is not.** No new runs; everything below is on the same
 households, from cells already on disk.
 
 Scripts: `scripts/does_the_log_cap_cost_anything.py` and
@@ -19,7 +19,7 @@ holds more than 40 sightings of that object, which happens to the objects it see
 easy ones. Cut questions score better whatever the cap does (90.9% against 80.7% on the ten-home
 run).
 
-So both tests below use **LastSeen as the ruler**. It never reads the log, so its accuracy on the
+So both tests below use **last seen as the ruler**. It never reads the log, so its accuracy on the
 same question measures how hard that question is, and the quantity of interest is our arm's *lead*
 over it.
 
@@ -42,9 +42,9 @@ the cut questions, in all five homes.
 ## Test 2: the step at exactly 40
 
 The cap is a step. Questions holding 25 to 39 sightings against 41 to 60 holds familiarity roughly
-fixed; LastSeen over the same two bands is the placebo, because it has no cap.
+fixed; last seen over the same two bands is the placebo, because it has no cap.
 
-| run | our arm, first room right | LastSeen over the same bands |
+| run | our arm, first room right | last seen over the same bands |
 |---|---|---|
 | ten homes, 8 a day | +1.5 (2 SE 4.9) | +1.1 (2 SE 6.3) |
 | five wider homes, 24 a day | +0.6 (2 SE 0.8) | −1.5 (2 SE 3.1) |
@@ -56,7 +56,7 @@ where the dated lines stop.
 
 ## The test that settles it: the budget trend on questions the cap never touched
 
-Our arm minus LastSeen, five wider homes, paired within household.
+Our arm minus last seen, five wider homes, paired within household.
 
 | questions a day | every question | only where nothing was cut |
 |---|---|---|
@@ -74,11 +74,11 @@ arm is dead level there.
 ## What this test can and cannot see
 
 Stated because a null from a comparison with no power says nothing. Feeding the same machinery two
-splits whose answer is known, on the same five homes at 24 a day: our arm's lead over LastSeen does
+splits whose answer is known, on the same five homes at 24 a day: our arm's lead over last seen does
 not differ measurably between moved objects and the rest (+0.9, 2 SE 3.3), nor between illness days
 and settled days on first room right (−0.9, 2 SE 3.2).
 
-That is not the machinery failing — it is the finding. **At 24 questions a day our arm and LastSeen
+That is not the machinery failing — it is the finding. **At 24 questions a day our arm and last seen
 are level on every subset tried**: cut and uncut, movers and not, inside the illness and outside it.
 There is no lead left for any split to eat. Which is why the argument above rests on the
 across-budget comparison of uncut questions rather than on a within-run split.

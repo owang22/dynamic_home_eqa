@@ -9,18 +9,18 @@ WHY NOT JUST COMPARE CUT AGAINST UNCUT QUESTIONS. A question is cut when the rob
 more than 40 sightings of that object, which happens to objects it sees constantly - the easy ones.
 Cut questions would look better whatever the cap did.
 
-So both tests use LastSeen as the ruler. LastSeen never reads the log, so its accuracy on the same
+So both tests use last seen as the ruler. last seen never reads the log, so its accuracy on the same
 question measures how hard that question is, and the quantity of interest is our arm's LEAD over it:
 
-  test 1, difference in differences: is our lead over LastSeen smaller on cut questions than on
+  test 1, difference in differences: is our lead over last seen smaller on cut questions than on
           uncut ones, paired within household?
   test 2, the discontinuity: the cap is a step at exactly 40. Comparing questions just below it
           (25 to 39 sightings held) with questions just above (41 to 60) holds the object's
-          familiarity roughly fixed, and LastSeen over the same two bands is the placebo - it has
+          familiarity roughly fixed, and last seen over the same two bands is the placebo - it has
           no cap, so its own step across 40 is what "no effect" looks like.
 
 `cut` is a property of OUR arm's own history, because it is our arm's looks that build the record
-it is shown. LastSeen's accuracy is read off its own run of the same questions.
+it is shown. last seen's accuracy is read off its own run of the same questions.
 
     python3 results/self_improve/paper/scripts/does_the_log_cap_cost_anything.py
 """
@@ -122,7 +122,7 @@ def main() -> int:
 
         for measure, fn in MEAS.items():
             print(f"\n  --- {measure}")
-            print(f"  {'':26s}{'our arm':>10s}{'LastSeen':>10s}{'our lead':>10s}{'questions':>11s}")
+            print(f"  {'':26s}{'our arm':>10s}{'last seen':>10s}{'our lead':>10s}{'questions':>11s}")
             lead = {}
             for group, keep in (("cut (over 40 held)", lambda n: n > CAP),
                                 ("not cut", lambda n: n <= CAP)):
@@ -154,7 +154,7 @@ def main() -> int:
 
         # --- test 2, the step at exactly 40
         print("\n  --- the step at 40: questions holding 25-39 sightings against 41-60")
-        for arm_label, which in (("our arm", 0), ("LastSeen (placebo, no cap)", 1)):
+        for arm_label, which in (("our arm", 0), ("last seen (placebo, no cap)", 1)):
             for measure, fn in MEAS.items():
                 below, above = [], []
                 nb = na = 0

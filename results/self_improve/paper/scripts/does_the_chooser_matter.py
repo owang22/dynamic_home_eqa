@@ -7,7 +7,7 @@ first names the room before the reason and caps the explanation at 240 character
 reasons first with 1,200. So the pair isolates the chooser, and comparing either of them with the
 ten-household run does not - that also changes the households, the budget and the object list.
 
-LastSeen is the control: it makes no model call, so its rows must be IDENTICAL across the two
+last seen is the control: it makes no model call, so its rows must be IDENTICAL across the two
 waves. If they are not, something other than the chooser moved.
 
     PYTHONPATH=src python3 results/self_improve/paper/scripts/does_the_chooser_matter.py
@@ -29,7 +29,7 @@ ARMS = {"the_log_and_notes_about_the_routine": "log and notes",
         "incremental_edits": "claim store",
         "ACE_as_published": "ACE",
         "ours_allowance_derived": "log and notes, counted allowance",
-        "last_seen_no_model": "LastSeen (control: no model call)"}
+        "last_seen_no_model": "last seen (control: no model call)"}
 WINDOWS = {"settled 1-13": range(1, 14), "day 14": range(14, 15), "days 15-17": range(15, 18),
            "spell 18-23": range(18, 24), "day 24": range(24, 25), "days 25-26": range(25, 27),
            "normal 27-31": range(27, 32)}
@@ -55,7 +55,7 @@ def share(rs, fn):
 
 
 def main() -> int:
-    print("the control first: LastSeen makes no model call, so its rows must not move\n")
+    print("the control first: last seen makes no model call, so its rows must not move\n")
     for home in HOMES:
         a = rows(ROOM_FIRST, "last_seen_no_model", home)
         b = rows(REASON_FIRST, "last_seen_no_model", home)

@@ -10,8 +10,8 @@ are in the sections.
 
 ## Check 1 — Figure 2 against Table 2: off by 0.6 of a point on day 32
 
-Specification: "the day-14 and day-32 values drawn must match Table 2 (LastSeen 20→54 first room,
-averaged)". Measured, LastSeen first room right on the 14 both-illness movers, per household and
+Specification: "the day-14 and day-32 values drawn must match Table 2 (last seen 20→54 first room,
+averaged)". Measured, last seen first room right on the 14 both-illness movers, per household and
 then averaged over households:
 
 | | hh_s2 | hh_s32 | hh_s48 | average | Table 2 says |
@@ -84,7 +84,7 @@ The suggested roles mostly survive the colour-blindness check; two do not.
 
 | method | colour | note |
 |---|---|---|
-| LastSeen | `#0072B2` dark blue | as suggested |
+| last seen | `#0072B2` dark blue | as suggested |
 | log and notes | `#D55E00` orange | as suggested |
 | claim store | `#009E73` green | **not grey-green**: every grey-green tried fails the chroma floor, i.e. it reads as grey |
 | ACE-style | `#785EF0` purple | as suggested |

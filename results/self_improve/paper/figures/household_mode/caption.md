@@ -3,8 +3,8 @@
 First room right by day on the objects the illness moves, over the ten-household run, for a
 latent-state memory built without a language model: object-to-room counts under a Dirichlet prior,
 each whole day assigned hard to one mode by a Chinese restaurant process, rooms ranked by the
-posterior over modes. It runs in the loop exactly as LastSeen does, so its own searches decide what
-it sees, and the loop was verified first — LastSeen rerun through the same driver reproduces every
+posterior over modes. It runs in the loop exactly as last seen does, so its own searches decide what
+it sees, and the loop was verified first — last seen rerun through the same driver reproduces every
 recorded row of all 28 cells, field for field.
 
 It found **one mode** in every household at every setting asked for: alpha 0.5, 1 and 2 crossed

@@ -36,21 +36,27 @@ WIDTH_IN = WIDTH_PT / 72.0
 SHADE = "#e4e4e1"
 INK, MUTED = "#1a1a1a", "#6b6b68"
 
-# validated with the dataviz checker: the four that share an axis in Figure 2 pass on all pairs
-# with no warning, and adding the wine for Figure A1 keeps that. Grey-green and brown, which the
+# THE BASELINE IS BLACK AND DOTTED, and the two methods it is measured against are the brightest
+# pair that passes the checker: #EE6100 against #8A3FFC clears every check with no warning at all,
+# where the older #D55E00 against #785EF0 only just cleared the contrast one. The five that share
+# an axis in Figure A1 pass on all pairs, not only adjacent ones. Grey-green and brown, which the
 # specification suggests, both fail - see FIGURE_CHECKS_BEFORE_DRAWING.md.
-COLOUR = {"LastSeen": "#0072B2", "log and notes": "#D55E00", "claim store": "#009E73",
-          "ACE-style": "#785EF0", "MemGPT-style": "#882255", "notes hidden": "#BBBBBB",
+COLOUR = {"last seen": "#000000", "log and notes": "#EE6100", "claim store": "#009E73",
+          "ACE-style": "#8A3FFC", "MemGPT-style": "#882255", "notes hidden": "#BBBBBB",
           # THE TEN-HOUSEHOLD RUN HAS NEITHER PUBLISHED METHOD IN IT. Its ACE-shaped and
           # MemGPT-shaped arms are the CONSTRAINED ones, and the MemGPT-shaped arm ran on a
           # 1,200-character block - a sixteenth of MemGPT's own smallest - which memory_notes.py
           # says must be called the tight variant and never MemGPT. They keep the published
           # methods' colours, because they are those methods' cousins, and different names.
-          "reduced ACE": "#785EF0", "tight working memory": "#882255"}
-MARKER = {"LastSeen": "o", "log and notes": "s", "claim store": "^", "ACE-style": "D",
+          "reduced ACE": "#8A3FFC", "tight working memory": "#882255"}
+# the baseline is a BLACK DOTTED line: it is the yardstick, not one of the methods being
+# compared, and a dash pattern separates it from every colour at once - including in print and
+# for a reader who cannot tell two hues apart. Every other method is solid.
+LINESTYLE = collections.defaultdict(lambda: "-", {"last seen": ":"})
+MARKER = {"last seen": "o", "log and notes": "s", "claim store": "^", "ACE-style": "D",
           "MemGPT-style": "v", "notes hidden": "X",
           "reduced ACE": "D", "tight working memory": "v"}
-ARM_DIR = {"LastSeen": "last_seen_no_model", "log and notes": "the_log_and_notes_about_the_routine",
+ARM_DIR = {"last seen": "last_seen_no_model", "log and notes": "the_log_and_notes_about_the_routine",
            "claim store": "incremental_edits", "ACE-style": "ACE_as_published",
            "MemGPT-style": "MemGPT_as_published", "notes hidden": "prior_only_no_notes",
            "reduced ACE": "claim_store_told_if_it_was_right",
@@ -146,7 +152,8 @@ def finish(fig, ax, style, names, title, ylab, days, counts_strip=None):
     ax.grid(axis="x", visible=False)
     if style["title"] and title:
         ax.set_title(title, fontweight=style["weight"], pad=14)
-    handles = [plt.Line2D([], [], color=COLOUR[n], marker=MARKER[n], lw=1.6, ms=4.5,
+    handles = [plt.Line2D([], [], color=COLOUR[n], marker=MARKER[n], linestyle=LINESTYLE[n],
+                          lw=1.6, ms=4.5,
                           markeredgecolor="white", markeredgewidth=0.5, label=n) for n in names]
     if style["legend"] == "inside":
         leg = ax.legend(handles=handles, loc="lower right", ncol=1, fontsize=7.8,
@@ -168,8 +175,8 @@ def draw_lines(ax, days, names, curves, style):
             ax.fill_between(days, [a - b for a, b in zip(line, band)],
                             [a + b for a, b in zip(line, band)],
                             color=COLOUR[n], alpha=0.14, lw=0, zorder=2)
-        ax.plot(days, line, color=COLOUR[n], marker=MARKER[n], lw=1.6, ms=3.8,
-                markeredgecolor="white", markeredgewidth=0.5, zorder=4)
+        ax.plot(days, line, color=COLOUR[n], marker=MARKER[n], linestyle=LINESTYLE[n],
+                lw=1.6, ms=3.8, markeredgecolor="white", markeredgewidth=0.5, zorder=4)
 
 
 def figure_2(style_name):
@@ -182,9 +189,9 @@ def figure_2(style_name):
     """
     style = dict(STYLES[style_name])
     apply(style)
-    names = ["LastSeen", "log and notes", "claim store", "ACE-style"]
+    names = ["last seen", "log and notes", "claim store", "ACE-style"]
     if style["lines"] == 3:
-        names = ["LastSeen", "log and notes", "ACE-style"]
+        names = ["last seen", "log and notes", "ACE-style"]
     days = list(range(1, 50))
     curves, counts = {}, None
     for n in names:
@@ -216,14 +223,15 @@ def figure_2(style_name):
         after = three_days_after(start_day)
         if style["annotate"]:
             ax.annotate(f"three days in:\nlog and notes {after['log and notes']:.0f}%\n"
-                        f"LastSeen {after['LastSeen']:.0f}%",
+                        f"last seen {after['last seen']:.0f}%",
                         xy=(x, 138), ha=ha, va="top", fontsize=7.0, color=INK, bbox=BOX,
                         fontweight=style["weight"], linespacing=1.25)
         note(f"  figure 2 [{style_name}] three days after day {start_day}: "
              + ", ".join(f"{n} {v:.1f}" for n, v in after.items()))
     if style["title"]:
         ax.set_title("The Same Illness, Twice", fontweight=style["weight"], pad=14)
-    handles = [plt.Line2D([], [], color=COLOUR[n], marker=MARKER[n], lw=1.6, ms=4.5,
+    handles = [plt.Line2D([], [], color=COLOUR[n], marker=MARKER[n], linestyle=LINESTYLE[n],
+                          lw=1.6, ms=4.5,
                           markeredgecolor="white", markeredgewidth=0.5, label=n) for n in names]
     if style["legend"] == "inside":
         ax.legend(handles=handles, loc="lower right", fontsize=7.4, handlelength=1.5,
@@ -341,13 +349,13 @@ def figure_A1(style_name):
     """The first illness on the ten households, five methods."""
     style = dict(STYLES[style_name])
     apply(style)
-    names = ["LastSeen", "log and notes", "claim store", "reduced ACE", "tight working memory"]
+    names = ["last seen", "log and notes", "claim store", "reduced ACE", "tight working memory"]
     cells = "results/self_improve/overnight_wave/cells"
     banks = pathlib.Path("results/self_improve/varied_homes/ten_homes/banks")
     movers = lambda h: sd.the_movers(FrozenHousehold(banks / f"{h}.jsonl"))
     have = [n for n in names if (pathlib.Path(cells) / ARM_DIR[n]).exists()]
     if style["lines"] == 3:
-        have = [n for n in have if n in ("LastSeen", "log and notes", "reduced ACE")]
+        have = [n for n in have if n in ("last seen", "log and notes", "reduced ACE")]
     days = list(range(1, 32))
     curves = {}
     for n in have:
@@ -386,14 +394,22 @@ def figure_A1(style_name):
     ax.grid(axis="x", visible=False)
     if style["title"]:
         ax.set_title("Adapting Inside the First Illness", fontweight=style["weight"], pad=12)
-    handles = [plt.Line2D([], [], color=COLOUR[n], marker=MARKER[n], lw=1.6, ms=4.5,
+    handles = [plt.Line2D([], [], color=COLOUR[n], marker=MARKER[n], linestyle=LINESTYLE[n],
+                          lw=1.6, ms=4.5,
                           markeredgecolor="white", markeredgewidth=0.5, label=n) for n in have]
-    # ABOVE THE AXES: at lower right it covered the lower part of the tight-working-memory line.
-    fig.subplots_adjust(left=0.115, right=0.985, top=0.76, bottom=0.135)
-    # three across, not five: five entries in one row is wider than a 396 pt canvas
-    leg = fig.legend(handles=handles, loc="upper center", ncol=3, fontsize=7.4,
-                     frameon=False, handlelength=1.4, columnspacing=1.4,
-                     bbox_to_anchor=(0.56, 1.0))
+    if style["legend"] == "below":
+        # THE SAME PLACE AS EVERY OTHER FIGURE IN THIS SET: under the plot, one row, close
+        # enough that it costs no white. Three entries fit a 396 pt canvas in one row.
+        fig.subplots_adjust(left=0.115, right=0.985, top=0.885, bottom=0.235)
+        leg = fig.legend(handles=handles, loc="lower center", ncol=len(have), fontsize=8,
+                         frameon=False, handlelength=1.5, columnspacing=1.2)
+    else:
+        # ABOVE THE AXES: at lower right it covered the lower part of the tight-working-memory
+        # line, and five entries in one row is wider than a 396 pt canvas, so three across.
+        fig.subplots_adjust(left=0.115, right=0.985, top=0.76, bottom=0.135)
+        leg = fig.legend(handles=handles, loc="upper center", ncol=3, fontsize=7.4,
+                         frameon=False, handlelength=1.4, columnspacing=1.4,
+                         bbox_to_anchor=(0.56, 1.0))
     if style["legend"] != "inside":
         for txt in leg.get_texts():
             txt.set_fontweight("bold")

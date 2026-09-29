@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Score the mode memory against LastSeen and our arm, on the runs it was given.
+"""Score the mode memory against last seen and our arm, on the runs it was given.
 
     PYTHONPATH=src python3 results/self_improve/paper/scripts/score_household_mode.py
 """
@@ -46,7 +46,7 @@ def main() -> int:
     for run, (cells_dir, banks, homes, days) in RUNS.items():
         cells = pathlib.Path(cells_dir)
         banks_dir = pathlib.Path(f"results/self_improve/varied_homes/{banks}/banks")
-        arms = {"LastSeen": lambda h: D.rows(cells, "last_seen_no_model", h)}
+        arms = {"last seen": lambda h: D.rows(cells, "last_seen_no_model", h)}
         if (cells / "the_log_and_notes_about_the_routine").exists():
             arms["log and notes"] = lambda h: D.rows(
                 cells, "the_log_and_notes_about_the_routine", h)
@@ -69,7 +69,7 @@ def main() -> int:
                         value = 100 * sum(1 for r in rs if fn(r)) / len(rs)
                         levels.append(value)
                         n += len(rs)
-                        if label == "LastSeen":
+                        if label == "last seen":
                             base[home] = value
                         elif home in base:
                             diffs.append(value - base[home])
@@ -78,7 +78,7 @@ def main() -> int:
                     extra = ""
                     if diffs:
                         tse = 2 * statistics.stdev(diffs) / len(diffs) ** 0.5
-                        extra = (f"  vs LastSeen {statistics.mean(diffs):+6.1f}  2 SE {tse:5.1f}"
+                        extra = (f"  vs last seen {statistics.mean(diffs):+6.1f}  2 SE {tse:5.1f}"
                                  f"  same sign {sum(1 for v in diffs if v > 0)} of {len(diffs)}")
                     print(f"    {label:18s}{statistics.mean(levels):7.1f}{n:9d} questions{extra}")
 
@@ -86,14 +86,14 @@ def main() -> int:
     print("\n\n===== day 14 against day 32, both-spell movers, 50-day run")
     for measure, fn in MEAS.items():
         print(f"\n  --- {measure}")
-        for label in ("LastSeen", "log and notes", "household mode"):
+        for label in ("last seen", "log and notes", "household mode"):
             per = []
             for home in D.HOMES_50:
                 both = D.both_spell_movers(home)
                 if label == "household mode":
                     rs = mode_rows("three homes, 50 days, 24 a day", home) or []
                 else:
-                    arm = ("last_seen_no_model" if label == "LastSeen"
+                    arm = ("last_seen_no_model" if label == "last seen"
                            else "the_log_and_notes_about_the_routine")
                     rs = D.rows(D.WAVE_50, arm, home)
                 a = [r for r in rs if r["day"] == 14 and r["object_id"] in both]

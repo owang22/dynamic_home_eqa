@@ -25,19 +25,19 @@ questions-per-day underneath (12 to 29 a day).
 
 | method | days 10-13 | day 14 | fall | days 28-31 | day 32 | fall |
 |---|---|---|---|---|---|---|
-| LastSeen | 79.3 | **20.5** | 58.8 | 84.8 | **53.4** | 31.4 |
+| last seen | 79.3 | **20.5** | 58.8 | 84.8 | **53.4** | 31.4 |
 | log and notes | 84.6 | 27.4 | 57.3 | 84.9 | 55.7 | 29.2 |
 | claim store | 57.6 | 6.4 | 51.3 | 60.6 | 12.8 | 47.8 |
 | ACE-style | 61.7 | 8.6 | 53.1 | 67.7 | 12.8 | 54.9 |
 
-Per household, LastSeen: day 14 10 / 33 / 18, day 32 56 / 50 / 55.
+Per household, last seen: day 14 10 / 33 / 18, day 32 56 / 50 / 55.
 
 **Figure A1, the first illness** — `figureA1_first_illness.pdf`. Ten-household run, moved objects,
 days 1 to 31.
 
 | method | days 10-13 | day 14 | day 24 |
 |---|---|---|---|
-| LastSeen | 81.6 | 33.5 | 42.2 |
+| last seen | 81.6 | 33.5 | 42.2 |
 | log and notes | 85.3 | 34.0 | 63.5 |
 | claim store | 68.2 | 36.0 | 31.3 |
 | reduced ACE | 69.1 | 31.5 | 24.4 |
@@ -122,7 +122,7 @@ Figure 1, the schematic. It needs no data decisions.
 
 ## The palette, as validated
 
-`#0072B2` LastSeen, `#D55E00` log and notes, `#009E73` claim store, `#785EF0` ACE-style and reduced
+`#0072B2` last seen, `#D55E00` log and notes, `#009E73` claim store, `#785EF0` ACE-style and reduced
 ACE, `#882255` MemGPT-style and tight working memory, `#BBBBBB` notes hidden. Grey-green and brown,
 which the specification suggests, both fail the colour-blindness checker — see
 `FIGURE_CHECKS_BEFORE_DRAWING.md`.

@@ -34,12 +34,12 @@ def main() -> int:
             continue
         per.append((100 * sum(1 for q in qs if a[q].get("found_at_step") == 1) / len(qs),
                     100 * sum(1 for q in qs if b[q].get("found_at_step") == 1) / len(qs), len(qs)))
-    print(f"     LastSeen {statistics.mean([x for x, _, _ in per]):.1f}%   "
+    print(f"     last seen {statistics.mean([x for x, _, _ in per]):.1f}%   "
           f"log and notes {statistics.mean([y for _, y, _ in per]):.1f}%   "
           f"({sum(n for _, _, n in per)} questions) - identical\n")
 
     print("2. But given three rooms, one of them FINDS it on the day of the change.")
-    for name, arm in (("LastSeen", RULE), ("log and notes", OURS)):
+    for name, arm in (("last seen", RULE), ("log and notes", OURS)):
         first, found = [], []
         for home in D.HOMES_50:
             both = D.both_spell_movers(home)
@@ -51,7 +51,7 @@ def main() -> int:
               f"found within three rooms {statistics.mean(found):.0f}%")
 
     print("\n3. So by the next three days it has already SEEN the objects where they now are.")
-    for name, arm in (("LastSeen", RULE), ("log and notes", OURS),
+    for name, arm in (("last seen", RULE), ("log and notes", OURS),
                       ("claim store", "incremental_edits"), ("ACE-style", "ACE_as_published")):
         share, acc = [], []
         for home in D.HOMES_50:
