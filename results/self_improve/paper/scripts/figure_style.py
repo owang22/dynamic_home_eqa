@@ -59,6 +59,9 @@ MUTED = "#6b6b68"
 def apply(plt):
     plt.rcParams.update({
         **SIZES,
+        # EVERY PIECE OF TEXT IS BOLD, tick numbers included. `font.weight` is the global default
+        # that the tick labels inherit; there is no per-tick weight rcParam.
+        "font.weight": "bold", "axes.labelweight": "bold", "axes.titleweight": "bold",
         "font.family": "serif",
         "font.serif": ["Times New Roman", "DejaVu Serif"],
         "mathtext.fontset": "dejavuserif",
@@ -95,7 +98,7 @@ def regimes(ax, spans, top=None, letters=True):
     for i, (first, last, name) in enumerate(spans):
         ax.annotate(name, xy=((first + last) / 2, 1.015), xycoords=("data", "axes fraction"),
                     ha="center", va="bottom", fontsize=8.5, color=MUTED,
-                    fontweight="bold" if name == "sick" else "normal", annotation_clip=False)
+                    annotation_clip=False)
         if i:
             ax.axvline(first - 0.5, color=INK, lw=0.9, ls=(0, (1.5, 1.8)), zorder=1)
             if letters:
@@ -109,14 +112,21 @@ def regimes(ax, spans, top=None, letters=True):
             edge += 1
 
 
-def legend_below(fig, ax, entries, ncol=None):
-    """One legend under the plot: a line-and-marker swatch and bold text, per method."""
+def legend_below(fig, ax, entries, ncol=None, y=None):
+    """One legend under the plot: a line-and-marker swatch and bold text, per method.
+
+    `y` is where its TOP sits in figure coordinates, so it can be tucked right under the x label
+    instead of parked at the foot of the canvas. Setting the anchor after the fact does not work -
+    matplotlib needs the loc and the bbox at creation.
+    """
     handles = [ax.plot([], [], color=COLOUR[name], marker=MARKER[name], lw=2.0, ms=5,
                        markeredgecolor="white", markeredgewidth=0.6, label=name)[0]
                for name in entries]
-    leg = fig.legend(handles=handles, loc="lower center", ncol=ncol or len(entries),
-                     fontsize=8.5, frameon=False, handlelength=1.8,
-                     columnspacing=1.4, borderpad=0.0, handletextpad=0.5)
+    where = {"loc": "upper center", "bbox_to_anchor": (0.5, y)} if y is not None \
+        else {"loc": "lower center"}
+    leg = fig.legend(handles=handles, ncol=ncol or len(entries), fontsize=8.5, frameon=False,
+                     handlelength=1.8, columnspacing=1.4, borderpad=0.0, handletextpad=0.5,
+                     labelspacing=0.35, **where)
     for text in leg.get_texts():
         text.set_fontweight("bold")
     return leg

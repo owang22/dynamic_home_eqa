@@ -43,7 +43,7 @@ def pooled(cells, arm, homes, days, objects_of=None):
     return [100 * got[d] / tot[d] if tot[d] else float("nan") for d in days], tot
 
 
-def draw(name, title, series, days, spans, ylim, note=None, width=0.62, height=3.1):
+def draw(name, title, series, days, spans, ylim, note=None, width=0.62, height=2.6):
     # Constrained layout is off here: the legend sits under the axes in a margin this reserves,
     # and constrained layout silently ignores subplots_adjust.
     # THE FIGURE HAS TO BE BORN WITHOUT CONSTRAINED LAYOUT. `layout=None` falls back to the
@@ -93,7 +93,7 @@ def main() -> int:
             values, counts = pooled(cells, arm, D.HOMES_10, days, movers)
             series.append((label, values))
     draw("first_illness_adaptation.pdf", "Adapting inside the illness", series, days,
-         [(1, 13, "normal"), (14, 23, "sick"), (24, 31, "normal")], (20, 100),
+         [(1, 13, "normal"), (14, 23, "sick"), (24, 31, "normal")], (0, 100),
          note=None)  # the question counts belong in the caption, not on the plot
 
     # --- the two illnesses, three households, the objects that move in both
@@ -134,7 +134,7 @@ def main() -> int:
     series.append(("household mode",
                    mode_curve("ten_homes_8_a_day", D.HOMES_10, days, movers)))
     draw("household_mode.pdf", "A mode memory, no language model", series, days,
-         [(1, 13, "normal"), (14, 23, "sick"), (24, 31, "normal")], (20, 100), note=None,
+         [(1, 13, "normal"), (14, 23, "sick"), (24, 31, "normal")], (0, 100), note=None,
          width=0.70)
 
     # --- the chooser, two lines, one panel
@@ -147,7 +147,7 @@ def main() -> int:
                                 D.HOMES_50, days31, movers)
         series.append((label, values))
     draw("the_chooser_by_day.pdf", "Does it matter when the room is chosen?", series, days31,
-         [(1, 13, "normal"), (14, 23, "sick"), (24, 31, "normal")], (20, 105),
+         [(1, 13, "normal"), (14, 23, "sick"), (24, 31, "normal")], (0, 105),
          note=None)
     return 0
 
