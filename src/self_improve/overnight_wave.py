@@ -35,9 +35,11 @@ FIVE GATES, every one of them because a wave was lost to the failure it catches:
   not parse               `model_call_failed` stayed False. Refused.
   the read budget         if it truncated the notes on any question the arm was not run with
                           unlimited memory, whatever this module intended.
-  a refused cell is       `run_one_cell` writes `cell.json` before any gate runs, and every
-  RENAMED                 "which cells are missing" query treats that file as done. A refused
-                          cell's file becomes `cell_REFUSED.json`.
+  a held cell is          `run_one_cell` writes `cell.json` before any gate runs, and every
+  RENAMED                 "which cells are missing" query treats that file as done. A held cell's
+                          file becomes `cell_HELD_FOR_REVIEW.json`, with the reason in `why.txt`
+                          beside it - NOT `cell_REFUSED.json`, which is what this line said until
+                          2026-09-28 and is the name `three_prompts.py` uses for its own gate.
 
     python -m self_improve.overnight_wave --arm "incremental edits" --household hh_s2_t03
 """

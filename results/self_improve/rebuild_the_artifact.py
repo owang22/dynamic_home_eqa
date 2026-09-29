@@ -201,8 +201,25 @@ def read_cell(f, root):
                 last_day = said
         except (ValueError, OSError):
             pass
+    # A CELL A GATE HELD BACK IS NOT A FINISHED CELL, and until 2026-09-28 the page could not tell
+    # the difference. `run_one_cell` writes cell.json, then the gates run, and a cell that fails
+    # one has its file renamed to cell_HELD_FOR_REVIEW.json with the reason in why.txt beside it
+    # (overnight_wave.py:259-273). The held cell still has a full searches.jsonl - it ran to the
+    # last day, it just wrote nothing on the night its completion did not parse - so it reached
+    # this page as an ordinary complete cell and a reader had no way to know a gate rejected it.
+    # Two such cells exist, both MemGPT as published at 24 questions a day. They are SHOWN rather
+    # than skipped, because the parse failure is a number this study reports rather than reruns
+    # away; what changes is that they are labelled.
+    held = f.parent / "cell_HELD_FOR_REVIEW.json"
+    why_held = ""
+    if held.exists():
+        note = f.parent / "why.txt"
+        if note.exists():
+            why_held = note.read_text().strip().splitlines()[-1].strip()
+        why_held = why_held or "a gate held this cell back; see why.txt beside it"
     return questions, notes, {"cfg": run, "hh": home, "arm": arm, "fmt": fmt,
                               "n": n, "maxday": day_max, "lastday": last_day,
+                              "held": why_held,
                               "quiet": None if quiet is None else round(quiet, 1)}
 
 
@@ -400,10 +417,14 @@ def main():
     PAGE.write_text(page)
     after = what_it_says_apart_from_how_stale_it_is(PAGE.read_text())
 
-    done = sum(1 for c in cells if c["maxday"] >= c["lastday"])
+    # A held cell reached its last day, so counting by day alone called it finished.
+    done = sum(1 for c in cells if c["maxday"] >= c["lastday"] and not c.get("held"))
+    n_held = sum(1 for c in cells if c.get("held"))
     runs = sorted({c["cfg"] for c in cells})
     print(f"{len(questions)} questions · {len(notes)} notes entries · "
-          f"{len(cells)} cells ({done} finished) · runs: {', '.join(runs)}")
+          f"{len(cells)} cells ({done} finished"
+          + (f", {n_held} HELD BY A GATE" if n_held else "")
+          + f") · runs: {', '.join(runs)}")
     print(f"page {PAGE.name} {PAGE.stat().st_size/1e6:.2f} MB · "
           f"{'unchanged' if before == after else 'CHANGED, worth republishing'}")
     print(f"{len(written)} trace files, {total_bytes/1e6:.2f} MB in total, "

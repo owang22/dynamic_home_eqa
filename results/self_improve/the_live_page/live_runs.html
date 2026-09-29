@@ -718,6 +718,20 @@
     var broken=keys.filter(function(k){return window.TR[k]&&window.TR[k].couldNotLoad;});
     var warn=broken.length? '<p class="note">'+broken.length+' of '+keys.length+
       ' files of reasoning could not be loaded, so what follows is incomplete.</p>' : '';
+    // A CELL A GATE HELD BACK LOOKS COMPLETE FROM HERE. It ran to its last day and its questions
+    // are all present, so nothing in the numbers says a gate rejected it. Two do exist, and a
+    // reader comparing arms has to be told which, so the reason is printed above the reading.
+    var heldNow=CELLS.filter(function(c){
+      return c.held && keys.indexOf(c.cfg+'~'+c.hh+'~'+c.arm+'~'+c.fmt)>=0;});
+    if(heldNow.length){
+      warn += '<p class="note" style="border-left:3px solid #b06000;padding-left:8px">'
+        +'<b>'+heldNow.length+' of these cells was held back by a gate</b> and is shown anyway, '
+        +'because the failure is a number this study reports rather than reruns away. '
+        +heldNow.map(function(c){
+            return esc(c.hh.replace('_t03',''))+' &middot; '+esc(c.fmt.replace(/_/g,' '))
+              +': '+esc(c.held);}).join('<br>')
+        +'</p>';
+    }
     who += warn;
     if(pick.view==='rooms'||pick.view==='why'){
       var qs=loadedQ(keys).filter(function(r){
