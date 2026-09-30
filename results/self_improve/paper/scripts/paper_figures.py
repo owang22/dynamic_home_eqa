@@ -41,7 +41,7 @@ INK, MUTED = "#1a1a1a", "#6b6b68"
 # where the older #D55E00 against #785EF0 only just cleared the contrast one. The five that share
 # an axis in Figure A1 pass on all pairs, not only adjacent ones. Grey-green and brown, which the
 # specification suggests, both fail - see FIGURE_CHECKS_BEFORE_DRAWING.md.
-COLOUR = {"last-seen": "#000000", "log and notes": "#EE6100", "claim store": "#009E73",
+COLOUR = {"log only": "#0072B2", "last-seen": "#000000", "log and notes": "#EE6100", "claim store": "#009E73",
           "ACE-style": "#8A3FFC", "MemGPT-style": "#882255", "notes hidden": "#BBBBBB",
           # THE TEN-HOUSEHOLD RUN HAS NEITHER PUBLISHED METHOD IN IT. Its ACE-shaped and
           # MemGPT-shaped arms are the CONSTRAINED ones, and the MemGPT-shaped arm ran on a
@@ -58,16 +58,16 @@ LINESTYLE = collections.defaultdict(lambda: "--")
 # `claim_store_told_if_it_was_right` in the ten-household run - so they keep separate keys here and
 # share one label. The same is true of the 1,200-character working memory, which the paper calls
 # MemGPT-style and which memory_notes.py says must never be called MemGPT without a qualifier.
-LABEL = {"ACE-style": "ACE-style playbook", "reduced ACE": "ACE-style playbook",
+LABEL = {"log only": "log only, no notes", "ACE-style": "ACE-style playbook", "reduced ACE": "ACE-style playbook",
          "tight working memory": "MemGPT-style working memory"}
 
 
 def label(name):
     return LABEL.get(name, name)
-MARKER = {"last-seen": "o", "log and notes": "s", "claim store": "^", "ACE-style": "D",
+MARKER = {"log only": "^", "last-seen": "o", "log and notes": "s", "claim store": "^", "ACE-style": "D",
           "MemGPT-style": "v", "notes hidden": "X",
           "reduced ACE": "D", "tight working memory": "v"}
-ARM_DIR = {"last-seen": "last_seen_no_model", "log and notes": "the_log_and_notes_about_the_routine",
+ARM_DIR = {"log only": "log_only_no_notes", "last-seen": "last_seen_no_model", "log and notes": "the_log_and_notes_about_the_routine",
            "claim store": "incremental_edits", "ACE-style": "ACE_as_published",
            "MemGPT-style": "MemGPT_as_published", "notes hidden": "prior_only_no_notes",
            "reduced ACE": "claim_store_told_if_it_was_right",
@@ -364,13 +364,22 @@ def figure_A1(style_name):
     cells = "results/self_improve/overnight_wave/cells"
     banks = pathlib.Path("results/self_improve/varied_homes/ten_homes/banks")
     movers = lambda h: sd.the_movers(FrozenHousehold(banks / f"{h}.jsonl"))
-    have = [n for n in names if (pathlib.Path(cells) / ARM_DIR[n]).exists()]
+    # The log-only arm lives in its own wave directory; bank, seed, questions a day and days are
+    # this wave's, so its line belongs on this figure.
+    LOG_ONLY_CELLS = "results/self_improve/wave_log_only/cells"
+    names = names + ["log only"]
+    have = [n for n in names
+            if (pathlib.Path(LOG_ONLY_CELLS if n == "log only" else cells)
+                / ARM_DIR[n]).exists()]
     if style["lines"] == 3:
-        have = [n for n in have if n in ("last-seen", "log and notes", "reduced ACE")]
+        # the three the ablation is about: the rule, the record, and the record plus summaries
+        have = [n for n in have if n in ("last-seen", "log only", "log and notes")]
     days = list(range(1, 32))
     curves = {}
     for n in have:
-        line, band, counts, per = by_day(cells, ARM_DIR[n], D.HOMES_10, days, movers)
+        line, band, counts, per = by_day(
+            LOG_ONLY_CELLS if n == "log only" else cells,
+            ARM_DIR[n], D.HOMES_10, days, movers)
         curves[n] = (line, band)
         note(f"  figure A1 [{style_name}] {n:15s} days 10-13 "
              f"{statistics.mean(line[9:13]):5.1f}  day 14 {line[13]:5.1f}  day 24 {line[23]:5.1f}")

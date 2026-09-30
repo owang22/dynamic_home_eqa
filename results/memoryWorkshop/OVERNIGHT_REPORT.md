@@ -181,46 +181,60 @@ _(new-against-old numbers are filled in below when the fixed rerun lands)_
 
 ---
 
-## D. Log-only arm on the ten-household run - PARTIAL at the time of writing, 4 of 10
+## D. Log-only arm on the ten-household run - DONE, all ten
 
 `PYTHONPATH=src python3 results/self_improve/paper/scripts/log_only_row.py`
+-> `results/self_improve/paper/log_only_row.txt`
 
 A new arm, `log only, no notes`: the model chooses rooms from the control's search-time prompt,
 with the object's raw sighting log present and the notes block empty, and **never writes a note**.
 Ten households, 31 days, 8 questions a day, same banks and seed as Table 1. Implementation: a new
 way of writing in `memory_notes`, membership of `THE_LOG_AND_THE_ROUTINE_FAMILY` so it reads the
-log, and a night that returns without calling anything. The guard that every night goes through
-the search-driven day renderer is exempted for this arm by name rather than weakened.
+log, and a night that returns without calling anything. The guard that every night goes through the
+search-driven day renderer is exempted for this arm by name rather than weakened.
 
-**Finished households at the time of writing: hh_s2_t03, hh_s19_t03, hh_s20_t03, hh_s32_t03.**
-The other six are still running and are not pooled with anything.
+**All ten households finished.** The Table 1 row, 2,480 questions per method:
 
 | method | first room right | found within 3 |
 |---|---|---|
-| log and notes | 88.3 | 98.0 |
-| **log only, no notes** | **86.0** | **96.1** |
-| last-seen | 80.8 | 94.7 |
-| claim store | 76.8 | 87.4 |
+| log and notes | 85.6 | 96.6 |
+| **log only, no notes** | **85.2** | **95.9** |
+| last-seen | 82.1 | 95.0 |
+| claim store | 77.0 | 86.9 |
 
-Paired within household, 2 SE across the four, floors 1.9 and 2.2:
+Paired within household, 2 SE across the ten, floors 1.9 and 2.2:
 
 | difference | first room right | found within 3 |
 |---|---|---|
-| log only - log and notes | -2.3, 2 SE 3.2, sign 2 of 4, does not clear | -1.9, 2 SE 3.9, sign 3 of 4, **inside the floor** |
-| log only - last-seen | **+5.1, 2 SE 3.0, sign 4 of 4, CLEARS** | +1.4, 2 SE 3.6, inside the floor |
-| log only - claim store | **+9.2, 2 SE 8.7, sign 3 of 4, CLEARS** | **+8.7, 2 SE 6.4, sign 4 of 4, CLEARS** |
+| log only - log and notes | -0.4, 2 SE 1.9, sign **5 of 10** | -0.7, 2 SE 2.0, sign **5 of 10** |
+| log only - last-seen | +3.1, 2 SE 3.4, sign 8 of 10 | +0.8, 2 SE 2.0, sign 7 of 10 |
+| log only - claim store | **+8.2, 2 SE 3.9, sign 9 of 10, CLEARS** | **+9.0, 2 SE 3.7, sign 10 of 10, CLEARS** |
 
-**Plainly: on these four households log-only is within the noise floor of log-and-notes.** Writing
-notes every night on top of the record buys 2.3 points of first-room-right and 1.9 of
-found-within-three, neither of which clears two standard errors and the second of which is inside
-the rerun floor. The record is doing the work; the summaries are close to free of it.
+**Plainly: log-only is inside the noise floor of log-and-notes on both measures.** The difference
+is 0.4 and 0.7 points, both under their floors (1.9 and 2.2), both under two standard errors, and
+the sign is 5 of 10 - a coin flip. Writing a note every night, on top of the record the model can
+already read, buys nothing measurable here.
 
-That is a stronger claim than the draft makes, and it is the arm the Limitations section says was
-wanted and not run - *"An arm that reads the log without notes would separate the value of the
-summaries from the model's use of the log; we did not run it."* It is run now. **Do not write it
-up on four households**: the number to quote is whatever ten give.
+Two consequences worth stating carefully:
 
----
+- The paper's second finding - *"Giving the same summaries the raw sighting record closes the
+  gap"* - survives, but its mechanism changes. On this evidence the record is the whole of it. An
+  arm that keeps the record and writes nothing does as well as the arm that keeps both, and both
+  beat the claim store by 8 to 9 points.
+- Log-only against last-seen is +3.1 and +0.8, neither clearing - the same shape as
+  log-and-notes against last-seen (+3.5 / +1.5). So the model reading the record is not reliably
+  better than the rule walking back through it either.
+
+This is the arm the Limitations section says was wanted and not run: *"An arm that reads the log
+without notes would separate the value of the summaries from the model's use of the log; we did
+not run it."* It is run now, on all ten households.
+
+**The Figure A1 line.** Added, from `results/self_improve/wave_log_only/cells`; everything else
+about it is that figure's wave. Days 10-13 **81.0**, day 14 **35.2**, day 24 **49.6**, against
+log-and-notes 85.3 / 34.0 / 63.5 and last-seen 81.6 / 33.5 / 42.2. On the figure the log-only line
+tracks log-and-notes through the whole illness and both climb back faster than last-seen. The
+`oliver` three-line version now shows the three arms the ablation is about - last-seen, log only,
+log and notes - and drops the reduced-ACE line; the `spec` version shows all six.
 
 ## E. One note's life - DONE
 
