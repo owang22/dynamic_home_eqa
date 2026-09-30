@@ -502,3 +502,56 @@ def figure_A2(style_name):
     fig.savefig(out)
     plt.close(fig)
     note(f"  wrote {out}")
+
+
+def figure_4(style_name):
+    """One note's life: the ill resident's glass, in the claim store, on four nights.
+
+    The same note, claim_0005, rewritten four times. It is never conditioned on the illness and
+    never keeps the illness placement: by night 31 the condition field reads "Always" and the
+    bedroom is gone. Quotes are verbatim from that claim's revision history, read with the rule
+    that a revision dated N stores under `was` the text it REPLACED, so the text a note carried on
+    night N is the `was` of its first revision after N.
+    """
+    style = dict(STYLES[style_name])
+    apply(style)
+    cell = pathlib.Path("results/self_improve/overnight_wave/cells/incremental_edits/hh_s2_t03")
+    notes = json.load(open(cell / "notes.json"))
+    claim = next(c for c in notes["claims"] if c["claim_id"] == "claim_0005")
+
+    def on_night(night, field="statement"):
+        for r in sorted(claim.get("revision_history") or [], key=lambda r: (r.get("day") or 0)):
+            if (r.get("day") or 0) > night:
+                was = r.get("was")
+                return (was.get(field) if isinstance(was, dict) else was) or ""
+        return claim.get(field) or ""
+
+    nights = [(13, "Night 13\nNormal"), (18, "Night 18\nFour Days Ill"),
+              (24, "Night 24\nLife Returns"), (31, "Night 31\nA Week After")]
+    fig = plt.figure(figsize=(WIDTH_IN, 2.1))
+    gs = fig.add_gridspec(1, 4, wspace=0.26)
+    ours = COLOUR["claim store"]
+    for i, (night, title) in enumerate(nights):
+        ax = fig.add_subplot(gs[i])
+        ax.set_xlim(0, 1); ax.set_ylim(0, 1); ax.axis("off")
+        ax.set_title(title, fontsize=7.4, fontweight=style["weight"], pad=6, linespacing=1.35)
+        body = on_night(night) or "(the note says nothing about the glass on this night)"
+        when = on_night(night, "holds_under") or "not said"
+        # 26 characters overran the box: four panels on a 396 pt canvas leave about 80 pt each,
+        # and this face is wider than the estimate. Measured by rendering.
+        text = _wrap(body, 19)
+        lines = text.count("\n") + 1
+        height = 0.062 * lines + 0.10
+        ax.add_patch(plt.Rectangle((0.0, 0.88 - height), 1.0, height, facecolor="#fbfbfa",
+                                   edgecolor=ours, lw=1.1))
+        ax.text(0.06, 0.835, text, ha="left", va="top", fontsize=6.4, color=INK,
+                style="italic", linespacing=1.45)
+        ax.text(0.5, 0.86 - height - 0.035, "when it is true:\n" + _wrap(when, 18),
+                ha="center", va="top", fontsize=6.2, color=MUTED,
+                fontweight=style["weight"], linespacing=1.35)
+        note(f"  figure 4 [{style_name}] night {night}: {body!r}  (when: {when!r})")
+    fig.subplots_adjust(left=0.025, right=0.975, top=0.83, bottom=0.03)
+    out = _place(style_name, "figure4_one_notes_life")
+    fig.savefig(out)
+    plt.close(fig)
+    note(f"  wrote {out}")

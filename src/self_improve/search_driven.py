@@ -73,7 +73,8 @@ from self_improve.memory_notes import (A_PROFILE_AND_TOLD, A_PROFILE_OF_EACH_PER
                                       TOLD_THE_NIGHT_BEFORE, TOLD_ON_THE_FIRST_NIGHT,
                                       ACE_AS_PUBLISHED, MEMGPT_AS_PUBLISHED,
                                        A_WORKING_MEMORY_AND_AN_ARCHIVE, Notes,
-                                       THE_LOG_AND_THE_ROUTINE, TOLD_IF_IT_WAS_RIGHT)
+                                       THE_LOG_AND_THE_ROUTINE, THE_LOG_ONLY,
+                                       TOLD_IF_IT_WAS_RIGHT)
 from self_improve.study_settings import LOCKED
 from self_improve import write_the_notes as write_the_notes_module
 from self_improve import the_log_the_robot_reads
@@ -162,7 +163,8 @@ HOW_MEMORY_IS_WRITTEN = ("wholesale rewrite", "incremental edits",
                          TOLD_AND_ASKED_WHAT_CHANGES)
 
 # The arms built on `the log and notes about the routine`: the same prompt, one thing changed.
-THE_LOG_AND_THE_ROUTINE_FAMILY = (THE_LOG_AND_THE_ROUTINE,
+THE_LOG_AND_THE_ROUTINE_FAMILY = (THE_LOG_ONLY,
+                                  THE_LOG_AND_THE_ROUTINE,
                                   THE_LOG_AND_THE_ROUTINE_DERIVED_ALLOWANCE,
                                   THE_LOG_AND_THE_ROUTINE_EIGHT,
                                   THE_LOG_AND_THE_ROUTINE_SIXTEEN,
@@ -1088,6 +1090,13 @@ def run_one_cell(household: FrozenHousehold, how_memory_is_written: str,
                     name_the_objects_it_will_be_quizzed_on=pinned.get(
                         "name_the_objects_it_will_be_quizzed_on", True),
                     a_message_tonight=pinned.get("a_message_tonight"))
+            elif how_memory_is_written == THE_LOG_ONLY:
+                # NO NIGHT AT ALL. This arm never writes, so there is nothing to call a model
+                # about; it is in the log-reading family only so that its search-time prompt is
+                # the control's, log and all, with an empty notes block.
+                report = {"day": day, "model_call_failed": False, "n_model_calls_tonight": 0,
+                          "applied": [], "rejected": [], "n_claims_now": 0,
+                          "this_arm_never_writes": True}
             elif how_memory_is_written in THE_LOG_AND_THE_ROUTINE_FAMILY:
                 # This arm's notes may not say where anything is, so its allowance is a flat
                 # number rather than derived from the objects it saw: see EDITS_A_NIGHT in
@@ -1151,7 +1160,10 @@ def run_one_cell(household: FrozenHousehold, how_memory_is_written: str,
             # such night. The guard is unchanged in strength: only a render through
             # `the_day_this_arm_sees` moves this counter at all.
             rendered_tonight = _HOW_MANY_TIMES_THE_DAY_WAS_RENDERED[0] - renders_before
-            if rendered_tonight < 1:
+            # The log-only arm has no night, so it renders nothing and the guard does not apply.
+            # It is exempted by name rather than by relaxing the test, which stays exactly as
+            # strong for every arm that does write.
+            if how_memory_is_written != THE_LOG_ONLY and rendered_tonight < 1:
                 raise AssertionError(
                     f"{household.name}/{arm} day {day}: the note-writing prompt did NOT "
                     f"go through the search-driven day renderer, so what the model was "

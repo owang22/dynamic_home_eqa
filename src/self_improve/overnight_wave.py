@@ -59,7 +59,7 @@ from self_improve import search_driven as sd
 from self_improve.frozen_household import FrozenHousehold
 from self_improve.memory_notes import (A_PROFILE_AND_TOLD, A_PROFILE_OF_EACH_PERSON,
                                       TOLD_AND_ASKED_WHAT_CHANGES,
-                                      ACE_AS_PUBLISHED, MEMGPT_AS_PUBLISHED,
+                                      ACE_AS_PUBLISHED, MEMGPT_AS_PUBLISHED, THE_LOG_ONLY,
                                       THE_LOG_AND_THE_ROUTINE_DERIVED_ALLOWANCE,
                                       THE_LOG_AND_THE_ROUTINE_EIGHT,
                                       THE_LOG_AND_THE_ROUTINE_SIXTEEN,
@@ -123,6 +123,9 @@ ARMS: Dict[str, Tuple[str, str, int]] = {
     "ours, told on the first night": (TOLD_ON_THE_FIRST_NIGHT, MEMORY_GUIDED, 3),
     "ACE as published": (ACE_AS_PUBLISHED, MEMORY_GUIDED, 3),
     "MemGPT as published": (MEMGPT_AS_PUBLISHED, MEMORY_GUIDED, 3),
+    # The log without the summaries: same search-time prompt as the control, empty notes block,
+    # no nightly write. Separates what the raw record is worth from what the notes add.
+    "log only, no notes": (THE_LOG_ONLY, MEMORY_GUIDED, 3),
     "last seen, no model": ("incremental edits", sd.LAST_SEEN, 10),
     "prior only, no notes": ("incremental edits", sd.PRIOR_ONLY, 10),
     "wholesale rewrite": ("wholesale rewrite", MEMORY_GUIDED, 1),

@@ -112,6 +112,12 @@ ACE_AS_PUBLISHED = "ACE as published"
 # their archive holds separate passages reached only by searching. Ours was a list of numbered
 # notes in both tiers, which is a claim store with a size limit rather than MemGPT.
 MEMGPT_AS_PUBLISHED = "MemGPT as published"
+# The log-only ablation, added 2026-09-30. It reads the same search-time prompt as `the log and
+# notes about the routine` - the object's raw sighting log and all - and writes NO notes at all,
+# so its notes block is always "(no notes yet)". It exists to separate the value of the log from
+# the value of the summaries the model writes about it: the paper argues the log is doing the work
+# and had no arm that isolates it.
+THE_LOG_ONLY = "the log only, no notes"
 # The eighth way, added 2026-09-25, and it exists because a limit we set turned out to bind.
 # `THE_LOG_AND_THE_ROUTINE` may write at most 16 notes a night, a flat number chosen on the
 # argument that useful notes about a household are few. The control's allowance is derived from
@@ -166,7 +172,7 @@ THE_LOG_AND_THE_ROUTINE_SIXTEEN = "the log and notes about the routine, sixteen 
 # nights carried a message is recorded so the set can be checked rather than trusted.
 TOLD_THE_NIGHT_BEFORE = "the log and notes, told the night before"
 TOLD_ON_THE_FIRST_NIGHT = "the log and notes, told on the first night"
-WAYS_OF_WRITING = (WHOLESALE_REWRITE, INCREMENTAL_EDITS, TOLD_IF_IT_WAS_RIGHT,
+WAYS_OF_WRITING = (THE_LOG_ONLY, WHOLESALE_REWRITE, INCREMENTAL_EDITS, TOLD_IF_IT_WAS_RIGHT,
                    THE_LOG_AND_THE_ROUTINE, A_WORKING_MEMORY_AND_AN_ARCHIVE,
                    ACE_AS_PUBLISHED, MEMGPT_AS_PUBLISHED,
                    THE_LOG_AND_THE_ROUTINE_DERIVED_ALLOWANCE,

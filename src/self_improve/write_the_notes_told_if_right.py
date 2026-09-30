@@ -565,7 +565,12 @@ def merge_what_says_the_same_thing(notes: Notes, household: FrozenHousehold, day
     text, _ = client.complete(
         [{"role": "system", "content": told.WRITING_SYSTEM},
          {"role": "user", "content": "\n".join(lines)}],
-        MERGE_SCHEMA, max_tokens=900)
+        # 900 -> 3000 on 2026-09-30. Tested first: a rebuilt four-pair night answered inside 900
+        # (737 completion tokens), so the cap is NOT the proven cause of the silent nights - but a
+        # twelve-merge schema with a 600-character `why` can ask for far more than 900, the change
+        # costs nothing, and it changes the cache key, which is what forces the merge calls of a
+        # rerun to be made fresh instead of replayed.
+        MERGE_SCHEMA, max_tokens=3000)
     merges = []
     if text:
         try:
@@ -573,10 +578,17 @@ def merge_what_says_the_same_thing(notes: Notes, household: FrozenHousehold, day
         except ValueError:
             merges = []
     ids = {c.claim_id for c in notes.claims}
-    done, rejected, notes_on_pairs = 0, 0, []
+    done, rejected, notes_on_pairs, unusable = 0, 0, [], []
+    # THIS USED TO BE A BARE `continue`. A reply naming a claim that is not in the store, or the
+    # same claim twice, was dropped with nothing recorded, so the night looked exactly like a night
+    # the model never answered: pairs proposed, no verdict. Over the 50-day run that was 126 of the
+    # 137 nights that proposed a pair, and it read as "ACE's merging does not do much here".
     for m in merges:
         keep, fold = m.get("keep"), m.get("fold_in")
         if keep not in ids or fold not in ids or keep == fold:
+            unusable.append({"keep": keep, "fold_in": fold,
+                             "why_unusable": ("same claim twice" if keep == fold
+                                              else "names a claim that is not in the store")})
             continue
         if not m.get("they_say_the_same_thing"):
             rejected += 1
@@ -595,6 +607,11 @@ def merge_what_says_the_same_thing(notes: Notes, household: FrozenHousehold, day
             pass
     return {"n_pairs_proposed": len(candidates), "n_merged": done,
             "n_rejected": rejected,
+            # every night now says what came back, so "no verdict" can never again be
+            # indistinguishable from "the model was never asked"
+            "n_returned_by_the_model": len(merges),
+            "n_unusable": len(unusable), "unusable": unusable[:6],
+            "the_reply_did_not_parse": bool(text) and not merges and text.strip() != "",
             "how_alike_the_pairs_were": [round(a, 3) for _, _, a in candidates],
             "pairs": notes_on_pairs}
 
