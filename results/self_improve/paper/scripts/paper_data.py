@@ -12,6 +12,7 @@ against the list in the brief.
 """
 import collections
 import json
+import os
 import pathlib
 import sys
 
@@ -22,7 +23,10 @@ from self_improve.frozen_household import FrozenHousehold  # noqa: E402
 
 BANKS_50 = pathlib.Path("results/self_improve/varied_homes/all_generated_v2_twice/banks")
 BANKS_10 = pathlib.Path("results/self_improve/varied_homes/ten_homes/banks")
-WAVE_50 = pathlib.Path("results/self_improve/wave_the_second_illness/cells")
+# Overridable so the same analysis can be pointed at a rerun without editing anything:
+#   WAVE_50=results/self_improve/wave_the_second_illness_ACE_rerun/cells python3 <script>
+WAVE_50 = pathlib.Path(os.environ.get(
+    "WAVE_50", "results/self_improve/wave_the_second_illness/cells"))
 WAVE_10 = pathlib.Path("results/self_improve/overnight_wave/cells")
 
 HOMES_50 = ("hh_s2_t03", "hh_s32_t03", "hh_s48_t03")

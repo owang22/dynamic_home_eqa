@@ -507,6 +507,26 @@ def change_the_notes(notes: Notes, household: FrozenHousehold, day: int, time: i
                 claims_before, household)}
 
 
+def merge_schema(claim_ids: Sequence[str]) -> Dict[str, Any]:
+    """The merge schema with `keep` and `fold_in` PINNED TO THE IDS IN THE PROMPT.
+
+    They used to be plain strings. Measured on the 2026-09-30 rerun, across two households: the
+    model answered on 356 of 359 proposed pairs and 329 of those answers were thrown away, because
+    it put words in those fields instead of ids - `keep: "both"`, `fold_in: "none"` 174 times, and
+    the same claim named twice 18 times. All of it is schema-valid free text, so nothing failed and
+    nothing was recorded, and the arm looked like a method whose merging step does not fire.
+
+    An enum makes the wrong answer unrepresentable, which is what every other schema in this
+    project does with a field that has to name something real - `room` in choose_where_to_look,
+    `status` in the edits schema. This is the same fix.
+    """
+    schema = json.loads(json.dumps(MERGE_SCHEMA))
+    props = schema["properties"]["merges"]["items"]["properties"]
+    props["keep"] = {"type": "string", "enum": list(claim_ids)}
+    props["fold_in"] = {"type": "string", "enum": list(claim_ids)}
+    return schema
+
+
 MERGE_SCHEMA: Dict[str, Any] = {
     "type": "object",
     "properties": {
@@ -553,6 +573,9 @@ def merge_what_says_the_same_thing(notes: Notes, household: FrozenHousehold, day
     lines = ["Two of your notes may be saying the same thing. For each pair below, say "
              "whether they do, and if they do, write the one note that should replace both.",
              "",
+             "`keep` and `fold_in` must each be one of the note numbers shown below, and they "
+             "must be different from each other. Do not put a word there.",
+             "",
              "If they say different things, say so and leave them alone. Two notes about the "
              "same object at different times of day are NOT the same note.",
              ""]
@@ -570,7 +593,8 @@ def merge_what_says_the_same_thing(notes: Notes, household: FrozenHousehold, day
         # twelve-merge schema with a 600-character `why` can ask for far more than 900, the change
         # costs nothing, and it changes the cache key, which is what forces the merge calls of a
         # rerun to be made fresh instead of replayed.
-        MERGE_SCHEMA, max_tokens=3000)
+        merge_schema(sorted({c.claim_id for one, two, _ in candidates
+                             for c in (one, two)})), max_tokens=3000)
     merges = []
     if text:
         try:
