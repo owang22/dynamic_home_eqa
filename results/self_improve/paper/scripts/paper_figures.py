@@ -574,16 +574,29 @@ def figure_4(style_name):
     tl.set_xlim(0.5, 31.5)
     tl.set_ylim(0, TIMELINE)
     tl.axis("off")
-    bar_y, bar_h = 0.24, 0.13
-    tl.add_patch(plt.Rectangle((0.5, bar_y), 31.0, bar_h, facecolor="#f2f2f0",
-                               edgecolor="#d8d8d4", lw=0.6, zorder=1))
-    tl.add_patch(plt.Rectangle((14, bar_y), 10, bar_h, facecolor=SHADE, edgecolor="none",
+    # THE TWO STRETCHES HAVE TO BE TELLABLE APART AT A GLANCE. A thin bar is not a shaded panel:
+    # the #f2f2f0 against #e4e4e1 that reads clearly across half of Figure 2 is nearly one colour
+    # in a strip this tall. So the normal days are white and the ill days are a grey dark enough to
+    # separate from white at 0.16 inches, with a rule at each boundary and both stretches named.
+    bar_y, bar_h = 0.22, 0.16
+    ILL = "#c8c8c3"
+    tl.add_patch(plt.Rectangle((0.5, bar_y), 31.0, bar_h, facecolor="white",
+                               edgecolor=MUTED, lw=0.7, zorder=1))
+    tl.add_patch(plt.Rectangle((14, bar_y), 10, bar_h, facecolor=ILL, edgecolor="none",
                                zorder=2))
-    tl.text(19, bar_y + bar_h + 0.045, "ill, days 14 to 23", ha="center", va="bottom",
-            fontsize=6.6, color=MUTED, fontweight=style["weight"])
-    tl.text(0.7, bar_y + bar_h + 0.045, "day 1", ha="left", va="bottom", fontsize=6.2,
+    for edge in (14, 24):
+        tl.plot([edge, edge], [bar_y, bar_y + bar_h], color=MUTED, lw=0.7, zorder=4)
+    tl.text(7.2, bar_y + bar_h / 2, "normal", ha="center", va="center", fontsize=6.4,
+            color=MUTED, fontweight=style["weight"], zorder=5)
+    tl.text(19, bar_y + bar_h / 2, "ill", ha="center", va="center", fontsize=6.4,
+            color=INK, fontweight="bold", zorder=5)
+    tl.text(27.8, bar_y + bar_h / 2, "normal", ha="center", va="center", fontsize=6.4,
+            color=MUTED, fontweight=style["weight"], zorder=5)
+    tl.text(19, bar_y + bar_h + 0.05, "days 14 to 23", ha="center", va="bottom",
+            fontsize=6.4, color=MUTED, fontweight=style["weight"])
+    tl.text(0.7, bar_y + bar_h + 0.05, "day 1", ha="left", va="bottom", fontsize=6.2,
             color=MUTED)
-    tl.text(31.3, bar_y + bar_h + 0.045, "day 31", ha="right", va="bottom", fontsize=6.2,
+    tl.text(31.3, bar_y + bar_h + 0.05, "day 31", ha="right", va="bottom", fontsize=6.2,
             color=MUTED)
     for night, _ in nights:
         tl.plot([night, night], [bar_y - 0.05, bar_y + bar_h + 0.02], color=INK, lw=1.1,

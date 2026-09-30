@@ -82,7 +82,8 @@ day, and one day never looks like a regime."""),
   """One note in the claim store - claim_0005 of household hh_s2_t03, the untold arm - on four
 nights: before the illness, four days into it, the first night back, and a week after. The note
 text and the condition are verbatim, and the condition is the `holds_under` field exactly as it is
-stored. The bar above the row places each night against the month, with days 14 to 23 shaded.
+stored. The bar above the row places each night against the month: the ill days, 14 to 23, are the
+shaded stretch between the two rules, and the ordinary days either side are white.
 
 The text a note carried at the end of night N is read as the text its next revision replaced: a
 revision dated day N stores the previous wording under `was`. Nights 13, 18 and 24 come from the
