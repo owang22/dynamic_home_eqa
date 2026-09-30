@@ -1,0 +1,435 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{margin:0;font:14px system-ui}[hidden]{display:none!important}img{max-width:100%}</style></head><body><title>Dana and Felix at Home</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --ground:#F2F4F6; --panel:#FFFFFF; --ink:#18232E; --soft:#5B6876; --line:#C9D1DA; --faint:#E4E9EE;
+  --robot:#D9480F; --dana:#9B2335; --felix:#A87900; --seen:#2B8A3E; --small:#B7791F; --room:#DCE6F0;
+  --sans:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --cond:"IBM Plex Sans Condensed","IBM Plex Sans",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){color-scheme:dark;
+    --ground:#11161C; --panel:#1A212A; --ink:#E7ECF1; --soft:#9AA7B5; --line:#38434F; --faint:#242D37;
+    --robot:#FF8A4C; --dana:#E8788A; --felix:#E3B341; --seen:#69C97E; --small:#E0A84A; --room:#22303E;}
+}
+:root[data-theme="dark"]{color-scheme:dark;
+  --ground:#11161C; --panel:#1A212A; --ink:#E7ECF1; --soft:#9AA7B5; --line:#38434F; --faint:#242D37;
+  --robot:#FF8A4C; --dana:#E8788A; --felix:#E3B341; --seen:#69C97E; --small:#E0A84A; --room:#22303E;}
+*{box-sizing:border-box}
+body{background:var(--ground);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.45;
+  padding-inline:20px;padding-block:20px 48px}
+.wrap{max-width:1320px;margin-inline:auto;display:flex;flex-direction:column;gap:18px}
+h1{font-family:var(--cond);font-weight:600;font-size:30px;line-height:1.1;margin:0;text-wrap:balance}
+h2{font-family:var(--cond);font-weight:600;font-size:17px;margin:0;letter-spacing:.01em}
+.lede{color:var(--soft);max-width:70ch;margin:6px 0 0}
+.label{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--soft);font-weight:500}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--robot);outline-offset:2px}
+
+.when{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:14px 16px;
+  display:flex;flex-direction:column;gap:12px}
+.now{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 16px}
+.now strong{font-family:var(--cond);font-size:22px;font-weight:600}
+.stage{font-size:13px;padding:2px 9px;border-radius:99px;border:1px solid var(--line);color:var(--soft)}
+.stage.sick{border-color:var(--dana);color:var(--dana)}
+.step{margin-left:auto;display:flex;gap:6px}
+.step button{border:1px solid var(--line);background:var(--ground);border-radius:4px;padding:4px 10px}
+.periods{display:flex;flex-wrap:wrap;gap:8px 18px}
+.period{display:flex;flex-direction:column;gap:5px}
+.chips{display:flex;flex-wrap:wrap;gap:4px}
+.chip{border:1px solid var(--line);background:var(--ground);border-radius:4px;padding:4px 9px;
+  font-family:var(--mono);font-size:13px;font-variant-numeric:tabular-nums;min-width:40px;text-align:center}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--panel);border-color:var(--ink)}
+
+.main{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:18px;align-items:start}
+@media (max-width:900px){.main{grid-template-columns:minmax(0,1fr)}}
+.col{display:flex;flex-direction:column;gap:12px;min-width:0}
+.box{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:14px 16px;
+  display:flex;flex-direction:column;gap:10px;min-width:0}
+svg.map{width:100%;height:auto;display:block}
+.map .r{fill:var(--faint);stroke:var(--line);stroke-width:.04}
+.map .r.live{fill:var(--room);cursor:pointer}
+.map .r.live:hover{stroke:var(--ink)}
+.map .r.on{stroke:var(--robot);stroke-width:.09}
+.map .f{fill:none;stroke:var(--soft);stroke-width:.025;opacity:.55}
+.map text{font-family:var(--sans);fill:var(--ink);pointer-events:none}
+.map .rn{font-size:.34px;font-weight:600}
+.map .rs{font-size:.24px;fill:var(--soft)}
+.map .cone{fill:var(--robot);opacity:.13;stroke:var(--robot);stroke-width:.03;cursor:pointer}
+.map .cone.on{opacity:.34}
+.map .cam{fill:var(--robot);cursor:pointer}
+.map .thing{stroke:var(--panel);stroke-width:.03}
+.map .who{stroke-width:.07;fill:var(--panel)}
+.map .wl{font-size:.3px;font-weight:600;text-anchor:middle}
+.key{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:13px;color:var(--soft)}
+.key i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:-1px}
+
+.tabs{display:flex;flex-wrap:wrap;gap:4px}
+.tab{border:1px solid var(--line);background:var(--ground);border-radius:4px;padding:4px 10px;font-size:13px}
+.tab[aria-pressed="true"]{background:var(--robot);border-color:var(--robot);color:#fff}
+:root[data-theme="dark"] .tab[aria-pressed="true"]{color:#1A0B02}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .tab[aria-pressed="true"]{color:#1A0B02}}
+.shot{position:relative;width:100%;max-width:100%;aspect-ratio:4/3;background:#0B0E12;border-radius:4px;overflow:hidden}
+.shot .img{position:absolute;inset:0;background-repeat:no-repeat}
+.shot .wait{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#C9D1DA;font-size:13px}
+.mark{position:absolute;border:2px solid #7CFF9B;border-radius:2px;pointer-events:none}
+.mark.tiny{border-color:#FFC766;border-style:dashed}
+.mark.faint{border-style:dotted}
+.mark.lit{box-shadow:0 0 0 3px rgba(255,255,255,.9)}
+.tag{position:absolute;background:rgba(8,12,16,.86);color:#fff;font-size:12px;line-height:16px;padding:1px 6px;
+  white-space:nowrap;border-radius:2px;pointer-events:none}
+.tag.tiny{color:#FFD894}
+.tag.lit{background:#fff;color:#0B0E12}
+ul.plain li{border-radius:3px}
+ul.plain li:hover{background:var(--faint)}
+.caption{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;font-size:13px;color:var(--soft)}
+.caption label{display:flex;gap:6px;align-items:center;color:var(--ink)}
+.note{font-size:13px;color:var(--soft);border-left:3px solid var(--small);padding-left:10px}
+
+ul.plain{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+ul.plain li{display:grid;grid-template-columns:auto minmax(0,1fr);gap:2px 10px;align-items:baseline}
+.pill{font-size:12px;border-radius:99px;padding:1px 8px;border:1px solid currentColor;white-space:nowrap}
+.pill.seen{color:var(--seen)} .pill.tiny{color:var(--small)} .pill.no{color:var(--soft)}
+.pill.faint{color:var(--seen);border-style:dashed}
+.sub{grid-column:2;color:var(--soft);font-size:13px}
+.report{font-family:var(--mono);font-size:13px;line-height:1.55;white-space:pre-wrap;background:var(--ground);
+  border:1px solid var(--faint);border-radius:4px;padding:10px 12px;margin:0;overflow-x:auto}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:14px;min-width:620px}
+th{text-align:left;font-weight:500;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--soft);
+  padding:4px 10px 6px 0;border-bottom:1px solid var(--line)}
+td{padding:6px 10px 6px 0;border-bottom:1px solid var(--faint);vertical-align:top}
+td .go{border:0;background:none;padding:0;color:var(--robot);text-decoration:underline;font-size:13px}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px}
+details{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:12px 16px}
+summary{cursor:pointer;font-family:var(--cond);font-weight:600;font-size:17px}
+details ul{margin:10px 0 0;padding-left:18px;max-width:80ch;display:flex;flex-direction:column;gap:6px}
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>Dana and Felix at Home</h1>
+    <p class="lede">A simulated household placed in a real 3D home. Pick a day and a time, then a room, and see what a robot's camera shows from where it stands. Every label on a picture comes from that picture: a thing is marked only if its own pixels are in the frame.</p>
+    <p class="lede">The study asks a robot where things are. Its questions are about 13 of this household's things, so those 13 are the ones placed in the home.</p>
+  </header>
+
+  <section class="when" aria-label="Day and time">
+    <div class="now">
+      <strong id="nowText">Loading</strong>
+      <span class="stage" id="stage"></span>
+      <span id="whoWhere" style="color:var(--soft)"></span>
+      <div class="step">
+        <button id="prev" aria-label="Earlier moment">&larr; earlier</button>
+        <button id="next" aria-label="Later moment">later &rarr;</button>
+      </div>
+    </div>
+    <div class="periods" id="days"></div>
+    <div class="period"><span class="label">Time of day</span><div class="chips" id="times"></div></div>
+  </section>
+
+  <div class="main">
+    <div class="col">
+      <section class="box">
+        <h2>The home, from above</h2>
+        <svg class="map" id="map" role="img" aria-label="Floor plan of the home"></svg>
+        <div class="key">
+          <span><i style="background:var(--dana)"></i>Dana and her things</span>
+          <span><i style="background:var(--felix)"></i>Felix and his things</span>
+          <span><i style="background:var(--robot);border-radius:2px"></i>where the robot's camera stands</span>
+        </div>
+        <div class="key"><span>Click a room to look into it. Click an orange square to take the picture from there; the shaded wedge is what the chosen camera faces. Click a dot or a person to jump to the clearest picture of it.</span></div>
+      </section>
+      <section class="box">
+        <h2 id="reportTitle">What the robot could report</h2>
+        <p class="caption" id="reportFrom" style="margin:0"></p>
+        <pre class="report" id="report"></pre>
+      </section>
+    </div>
+
+    <div class="col">
+      <section class="box">
+        <div class="tabs" id="tabs" role="group" aria-label="Pictures of this room"></div>
+        <div class="shot" id="shot"><div class="img" id="img"></div><div class="wait" id="wait">Loading picture</div></div>
+        <div class="caption">
+          <span id="capText"></span>
+          <label><input type="checkbox" id="labels" checked> mark what is in the picture</label>
+          <label><input type="checkbox" id="smalls"> also mark what is too small to count</label>
+        </div>
+        <div class="note" id="standin" hidden></div>
+        <h2>In this picture</h2>
+        <ul class="plain" id="inPicture"></ul>
+      </section>
+    </div>
+  </div>
+
+  <section class="box">
+    <h2 id="allTitle">Where everything is at this moment</h2>
+    <div class="scroll"><table id="all"></table></div>
+  </section>
+
+  <details>
+    <summary>What is simplified, and what stands in for what</summary>
+    <ul id="notes"></ul>
+  </details>
+</div>
+
+<script>
+(function(){
+"use strict";
+var D=null, S={m:0, room:"kitchen", view:null, labels:true, smalls:false};
+var ROOM={kitchen:"kitchen",living:"living room",dining:"dining room",office:"office",entry:"entry",
+  bathroom:"bathroom",bedroom_1:"Dana's bedroom",bedroom_2:"Felix's bedroom"};
+var STAGE={lead:"usual routine",sick:"Dana is unwell",return:"back to the usual routine"};
+var sheets={};
+function $(id){return document.getElementById(id)}
+function el(tag,attrs,text){var e=document.createElement(tag);for(var k in attrs||{})e.setAttribute(k,attrs[k]);
+  if(text!=null)e.textContent=text;return e}
+function svg(tag,attrs,text){var e=document.createElementNS("http://www.w3.org/2000/svg",tag);
+  for(var k in attrs||{})e.setAttribute(k,attrs[k]);if(text!=null)e.textContent=text;return e}
+function cap(s){return s.charAt(0).toUpperCase()+s.slice(1)}
+function owner(id){var p=id.split("_");return p[p.length-1]}
+function thingName(id){var p=id.split("_");var who=cap(p.pop());return who+"'s "+p.join(" ")}
+function personName(res){return D.people[res].name}
+function colourOf(who){return who.toLowerCase()==="dana"?"var(--dana)":"var(--felix)"}
+function hard(p){return !p.is_person&&p.hard_to_make_out}
+function clear(p){return p.seen&&!p.only_part_shows}
+function verdict(p){
+  if(!p.seen)return ["tiny","too small to count"];
+  if(p.only_part_shows)return ["tiny","only part of "+(p.is_person?(D.people[p.what].name==="Dana"?"her":"him"):"it")+" shows"];
+  if(hard(p))return ["faint","seen, hard to make out"];
+  if(p.pixels<600)return ["seen","seen, small"];
+  return ["seen","seen"]}
+function nameOf(p){return p.is_person?personName(p.what):thingName(p.what)}
+function viewByName(n){for(var i=0;i<D.views.length;i++)if(D.views[i].name===n)return D.views[i];return null}
+function viewLabel(v){if(v.kind==="whole room")return "Whole room, camera "+v.name.slice(-1);
+  return "At the "+D.places[v.place].called}
+function inRoom(r){var n=ROOM[r]||r;return (/\u0027s /.test(n)?"":"the ")+n}
+function moment(){return D.moments[S.m]}
+function roomViews(){return moment().views.filter(function(v){return viewByName(v.view).room===S.room})}
+
+function build(){
+  var days=[],times=[];
+  D.moments.forEach(function(m){if(days.indexOf(m.day)<0)days.push(m.day);if(times.indexOf(m.clock)<0)times.push(m.clock)});
+  var groups={};D.moments.forEach(function(m){(groups[m.stage]=groups[m.stage]||[]);
+    if(groups[m.stage].indexOf(m.day)<0)groups[m.stage].push(m.day)});
+  var box=$("days");
+  ["lead","sick","return"].forEach(function(st){if(!groups[st])return;
+    var g=el("div",{"class":"period"});g.appendChild(el("span",{"class":"label"},"Day, "+STAGE[st]));
+    var c=el("div",{"class":"chips"});
+    groups[st].forEach(function(d){var b=el("button",{"class":"chip","data-day":d,"aria-pressed":"false"},String(d));
+      b.addEventListener("click",function(){go(d,moment().clock)});c.appendChild(b)});
+    g.appendChild(c);box.appendChild(g)});
+  times.forEach(function(t){var b=el("button",{"class":"chip","data-time":t,"aria-pressed":"false"},t);
+    b.addEventListener("click",function(){go(moment().day,t)});$("times").appendChild(b)});
+  $("prev").addEventListener("click",function(){S.m=Math.max(0,S.m-1);S.view=keep();draw()});
+  $("next").addEventListener("click",function(){S.m=Math.min(D.moments.length-1,S.m+1);S.view=keep();draw()});
+  $("labels").addEventListener("change",function(e){S.labels=e.target.checked;drawPicture()});
+  $("smalls").addEventListener("change",function(e){S.smalls=e.target.checked;drawPicture()});
+  document.addEventListener("keydown",function(e){
+    if(e.target&&/INPUT|TEXTAREA|SELECT/.test(e.target.tagName))return;
+    if(e.key==="ArrowLeft"){$("prev").click()}else if(e.key==="ArrowRight"){$("next").click()}});
+  var notes=[
+    "The home is HSSD home "+D.home+". The household is "+D.household+" from the ten-home set.",
+    "Only the "+D.things_drawn+" things the questions ask about are drawn. The household has "+D.things_in_the_bank+" things in all; the rest are not in the pictures, so rooms look tidier than the household is.",
+    "A thing counts as seen when at least "+D.seen_at_least_pixels+" of its own pixels are in a picture of "+D.counted_at[0]+" by "+D.counted_at[1]+" pixels. Fewer than that is too small to count. The pictures shown here are saved a little smaller, at 800 by 600.",
+    "Only part shows means the edge of the picture cuts the thing, or less than half of what it shows at its best is in view. For a person it means under 3,000 pixels or about a third of the figure. These are not counted as seen.",
+    "Seen does not mean easy to see. A thing whose brightness is close to what surrounds it, such as black glasses on a black table or a navy mug on a dark desk, is marked hard to make out.",
+    "Placed means the thing or person was put into the 3D home at that moment. A thing can be placed and still be in no picture.",
+    "The run has 32 days. "+days.length+" of them are rendered here, at "+times.length+" times each, to keep the page small.",
+    "Things inside a closed cupboard, drawer, wardrobe or cabinet are never drawn.",
+    "Residents are fixed figures. One figure stands, one walks, one lies down. They do not sit, and they do not hold the things they carry.",
+    "The light is the same at every hour. Nothing in the picture tells you the time of day.",
+    "The camera is 1.3 m above the floor and sees "+D.lens_degrees+" degrees across. It stands only where the floor is clear.",
+    "The home's own ornaments stay where they are, so a surface can already have a vase or a cloth on it."];
+  Object.keys(D.places).forEach(function(p){var x=D.places[p];
+    if(x.stand_in)notes.push(cap(ROOM[x.room]||x.room)+": "+x.stand_in+(x.kind==="missing"?".":", so the "+x.called+" is used instead.")+" (The household's list calls this place "+p+".)") });
+  notes.forEach(function(n){$("notes").appendChild(el("li",null,n))});
+}
+function go(day,clock){
+  var best=-1;D.moments.forEach(function(m,i){if(m.day===day&&m.clock===clock)best=i});
+  if(best<0)D.moments.forEach(function(m,i){if(best<0&&m.day===day)best=i});
+  if(best>=0){S.m=best;S.view=keep();draw()}
+}
+function keep(){var vs=roomViews();for(var i=0;i<vs.length;i++)if(vs[i].view===S.view)return S.view;return vs.length?vs[0].view:null}
+function pick(room,view){S.room=room;S.view=view||null;S.view=keep();draw()}
+
+function draw(){
+  var m=moment();
+  $("nowText").textContent="Day "+m.day+", "+m.clock;
+  $("stage").textContent=cap(STAGE[m.stage]||m.stage);$("stage").className="stage"+(m.stage==="sick"?" sick":"");
+  $("whoWhere").textContent=m.people.map(function(p){
+    return p.name+(p.shown?" is in "+inRoom(p.room)+(p.pose==="lying"?", lying down":""):" is "+p.why_not_shown)}).join(". ")+".";
+  Array.prototype.forEach.call(document.querySelectorAll("[data-day]"),function(b){b.setAttribute("aria-pressed",String(+b.dataset.day===m.day))});
+  Array.prototype.forEach.call(document.querySelectorAll("[data-time]"),function(b){b.setAttribute("aria-pressed",String(b.dataset.time===m.clock))});
+  if(!S.view)S.view=keep();
+  try{history.replaceState(null,"","#d"+m.day+".t"+m.clock.replace(":","")+"."+S.room+(S.view?"."+S.view:""))}catch(e){}
+  drawMap();drawTabs();drawPicture();drawReport();drawAll();
+}
+function drawMap(){
+  var m=moment(),s=$("map");while(s.firstChild)s.removeChild(s.firstChild);
+  var xs=[],zs=[];D.rooms.forEach(function(r){r.outline.forEach(function(p){xs.push(p[0]);zs.push(p[1])})});
+  var x0=Math.min.apply(null,xs)-.4,z0=Math.min.apply(null,zs)-.4,w=Math.max.apply(null,xs)-x0+.4,h=Math.max.apply(null,zs)-z0+.4;
+  s.setAttribute("viewBox",[x0,z0,w,h].join(" "));
+  D.rooms.forEach(function(r){
+    var p=svg("polygon",{"class":"r"+(r.room?" live":"")+(r.room===S.room?" on":""),
+      points:r.outline.map(function(q){return q.join(",")}).join(" ")});
+    if(r.room){p.setAttribute("tabindex","0");p.setAttribute("role","button");p.setAttribute("aria-label","Look into "+inRoom(r.room));
+      p.addEventListener("click",function(){pick(r.room)});
+      p.addEventListener("keydown",function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();pick(r.room)}})}
+    s.appendChild(p)});
+  D.furniture.forEach(function(f){s.appendChild(svg("rect",{"class":"f",x:f.box[0],y:f.box[1],width:f.box[2]-f.box[0],height:f.box[3]-f.box[1]}))});
+  D.rooms.forEach(function(r){
+    var cx=0,cz=0;r.outline.forEach(function(q){cx+=q[0];cz+=q[1]});cx/=r.outline.length;cz/=r.outline.length;
+    var top=Math.min.apply(null,r.outline.map(function(q){return q[1]}));
+    var left=Math.min.apply(null,r.outline.map(function(q){return q[0]}));
+    if(r.room)s.appendChild(svg("text",{"class":"rn",x:left+.15,y:top+.42},ROOM[r.room]));
+    else s.appendChild(svg("text",{"class":"rs",x:left+.12,y:top+.34},r.label.split("/")[0]))});
+  roomViews().forEach(function(v){
+    var d=viewByName(v.view),eye=v.eye||d.eye,aim=v.target||d.target,ex=eye[0],ez=eye[2],a=Math.atan2(aim[2]-ez,aim[0]-ex),L=1.1,on=v.view===S.view;
+    var half=(D.lens_degrees||75)*Math.PI/360;
+    var p1=[ex+L*Math.cos(a-half),ez+L*Math.sin(a-half)],p2=[ex+L*Math.cos(a+half),ez+L*Math.sin(a+half)];
+    if(on){var c=svg("polygon",{"class":"cone on",points:[ex,ez,p1[0],p1[1],p2[0],p2[1]].join(" ")});
+      c.appendChild(svg("title",null,viewLabel(d)));s.appendChild(c)}
+    var k=svg("rect",{"class":"cam",x:ex-(on?.15:.1),y:ez-(on?.15:.1),width:on?.3:.2,height:on?.3:.2,rx:.04,opacity:on?1:.55});
+    k.appendChild(svg("title",null,viewLabel(d)));k.addEventListener("click",function(){pick(S.room,v.view)});s.appendChild(k)});
+  Object.keys(m.things).forEach(function(id){var t=m.things[id];if(!t.shown)return;
+    var c=svg("circle",{"class":"thing",cx:t.x,cy:t.z,r:.11,fill:colourOf(owner(id)),style:"cursor:pointer"});
+    c.appendChild(svg("title",null,thingName(id)+", on the "+t.furniture));
+    c.addEventListener("click",function(){clearest(id,t.room)});s.appendChild(c)});
+  m.people.forEach(function(p){if(!p.shown)return;
+    var w=svg("circle",{"class":"who",cx:p.x,cy:p.z,r:.27,stroke:colourOf(p.name),style:"cursor:pointer"});
+    w.appendChild(svg("title",null,p.name));w.addEventListener("click",function(){clearest(p.resident,p.room)});s.appendChild(w);
+    s.appendChild(svg("text",{"class":"wl",x:p.x,y:p.z+.11,fill:colourOf(p.name)},p.name.charAt(0)))});
+}
+function clearest(what,room){var s=seenIn(what);
+  if(s.length){pick(viewByName(s[0].view).room,s[0].view)}else if(ROOM[room]){pick(room)}}
+function drawTabs(){
+  var t=$("tabs");while(t.firstChild)t.removeChild(t.firstChild);
+  roomViews().forEach(function(v){var d=viewByName(v.view);
+    var n=v.in_picture.filter(clear).length;
+    var b=el("button",{"class":"tab","aria-pressed":String(v.view===S.view)},viewLabel(d)+" \u00b7 "+(n?n+" seen":"nothing seen"));
+    b.addEventListener("click",function(){pick(S.room,v.view)});t.appendChild(b)});
+}
+function current(){var vs=roomViews();for(var i=0;i<vs.length;i++)if(vs[i].view===S.view)return vs[i];return null}
+function drawPicture(){
+  var v=current(),shot=$("shot"),img=$("img");
+  Array.prototype.slice.call(shot.querySelectorAll(".mark,.tag")).forEach(function(n){n.remove()});
+  var list=$("inPicture");while(list.firstChild)list.removeChild(list.firstChild);
+  $("standin").hidden=true;
+  if(!v){img.style.backgroundImage="none";$("wait").hidden=false;$("wait").textContent="No picture of this room at this moment";$("capText").textContent="";return}
+  var d=viewByName(v.view),sheet=v.at[0],i=v.at[1],A=D.sheet.across,B=D.sheet.down;
+  var url="sheets/s"+("00"+sheet).slice(-3)+".jpg";
+  $("wait").hidden=false;$("wait").textContent="Loading picture";
+  function show(){if(current()!==v)return;img.style.backgroundImage="url("+url+")";
+    img.style.backgroundSize=(A*100)+"% "+(B*100)+"%";
+    img.style.backgroundPosition=((i%A)/(A-1)*100)+"% "+(Math.floor(i/A)/(B-1)*100)+"%";$("wait").hidden=true}
+  if(sheets[url]==="ok")show();else{var im=new Image();im.onload=function(){sheets[url]="ok";show()};
+    im.onerror=function(){if(current()===v){$("wait").textContent="This picture could not be loaded"}};im.src=url}
+  $("capText").textContent=cap(ROOM[S.room])+", "+viewLabel(d).toLowerCase()+". Day "+moment().day+", "+moment().clock+"."+
+    (v.stepped_aside?" A resident stood in front of the usual camera position, so the robot took this from another spot. The floor plan shows where it stood.":"");
+  if(d.kind==="one place"&&D.places[d.place].stand_in){$("standin").hidden=false;
+    $("standin").textContent="The household's place here is called "+d.place+". In this home, "+D.places[d.place].stand_in+"; the "+D.places[d.place].called+" is used."}
+  var seen=v.in_picture.slice().sort(function(a,b){return b.pixels-a.pixels});
+  var W=shot.clientWidth||800,H=shot.clientHeight||600,placed=[];
+  var drawn=seen.filter(function(p){return p.seen||S.smalls});
+  if(S.labels)drawn.forEach(function(p,n){
+    var b=p.box,x=b[0]*W,y=b[1]*H,w=(b[2]-b[0])*W,h=(b[3]-b[1])*H,least=14;
+    if(w<least){x-=(least-w)/2;w=least} if(h<least){y-=(least-h)/2;h=least}
+    var k=el("div",{"class":"mark"+(clear(p)?"":" tiny")+(hard(p)?" faint":""),"data-n":n});
+    k.style.left=x+"px";k.style.top=y+"px";k.style.width=w+"px";k.style.height=h+"px";shot.appendChild(k);
+    var g=el("div",{"class":"tag"+(clear(p)?"":" tiny"),"data-n":n},nameOf(p)+(!p.seen?", too small":p.only_part_shows?", in part":""));shot.appendChild(g);
+    var gw=g.offsetWidth||nameOf(p).length*7+12,gh=18;
+    var tries=[[x,y-gh],[x,y+h],[x+w-gw,y-gh],[x+w-gw,y+h],[x+w+2,y],[x-gw-2,y],[x,y-2*gh],[x,y+h+gh],[x,y-3*gh],[x,y+h+2*gh]],spot=null;
+    for(var i=0;i<tries.length&&!spot;i++){
+      var tx=Math.max(0,Math.min(W-gw,tries[i][0])),ty=Math.max(0,Math.min(H-gh,tries[i][1])),clash=false;
+      placed.forEach(function(q){if(tx<q[0]+q[2]&&tx+gw>q[0]&&ty<q[1]+gh&&ty+gh>q[1])clash=true});
+      if(!clash)spot=[tx,ty]}
+    if(!spot)spot=[Math.max(0,Math.min(W-gw,x)),Math.max(0,Math.min(H-gh,y-gh))];
+    placed.push([spot[0],spot[1],gw]);g.style.left=spot[0]+"px";g.style.top=spot[1]+"px"});
+  if(!seen.length)list.appendChild(el("li",null,"None of the "+D.things_drawn+" things and neither resident is in this picture."));
+  seen.forEach(function(p){var li=el("li"),n=drawn.indexOf(p);
+    function light(on){Array.prototype.forEach.call(shot.querySelectorAll('[data-n="'+n+'"]'),function(e){e.classList.toggle("lit",on)})}
+    if(n>=0){li.addEventListener("mouseenter",function(){light(true)});li.addEventListener("mouseleave",function(){light(false)})}
+    var says=verdict(p);li.appendChild(el("span",{"class":"pill "+says[0]},says[1]));
+    var facts=p.is_person?D.people[p.what].looks_like:moment().things[p.what].looks_like;
+    li.appendChild(el("span",null,nameOf(p)+", "+facts));
+    var t=p.is_person?null:moment().things[p.what];
+    li.appendChild(el("span",{"class":"sub"},(t?"On the "+t.furniture+" in "+inRoom(t.room)+". ":"")+
+      p.pixels.toLocaleString()+" pixels, "+p.metres_away.toFixed(1)+" m from the camera."+
+      (p.seen&&hard(p)?" Its brightness is close to what is around it.":"")+
+      (!p.seen?" Fewer than "+D.seen_at_least_pixels+" pixels.":"")+
+      (p.seen&&p.only_part_shows?(p.cut_by_the_edge&&!p.is_person?" The edge of the picture cuts it.":" Most of "+(p.is_person?"the person":"it")+" is hidden or out of the picture."):"")));
+    list.appendChild(li)});
+}
+function seenIn(what){var out=[];moment().views.forEach(function(v){v.in_picture.forEach(function(p){
+  if(p.what===what&&clear(p))out.push({view:v.view,pixels:p.pixels,hard:hard(p)})})});
+  return out.sort(function(a,b){return (a.hard-b.hard)||(b.pixels-a.pixels)})}
+function drawReport(){
+  var m=moment(),vs=roomViews(),found={},people={};
+  var glimpsed={};
+  vs.forEach(function(v){v.in_picture.forEach(function(p){if(!p.seen)return;
+    if(!clear(p)){glimpsed[p.what]=p;return}
+    if(p.is_person)people[p.what]=1;else found[p.what]=1})});
+  var lines=["Day "+m.day+" at "+m.clock+", the robot looked in: "+ROOM[S.room]+".",""];
+  var here=Object.keys(found).filter(function(id){return m.things[id].room===S.room});
+  var through=Object.keys(found).filter(function(id){return m.things[id].room!==S.room});
+  lines.push("It found:");
+  if(!here.length)lines.push("  none of the "+D.things_drawn+" things the questions ask about");
+  here.forEach(function(id){lines.push("  - "+m.things[id].looks_like+" on the "+m.things[id].furniture+"   ["+id+"]")});
+  if(through.length){lines.push("","Seen through a doorway, in another room:");
+    through.forEach(function(id){lines.push("  - "+m.things[id].looks_like+" on the "+m.things[id].furniture+" in "+inRoom(m.things[id].room)+"   ["+id+"]")})}
+  var inHere=[],beyond=[];
+  m.people.forEach(function(p){if(!people[p.resident])return;(p.room===S.room?inHere:beyond).push(p)});
+  lines.push("","People in this room: "+(inHere.length?inHere.map(function(p){return p.name}).join(", "):"nobody seen")+".");
+  if(beyond.length)lines.push("People seen through a doorway: "+beyond.map(function(p){return p.name+" in "+inRoom(p.room)}).join(", ")+".");
+  var half=Object.keys(glimpsed).filter(function(k){return !found[k]&&!people[k]});
+  if(half.length){lines.push("","Glimpsed, too little to report:");
+    half.forEach(function(k){lines.push("  - "+(glimpsed[k].is_person?personName(k):thingName(k))+", only part in view")})}
+  var missed=Object.keys(m.things).filter(function(id){var t=m.things[id];return t.room===S.room&&!found[id]&&!glimpsed[id]});
+  var unseen=m.people.filter(function(p){return p.shown&&p.room===S.room&&!people[p.resident]&&!glimpsed[p.resident]});
+  if(missed.length||unseen.length){lines.push("","Here, but not in the report. The robot has no way to know these:");
+    unseen.forEach(function(p){lines.push("  - "+p.name+": in the room, but in none of its pictures")});
+    missed.forEach(function(id){var t=m.things[id];
+      lines.push("  - "+thingName(id)+": "+(t.shown?"on the "+t.furniture+", but in no picture or too small to count":t.why_not_shown))})}
+  $("reportTitle").textContent="What the robot could report from "+inRoom(S.room);
+  $("reportFrom").textContent="Put together from all "+vs.length+" pictures of this room at this moment, not only the one shown. The wording follows what the study's language models are given.";
+  $("report").textContent=lines.join("\n");
+}
+function drawAll(){
+  var m=moment(),t=$("all");while(t.firstChild)t.removeChild(t.firstChild);
+  $("allTitle").textContent="Where everything is on day "+m.day+" at "+m.clock;
+  var h=el("tr");["Thing","Looks like","Where","In the pictures"].forEach(function(x){h.appendChild(el("th",null,x))});t.appendChild(h);
+  function row(name,colour,looks,where,what,shown,why){
+    var r=el("tr"),a=el("td");var d=el("span",{"class":"dot"});d.style.background=colour;a.appendChild(d);
+    a.appendChild(document.createTextNode(name));r.appendChild(a);r.appendChild(el("td",null,looks));r.appendChild(el("td",null,where));
+    var c=el("td");
+    if(!shown)c.appendChild(el("span",{"class":"pill no"},"not placed in the home"));
+    else{var s=seenIn(what);
+      if(!s.length)c.appendChild(el("span",{"class":"pill tiny"},"placed, but in no picture as a whole"));
+      else{c.appendChild(el("span",{"class":"pill seen"},"seen in "+s.length+(s.length===1?" picture":" pictures")));
+        c.appendChild(document.createTextNode(" "));
+        var b=el("button",{"class":"go"},"show the clearest");
+        b.addEventListener("click",function(){var d=viewByName(s[0].view);pick(d.room,s[0].view);
+          $("shot").scrollIntoView({block:"center",behavior:"smooth"})});c.appendChild(b)}}
+    r.appendChild(c);t.appendChild(r)}
+  m.people.forEach(function(p){row(p.name,colourOf(p.name),p.looks_like,
+    p.shown?cap(ROOM[p.room]||p.room)+(p.pose==="lying"?", lying on the bed":", on their feet"):cap(p.why_not_shown),p.resident,p.shown)});
+  Object.keys(m.things).sort().forEach(function(id){var x=m.things[id];
+    row(thingName(id),colourOf(owner(id)),x.looks_like,
+      x.shown?cap(ROOM[x.room]||x.room)+", on the "+x.furniture+(x.on_top_of?" (on top of "+thingName(x.on_top_of)+")":""):cap(x.why_not_shown||"no place"),id,x.shown)});
+}
+fetch("data.json").then(function(r){return r.json()}).then(function(d){
+  D=d;build();
+  var start=0;D.moments.forEach(function(m,i){if(m.day===17&&m.clock==="23:30")start=i});
+  S.m=start;S.room="bedroom_1";
+  // a link may name a moment, a room and a picture: #d17.t2330.bedroom_1.bedroom_1_whole_1
+  var h=(location.hash||"").slice(1).split(".");
+  if(h.length>=2&&h[0].charAt(0)==="d"){D.moments.forEach(function(m,i){
+      if("d"+m.day===h[0]&&"t"+m.clock.replace(":","")===h[1])S.m=i});
+    if(h[2]&&ROOM[h[2]])S.room=h[2];if(h[3])S.view=h[3]}
+  S.view=keep();draw();
+}).catch(function(e){$("nowText").textContent="The data for this page could not be loaded";$("wait").textContent=String(e)});
+})();
+</script>
+</body></html>
