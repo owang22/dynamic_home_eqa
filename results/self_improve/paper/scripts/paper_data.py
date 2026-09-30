@@ -85,8 +85,17 @@ def spell_1_movers(name, banks=BANKS_10):
     return sd.the_movers(home(name, banks))
 
 
+# When WAVE_50 points at a rerun that contains only the arm that was rerun, every other arm falls
+# back to the wave it was originally run in. That makes a mixed comparison, and a mixed comparison
+# has to be labelled as one wherever it is reported.
+WAVE_50_ORIGINAL = pathlib.Path("results/self_improve/wave_the_second_illness/cells")
+
+
 def rows(wave, arm, name):
     out = []
+    if not (wave / arm / name / "searches.jsonl").exists() and \
+            (WAVE_50_ORIGINAL / arm / name / "searches.jsonl").exists():
+        wave = WAVE_50_ORIGINAL
     for line in (wave / arm / name / "searches.jsonl").open():
         r = json.loads(line)
         if r.get("kind") == "search":

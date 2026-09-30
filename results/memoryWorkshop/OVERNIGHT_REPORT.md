@@ -117,7 +117,7 @@ at the second onset *because it remembers the first one*, not because it had les
 
 ---
 
-## C. ACE-style 50-day rerun with the merge call fixed - PARTIAL, diagnosis complete
+## C. ACE-style 50-day rerun with the merge call fixed - DONE
 
 ### Step 1: the cap is not the cause
 
@@ -177,7 +177,73 @@ values exactly on the original wave, including the never-found counts, which is 
 can be trusted on a rerun. The drops, the first-question numbers and the recovery days come from
 `the_drop_at_each_onset.py` and `the_first_question_of_the_day.py`, which now honour `WAVE_50` too.
 
-_(new-against-old numbers are filled in below when the fixed rerun lands)_
+### What the fix changed
+
+`wave_the_second_illness_ACE_fixed`, all three households, finished 05:21. Old beside new for
+every number. **The other three arms are not in the rerun wave and come from the original one**,
+which makes these mixed comparisons; `paper_data.rows` falls back for them and every table marks
+the rows it fell back on.
+
+**The merging step.** The enum did exactly what it was for: nothing is discarded any more.
+
+| | old schema (2 households) | fixed (3 households) |
+|---|---|---|
+| pairs proposed | 359 | 517 |
+| answered by the model | 356 | 424 |
+| **merged** | **7** | **26** |
+| **rejected** | **20** | **396** |
+| **discarded** | **329** | **0** |
+| nights asked with no verdict | 83 of 92 | 24 of 136 |
+
+**But the conclusion about ACE survives the fix, and for a better reason.** Merges per household
+go 5 and 2 under the old schema, 6, 1 and 19 under the fixed one. What the fix mostly revealed was
+**rejections**: the model, asked in a currency it can answer in, says these pairs are *different
+notes* 396 times out of 422. ACE's grow-and-refine really does almost nothing on this task - not
+because the call was broken, but because the pairs an embedding ranks as most alike are, in this
+household, notes about different objects. The old numbers were produced by a bug; the new ones say
+the same thing honestly.
+
+**Table 2, the ACE-style playbook row** (14 objects, day 14 to 32):
+
+| measure | draft | fixed |
+|---|---|---|
+| found within 3 | 10->44, 83->25, 91->45, mean **-23.1**, 2 SE 58.0 | 10->33, 83->25, 55->55, mean **-11.7**, 2 SE 48.6 |
+| first room right | 0->11, 17->0, 9->27, mean +4.2, 2 SE 21.3 | 0->11, 17->0, 9->27, mean +4.2, 2 SE 21.3 - **identical** |
+| objects never found | 11 -> 14 | 15 -> 14 |
+
+**Table 3, the ACE-style playbook row** (22 objects, found within 3): draft 25->62, 91->17,
+91->50, mean **-26.2**, 2 SE 65.6; fixed 25->54, 91->50, 55->58, mean **-2.8**, 2 SE 40.8.
+
+**The four onset drops** (first room right, against each method's own four preceding days):
+
+| | draft | fixed |
+|---|---|---|
+| day 14 | 53.1, 2 SE 20.3 | **65.9**, 2 SE **8.2** |
+| day 32 | 54.9, 2 SE 46.0 | **62.9**, 2 SE **18.8** |
+| pre-onset baselines | 61.7 and 67.7 | **74.4 and 75.7** |
+
+The arm is better *between* illnesses after the fix and falls further at each onset. Section 3.2's
+sentence - the summary-only memories drop as far the second time as the first - holds: 65.9 then
+62.9, and the two-standard-error bands are less than half what they were.
+
+**First question of the day, before that day's looking can help** (unfiltered form, 13 and 11
+object-days): day 14 first room right 8.3 -> **15.0**, found within 3 60.0 -> **53.3**; day 32
+21.7 -> **20.0** and 61.7 -> **60.0**.
+
+**Recovery inside the first illness** (days until back within ten points of the pre-onset mean,
+per household): 1, 2, 1 -> 1, 2, 2. Inside the illness in every household, both ways.
+
+**Figure 2 regenerated with the new arm, no drop annotations**:
+`results/self_improve/paper/figures/{oliver,spec}/figure2_both_illnesses_ACE_fixed/`. The legend
+reads "ACE-style playbook", matching the text. The old figure is untouched beside it.
+
+### What this means for the draft
+
+The ACE row's **first-room-right** numbers do not move at all, so Table 2's first-room-right block
+and Section 3.2's "53 and 55" for the playbook are the only places that need touching - and they
+become 66 and 63. The **found-within-three** numbers do move, by 11 points in Table 2 and 23 in
+Table 3, both towards zero. Neither reverses a claim. What has to change is the appendix's account
+of the merging step, which currently describes a mechanism that was being thrown away.
 
 ---
 

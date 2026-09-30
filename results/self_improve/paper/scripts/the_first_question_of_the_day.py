@@ -32,6 +32,10 @@ def first_sighting_times(arm_dir, home, day):
     """object -> the time of the first look that day which saw it."""
     seen = {}
     path = D.WAVE_50 / arm_dir / home / "looks.jsonl"
+    if not path.exists():
+        # same fallback as paper_data.rows: an arm the rerun does not contain comes from the
+        # wave it was originally run in, which makes this a mixed comparison and is labelled so
+        path = D.WAVE_50_ORIGINAL / arm_dir / home / "looks.jsonl"
     for line in path.open():
         r = json.loads(line)
         if r.get("kind") != "look" or r.get("day") != day:

@@ -34,9 +34,7 @@ def table(objects_of, title, measures):
         print(f"    {'method':22s} " + "  ".join(f"{h[:9]:>11s}" for h in D.HOMES_50)
               + f" {'mean change':>12s} {'2 SE':>6s} {'never found 14->32':>19s}")
         for name, arm_dir in ARMS:
-            if not (D.WAVE_50 / arm_dir).exists():
-                print(f"    {name:22s} (not in this wave)")
-                continue
+            where = ("" if (D.WAVE_50 / arm_dir).exists() else "  [from the original wave]")
             cells, changes, nf14, nf32 = [], [], 0, 0
             for home in D.HOMES_50:
                 objs = objects_of(home)
@@ -51,7 +49,8 @@ def table(objects_of, title, measures):
             two_se = (2 * statistics.stdev(changes) / len(changes) ** 0.5
                       if len(changes) > 1 else 0)
             print(f"    {name:22s} " + "  ".join(f"{c:>11s}" for c in cells)
-                  + f" {statistics.mean(changes):+12.1f} {two_se:6.1f} {nf14:>10d} -> {nf32:<5d}")
+                  + f" {statistics.mean(changes):+12.1f} {two_se:6.1f} {nf14:>10d} -> {nf32:<5d}"
+                  + where)
 
 
 def merge_audit():
