@@ -1,4 +1,4 @@
-<title>Dana and Felix at Home</title>
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{margin:0;font:14px system-ui}[hidden]{display:none!important}img{max-width:100%}</style></head><body><title>Dana and Felix at Home</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
 :root{
@@ -263,6 +263,7 @@ function draw(){
   Array.prototype.forEach.call(document.querySelectorAll("[data-day]"),function(b){b.setAttribute("aria-pressed",String(+b.dataset.day===m.day))});
   Array.prototype.forEach.call(document.querySelectorAll("[data-time]"),function(b){b.setAttribute("aria-pressed",String(b.dataset.time===m.clock))});
   if(!S.view)S.view=keep();
+  try{history.replaceState(null,"","#d"+m.day+".t"+m.clock.replace(":","")+"."+S.room+(S.view?"."+S.view:""))}catch(e){}
   drawMap();drawTabs();drawPicture();drawReport();drawAll();
 }
 function drawMap(){
@@ -288,9 +289,9 @@ function drawMap(){
     var d=viewByName(v.view),eye=v.eye||d.eye,aim=v.target||d.target,ex=eye[0],ez=eye[2],a=Math.atan2(aim[2]-ez,aim[0]-ex),L=1.1,on=v.view===S.view;
     var half=(D.lens_degrees||75)*Math.PI/360;
     var p1=[ex+L*Math.cos(a-half),ez+L*Math.sin(a-half)],p2=[ex+L*Math.cos(a+half),ez+L*Math.sin(a+half)];
-    if(on){var c=svg("polygon",{"class":"cone on",points:[ex,ez,p1[0],p1[1],p2[0],p2[1]].join(" "),"pointer-events":"none"});
+    if(on){var c=svg("polygon",{"class":"cone on",points:[ex,ez,p1[0],p1[1],p2[0],p2[1]].join(" ")});
       c.appendChild(svg("title",null,viewLabel(d)));s.appendChild(c)}
-    var k=svg("rect",{"class":"cam",x:ex-(on?.17:.14),y:ez-(on?.17:.14),width:on?.34:.28,height:on?.34:.28,rx:.05,opacity:on?1:.6});
+    var k=svg("rect",{"class":"cam",x:ex-(on?.15:.1),y:ez-(on?.15:.1),width:on?.3:.2,height:on?.3:.2,rx:.04,opacity:on?1:.55});
     k.appendChild(svg("title",null,viewLabel(d)));k.addEventListener("click",function(){pick(S.room,v.view)});s.appendChild(k)});
   Object.keys(m.things).forEach(function(id){var t=m.things[id];if(!t.shown)return;
     var c=svg("circle",{"class":"thing",cx:t.x,cy:t.z,r:.11,fill:colourOf(owner(id)),style:"cursor:pointer"});
@@ -431,3 +432,19 @@ fetch("data.json").then(function(r){return r.json()}).then(function(d){
 }).catch(function(e){$("nowText").textContent="The data for this page could not be loaded";$("wait").textContent=String(e)});
 })();
 </script>
+<script>
+setTimeout(function(){
+  var log=[];window.onerror=function(m,u,l){log.push("ERROR "+m+" line "+l)};
+  function pos(){return document.getElementById("img").style.backgroundImage.replace(/.*sheets\//,"")+" "+document.getElementById("img").style.backgroundPosition+" wait="+document.getElementById("wait").hidden}
+  var steps=[pos()];
+  var cams=document.querySelectorAll("#map .cam"); cams[cams.length-1].dispatchEvent(new MouseEvent("click",{bubbles:true}));
+  setTimeout(function(){steps.push("after camera click: "+pos());
+    var tabs=document.querySelectorAll("#tabs .tab"); tabs[tabs.length-1].click();
+    setTimeout(function(){steps.push("after last tab: "+pos());
+      document.querySelector('[data-day="9"]').click();
+      setTimeout(function(){steps.push("after day 9: "+pos());
+        var tabs=document.querySelectorAll("#tabs .tab"); if(tabs[1])tabs[1].click();
+        setTimeout(function(){steps.push("after tab 2 on day 9: "+pos());
+          var d=document.createElement("pre");d.id="probe";d.textContent=steps.join("\n")+"\n"+log.join(" | ");document.body.insertBefore(d,document.body.firstChild);},2500);},2500);},2500);},2500);
+},3500);
+</script></body></html>

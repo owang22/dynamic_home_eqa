@@ -1,3 +1,0 @@
-# a01 — scratch memory, final (live at the end; final weight 0.0007)
-
-
