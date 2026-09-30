@@ -22,7 +22,7 @@ import paper_data as D                                              # noqa: E402
 
 TEN = pathlib.Path("results/self_improve/overnight_wave/cells")
 LOG_ONLY = pathlib.Path("results/self_improve/wave_log_only/cells")
-ARM = "the_log_only_no_notes"
+ARM = "log_only_no_notes"
 OTHERS = {"log and notes": "the_log_and_notes_about_the_routine",
           "last-seen": "last_seen_no_model", "claim store": "incremental_edits"}
 MEAS = (("first room right", "first", 1.9), ("found within 3", "found", 2.2))

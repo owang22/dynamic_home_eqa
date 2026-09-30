@@ -70,6 +70,16 @@ eight filed a confirming sighting as an unconditioned standing fact in the same 
 The quotes for every row are in the output file. The Figure 3 household is the cleanest case and
 also the most favourable one: 11 of 11, retracted the very next night.
 
+**hh_s93_t03 is the same story, independently, and would make a second panel if one is wanted.**
+Night 13: *"Ines is unwell and staying home. Expect her to be in bedroom_1 or living room during
+the day, not the office."* Day 14: 5 of 7. Night 14, the note becomes *"Ines is working in the
+office during the day... Day 14: office (11:48)"* - one sighting, and the hypothesis is gone. In
+the same pass it files *"Ines's water bottle moves between kitchen dish rack (morning) and
+bedroom_1 nightstand (day/evening). Day 14: dish rack (08:22), nightstand (09:33-16:31)"* - the
+bedroom nightstand through the working day is the illness, recorded as a rule about ordinary life.
+That is Figure 3's mechanism in a different household with a different resident and a different
+object.
+
 ---
 
 ## B. Last-seen with the first illness deleted - DONE
@@ -171,9 +181,44 @@ _(new-against-old numbers are filled in below when the fixed rerun lands)_
 
 ---
 
-## D. Log-only arm on the ten-household run - see below
+## D. Log-only arm on the ten-household run - PARTIAL at the time of writing, 4 of 10
 
-_(filled in when the runs land)_
+`PYTHONPATH=src python3 results/self_improve/paper/scripts/log_only_row.py`
+
+A new arm, `log only, no notes`: the model chooses rooms from the control's search-time prompt,
+with the object's raw sighting log present and the notes block empty, and **never writes a note**.
+Ten households, 31 days, 8 questions a day, same banks and seed as Table 1. Implementation: a new
+way of writing in `memory_notes`, membership of `THE_LOG_AND_THE_ROUTINE_FAMILY` so it reads the
+log, and a night that returns without calling anything. The guard that every night goes through
+the search-driven day renderer is exempted for this arm by name rather than weakened.
+
+**Finished households at the time of writing: hh_s2_t03, hh_s19_t03, hh_s20_t03, hh_s32_t03.**
+The other six are still running and are not pooled with anything.
+
+| method | first room right | found within 3 |
+|---|---|---|
+| log and notes | 88.3 | 98.0 |
+| **log only, no notes** | **86.0** | **96.1** |
+| last-seen | 80.8 | 94.7 |
+| claim store | 76.8 | 87.4 |
+
+Paired within household, 2 SE across the four, floors 1.9 and 2.2:
+
+| difference | first room right | found within 3 |
+|---|---|---|
+| log only - log and notes | -2.3, 2 SE 3.2, sign 2 of 4, does not clear | -1.9, 2 SE 3.9, sign 3 of 4, **inside the floor** |
+| log only - last-seen | **+5.1, 2 SE 3.0, sign 4 of 4, CLEARS** | +1.4, 2 SE 3.6, inside the floor |
+| log only - claim store | **+9.2, 2 SE 8.7, sign 3 of 4, CLEARS** | **+8.7, 2 SE 6.4, sign 4 of 4, CLEARS** |
+
+**Plainly: on these four households log-only is within the noise floor of log-and-notes.** Writing
+notes every night on top of the record buys 2.3 points of first-room-right and 1.9 of
+found-within-three, neither of which clears two standard errors and the second of which is inside
+the rerun floor. The record is doing the work; the summaries are close to free of it.
+
+That is a stronger claim than the draft makes, and it is the arm the Limitations section says was
+wanted and not run - *"An arm that reads the log without notes would separate the value of the
+summaries from the model's use of the log; we did not run it."* It is run now. **Do not write it
+up on four households**: the number to quote is whatever ten give.
 
 ---
 
