@@ -52,6 +52,18 @@ COLOUR = {"last-seen": "#000000", "log and notes": "#EE6100", "claim store": "#0
 # EVERY line is dashed, the baseline included. The table stays so a method can be given its own
 # pattern later; today they all share one.
 LINESTYLE = collections.defaultdict(lambda: "--")
+
+# WHAT THE DRAFT CALLS EACH ARM, which is not always what this module keys it by. Two DIFFERENT
+# arms are both called "ACE-style playbook" in the paper - `ACE_as_published` in the 50-day run and
+# `claim_store_told_if_it_was_right` in the ten-household run - so they keep separate keys here and
+# share one label. The same is true of the 1,200-character working memory, which the paper calls
+# MemGPT-style and which memory_notes.py says must never be called MemGPT without a qualifier.
+LABEL = {"ACE-style": "ACE-style playbook", "reduced ACE": "ACE-style playbook",
+         "tight working memory": "MemGPT-style working memory"}
+
+
+def label(name):
+    return LABEL.get(name, name)
 MARKER = {"last-seen": "o", "log and notes": "s", "claim store": "^", "ACE-style": "D",
           "MemGPT-style": "v", "notes hidden": "X",
           "reduced ACE": "D", "tight working memory": "v"}
@@ -153,7 +165,7 @@ def finish(fig, ax, style, names, title, ylab, days, counts_strip=None):
         ax.set_title(title, fontweight=style["weight"], pad=14)
     handles = [plt.Line2D([], [], color=COLOUR[n], marker=MARKER[n], linestyle=LINESTYLE[n],
                           lw=1.6, ms=4.5,
-                          markeredgecolor="white", markeredgewidth=0.5, label=n) for n in names]
+                          markeredgecolor="white", markeredgewidth=0.5, label=label(n)) for n in names]
     if style["legend"] == "inside":
         leg = ax.legend(handles=handles, loc="lower right", ncol=1, fontsize=7.8,
                         handlelength=1.6, labelspacing=0.3, borderpad=0.3,
@@ -231,7 +243,7 @@ def figure_2(style_name):
         ax.set_title("The Same Illness, Twice", fontweight=style["weight"], pad=14)
     handles = [plt.Line2D([], [], color=COLOUR[n], marker=MARKER[n], linestyle=LINESTYLE[n],
                           lw=1.6, ms=4.5,
-                          markeredgecolor="white", markeredgewidth=0.5, label=n) for n in names]
+                          markeredgecolor="white", markeredgewidth=0.5, label=label(n)) for n in names]
     if style["legend"] == "inside":
         ax.legend(handles=handles, loc="lower right", fontsize=7.4, handlelength=1.5,
                   labelspacing=0.26, borderpad=0.4, facecolor="white", framealpha=0.9,
@@ -395,7 +407,7 @@ def figure_A1(style_name):
         ax.set_title("Adapting Inside the First Illness", fontweight=style["weight"], pad=12)
     handles = [plt.Line2D([], [], color=COLOUR[n], marker=MARKER[n], linestyle=LINESTYLE[n],
                           lw=1.6, ms=4.5,
-                          markeredgecolor="white", markeredgewidth=0.5, label=n) for n in have]
+                          markeredgecolor="white", markeredgewidth=0.5, label=label(n)) for n in have]
     if style["legend"] == "below":
         # THE SAME PLACE AS EVERY OTHER FIGURE IN THIS SET: under the plot, one row, close
         # enough that it costs no white. Three entries fit a 396 pt canvas in one row.
@@ -455,7 +467,7 @@ def figure_A2(style_name):
                 color=INK, fontweight=style["weight"])
     ax.set_xticks(xs)
     ax.set_xlim(-0.62, len(order) - 0.38)
-    ax.set_xticklabels(["Claim Store", "Log and Notes", "Reduced ACE"], fontsize=8.0,
+    ax.set_xticklabels(["Claim Store", "Log and Notes", "ACE-Style Playbook"], fontsize=8.0,
                        fontweight=style["weight"])
     ax.set_ylabel("Notes (count)", fontweight=style["weight"])
     # ROOM RATHER THAN BOXES. Boxing the legend and the red note only made their collisions
@@ -464,7 +476,13 @@ def figure_A2(style_name):
     ax.grid(axis="x", visible=False)
     # NOT a fourth bar on the method axis: it is a fact about all three, so it is written as one,
     # and ABOVE the axes, where it covers no bar and no total.
-    ax.text(0.5, 1.012, f"none of these {sum(bottoms)} notes mentions the illness",
+    #
+    # It used to read "none of these 426 notes mentions the illness". True, and no longer what
+    # the figure is FOR: the bars are about the conditions, and the point is that the conditions
+    # do not separate ill days from well ones. Measured on these three arms: "always" and "a time
+    # of day" are 371 of the 426, and the 12 that name a person home or away all say things like
+    # "Dana is at home", which is true on a well day as well. That is 90%, so "most" is safe.
+    ax.text(0.5, 1.012, "most conditions hold on ill and well days alike",
             transform=ax.transAxes, ha="center", va="bottom", fontsize=7.6,
             color="#b03020", fontweight="bold")
     leg = ax.legend(loc="upper right", fontsize=7.2, handlelength=1.0, labelspacing=0.26,

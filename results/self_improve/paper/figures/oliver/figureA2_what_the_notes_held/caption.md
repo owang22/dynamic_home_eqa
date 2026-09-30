@@ -12,6 +12,8 @@ held 101 notes against the claim store's 595, too few for its bar to say anythin
 
 The memories record where things went while someone was ill in great detail - 426 notes across
 three methods - and not one of the 426 says anyone was ill. They keep the consequence and drop the
-cause, which is why none of them can recognise the condition when it returns. The conditions the
-notes do attach are the wrong ones for this: a time of day carries most of them, and a time of day
-is true again the next day, ill or well.
+cause, which is why none of them can recognise the condition when it returns. The conditions they
+do attach are the wrong ones for this. "Always" and "a time of day" are 371 of the 426, and both
+are true again the next day, ill or well. The twelve that name a person being home come from one
+household and one method, and say things like "Dana is at home", which is also true on a well day.
+That is 383 of 426, 90%, which is what the line above the axes means by most.
