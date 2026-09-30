@@ -6,14 +6,19 @@ Five jobs. Every number names the script that produced it. The draft was not edi
 
 ## Contradicts the draft
 
-1. **The ACE-style playbook's merging step did not fail because merging does not help here. It
-   failed because the model was putting words where a claim number belongs, and the code threw
-   those answers away without counting them.** Measured on the rerun: the model answered 356 of
-   359 proposed pairs across two households, and **329 of those answers were discarded** -
-   `keep: "both"`, `fold_in: "none"` 174 times, the same claim named twice 18 times. Both are
-   valid under the old schema, which typed those fields as plain strings. Anything the paper says
-   about how much ACE's grow-and-refine merges in the 50-day run is a measurement of that bug.
-   (Job C.)
+1. **Every number the draft gives for the ACE-style playbook on the 50-day run was produced with
+   its merging step silently broken.** The model was putting words where a claim number belongs -
+   `keep: "both"`, `fold_in: "none"` - in fields typed as plain strings, and the handler dropped
+   those answers without counting them: **329 of 356 answers discarded** across two households.
+   Fixed with an enum of the real claim ids and rerun: **0 discarded**. The draft's
+   **first-room-right** numbers for that arm come out identical, so Table 2's first-room-right
+   block is safe; **found within three rooms** moves 11 points in Table 2 and 23 in Table 3, both
+   towards zero, and the onset drops become 66 and 63 rather than 53 and 55. (Job C.)
+
+   **The paper's conclusion about ACE survives, and improves.** With the fix the model returns
+   396 rejections against 26 merges: asked in a currency it can answer in, it says the pairs are
+   *different notes*. So ACE's grow-and-refine does little here for a defensible reason rather
+   than because of a bug - which is a better sentence for the paper than the one it has.
 
 2. **My own note from 29 September, that the 900-token cap caused the silent nights, is wrong.**
    A rebuilt four-pair night answered inside 900 tokens with 737 used. The cap was raised anyway,
@@ -32,7 +37,14 @@ Five jobs. Every number names the script that produced it. The draft was not edi
    predicted rooms ranges from 3 of 6 to 11 of 11. Figure 3's household is the strongest of the
    eight, and the draft should say so. (Job A.)
 
-5. **`told_and_committed.py` mislabels its nights by one**, printing as "night 15" the text a note
+5. **Writing notes on top of the raw record buys nothing measurable.** A new log-only arm - the
+   control's search-time prompt, the object's raw log, an empty notes block, no nightly write -
+   scores 85.2 / 95.9 against log-and-notes' 85.6 / 96.6 over all ten households. The difference
+   is -0.4 and -0.7, both inside their noise floors, both under two standard errors, sign 5 of 10.
+   The draft's second finding survives but its mechanism changes: the record is the whole of it.
+   (Job D.)
+
+6. **`told_and_committed.py` mislabels its nights by one**, printing as "night 15" the text a note
    carried at the end of night 14. Figure 3 and its caption are correct; the script's headings are
    not. (Job A.)
 
