@@ -516,50 +516,110 @@ def figure_A2(style_name):
 def figure_4(style_name):
     """One note's life: the ill resident's glass, in the claim store, on four nights.
 
-    The same note, claim_0005, rewritten four times. It is never conditioned on the illness and
-    never keeps the illness placement: by night 31 the condition field reads "Always" and the
-    bedroom is gone. Quotes are verbatim from that claim's revision history, read with the rule
-    that a revision dated N stores under `was` the text it REPLACED, so the text a note carried on
-    night N is the `was` of its first revision after N.
+    The same note, claim_0005 of hh_s2_t03 under `incremental_edits`, quoted verbatim on the night
+    before the illness, four days in, the first night back, and a week after.
+
+    THE NIGHT RULE, and where it stops. A revision dated day N stores under `was` the text it
+    REPLACED, so the text a note carried at the end of night N is the `was` of its first revision
+    after N. Nights 13, 18 and 24 are read that way, from the revisions dated 16, 19 and 25. Night
+    31 has no revision after it - the run ends there - so it is read from the claim's current
+    `statement`, which is the same thing: the claim WAS revised on day 31, so what the file holds
+    is what that night wrote. Three of the four come from a replaced-text entry and the fourth from
+    the end state, and that is the most the history can give.
     """
     style = dict(STYLES[style_name])
     apply(style)
     cell = pathlib.Path("results/self_improve/overnight_wave/cells/incremental_edits/hh_s2_t03")
-    notes = json.load(open(cell / "notes.json"))
-    claim = next(c for c in notes["claims"] if c["claim_id"] == "claim_0005")
+    claim = next(c for c in json.load(open(cell / "notes.json"))["claims"]
+                 if c["claim_id"] == "claim_0005")
+    revs = sorted(claim.get("revision_history") or [], key=lambda r: (r.get("day") or 0))
 
-    def on_night(night, field="statement"):
-        for r in sorted(claim.get("revision_history") or [], key=lambda r: (r.get("day") or 0)):
-            if (r.get("day") or 0) > night:
-                was = r.get("was")
-                return (was.get(field) if isinstance(was, dict) else was) or ""
-        return claim.get(field) or ""
+    def on_night(night):
+        """(statement, condition, where it came from) at the end of `night`."""
+        nxt = next((r for r in revs if (r.get("day") or 0) > night), None)
+        if nxt:
+            was = nxt.get("was")
+            if isinstance(was, dict):
+                return was.get("statement") or "", was.get("holds_under") or "", nxt["day"]
+            return was or "", "", nxt["day"]
+        return claim.get("statement") or "", claim.get("holds_under") or "", None
 
-    nights = [(13, "Night 13\nNormal"), (18, "Night 18\nFour Days Ill"),
-              (24, "Night 24\nLife Returns"), (31, "Night 31\nA Week After")]
-    fig = plt.figure(figsize=(WIDTH_IN, 2.1))
-    gs = fig.add_gridspec(1, 4, wspace=0.26)
-    ours = COLOUR["claim store"]
+    nights = [(13, "Night 13, normal"), (18, "Night 18, four days ill"),
+              (24, "Night 24, first night back"), (31, "Night 31, a week after")]
+    accent = COLOUR["log and notes"]          # the same accent Figure 3 draws its boxes in
+    SIZE = 7.4                                # Figure 3's body size
+
+    # EVERYTHING IS IN INCHES, because the height has to be set by the longest note rather than
+    # guessed at. Four boxes on a 396 pt canvas leave about 84 pt each, and this face runs about
+    # 3.7 pt a character at 7.4 pt, so a line holds 18 characters once the box padding is taken off.
+    WRAP = 18
+    LEAD = SIZE * 1.5 / 72.0                  # one line of body text
+    HOLDS_WRAP, HOLDS_SIZE = 16, 6.6
+    HOLDS_LEAD = HOLDS_SIZE * 1.3 / 72.0
+    TIMELINE, HEADER, PAD = 0.62, 0.20, 0.07
+    tallest = max(_wrap(on_night(n)[0], WRAP).count("\n") + 1 for n, _ in nights)
+    box_h = tallest * LEAD + 0.14
+    # the condition line is sized the same way: by the longest one, not by a guess
+    holds_lines = max(_wrap(on_night(n)[1], HOLDS_WRAP).count("\n") + 1 for n, _ in nights)
+    HOLDS = 0.075 + holds_lines * HOLDS_LEAD + 0.04
+    height = TIMELINE + HEADER + box_h + HOLDS + PAD
+
+    fig = plt.figure(figsize=(WIDTH_IN, height))
+    gs = fig.add_gridspec(2, 4, height_ratios=[TIMELINE, height - TIMELINE],
+                          hspace=0.0, wspace=0.16,
+                          left=0.015, right=0.985, top=1.0, bottom=0.0)
+
+    # ---------------------------------------------------------------- the timeline
+    tl = fig.add_subplot(gs[0, :])
+    tl.set_xlim(0.5, 31.5)
+    tl.set_ylim(0, TIMELINE)
+    tl.axis("off")
+    bar_y, bar_h = 0.24, 0.13
+    tl.add_patch(plt.Rectangle((0.5, bar_y), 31.0, bar_h, facecolor="#f2f2f0",
+                               edgecolor="#d8d8d4", lw=0.6, zorder=1))
+    tl.add_patch(plt.Rectangle((14, bar_y), 10, bar_h, facecolor=SHADE, edgecolor="none",
+                               zorder=2))
+    tl.text(19, bar_y + bar_h + 0.045, "ill, days 14 to 23", ha="center", va="bottom",
+            fontsize=6.6, color=MUTED, fontweight=style["weight"])
+    tl.text(0.7, bar_y + bar_h + 0.045, "day 1", ha="left", va="bottom", fontsize=6.2,
+            color=MUTED)
+    tl.text(31.3, bar_y + bar_h + 0.045, "day 31", ha="right", va="bottom", fontsize=6.2,
+            color=MUTED)
+    for night, _ in nights:
+        tl.plot([night, night], [bar_y - 0.05, bar_y + bar_h + 0.02], color=INK, lw=1.1,
+                zorder=3)
+        tl.text(night, bar_y - 0.07, str(night), ha="center", va="top", fontsize=6.4,
+                color=INK, fontweight=style["weight"])
+
+    # ---------------------------------------------------------------- the four notes
+    inner = height - TIMELINE
     for i, (night, title) in enumerate(nights):
-        ax = fig.add_subplot(gs[i])
-        ax.set_xlim(0, 1); ax.set_ylim(0, 1); ax.axis("off")
-        ax.set_title(title, fontsize=7.4, fontweight=style["weight"], pad=6, linespacing=1.35)
-        body = on_night(night) or "(the note says nothing about the glass on this night)"
-        when = on_night(night, "holds_under") or "not said"
-        # 26 characters overran the box: four panels on a 396 pt canvas leave about 80 pt each,
-        # and this face is wider than the estimate. Measured by rendering.
-        text = _wrap(body, 19)
-        lines = text.count("\n") + 1
-        height = 0.062 * lines + 0.10
-        ax.add_patch(plt.Rectangle((0.0, 0.88 - height), 1.0, height, facecolor="#fbfbfa",
-                                   edgecolor=ours, lw=1.1))
-        ax.text(0.06, 0.835, text, ha="left", va="top", fontsize=6.4, color=INK,
-                style="italic", linespacing=1.45)
-        ax.text(0.5, 0.86 - height - 0.035, "when it is true:\n" + _wrap(when, 18),
-                ha="center", va="top", fontsize=6.2, color=MUTED,
-                fontweight=style["weight"], linespacing=1.35)
-        note(f"  figure 4 [{style_name}] night {night}: {body!r}  (when: {when!r})")
-    fig.subplots_adjust(left=0.025, right=0.975, top=0.83, bottom=0.03)
+        ax = fig.add_subplot(gs[1, i])
+        ax.set_xlim(0, 1)
+        ax.set_ylim(0, inner)          # y is inches from the bottom of this row
+        ax.axis("off")
+        text, holds, _from = on_night(night)
+        top = inner - 0.02
+        ax.text(0.5, top, title, ha="center", va="top", fontsize=6.9, color=INK,
+                fontweight=style["weight"])
+        box_top = top - HEADER
+        # every box is the height of the tallest note, so the row shares one baseline
+        ax.add_patch(plt.Rectangle((0.0, box_top - box_h), 1.0, box_h, facecolor="#fbfbfa",
+                                   edgecolor=accent, lw=1.1))
+        ax.text(0.055, box_top - 0.07, _wrap(text, WRAP), ha="left", va="top", fontsize=SIZE,
+                color=INK, style="italic", linespacing=1.5)
+        # "Holds: <condition>", the condition exactly as the field stores it
+        y = box_top - box_h - 0.075
+        is_always = holds.strip().lower() == "always"
+        ax.text(0.0, y, "Holds:", ha="left", va="top", fontsize=HOLDS_SIZE, color=MUTED,
+                fontweight=style["weight"])
+        ax.text(0.305, y, _wrap(holds, HOLDS_WRAP), ha="left", va="top", fontsize=HOLDS_SIZE,
+                color=accent if is_always else INK,
+                fontweight="bold" if is_always else style["weight"], linespacing=1.3)
+        note(f"  figure 4 [{style_name}] night {night}: {text!r}  holds {holds!r}  (from "
+             + (f"the `was` of the revision dated day {_from}" if _from
+                else "the current statement: no revision after this night") + ")")
+
     out = _place(style_name, "figure4_one_notes_life")
     fig.savefig(out)
     plt.close(fig)
