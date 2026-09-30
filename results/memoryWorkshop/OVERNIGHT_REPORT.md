@@ -107,9 +107,67 @@ at the second onset *because it remembers the first one*, not because it had les
 
 ---
 
-## C. ACE-style 50-day rerun with the merge call fixed - see below
+## C. ACE-style 50-day rerun with the merge call fixed - PARTIAL, diagnosis complete
 
-_(filled in when the rerun lands)_
+### Step 1: the cap is not the cause
+
+`scratchpad/cap_test.py` rebuilt a four-pair night from the household that was silent from night 1
+(`hh_s32_t03`, night 20, 48 live claims) and sent it to the server. It answered inside
+`max_tokens=900`, using **737 completion tokens**, parsed, four verdicts. So the cap never bound
+and the value recorded on 29 September as the likely cause is wrong.
+
+The cap was raised to **3,000** anyway, for one reason: `max_tokens` is part of the response
+cache key, so raising it is what forces a rerun to make the merge calls fresh instead of replaying
+them.
+
+### Step 2: no other arm shares this call
+
+`merge_what_says_the_same_thing` is called from one place, under `as_published=True`. The claim
+store and log-and-notes have **no merge step at all** - not a silent one, none - so there are no
+silent nights to count for them.
+
+### Step 3: the real cause, found by counting what the handler threw away
+
+The handler had a bare `continue` for any returned merge whose `keep`/`fold_in` was not a claim in
+the store. Nothing was recorded, so "the model answered and we discarded it" and "the model never
+answered" looked identical from outside. I added `n_returned_by_the_model`, `n_unusable` and the
+reason for each discard, and reran.
+
+| household | nights | pairs proposed | answered by the model | merged | rejected | **discarded** | nights with no verdict |
+|---|---|---|---|---|---|---|---|
+| hh_s2_t03 | 50 | 163 | 160 | 5 | 18 | **137** | 35 of 43 |
+| hh_s32_t03 | 50 | 196 | 196 | 2 | 2 | **192** | 48 of 49 |
+
+**The model answered 356 of the 359 pairs it was shown. 329 of those answers were thrown away.**
+The reasons, counted: **174** named a claim that is not in the store, **18** named the same claim
+twice. The values it actually returned were `keep: "both"`, `fold_in: "none"` - it answered the
+question in words, in a field typed as a plain string, which makes that schema-valid.
+
+The fix is the one every other schema in this project already uses for a field that must name
+something real: `merge_schema()` now builds an **enum of the claim ids in the prompt**, so a word
+cannot be returned at all, and the prompt says the two must differ. A head-to-head test on one
+reconstructed prompt returned usable ids under both schemas, so the failure is prompt-dependent;
+the enum's value is that it makes the bad answer unrepresentable rather than merely unlikely.
+
+### Step 4: two reruns
+
+Both on the same three households, 24 questions a day, same banks and seed, otherwise identical.
+
+- `wave_the_second_illness_ACE_rerun` - raised cap, old schema. Two households finished and are
+  the table above. The third was stopped after 17 of 49 days: it was running at about ten minutes
+  a day under contention and would not have finished, and its value was diagnostic only, which the
+  first two already gave.
+- `wave_the_second_illness_ACE_fixed` - the enum. Launched 00:59.
+
+### Step 5: the tables
+
+`WAVE_50=<wave>/cells PYTHONPATH=src python3 results/self_improve/paper/scripts/the_rerun_tables.py`
+produces Table 2, Table 3 and the merge audit for any wave; it reproduces the draft's published
+values exactly on the original wave, including the never-found counts, which is the check that it
+can be trusted on a rerun. The drops, the first-question numbers and the recovery days come from
+`the_drop_at_each_onset.py` and `the_first_question_of_the_day.py`, which now honour `WAVE_50` too.
+
+_(new-against-old numbers are filled in below when the fixed rerun lands)_
 
 ---
 
