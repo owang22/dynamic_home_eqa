@@ -68,8 +68,9 @@ On the second point: the draft says log and notes' +3.5 / +1.5 "does not clear t
 clears the 1.9 floor and fails 2 SE and the sign test. +1.5 is under the 2.2 floor and fails all
 three. The conclusion stands; the stated reason is wrong for one of the two numbers.
 
-Note also `results/self_improve/THE_MAIN_POINTS.md` line 59 carries the same error - it says
-"LastSeen - plain claim store +5.1 / +8.2 both clear" - and should be corrected there too.
+`results/self_improve/THE_MAIN_POINTS.md` carried the same error - "LastSeen - plain claim store
++5.1 / +8.2 both clear". **Fixed there on 2026-09-29**, with the 2 SE and the household sign
+printed on every line so it cannot come back as a bare "clears".
 
 ### 2. The 8.6 / 9.7 gap, the 15.9% match, 57 vs 24, 95 vs 59, 96 seen / 62 found
 
@@ -320,11 +321,46 @@ Send the `.tex` and `.bib` and both remaining items can be finished.
 
 ---
 
+## Found afterwards, and it affects Section 3.2 and Table 2
+
+**In the 50-day run, ACE's grow-and-refine step returned almost nothing.** Over 150 nights and
+three households, the embedding proposed 529 pairs and the model sent back a verdict on **33** of
+them, merging **7** notes. On **126 of the 137** nights that proposed a pair, the reply produced no
+verdict at all. The same code, on the same three households at 24 questions a day, run the day
+before, was silent on 3 of 88 nights and merged 67 notes.
+
+A likely cause, not confirmed: commit `b4207b7b3` (2026-09-26 20:49) raised that call's schema from
+four merges to twelve and its `why` field from 200 characters to 600 and left `max_tokens=900`
+where it was; a reply carrying several 600-character explanations does not fit, is cut off, and the
+handler silently sets `merges = []`. The timing fits two of the three cells - the one that finished
+before the commit answered on 9 of its 43 asked nights, the two that finished after it answered on
+one night each - but it does not explain the first cell's own 9 of 43.
+
+**What this means for the draft.** The arm Table 2, Figure 2 and Section 3.2 call the ACE-style
+playbook had its merging step effectively switched off in that run. Its numbers are still a correct
+measurement of the arm as it ran; what cannot be said is that they measure ACE's grow-and-refine.
+Appendix D should say the step returned a verdict on 11 of 137 nights, or the run should be redone
+with the cap raised. Full counts and the per-cell timing are in
+`results/self_improve/paper/appendix_material.md`, Section 1.
+
+**The "Differences from ACE" paragraph mixes the two ACE arms.** "Ours ranks pairs by embedding,
+hands at most four pairs a night to the model, which decides whether they say one thing, and merges
+by deterministic concatenation" - the embedding ranking and the model verdict are the 50-day arm;
+the deterministic merge is the ten-household arm. No single arm does both. The ten-household arm
+never proposed a pair at all in 320 nights: its merge sits behind a line budget that was never
+reached, and the only joining it did was 22 uses of the deterministic backstop. Section 1 of
+`appendix_material.md` now sets the two arms side by side and gives replacement wording.
+
 ## Smaller things found along the way
 
 - Appendix A, "eleven kinds of object, including books, mugs, glasses, water bottles, chargers and
-  tablets" - confirmed. The eleven are book, charger, glass, glasses, medication, mug, notebook,
-  razor, tablet, towel, water_bottle, and all six named are among them.
+  tablets" - confirmed for the ten-household and 50-day runs. The eleven are book, charger, glass,
+  glasses, medication, mug, notebook, razor, tablet, towel, water_bottle, and all six named are
+  among them. **The five wider households use a different list of 21 kinds**, which is what makes
+  them wider; if the sentence is meant to cover the whole study it needs a clause.
+- **The simulator-dynamics paragraph** the draft leaves as a TODO is now written, from the
+  generator and the two scenario files rather than from the README:
+  `results/self_improve/paper/appendix_material.md`, Section 4.
 - Appendix A, "Day 0 is a night with no questions" - confirmed; question days start at 1.
 - Setting, "two or three residents, eight or nine rooms with about forty places between them" -
   confirmed: 2 to 3 residents, 8 or 9 rooms, 39 to 46 places.

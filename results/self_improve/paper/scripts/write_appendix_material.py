@@ -36,6 +36,59 @@ def rendered_prompts():
     return buf.getvalue()
 
 
+def scenario_numbers():
+    """The illness event, read out of the two scenario files the paper's runs were built from."""
+    import yaml
+    out = {}
+    for tag, name in (("main", "events_varied.yaml"), ("wider", "events_varied_v3.yaml")):
+        d = yaml.safe_load((pathlib.Path("results/self_improve/varied_homes/scenario")
+                            / name).read_text())
+        ev = d["events"]["unwell_spell"]
+        out[tag] = dict(file=name, rules=[r["class"] for r in ev["placement"]],
+                        removed=len(ev["schedule"]["remove"]),
+                        added=[a["activity"] for a in ev["schedule"]["add"]],
+                        internal=ev["internal"])
+    return out
+
+
+def merge_numbers():
+    """What each ACE arm's grow-and-refine step did, over every landed cell of each wave.
+
+    `n_pairs_proposed` is how many pairs the embedding handed the model; `n_merged` and
+    `n_rejected` come only from what the model sent back, so a night where the reply did not
+    parse counts as a pair proposed and no verdict. That gap is the point of the table.
+    """
+    import glob
+    out = {}
+    for label, pat in (
+            ("ten-household run, 8 a day (claim_store_told_if_it_was_right)",
+             "results/self_improve/overnight_wave/cells/"
+             "claim_store_told_if_it_was_right/*/cell.json"),
+            ("50-day run, 24 a day (ACE_as_published)",
+             "results/self_improve/wave_the_second_illness/cells/ACE_as_published/*/cell.json"),
+            ("ten households, 24 a day (ACE_as_published)",
+             "results/self_improve/overnight_wave_24_questions/cells/"
+             "ACE_as_published/*/cell.json")):
+        cells = nights = proposed = merged = rejected = by_rule = asked = silent = 0
+        for f in sorted(glob.glob(pat)):
+            cells += 1
+            for n in json.load(open(f)).get("nightly") or []:
+                nights += 1
+                m = n.get("how_it_merged") or {}
+                proposed += m.get("n_pairs_proposed", 0)
+                merged += m.get("n_merged", 0)
+                rejected += m.get("n_rejected", 0)
+                if m.get("n_pairs_proposed", 0):
+                    asked += 1
+                    if m.get("n_merged", 0) + m.get("n_rejected", 0) == 0:
+                        silent += 1
+                j = n.get("joined_by_rule_not_by_the_model")
+                by_rule += len(j) if isinstance(j, list) else (1 if j else 0)
+        out[label] = dict(cells=cells, nights=nights, proposed=proposed, merged=merged,
+                          rejected=rejected, by_rule=by_rule, asked=asked, silent=silent)
+    return out
+
+
 def memgpt_numbers():
     """Block cap, nights and refusals, counted from the landed cells themselves."""
     import glob
@@ -84,6 +137,63 @@ def main() -> int:
                                            WORKING_MEMORY_CHARACTERS)
     from self_improve.write_the_notes_memgpt_as_published import HOW_MANY_PASSAGES_A_PAGE
     m = memgpt_numbers()
+    mg = merge_numbers()
+    sc = scenario_numbers()
+    main_file, wider = sc["main"]["file"], sc["wider"]
+    removed, added = sc["main"]["removed"], sc["main"]["added"]
+    n_added = len(set(added))
+    added = ", ".join(sorted(set(added)))
+    no_rule = ", ".join(c for c in ("book", "water_bottle", "tablet", "mug", "charger", "glasses",
+                                    "glass", "razor", "medication", "towel", "notebook")
+                        if c not in sc["main"]["rules"])
+    energy = f"by {sc['main']['internal']['energy']}"
+    hurried = f"by {sc['main']['internal']['hurriedness']}"
+    rules = sc["main"]["rules"]
+    n_rules, n_classes = len(rules), 11
+    rule_list = ", ".join(rules)
+    extra_rules = ", ".join(r for r in wider["rules"] if r not in rules)
+
+    def merge_row(label):
+        d = mg[label]
+        return (f"| {label} | {d['cells']} | {d['nights']} | {d['proposed']} | "
+                f"{d['merged']} | {d['rejected']} | {d['silent']} of {d['asked']} | "
+                f"{d['by_rule']} |")
+
+    merge_counts = f"""| arm and wave | cells | nights | pairs proposed | merged | rejected | nights asked with no verdict | joined by rule |
+|---|---|---|---|---|---|---|---|
+{merge_row('ten-household run, 8 a day (claim_store_told_if_it_was_right)')}
+{merge_row('50-day run, 24 a day (ACE_as_published)')}
+{merge_row('ten households, 24 a day (ACE_as_published)')}
+
+**The ten-household arm never ran the step at all.** Zero pairs proposed in
+{mg['ten-household run, 8 a day (claim_store_told_if_it_was_right)']['nights']} nights: its merge
+sits behind a line budget that was never reached. All the joining it did -
+{mg['ten-household run, 8 a day (claim_store_told_if_it_was_right)']['by_rule']} joins - was the
+deterministic backstop in `keep_the_notes_from_growing`, which folds the claim with the worst
+record into the live claim it shares most words with.
+
+**In the 50-day run the step was nearly inert, and that needs saying in the paper.** It proposed
+{mg['50-day run, 24 a day (ACE_as_published)']['proposed']} pairs and the model returned a verdict
+on {mg['50-day run, 24 a day (ACE_as_published)']['merged'] + mg['50-day run, 24 a day (ACE_as_published)']['rejected']} of them,
+merging {mg['50-day run, 24 a day (ACE_as_published)']['merged']} notes in
+{mg['50-day run, 24 a day (ACE_as_published)']['nights']} nights over three households. On
+{mg['50-day run, 24 a day (ACE_as_published)']['silent']} of the
+{mg['50-day run, 24 a day (ACE_as_published)']['asked']} nights that proposed a pair, nothing came
+back. The same code on the same three households at 24 questions a day, run the day before, was
+silent on only {mg['ten households, 24 a day (ACE_as_published)']['silent']} of
+{mg['ten households, 24 a day (ACE_as_published)']['asked']} and merged
+{mg['ten households, 24 a day (ACE_as_published)']['merged']} notes.
+
+**A likely cause, not yet confirmed.** `merge_what_says_the_same_thing` calls the model with
+`max_tokens=900`. Commit `b4207b7b3` (2026-09-26 20:49) raised that call's schema from four merges
+to twelve and its `why` field from 200 characters to 600, and left `max_tokens` where it was. A
+reply carrying several 600-character explanations does not fit in 900 tokens; it is cut off,
+`json.loads` raises, and the handler sets `merges = []` with nothing recorded. The timing fits two
+of the three cells: `hh_s2_t03` finished at 18:36 that day, before the commit, and answered on 9 of
+its 43 asked nights; `hh_s32_t03` and `hh_s48_t03` finished at 23:23 and 08:13 the next morning,
+after it, and answered on exactly one night each - `hh_s32_t03` was silent from night 1 onward. It
+does not explain `hh_s2_t03`'s own 9 of 43, so there is a second thing to find. Until it is found,
+the paper should not describe the 50-day playbook's grow-and-refine as having run.""" 
 
     def row(label):
         d = m[label]
@@ -106,29 +216,62 @@ in this document is a transcription. Re-run it after any change to the method mo
 
 ## 1. Differences from ACE
 
-The paragraph should quote the header of `src/self_improve/write_the_notes_told_if_right.py`. The
-brief asked for lines 34 to 56; line 34 starts mid-sentence, so the block below is lines **33 to
-65**, which is the whole of the two lists - the differences from the released code, and the
-differences from the paper.
+### There are two ACE arms, and they are not the same arm
+
+The paper calls both of them the ACE-style playbook. The code keeps them apart, and the paragraph
+has to as well, because the grow-and-refine step works in **opposite directions** in the two.
+
+| | ten-household run (Table 1, Figure 4) | 50-day run (Table 2, Figure 2) |
+|---|---|---|
+| cell directory | `claim_store_told_if_it_was_right` | `ACE_as_published` |
+| looking back | once, unconditionally | up to three rounds, stopping early when nothing went wrong |
+| when it merges | only when the store is over a line budget | every night |
+| how pairs are grouped | shared words | sentence embedding, most alike first |
+| who writes the merged note | the code, by deterministic concatenation | the model |
+
+Both run through `write_the_notes_told_if_right.py`; the second is the first with
+`as_published=True` (that file, `write_the_notes_told_if_right`). `memory_notes.py` states the
+three differences and nothing else separates them.
+
+**So the draft's sentence mixes the two.** "Ours ranks pairs by embedding, hands at most four pairs
+a night to the model, which decides whether they say one thing, and merges by deterministic
+concatenation" describes the embedding ranking and the model verdict of the **50-day** arm and the
+deterministic merge of the **ten-household** arm. No single arm does both. It should read: the
+ten-household arm groups by shared words and merges in code with no model call; the 50-day arm
+ranks by embedding, hands at most four pairs a night to the model, and the model decides and writes
+the merged note.
+
+### What the module header says, and where it is now out of date
+
+Quoted verbatim, lines **33 to 65** of `src/self_improve/write_the_notes_told_if_right.py`. The
+brief asked for 34 to 56; line 34 starts mid-sentence, and 33 to 65 is the whole of both lists.
+**The header was written for the ten-household arm, before `ACE as published` existed.** Its second
+bullet - "Ours is the mirror image: word overlap for the grouping, and a deterministic
+concatenation for the merge" - and the third of its three differences from the paper are true of
+that arm only. The 50-day arm closes both gaps.
 
 > {quote(SRC / 'write_the_notes_told_if_right.py', 33, 65).replace(chr(10), chr(10) + '> ')}
 
-### The grouper
+### The grouper, and the four pairs a night
 
 `grouping_by_meaning.pairs_worth_asking_about` proposes at most **{HOW_MANY_PAIRS_TO_PROPOSE} pairs a night** (`HOW_MANY_PAIRS_TO_PROPOSE = {HOW_MANY_PAIRS_TO_PROPOSE}`). It ranks every
 eligible pair by the cosine of two mean-pooled Llama-3.2-1B vectors, most alike first, and hands
-the top four to the model, which decides for each whether the two notes say one thing. The
-embedding never decides a merge on its own - there is no similarity threshold - for the reason in
-that module's header: measured on this machine, unrelated sentences already score 0.83 to 0.88 on
-this model, so ACE's 0.90 does not transfer to it.
+the top four to the model, which decides for each whether the two notes say one thing and writes
+the note that replaces both. There is no similarity threshold, for the reason in that module's
+header: measured on this machine, unrelated sentences already score 0.83 to 0.88 on this model, so
+ACE's 0.90 does not transfer to it. **This step runs in the 50-day arm only.**
 
 **One thing to state carefully.** That function's docstring says two rules make a pair eligible:
 the same condition, and the same object. The code enforces only the first - it compares
-`holds_under` and nothing else - and the caller in `write_the_notes_told_if_right.py` passes every
-live claim. So the appendix should say pairs are restricted to notes holding under the same
-condition, and not claim an object restriction. What keeps one object's two routines apart is the
-condition test plus the sentence in the merge prompt: *"Two notes about the same object at
-different times of day are NOT the same note."*
+`holds_under` and nothing else - and the caller passes every live claim. So the appendix should say
+pairs are restricted to notes holding under the same condition, and not claim an object
+restriction. What keeps one object's two routines apart is the condition test plus the sentence in
+the merge prompt: *"Two notes about the same object at different times of day are NOT the same
+note."*
+
+### What the merging step actually did, counted from the cells
+
+{merge_counts}
 
 ---
 
@@ -209,6 +352,72 @@ schema enforced by the server as a JSON schema response format.
 ```
 {rendered_prompts()}
 ```
+
+---
+
+## 4. Simulator dynamics
+
+The households are generated by `src/situation_sim`, and nothing about the illness is written into
+a household by hand. A **day is a hidden situation**: a set of causes drawn for that day, which
+rewrite the day's schedule and move many objects at once. That is the whole design - a cause is
+modelled explicitly only when it moves more than one object, and single-object noise is left to a
+*whim* term.
+
+**A day.** Each resident has a role, and the role carries a weekday and weekend schedule of
+activities with free slots that habits fill. `schedule.py` turns that into the day's bouts: habits
+fire once per resident per day with their own probabilities, household chores once per home, bouts
+are skipped in proportion to how tidy the resident is, start times are jittered by their
+punctuality, and long bouts fragment around kitchen breaks. Nothing is tied to a fixed date beyond
+the weekday/weekend split.
+
+**Where a thing ends up.** While a bout runs, the objects it uses sit on that bout's surface - a
+laptop on the desk - and pocket items ride on the person. When the bout ends, every used object the
+next bout does not need goes through one decision function, in this order: an event's placement
+rule, a tidy pass, the arriving-home rule (put away, or dumped at the door), the home-activity rule
+(carried into the next room if the resident is distracted, left where it was used, sent to the sink
+if it is a dirty dish, or put back), a fallback if the intended spot is occupied or blocked, and
+finally whim. The size of the whim term scales with the resident's traits and how hurried the day
+is. A decision that lands an object where it already is counts as a decision and not as a move.
+Attribution is exact: a cause is credited only with the probability mass it added.
+
+Measured on the banks the paper runs on, each household holds **76 to 104 objects**, of which
+**52 to 74 ever change place** - the rest are fixtures the generator records once - and residents
+make **106 to 213 object moves a day**
+(`what_a_household_is_made_of.py`).
+
+**The change in routine.** The scenario file forces one event, `unwell_spell`, on `resident_1` for
+days 14 to 23, and again for days 32 to 41 in the 50-day run. Every other event in the catalogue -
+rain, a guest, late work, a grocery delivery, laundry day, an ordinary sick day - is set to
+probability zero, and every stage sets `suppress_random_events`, so **the illness is the only live
+event in the month** and it does nothing at all before day 14.
+
+The event itself ({main_file}) does three things:
+
+- **It empties the day.** {removed} activities are removed, among them the commute, work sessions,
+  classes, shifts, video calls, every trip out, every form of exercise, errands, the shopping,
+  all four ordinary meals and the washing up, and four whole schedule slots.
+- **It fills the day with nine bouts**, all at home, from {n_added} distinct activities -
+  {added} - with `rest_coffee` twice, at 13:00 and 20:15. It also sets the resident's energy
+  {energy} and hurriedness {hurried}, which feeds back into the whim term.
+- **It carries {n_rules} placement rules**, and these are what actually move the answers:
+  {rule_list}. Everything else in the house keeps moving for its own reasons.
+
+The rules cover {n_rules} of the {n_classes} kinds the questions ask about in this scenario;
+{no_rule} have no rule at all. But a rule only fires after a bout the **ill** resident had, so a
+well resident's mug and glass stay where they always were. Both kinds of control matter: a class
+with no rule, and a ruled class owned by somebody who is not ill. A memory that spreads the
+illness across the whole house is wrong about all of them. The wider five-household scenario adds
+two more rules ({extra_rules}) and widens the question list from 11 kinds to 21.
+
+**The second illness is a fresh draw, not a replay.** The same event is forced on the same resident,
+but the bout counts and every placement decision are resampled for those days. The evidence is in
+the outcome: of the 22 objects whose commonest daytime room changes in the first illness, **8 do
+not change room in the second**, which is why the paper's recurrence tables use the 14 that change
+in both.
+
+Same seed, same files: `situation_sim` is deterministic, and every arm of a household reads one
+frozen bank, so the world and the question schedule are identical across arms (checked by hashing
+in `results/memoryWorkshop/CHECKS_ON_THE_DRAFT.md`, item 6).
 """
     OUT.write_text(text)
     print(f"wrote {OUT}  ({len(text.splitlines())} lines)")

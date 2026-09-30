@@ -56,12 +56,18 @@ Ten households, 2,456 questions, identical question sets in every arm, 8 a day.
 | notes hidden at choice time | 53.4% | 65.8% |
 
 Paired within household, against 2 standard errors and the rerun noise floor (1.9 points on first
-room, 2.2 on found-in-budget):
+room, 2.2 on found-in-budget). CORRECTED 2026-09-29: the first two lines used to say "both clear"
+and on FIRST ROOM RIGHT they do not - +5.1 sits under a 2 SE of 5.7 and +6.0 under 6.1, and each
+holds in only 7 of the 10 households. The found-in-budget column is where the result lives.
+Recomputed with `results/self_improve/paper/scripts/table1_ten_homes.py`:
 
-  LastSeen - plain claim store   +5.1 / +8.2   both clear
-  LastSeen - our first ACE       +6.1 / +9.7   both clear
-  LastSeen - our first MemGPT   +11.1 / +12.9  both clear
-  ours - LastSeen                +3.5 / +1.5   NEITHER clears; +1.5 is under the 2.2 floor
+  LastSeen - plain claim store   +5.1 (2 SE 5.7, 7 of 10) DOES NOT CLEAR / +8.2 (4.3, 10 of 10) clears
+  LastSeen - our first ACE       +6.0 (2 SE 6.1, 7 of 10) DOES NOT CLEAR / +9.7 (6.1, 9 of 10) clears
+  LastSeen - our first MemGPT   +11.1 (2 SE 7.1, 8 of 10) clears        / +12.9 (6.9, 10 of 10) clears
+  ours - LastSeen                +3.5 (2 SE 4.2, 9 of 10) does not clear / +1.5 (2.0, 8 of 10) does not clear
+
+  On the last line: +3.5 DOES clear the 1.9 floor and fails 2 SE and the all-household sign;
+  +1.5 fails all three. The conclusion is unchanged, the reason is not.
 
 LastSeen also does not sag during the shift: 81.1, 81.8, 84.1 across the three windows.
 
