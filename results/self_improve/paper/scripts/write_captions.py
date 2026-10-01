@@ -15,16 +15,16 @@ MEASURE = ("*First room right* is the share of questions where the object was in
 
 CAPTIONS = {
  "figure2_both_illnesses": (
-  "Figure 2. The same illness, twice.",
+  "Figure 2. The same sickness, twice.",
   """**Every memory collapses on the day a change begins. They separate on how fast they come
-back.** Three days into the first illness the memory that keeps both a log and a summary is at 88%,
+back.** Three days into the first sickness the memory that keeps both a log and a summary is at 88%,
 the trail at 62% and the plain claim store at 61%. The same gap opens at the other two changes:
 three days after ordinary life returns it is at 85% against the trail's 78%, and three days into
-the second illness at 91% against 81%.
+the second sickness at 91% against 81%.
 
 **The advantage is not in guessing the new room.** On the questions where neither memory has yet
 seen an object in the place it now occupies, the two are exactly level - 15.9% each. Neither can
-predict where the illness put things.
+predict where the sickness put things.
 
 **It is in what happens after the first guess fails.** On day 14 both guess the first room about
 equally, 27% against 21%; but given its three rooms the log-and-summary memory *finds* the object
@@ -36,7 +36,7 @@ on 95% of questions, where the trail has on 59%.
 Seeing is necessary and not sufficient - the claim store reaches the same 96% exposure and still
 answers 62%, because it has rewritten the sightings into summaries it cannot re-read.
 
-Three households, the fourteen objects that move in both illnesses.""",
+Three households, the fourteen objects that move in both sicknesses.""",
   """The value of a language model here is not prediction and not steady-state accuracy, where the
 trail matches it. It is recovery from a wrong guess: with three looks and a readable record, a
 wrong first room becomes a found object the same day, and a found object becomes a right first
@@ -47,7 +47,7 @@ count."""),
  "figure3_told_the_cause": (
   "Figure 3. Told the cause, then retracting it.",
   """One household, the *log and notes* memory, told a single sentence on the night before the
-illness begins and asked to write down what will change. Both notes are verbatim; the ellipsis
+sickness begins and asked to write down what will change. Both notes are verbatim; the ellipsis
 marks one omitted sentence. The second note on night 14 is a night-13 claim that the same update
 revised.
 
@@ -60,9 +60,9 @@ dropped.
 **The evidence it needed was in its own hand, the same night.** The second note records that
 Tomas's glass sat on the bedroom nightstand from 08:07 to 15:12. Across the settled fortnight that
 glass spends 91% of the working day in the kitchen and is never once on the bedroom nightstand;
-across the ten illness days it is on that nightstand for 90% of it. A personal item parked in the
+across the ten sickness days it is on that nightstand for 90% of it. A personal item parked in the
 bedroom through seven hours of a working day is not a new fact about where the glass lives - it is
-the illness, written down. The memory does not read it that way. It files it as a standing rule
+the sickness, written down. The memory does not read it that way. It files it as a standing rule
 about a Tomas who is well, a few lines below the note where it deletes the hypothesis that explains
 it.""",
   """The model can infer a hidden cause it was told about and turn it into specific, correct
@@ -74,13 +74,13 @@ absorbed as an unrelated fact.
 
 This is the mechanism behind the paper's aggregate result. A memory that rewrites itself each night
 has no way to accumulate evidence for an explanation across days, which is why summary-only
-memories fall as far at the second illness as at the first: each night they are reasoning from one
+memories fall as far at the second sickness as at the first: each night they are reasoning from one
 day, and one day never looks like a regime."""),
 
  "figure4_one_notes_life": (
   "Figure 4. One note's life.",
   """One note in the claim store - claim_0005 of household hh_s2_t03, the untold arm - on four
-nights: before the illness, four days into it, the first night back, and a week after. The note
+nights: before the sickness, four days into it, the first night back, and a week after. The note
 text and the condition are verbatim, and the condition is the `holds_under` field exactly as it is
 stored. The bar above the row places each night against the month: the sick days, 14 to 23, are the
 shaded stretch between the two rules, and the ordinary days either side are white.
@@ -113,19 +113,19 @@ days of the month.
 Nothing here was lost by forgetting. The note was rewritten every night and every version was
 correct about the day it was written on. What the memory never does is keep the old reading beside
 the new one with a condition that separates them, which is what it would need to be less wrong when
-the illness comes back."""),
+the sickness comes back."""),
  "figureA1_first_illness": (
-  "Figure A1. Adapting inside the first illness.",
-  f"""First room right by day on the objects the illness moves, over the ten-household run, days 1
+  "Figure A1. Adapting inside the first sickness.",
+  f"""First room right by day on the objects the sickness moves, over the ten-household run, days 1
 to 31. {MEASURE} Each line is the mean of ten households; the band is one standard error across
-them. The shaded span is the illness, days 14 to 23.
+them. The shaded span is the sickness, days 14 to 23.
 
 *Reduced ACE* and *tight working memory* are this run's constrained versions of the two published
 designs: the ACE-shaped arm reflects once a night rather than up to three times, and the
 MemGPT-shaped arm ran on a 1,200-character block, a sixteenth of the smallest block that lineage
 uses. The published implementations appear in Figure 2, on three households.""",
   """Every memory, however it is built, falls to about a third on the first changed day, and every
-one climbs back inside the ten days of the illness. The second fall on day 24, when ordinary life
+one climbs back inside the ten days of the sickness. The second fall on day 24, when ordinary life
 returns, is nearly as deep as the first - adaptation to the new routine is itself a cost when the
 old one comes back."""),
 

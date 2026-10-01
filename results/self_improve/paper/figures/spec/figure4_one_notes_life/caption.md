@@ -1,7 +1,7 @@
 # Figure 4. One note's life.
 
 One note in the claim store - claim_0005 of household hh_s2_t03, the untold arm - on four
-nights: before the illness, four days into it, the first night back, and a week after. The note
+nights: before the sickness, four days into it, the first night back, and a week after. The note
 text and the condition are verbatim, and the condition is the `holds_under` field exactly as it is
 stored. The bar above the row places each night against the month: the sick days, 14 to 23, are the
 shaded stretch between the two rules, and the ordinary days either side are white.
@@ -37,4 +37,4 @@ days of the month.
 Nothing here was lost by forgetting. The note was rewritten every night and every version was
 correct about the day it was written on. What the memory never does is keep the old reading beside
 the new one with a condition that separates them, which is what it would need to be less wrong when
-the illness comes back.
+the sickness comes back.

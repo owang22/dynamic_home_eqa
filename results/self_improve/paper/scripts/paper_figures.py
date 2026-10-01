@@ -9,7 +9,7 @@ The two disagree on four things, so neither is a subset of the other and both ar
   text weight         regular, no title          bold, including tick numbers, with a title
   the legend          inside if it fits          below the plot, close, one entry a row
 
-Everything else they agree on: first-guess accuracy on y from 0 to 100, day on x, the illness
+Everything else they agree on: first-guess accuracy on y from 0 to 100, day on x, the sickness
 shaded with "sick" over the band, one fixed colour per method, a 396 pt canvas.
 
     PYTHONPATH=src python3 results/self_improve/paper/scripts/paper_figures.py
@@ -148,7 +148,7 @@ def shade_sick(ax, spans, style, top=None):
         ax.axvspan(first - 0.5, last + 0.5, color=SHADE, lw=0, zorder=0,
                    ymax=(top / ax.get_ylim()[1]) if top else 1.0)
         # in the headroom above the labelled range, not inside the data: at 94 it sat behind
-        # the log-and-notes line, which reaches 97 mid-illness, and printed as "ick".
+        # the log-and-notes line, which reaches 97 mid-sickness, and printed as "ick".
         ax.annotate("sick", xy=((first + last) / 2, (top + 6) if top else 101),
                     xycoords=("data", "data"),
                     ha="center", va="bottom", fontsize=8.5, color=MUTED, bbox=BOX,
@@ -191,11 +191,11 @@ def draw_lines(ax, days, names, curves, style):
 
 
 def figure_2(style_name):
-    """Both illnesses, day by day, on the objects that move in both.
+    """Both sicknesses, day by day, on the objects that move in both.
 
     NO QUESTIONS-A-DAY STRIP. It cluttered the figure to carry a fact that belongs in a sentence,
     and the figure is about how fast each memory comes back, not about the sample behind each point.
-    The annotations say that: three days after each illness begins, where each of the two leading
+    The annotations say that: three days after each sickness begins, where each of the two leading
     lines has got back to.
     """
     style = dict(STYLES[style_name])
@@ -240,7 +240,7 @@ def figure_2(style_name):
         note(f"  figure 2 [{style_name}] three days after day {start_day}: "
              + ", ".join(f"{n} {v:.1f}" for n, v in after.items()))
     if style["title"]:
-        ax.set_title("The Same Illness, Twice", fontweight=style["weight"], pad=14)
+        ax.set_title("The Same Sickness, Twice", fontweight=style["weight"], pad=14)
     handles = [plt.Line2D([], [], color=COLOUR[n], marker=MARKER[n], linestyle=LINESTYLE[n],
                           lw=1.6, ms=4.5,
                           markeredgecolor="white", markeredgewidth=0.5, label=label(n)) for n in names]
@@ -261,7 +261,7 @@ def figure_2(style_name):
     out = _place(style_name, "figure2_both_illnesses")
     fig.savefig(out)
     plt.close(fig)
-    note(f"  wrote {out}   both-illness-mover questions a day: "
+    note(f"  wrote {out}   both-sickness-mover questions a day: "
          f"{min(counts.values())} to {max(counts.values())}")
 
 
@@ -357,7 +357,7 @@ def _wrap(text, width):
 
 
 def figure_A1(style_name):
-    """The first illness on the ten households, five methods."""
+    """The first sickness on the ten households, five methods."""
     style = dict(STYLES[style_name])
     apply(style)
     names = ["last-seen", "log and notes", "claim store", "reduced ACE", "tight working memory"]
@@ -413,7 +413,7 @@ def figure_A1(style_name):
     ax.set_xlabel("Day", fontweight=style["weight"])
     ax.grid(axis="x", visible=False)
     if style["title"]:
-        ax.set_title("Adapting Inside the First Illness", fontweight=style["weight"], pad=12)
+        ax.set_title("Adapting Inside the First Sickness", fontweight=style["weight"], pad=12)
     handles = [plt.Line2D([], [], color=COLOUR[n], marker=MARKER[n], linestyle=LINESTYLE[n],
                           lw=1.6, ms=4.5,
                           markeredgecolor="white", markeredgewidth=0.5, label=label(n)) for n in have]
@@ -486,7 +486,7 @@ def figure_A2(style_name):
     # NOT a fourth bar on the method axis: it is a fact about all three, so it is written as one,
     # and ABOVE the axes, where it covers no bar and no total.
     #
-    # It used to read "none of these 426 notes mentions the illness". True, and no longer what
+    # It used to read "none of these 426 notes mentions the sickness". True, and no longer what
     # the figure is FOR: the bars are about the conditions, and the point is that the conditions
     # do not separate ill days from well ones. Measured on these three arms: "always" and "a time
     # of day" are 371 of the 426, and the 12 that name a person home or away all say things like
@@ -517,7 +517,7 @@ def figure_4(style_name):
     """One note's life: the ill resident's glass, in the claim store, on four nights.
 
     The same note, claim_0005 of hh_s2_t03 under `incremental_edits`, quoted verbatim on the night
-    before the illness, four days in, the first night back, and a week after.
+    before the sickness, four days in, the first night back, and a week after.
 
     THE NIGHT RULE, and where it stops. A revision dated day N stores under `was` the text it
     REPLACED, so the text a note carried at the end of night N is the `was` of its first revision

@@ -1,14 +1,14 @@
-# Figure 2. The same illness, twice.
+# Figure 2. The same sickness, twice.
 
 **Every memory collapses on the day a change begins. They separate on how fast they come
-back.** Three days into the first illness the memory that keeps both a log and a summary is at 88%,
+back.** Three days into the first sickness the memory that keeps both a log and a summary is at 88%,
 the trail at 62% and the plain claim store at 61%. The same gap opens at the other two changes:
 three days after ordinary life returns it is at 85% against the trail's 78%, and three days into
-the second illness at 91% against 81%.
+the second sickness at 91% against 81%.
 
 **The advantage is not in guessing the new room.** On the questions where neither memory has yet
 seen an object in the place it now occupies, the two are exactly level - 15.9% each. Neither can
-predict where the illness put things.
+predict where the sickness put things.
 
 **It is in what happens after the first guess fails.** On day 14 both guess the first room about
 equally, 27% against 21%; but given its three rooms the log-and-summary memory *finds* the object
@@ -20,7 +20,7 @@ on 95% of questions, where the trail has on 59%.
 Seeing is necessary and not sufficient - the claim store reaches the same 96% exposure and still
 answers 62%, because it has rewritten the sightings into summaries it cannot re-read.
 
-Three households, the fourteen objects that move in both illnesses.
+Three households, the fourteen objects that move in both sicknesses.
 
 ## The claim this figure is here to make
 
