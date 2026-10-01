@@ -399,6 +399,53 @@ cells into before and after and reads as a household effect - and it is why
 `results/self_improve/paper/the_rerun_tables_FIXED.txt` labels every row that falls back to the
 original wave.
 
+## 30 Sep, from a peer's rerun: how much a single household can move on a rerun alone
+
+A peer session reran `the log and notes about the routine` on **hh_s2_t03** under the current code -
+same arm, same household, same 8-a-day / 31-day / `ten_homes` config as Table 1, differing only in
+the nightly edits schema that changed on 26 Sep. Their numbers, checked here against the cell:
+
+| | Table 1 cell (25 Sep, old schema) | rerun (30 Sep, current schema) |
+|---|---|---|
+| first room right | **90.3** | 85.9 |
+| found within 3 | **97.6** | 95.6 |
+
+248 questions each. Days 8 to 27 agree within a question or two; the gap is days 28 to 31, 93.8
+against 81.2. Their mechanism, read from the answers rather than inferred: one note was revised
+during the illness to say the charger moves to the bedroom at the end of the working day, was never
+withdrawn, and after the return sent the first look to the bedroom in the afternoon. Four of the
+rerun's nine first-room misses on days 25 to 31 cite that note; the original opened the office on
+all four.
+
+**How to read it, and this is the part the paper needs.** A 4.4-point move is inside what a rerun
+of this arm can do to one household by itself. The rerun noise floor's own data says so, and the
+paper currently quotes only half of that data:
+
+| | mean absolute difference | **largest single household** |
+|---|---|---|
+| first room right | 1.9 | **6.2** |
+| found within 3 | 2.2 | **7.3** |
+
+measured on 7 households over **days 0 to 13 only**. So 4.4 sits under the largest difference the
+floor measurement itself produced on identical prompts - and that was over fourteen days, where
+here a note written differently on one night compounds for thirty-one. The 6.2 is a floor for a
+floor.
+
+**What this does and does not threaten.** It does **not** threaten Table 1's pooled rows. The
+1.9 / 2.2 figures are per-household mean absolute differences, and Table 1 compares means over ten
+households, where that noise shrinks by about the square root of ten. Using 1.9 as a bar on a
+ten-household mean is a stricter test than it needs to be, which is the safe direction.
+
+It does threaten **per-household cells quoted individually**, and Tables 2 and 3 quote them for
+three households each - `10 -> 56`, `33 -> 50`, `18 -> 55` and so on. Each of those is one run of
+one household, and the evidence now says one run of one household carries a spread of at least six
+points from rerun alone, probably more over a longer month. The paper reads direction off those
+per-household arrows. That is defensible, but the spread should be stated next to them, and it
+compounds with the schema straddle recorded above, which is in the same three households.
+
+**Cheapest thing that would settle it**: rerun one 50-day arm on one household unchanged and report
+the difference, which gives a 49-day rerun floor rather than a 14-day one. Nobody has that number.
+
 ## Smaller things found along the way
 
 - Appendix A, "eleven kinds of object, including books, mugs, glasses, water bottles, chargers and
