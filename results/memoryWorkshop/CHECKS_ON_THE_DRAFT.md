@@ -351,6 +351,54 @@ never proposed a pair at all in 320 nights: its merge sits behind a line budget 
 reached, and the only joining it did was 22 uses of the deterministic backstop. Section 1 of
 `appendix_material.md` now sets the two arms side by side and gives replacement wording.
 
+## Found 30 Sep while answering a peer session: the 50-day wave straddles a schema change
+
+A peer replaying `the log and notes about the routine` found every night missing the response
+cache. The cause is commit **`b4207b7b3`, 26 Sep 20:49**, which changed that arm's nightly edits
+schema (`why` `maxLength` 240 -> 600) and its token budget (`300 + 260 * cap` -> `300 + 420 * cap`).
+Both are in the cache key, so nothing made before that date replays.
+
+**The prompt text did not change for this arm.** That commit also made the nightly prompt name the
+note budget out loud, but the line is gated on `NOTES_A_NIGHT`, which holds only the `eight a
+night`, `sixteen a night` and `allowance derived` variants. Plain log-and-notes never sees it. What
+changed is the grammar the reply is decoded against and the token ceiling - enough to change what
+is written at temperature 0, not a change of instructions.
+
+**Where it matters: `wave_the_second_illness` has cells on both sides of it.**
+
+| finished | side | arm | household |
+|---|---|---|---|
+| 26 Sep 18:14 | **before** | log and notes | hh_s2_t03 |
+| 26 Sep 18:36 | **before** | ACE as published | hh_s2_t03 |
+| 26 Sep 19:32 | **before** | incremental edits | hh_s2_t03 |
+| 26 Sep 22:11 | after | log and notes | hh_s32_t03 |
+| 26 Sep 23:23 | after | ACE as published | hh_s32_t03 |
+| 27 Sep 02:23 | after | incremental edits | hh_s32_t03 |
+| 27 Sep 04:22 | after | log and notes | hh_s48_t03 |
+| 27 Sep 08:13 | after | ACE as published | hh_s48_t03 |
+| 27 Sep 08:18 | after | incremental edits | hh_s48_t03 |
+
+So in the wave Table 2, Table 3, Figure 2 and Section 3.2 all rest on, **one of the three
+households had every model arm decoded against a different grammar from the other two**.
+`last_seen_no_model` is unaffected: it makes no model calls, and it ran on 27 Sep anyway.
+
+**What this does and does not threaten.** It is not a confound between arms - all three model arms
+within a household are on the same side, so the arm-to-arm comparisons that Table 2 reports are
+internally consistent per household. It is a confound between **households**, which is exactly the
+unit this paper compares across: "same sign in 3 of 3" is a statement across a schema boundary, and
+hh_s2_t03 is the household that most often sits apart from the other two in those tables. With
+n = 3 it cannot be tested away. It should be stated in the paper, and the per-household numbers
+should carry it.
+
+**What I would do**, in order of cost: state it in the appendix and leave the numbers; or rerun
+hh_s2_t03's three model arms under the current schema and report both. The second is about three
+hours on a free GPU and would settle it.
+
+This is the same failure the repo already warns about - a code change landing mid-wave splits the
+cells into before and after and reads as a household effect - and it is why
+`results/self_improve/paper/the_rerun_tables_FIXED.txt` labels every row that falls back to the
+original wave.
+
 ## Smaller things found along the way
 
 - Appendix A, "eleven kinds of object, including books, mugs, glasses, water bottles, chargers and
