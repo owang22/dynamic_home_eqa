@@ -491,7 +491,7 @@ def figure_A2(style_name):
     # do not separate ill days from well ones. Measured on these three arms: "always" and "a time
     # of day" are 371 of the 426, and the 12 that name a person home or away all say things like
     # "Dana is at home", which is true on a well day as well. That is 90%, so "most" is safe.
-    ax.text(0.5, 1.012, "most conditions hold on ill and well days alike",
+    ax.text(0.5, 1.012, "most conditions hold on sick and well days alike",
             transform=ax.transAxes, ha="center", va="bottom", fontsize=7.6,
             color="#b03020", fontweight="bold")
     leg = ax.legend(loc="upper right", fontsize=7.2, handlelength=1.0, labelspacing=0.26,
@@ -544,7 +544,7 @@ def figure_4(style_name):
             return was or "", "", nxt["day"]
         return claim.get("statement") or "", claim.get("holds_under") or "", None
 
-    nights = [(13, "Night 13, normal"), (18, "Night 18, four days ill"),
+    nights = [(13, "Night 13, normal"), (18, "Night 18, four days sick"),
               (24, "Night 24, first night back"), (31, "Night 31, a week after")]
     accent = COLOUR["log and notes"]          # the same accent Figure 3 draws its boxes in
     SIZE = 7.4                                # Figure 3's body size
@@ -588,7 +588,7 @@ def figure_4(style_name):
         tl.plot([edge, edge], [bar_y, bar_y + bar_h], color=MUTED, lw=0.7, zorder=4)
     tl.text(7.2, bar_y + bar_h / 2, "normal", ha="center", va="center", fontsize=6.4,
             color=MUTED, fontweight=style["weight"], zorder=5)
-    tl.text(19, bar_y + bar_h / 2, "ill", ha="center", va="center", fontsize=6.4,
+    tl.text(19, bar_y + bar_h / 2, "sick", ha="center", va="center", fontsize=6.4,
             color=INK, fontweight="bold", zorder=5)
     tl.text(27.8, bar_y + bar_h / 2, "normal", ha="center", va="center", fontsize=6.4,
             color=MUTED, fontweight=style["weight"], zorder=5)

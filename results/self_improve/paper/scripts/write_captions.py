@@ -82,7 +82,7 @@ day, and one day never looks like a regime."""),
   """One note in the claim store - claim_0005 of household hh_s2_t03, the untold arm - on four
 nights: before the illness, four days into it, the first night back, and a week after. The note
 text and the condition are verbatim, and the condition is the `holds_under` field exactly as it is
-stored. The bar above the row places each night against the month: the ill days, 14 to 23, are the
+stored. The bar above the row places each night against the month: the sick days, 14 to 23, are the
 shaded stretch between the two rules, and the ordinary days either side are white.
 
 The text a note carried at the end of night N is read as the text its next revision replaced: a
@@ -96,7 +96,7 @@ The four notes, and their conditions as stored:
 | night | the note | `holds_under` |
 |---|---|---|
 | 13, normal | Tomas's glass is in the kitchen sink in the morning. It is not on the dining table during this time. | Morning (observed 09:09) |
-| 18, four days ill | Tomas's glass is on the bedroom nightstand during the day. It is not in the kitchen or office. | Daytime |
+| 18, four days sick | Tomas's glass is on the bedroom nightstand during the day. It is not in the kitchen or office. | Daytime |
 | 24, first night back | Tomas's glass is on the bedroom nightstand in the morning. It moves to the kitchen dish rack by midday and stays there until evening. | Daytime |
 | 31, a week after | Tomas's glass is on the kitchen cupboard in the morning and evening. | Always |""",
   """A memory that could recognise a returning situation would end the month holding two readings of
@@ -104,7 +104,7 @@ this glass - one for ordinary days, one for the days its owner is unwell - and a
 which applies. This one holds a single reading and overwrites it each time.
 
 Night 18 is the whole point. The glass is on the bedroom nightstand through the working day, which
-in this household happens only while Tomas is ill, and the note files it under "Daytime" - a
+in this household happens only while Tomas is sick, and the note files it under "Daytime" - a
 condition that is true again the next morning whatever his state. Nothing marks it as belonging to
 an unusual week. By night 31 the bedroom is gone from the note altogether and the condition has
 widened to "Always", the most general value the format allows, on a placement that held for ten
@@ -132,17 +132,17 @@ old one comes back."""),
  "figureA2_what_the_notes_held": (
   "Figure A2. Notes about object rules on night 31.",
   """Notes held on night 31 of the ten-household run that name an object together with a room that
-object moves to while the resident is ill, split by what the note makes that object's location
+object moves to while the resident is sick, split by what the note makes that object's location
 depend on. A note counts when a structural matcher finds the object and the note's text contains
 one of the rooms or spots that object occupied in daytime hours on days 14 to 23, read from the
 simulator rather than from the text. Counts are printed on every segment large enough to hold one;
 the total for each method is printed above its bar. The tight-working-memory method is left out: it
 held 101 notes against the claim store's 595, too few for its bar to say anything.""",
-  """The memories record where things went while someone was ill in great detail - 426 notes across
-three methods - and not one of the 426 says anyone was ill. They keep the consequence and drop the
+  """The memories record where things went while someone was sick in great detail - 426 notes across
+three methods - and not one of the 426 says anyone was sick. They keep the consequence and drop the
 cause, which is why none of them can recognise the condition when it returns. The conditions they
 do attach are the wrong ones for this. "Always" and "a time of day" are 371 of the 426, and both
-are true again the next day, ill or well. The twelve that name a person being home come from one
+are true again the next day, sick or well. The twelve that name a person being home come from one
 household and one method, and say things like "Dana is at home", which is also true on a well day.
 That is 383 of 426, 90%, which is what the line above the axes means by most."""),
 }

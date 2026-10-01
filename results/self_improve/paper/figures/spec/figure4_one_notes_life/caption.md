@@ -3,7 +3,7 @@
 One note in the claim store - claim_0005 of household hh_s2_t03, the untold arm - on four
 nights: before the illness, four days into it, the first night back, and a week after. The note
 text and the condition are verbatim, and the condition is the `holds_under` field exactly as it is
-stored. The bar above the row places each night against the month: the ill days, 14 to 23, are the
+stored. The bar above the row places each night against the month: the sick days, 14 to 23, are the
 shaded stretch between the two rules, and the ordinary days either side are white.
 
 The text a note carried at the end of night N is read as the text its next revision replaced: a
@@ -17,7 +17,7 @@ The four notes, and their conditions as stored:
 | night | the note | `holds_under` |
 |---|---|---|
 | 13, normal | Tomas's glass is in the kitchen sink in the morning. It is not on the dining table during this time. | Morning (observed 09:09) |
-| 18, four days ill | Tomas's glass is on the bedroom nightstand during the day. It is not in the kitchen or office. | Daytime |
+| 18, four days sick | Tomas's glass is on the bedroom nightstand during the day. It is not in the kitchen or office. | Daytime |
 | 24, first night back | Tomas's glass is on the bedroom nightstand in the morning. It moves to the kitchen dish rack by midday and stays there until evening. | Daytime |
 | 31, a week after | Tomas's glass is on the kitchen cupboard in the morning and evening. | Always |
 
@@ -28,7 +28,7 @@ this glass - one for ordinary days, one for the days its owner is unwell - and a
 which applies. This one holds a single reading and overwrites it each time.
 
 Night 18 is the whole point. The glass is on the bedroom nightstand through the working day, which
-in this household happens only while Tomas is ill, and the note files it under "Daytime" - a
+in this household happens only while Tomas is sick, and the note files it under "Daytime" - a
 condition that is true again the next morning whatever his state. Nothing marks it as belonging to
 an unusual week. By night 31 the bedroom is gone from the note altogether and the condition has
 widened to "Always", the most general value the format allows, on a placement that held for ten
