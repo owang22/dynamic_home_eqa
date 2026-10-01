@@ -446,6 +446,62 @@ compounds with the schema straddle recorded above, which is in the same three ho
 **Cheapest thing that would settle it**: rerun one 50-day arm on one household unchanged and report
 the difference, which gives a 49-day rerun floor rather than a 14-day one. Nobody has that number.
 
+## 1 Oct: a 31-day rerun floor, and it is four times larger inside the change window
+
+A peer reran `log only, no notes` on three households with a fresh cache - nothing replayed,
+prompts verified byte-identical until the two runs first choose differently - against the cells
+from 29 Sep. First room right, rerun minus original:
+
+| window | hh_s2 | hh_s19 | hh_s20 |
+|---|---|---|---|
+| days 1-13, settled | +1.0 | 0.0 | +1.0 |
+| **days 14-23, the sickness** | **+6.2** | **+2.5** | **+5.0** |
+| days 24-31, return | +1.6 | +3.1 | -4.7 |
+| whole month | +2.8 | +1.6 | +0.8 |
+
+**The settled window reproduces the floor the paper already quotes** (1.9 mean, measured on days
+0-13) - so that number was right for the window it was measured in. **Inside the change window the
+same arm against itself moves 2.5 to 6.2 points.** That is where Tables 2 and 3 take their
+per-household arrows, where Section 3.2 measures its drops, and where Figure 2 tells its story.
+
+The paper applies a settled-window floor to change-window claims. It understates by roughly four
+times exactly where the claims live.
+
+### What survives, and the answer is better than it sounds
+
+**`last seen, no model` makes zero model calls** - checked: `n_model_calls_timed` is 0 in all three
+50-day cells, which run in under three seconds. It is deterministic. Rerun noise for it is not
+small, it is **nil**, and its numbers reproduce exactly.
+
+That decides most of it. In Table 2, first room right:
+
+| row | mean change | 2 SE | model calls | exposed? |
+|---|---|---|---|---|
+| last-seen | +32.9 | 17.0 | **none** | no - exact |
+| log and notes | +28.4 | **5.2** | yes | **yes** |
+| claim store | +6.4 | 11.8 | yes | does not clear anyway |
+| ACE-style playbook | +4.2 | 21.3 | yes | does not clear anyway |
+
+and on found within three rooms only last-seen's +56.9 (2 SE 20.6) clears at all.
+
+**So both Table 2 rows that clear two standard errors are last-seen's, and last-seen is the one arm
+immune to this.** The recurrence finding rests on the arm whose numbers are exactly reproducible,
+which is a stronger position than the draft currently claims for itself.
+
+**The one exposed claim is log and notes' +28.4 with a 2 SE of 5.2.** Three per-household arrows,
+each carrying 2.5 to 6.2 points of change-window rerun spread. Taking the middle of that range, the
+rerun contribution alone to a three-household mean is about 4/sqrt(3), so roughly 4.6 points of
+2 SE - which is most of the 5.2 observed. The between-household signal is not separable from rerun
+noise at n = 3. That row should be restated, or rerun with the arm repeated per household.
+
+**Job B is unaffected** and is now the strongest evidence for the recurrence result: deleting days
+14-23 from last-seen's memory moves its day-32 drop from 31.4 to 60.8, and last-seen calls no
+model, so none of that is rerun noise.
+
+**It is not only our problem.** The same rerun halved the peer's own headline: their Sonnet
+end-to-end gain is +8.8 against the 29 Sep cells and +4.2 against the rerun. Half of it was the
+baseline moving.
+
 ## Smaller things found along the way
 
 - Appendix A, "eleven kinds of object, including books, mugs, glasses, water bottles, chargers and
