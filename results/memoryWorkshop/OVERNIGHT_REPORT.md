@@ -303,6 +303,35 @@ Two consequences worth stating carefully:
   log-and-notes against last-seen (+3.5 / +1.5). So the model reading the record is not reliably
   better than the rule walking back through it either.
 
+### Added 30 Sep: where that difference lives, and why the pooled number understates it
+
+Prompted by a peer's note that the two arms send byte-identical prompts until notes accumulate, I
+split the comparison by whether the two arms actually opened the same rooms.
+
+| | questions | log and notes | log only | difference |
+|---|---|---|---|---|
+| **identical room sequences** | 2,145 (86.5%) | 94.1 / 99.6 | 94.1 / 99.6 | **+0.0 / +0.0** |
+| **divergent room sequences** | 335 (13.5%) | 31.0 / 77.0 | 28.4 / 71.9 | **-2.7 / -5.1** |
+
+The identical row is a check on the data rather than a result: the same rooms in the same order
+must give the same outcome, and they do, exactly, in all ten households.
+
+**The notes change the room opened on about one question in seven.** On those questions the arm
+that writes notes is 2.7 points better on first room right and 5.1 on found within three - and the
+paired two-standard-error band across the ten households is **11.4**, so neither is distinguishable
+from nothing. Diluted over all 2,480 questions, 2.7 x 0.135 = 0.4 and 5.1 x 0.135 = 0.7, which is
+exactly the pooled difference reported above.
+
+So the honest statement is narrower than "the notes add nothing", and better:
+
+> The notes change which room is opened on 13.5% of questions. On those the memory that writes
+> them is a few points better, too small to separate from rerun noise on ten households. Over all
+> questions that is 0.4 and 0.7 points, inside the floor.
+
+That still supports the paper's second finding - the record is doing the work - and it changes what
+a bigger sample would buy. This is not "notes are useless"; it is "notes are worth about half a
+point overall and we cannot distinguish that from zero". A run with more households could.
+
 This is the arm the Limitations section says was wanted and not run: *"An arm that reads the log
 without notes would separate the value of the summaries from the model's use of the log; we did
 not run it."* It is run now, on all ten households.
