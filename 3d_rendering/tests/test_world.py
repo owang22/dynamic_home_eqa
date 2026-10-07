@@ -128,25 +128,30 @@ def test_put_into_bag_and_take_out():
     assert ok, msg
     assert w.where["phone_ana"] == {"at": "inside", "carrier": "backpack_black"}
     assert set(w.contents("backpack_black")) == {"laptop_work", "phone_ana"}
-    # a non-carrier cannot hold things
+    # anything can hold things, but not something already inside the thing itself
     w.apply("ana", A("pick_up", object="keys_ben"), 3)
     ok, msg, _ = w.apply("ana", A("put_down", object="keys_ben", relation="in", ref="phone_ana"), 3)
-    assert not ok and "cannot hold" in msg
+    assert ok, msg
+    w.apply("ana", A("pick_up", object="backpack_black"), 3)
+    ok, msg, _ = w.apply("ana", A("put_down", object="backpack_black", relation="in", ref="phone_ana"), 3)
+    assert not ok and "cannot go inside" in msg
     ok, msg, _ = w.apply("ana", A("pick_up", object="laptop_work"), 4)
     assert ok, msg
     assert w.contents("backpack_black") == ["phone_ana"]
 
 
-def test_carrier_with_contents_cannot_nest():
+def test_a_bag_with_things_in_it_can_go_in_another_bag_and_both_move():
     w = make()
     objects_extra = {"tote_blue": obj("tote", "entry_table", carrier="closed")}
     w.objects.update(objects_extra)
     w.where["tote_blue"] = dict(objects_extra["tote_blue"]["start"])
     w.apply("ben", A("go", place="entry_table"), 0)
     w.apply("ben", A("pick_up", object="backpack_black"), 0)
-    ok, msg, _ = w.apply("ben", A("put_down", object="backpack_black", relation="in",
-                                  ref="tote_blue"), 0)
-    assert not ok and "has things in it" in msg
+    ok, msg, _ = w.apply("ben", A("put_down", object="backpack_black", relation="in", ref="tote_blue"), 0)
+    assert ok, msg
+    w.apply("ben", A("pick_up", object="tote_blue"), 1)
+    w.apply("ben", A("leave_home", minutes=10), 1)
+    assert {"tote_blue", "backpack_black", "laptop_work"} <= set(w.log[-1]["carried"])
 
 
 def test_hidden_place_seen_only_when_there():

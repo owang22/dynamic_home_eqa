@@ -41,8 +41,8 @@ def test_semantic_problems_listed_together():
             thing(5, "bag", "x", ref=6, rel="in", carrier="closed"), thing(6, "basket", "y", carrier="open"),
             thing(7, "pen", "z", ref=9)]
     msg = check_room_objects({"a"})({"objects": objs})
-    assert "loop" in msg and "cannot hold things" in msg and "cannot start inside" in msg
-    assert "not another thing" in msg
+    assert "loop" in msg and "not another thing" in msg
+    assert "cannot hold" not in msg                     # anything may hold anything
 
 
 def test_owned_thing_described_again_is_dropped_but_shared_kept():

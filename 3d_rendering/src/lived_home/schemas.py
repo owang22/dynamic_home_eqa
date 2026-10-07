@@ -125,6 +125,9 @@ def room_objects_schema(place_ids: list[str], owners: list[str], lo: int, hi: in
         "relation": _enum(RELATIONS),
         "ref": {"type": "integer"},
     })
+    if owner_required:                       # one person's own things: what they wear in bed now
+        obj["properties"]["worn_now"] = BOOL
+        obj["required"].append("worn_now")
     return _obj({"thinking": STR, "objects": _arr(obj, lo, hi)})
 
 

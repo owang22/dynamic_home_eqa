@@ -27,6 +27,7 @@ from lived_home.schemas import WEEKDAYS, act_schema_fitting, plan_schema
 from lived_home.world import World, clock
 
 MAX_REPLANS = 3     # per activity, after an action fails
+MAX_INTERRUPTS = 3  # per activity; further news waits for the next call
 
 
 def lines(items) -> str:
@@ -67,6 +68,7 @@ class Household:
         self.recap = {r: "This is the first day of the simulation." for r in self.rids}
         self.inbox = {r: [] for r in self.rids}
         self.states, self.thoughts = [], []
+        self.interrupts = []
         self._flushed = 0
 
     def _system(self, rid: str) -> str:
@@ -146,8 +148,9 @@ class Household:
 
     def act(self, rid: str, day: int, weekday: str, activity: dict, minute: int,
             rest: list[dict], events: list[str], problem: str, last: bool,
-            done: list = ()) -> list[dict]:
-        heard = [f"At {t} {who} {how}: {text}" for t, who, how, text in self.inbox[rid]]
+            done: list = (), interrupted: bool = False) -> list[dict]:
+        heard = [f"At {t} {who} {how}: {text}" if who else f"At {t}: {text}"
+                 for t, who, how, text in self.inbox[rid]]
         self.inbox[rid] = []
         hands, pocket, worn = self.world.holding_view(rid)
         user = prompts.ACT_USER.format(
@@ -161,14 +164,16 @@ class Household:
             memory=self.world.memory_view(rid, set(activity.get("uses") or [])),
             problem=(f"\nSo far in this activity you have: {'; '.join(done) or 'done nothing yet'}.\n"
                      f"Then this did not work: {problem}\n"
-                     "Carry on from here; do not repeat what you already did.\n") if problem else "",
+                     "Carry on from here; do not repeat what you already did.\n") if problem else
+                    (prompts.INTERRUPTED.format(done="; ".join(done) or "nothing yet") if interrupted else ""),
             bedtime=prompts.BEDTIME if last else "")
         out = self.caller.call(f"act/{rid}/{day + 1}/{clock(minute)}/{len(self.thoughts)}",
                                self.systems[rid], user, self.act_schemas[rid])
         self._note(rid, day, minute, "act", out)
         self._log("responses.jsonl", {"day": day + 1, "time": clock(minute), "resident": rid,
                                       "stage": "act", "activity": activity["activity"],
-                                      "problem_given": problem or None, **out})
+                                      "problem_given": problem or None,
+                                      "interrupted_by": events if interrupted else None, **out})
         return out["actions"]
 
     @staticmethod
@@ -228,6 +233,33 @@ class Household:
             self.spec["small_disturbances"], r, day, self.variation, self.seed) for r in self.rids}
         script, current, replans, done = {r: [] for r in self.rids}, {}, {}, {}
         failed, skipped, dropped_after_leaving, ran = [], [], [], {r: [] for r in self.rids}
+        news = {r: [] for r in self.rids}          # (minute, text) waiting to interrupt
+        n_int = {r: 0 for r in self.rids}
+        last_do = {r: None for r in self.rids}    # (log index, start, end) of a do in progress
+
+        def asleep(o, t):
+            return (t < plans[o][0]["start_min"]
+                    or (not pending[o] and o in current and "sleep" in current[o]["activity"].lower()
+                        and t >= current[o]["start_min"]))
+
+        def tell(o, t, text, capped=True):
+            """Something reaches o at minute t: it interrupts what they are doing if
+            they are awake, at home and in an activity; otherwise it waits."""
+            if asleep(o, t):
+                return
+            if world.people[o].at is None or o not in current or (capped and n_int[o] >= MAX_INTERRUPTS):
+                self.inbox[o].append((clock(t), None, None, text))
+                return
+            news[o].append((t, text))
+            ld = last_do[o]
+            if ld and ld[1] < t < ld[2] and now[o] == ld[2]:   # cut a long do short
+                now[o] = t
+                world.log.append({"day": world.day, "minute": t, "time": clock(t), "resident": o,
+                                  "verb": "interrupted", "object": None, "from": None, "to": None,
+                                  "minutes": t - ld[1], "text": text, "why": "(stopped what they were doing)"})
+                last_do[o] = None
+            now[o] = max(now[o], t) if now[o] < t else now[o]
+
         while True:
             live = [r for r in self.rids if script[r] or pending[r]]
             if not live:
@@ -237,7 +269,31 @@ class Household:
             if world.people[rid].at is None:
                 now[rid] = world.people[rid].back_at
                 continue
+            free_until = pending[rid][0]["start_min"] if pending[rid] else 10 ** 6
+            if news[rid] and rid in current and (script[rid] or now[rid] < free_until):
+                texts = [f"At {clock(t)}: {x}" for t, x in news[rid]]
+                news[rid] = []
+                n_int[rid] += 1
+                heard = [f"At {t} {who} {how}: {text}" if who else f"At {t}: {text}"
+                         for t, who, how, text in self.inbox[rid]]
+                self.inbox[rid] = []
+                self.interrupts.append({"day": day + 1, "time": clock(now[rid]), "resident": rid,
+                                        "news": texts})
+                script[rid] = self.act(rid, day, weekday, current[rid], now[rid], pending[rid],
+                                       heard + texts, "", not pending[rid], done[rid], interrupted=True)
+                continue
+            if not script[rid] and rid in current:
+                # idle until the next activity: a disturbance in that gap still happens on time
+                gap = next((d for d in disturbances[rid] if now[rid] <= d[0] < free_until), None)
+                if gap is not None:
+                    disturbances[rid].remove(gap)
+                    now[rid] = gap[0]
+                    tell(rid, now[rid], gap[1], capped=False)
+                    continue
             if not script[rid]:
+                # news that came between activities is told at the next call
+                self.inbox[rid] += [(clock(t), None, None, x) for t, x in news[rid]]
+                news[rid] = []
                 activity = pending[rid].pop(0)
                 if activity["end_min"] <= now[rid] and pending[rid]:
                     skipped.append({"resident": rid, "activity": activity["activity"],
@@ -245,16 +301,33 @@ class Household:
                                     "now": clock(now[rid]),
                                     "while_out": activity["room"] == "out_of_house"})
                     continue
-                current[rid], replans[rid], done[rid] = activity, 0, []
+                current[rid], replans[rid], done[rid], n_int[rid] = activity, 0, [], 0
                 ran[rid].append(activity["activity"])
                 now[rid] = max(now[rid], activity["start_min"])
-                due = [d for d in disturbances[rid] if d[0] < activity["end_min"]]
+                # disturbances already past (while out or asleep) are told now; later ones
+                # wait for their own time
+                due = [d for d in disturbances[rid] if d[0] <= now[rid]]
                 disturbances[rid] = [d for d in disturbances[rid] if d not in due]
                 events = [f"At {clock(t)}: {text}" for t, text in due]
                 script[rid] = self.act(rid, day, weekday, activity, now[rid],
                                        pending[rid], events, "", not pending[rid])
                 continue
-            action = script[rid].pop(0)
+            # a disturbance whose time has come interrupts; a do that spans one stops there
+            action = script[rid][0]
+            nxt = next((d for d in disturbances[rid] if d[0] <= now[rid]), None)
+            if nxt is None and action.get("verb") == "do":
+                span = now[rid] + max(1, action.get("minutes") or 1)
+                nxt = next((d for d in disturbances[rid] if d[0] < span), None)
+                if nxt is not None and nxt[0] > now[rid]:
+                    action = dict(action, minutes=nxt[0] - now[rid], cut_short=True)
+                    script[rid][0] = action
+                elif nxt is not None:
+                    nxt = None
+            if nxt is not None and nxt[0] <= now[rid]:
+                disturbances[rid].remove(nxt)
+                tell(rid, now[rid], nxt[1], capped=False)    # a disturbance always gets through
+                continue
+            script[rid].pop(0)
             if action.get("verb") == "leave_home":
                 self._away_minutes(action, current[rid], pending[rid], now[rid])
             ok, message, minutes = world.apply(rid, action, now[rid])
@@ -264,22 +337,22 @@ class Household:
                     dropped_after_leaving.append({"resident": rid, "time": clock(now[rid]),
                                                   "actions": [_short(a) for a in script[rid]]})
                     script[rid] = []
-            if ok and action["verb"] == "say" and action.get("person") in self.inbox:
-                other = world.people[action["person"]]
+                last_do[rid] = ((len(world.log) - 1, now[rid], now[rid] + minutes)
+                                if action.get("verb") == "do" else None)
+            if ok and action["verb"] in ("say", "give") and action.get("person") in self.people \
+                    and action["person"] != rid:
                 o = action["person"]
-                asleep = (now[rid] < plans[o][0]["start_min"]
-                          or (not pending[o] and o in current and "sleep" in current[o]["activity"].lower()
-                              and now[rid] >= current[o]["start_min"]))
-                if asleep:
-                    pass                                   # they are asleep and do not hear it
+                other = world.people[o]
+                name = self.people[rid]["name"].split()[0]
+                if action["verb"] == "give":
+                    text = f"{name} handed you {action.get('object')}."
                 elif other.at is None:
-                    how = "texted you"
-                elif world.room_of_person(rid) == world.room_of_person(other.rid):
-                    how = "said to you"
+                    text = f"{name} texted you: {action.get('text')}"
+                elif world.room_of_person(rid) == world.room_of_person(o):
+                    text = f"{name} said to you: {action.get('text')}"
                 else:
-                    how = "called out to you from another room"
-                if not asleep:
-                    self.inbox[o].append((clock(now[rid]), rid, how, action.get("text")))
+                    text = f"{name} called out to you from another room: {action.get('text')}"
+                tell(o, now[rid], text)
             if not ok:
                 failed.append({"day": day + 1, "time": clock(now[rid]), "resident": rid,
                                "activity": current[rid]["activity"], "action": action,
@@ -375,6 +448,7 @@ def main() -> None:
         for name, value in result.items():
             (folder / f"{name}.json").write_text(json.dumps(value, indent=1))
         (args.out / "inner_states.json").write_text(json.dumps(home.states, indent=1))
+        (args.out / "interrupts.json").write_text(json.dumps(home.interrupts, indent=1))
         (args.out / "thoughts.json").write_text(json.dumps(home.thoughts, indent=1))
         print(f"day {day + 1}: {len(result['events'])} actions, {len(result['failed'])} failed, "
               f"calls {caller.calls} (cached {caller.cached_hits}), ${caller.cost:.2f}", flush=True)

@@ -98,6 +98,8 @@ class FakeClient:
                         "size": "small", "pattern": "plain", "condition": "worn",
                         "owner": rng.choice(owners), "pocketable": kind in POCKETABLE,
                         "carrier": carrier, "place": place, "relation": relation, "ref": ref})
+            if "worn_now" in item:
+                out[-1]["worn_now"] = i == 0
             if carrier != "none":
                 carriers.append((n, place))
         return {"thinking": "fake", "objects": out}

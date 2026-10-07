@@ -104,8 +104,10 @@ You live with {others}. You are taking part in a simulation of everyday life at
 home: act as yourself, in ordinary detail. You move things with your hands, so
 you carry them from place to place, put them down when you need your hands
 free or when you are done, and sometimes leave them where you were rather than
-in their usual spot, as people do. You have two hands and pockets. A bag or
-basket you carry holds what you put in it.
+in their usual spot, as people do. When you use something (a plate, a mug, a
+pot, a book), pick it up and take it where you use it rather than only saying
+you used it. You have two hands and pockets. A bag or basket you carry holds
+what you put in it.
 
 Your habits with things:
 {object_habits}
@@ -132,8 +134,9 @@ What is going on today:
 {variation}
 Yesterday: {yesterday}
 
-Plan today from when you wake up until you go to sleep, as a list of
-activities with start and end times (HH:MM). Follow your usual routine unless
+Plan today from when you wake up until you go to sleep, as a list of your own
+activities with start and end times (HH:MM); the others in the home plan
+theirs, so do not plan what they will do. Follow your usual routine unless
 something today gives you a reason to change it. For each activity, list the
 kinds of things you expect to use (from the kinds in the home). Say how you
 feel this morning: stress, tiredness, mood and health from 0 to 3 (mood 0 is
@@ -165,8 +168,9 @@ finish it. Actions:
     top of" the books). To put something in a bag, a basket, or the pocket of
     a jacket or pants lying here: relation in, ref that thing.
   pocket (object): put something small in a pocket of what you are wearing
-  wear (object): put on clothes, shoes, a watch, glasses or a backpack; to
-    take it off, pick_up or put_down
+  wear (object): put on clothes, shoes, a watch, glasses or a backpack, or
+    clip something on (keys on a belt, a badge on a lanyard); to take it off,
+    pick_up or put_down
   give (object, person): hand it to someone in the same room
   do (minutes, text): spend time on something, like "cook pasta" or "read"
   say (person, text): say something to someone
@@ -200,18 +204,16 @@ FIELDS = """- n: number the things 1, 2, 3, ... in the order you list them.
   things are none: mugs, chargers, mail, kitchen things, shared toiletries,
   books on a shared shelf.
 - pocketable: fits in a trouser or jacket pocket.
-- carrier: whether other things in the home get put into it. open for things
-  that hold other things in the open (a basket, a tray, a fruit bowl); closed
-  for bags, backpacks, boxes with lids and cases; pockets for clothes with
-  pockets (jeans, work pants, jackets, hoodies); none otherwise (a pill bottle
-  is none: its pills are part of it).
+- carrier: whether what is put inside it can be seen: open for things that
+  hold other things in the open (a basket, a tray, a bowl, a mug); closed for
+  bags, backpacks, boxes with lids and cases; pockets for clothes with pockets
+  (jeans, work pants, jackets, hoodies); none for everything else.
 - place: the spot it is at. relation and ref: where it is at that spot. With
   ref 0, relation is on (a surface) or in (a container). With ref set to the n
   of another thing in your list at the same spot, it is relative to that
   thing: behind the toaster, on top of the stack of books, next to the
-  kettle, or in a bag, basket or pocket of a piece of clothing (relation in,
-  ref its n). Things inside a carrier cannot themselves be carriers, except
-  clothes with pockets (jeans with a wallet in them, in the laundry basket).
+  kettle, or inside another thing (a pen case in a backpack, a bookmark in a
+  book, a wallet in the pocket of jeans): relation in, ref its n.
 """
 
 PERSONAL_USER = """The home: {home}
@@ -238,6 +240,8 @@ keep several. {lo} to {hi} things; owner is {rid} for all of them.
 {others}
 It is early morning and both are still asleep: put each thing where it would
 be right now, following {name}'s habits with things. Any spot in the home.
+worn_now: true only for what {name} is wearing in bed right now (their
+sleepwear); false for everything else.
 
 {fields}"""
 
@@ -265,3 +269,30 @@ dryer drums; anything similar elsewhere. List the ones this home has that are
 not yet spots, grouped under the room and the fixture they belong to, as spots
 with the same fields as before (id starting with the room id, name, kind,
 hidden, 2 to 4 descriptions). Add only what is missing; {lo} to {hi} spots."""
+
+INTERRUPTED = """
+You are in the middle of this activity. So far you have: {done}.
+Something just happened (see above). Decide what to do now: carry on, deal
+with it, or stop this activity early.
+"""
+
+SUPPLIES_USER = """The home: {home}
+
+Its rooms and spots:
+{layout}
+
+The residents:
+{residents}
+
+Their own things are already placed (type: names):
+{taken}
+
+Now the household's shared everyday supplies: things that belong to nobody in
+particular and that either of them reaches for when needed. Painkillers and
+cold or flu medicine, a thermometer, tissues, plasters and a first-aid kit,
+cleaning things, batteries, tape, scissors, a flashlight, spare chargers, a
+water bottle or thermos anyone can take, laundry supplies, a spare umbrella,
+whatever this household would keep. {lo} to {hi} things, owner none, each where
+this household keeps it. Any spot in the home.
+
+{fields}"""

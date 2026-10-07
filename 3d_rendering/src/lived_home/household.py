@@ -21,6 +21,7 @@ PLACES_LO, PLACES_HI = 100, 200
 OBJECTS_LO, OBJECTS_HI, OBJECTS_TARGET = 150, 300, 220
 PERSONAL_LO, PERSONAL_HI = 18, 32
 FIXTURES_LO, FIXTURES_HI = 4, 24
+SUPPLIES_LO, SUPPLIES_HI = 15, 30
 
 
 def slug(text: str) -> str:
@@ -143,13 +144,6 @@ def check_room_objects(room_places: set):
                 cur = by_n[cur]["ref"]
             if cur in chain:
                 problems.append(f"things {o['n']} and {ref} refer to each other in a loop")
-            elif o["relation"] == "in":
-                if target["carrier"] == "none":
-                    problems.append(f"thing {o['n']} is in thing {ref}, which has carrier none and cannot hold things")
-                elif target["relation"] == "in" and target["ref"] and target["carrier"] != "pockets":
-                    problems.append(f"thing {ref} is itself inside something; thing {o['n']} cannot go inside it")
-                if o["carrier"] not in ("none", "pockets"):
-                    problems.append(f"thing {o['n']} is a bag or basket and cannot start inside thing {ref}")
         if not problems:
             return ""
         return f"{len(problems)} problems: " + "; ".join(problems) + "."
@@ -307,6 +301,26 @@ def _personal(caller, layout, home, residents, r, so_far, dropped) -> list[dict]
     return out
 
 
+def _supplies(caller, layout, home, residents, rids, so_far, dropped) -> list[dict]:
+    """Shared everyday supplies nobody owns: medicine, tissues, batteries, tape."""
+    by_type = collections.defaultdict(list)
+    for o in so_far:
+        by_type[o["type"]].append(o["id"])
+    taken = {o["id"]: {"owner": o["owner"], "place": o["place"], "type": o["type"],
+                       "looks": set(o.get("look_words") or [])} for o in so_far}
+    ans = caller.call("create/supplies", prompts.CREATE_SYSTEM,
+                      prompts.SUPPLIES_USER.format(
+                          home=home, layout=layout.describe(), residents=residents_text(residents),
+                          taken="\n".join(f"  {t}: {', '.join(ids)}" for t, ids in sorted(by_type.items())),
+                          lo=SUPPLIES_LO, hi=SUPPLIES_HI, fields=prompts.FIELDS),
+                      room_objects_schema(layout.place_ids, rids, SUPPLIES_LO, SUPPLIES_HI),
+                      check_room_objects(set(layout.place_ids)), max_tokens=30000)
+    for o in ans["objects"]:
+        o["owner"] = "none"
+    dropped += compose_ids(ans["objects"], taken, rids)
+    return [_finish(o, layout) for o in ans["objects"]]
+
+
 def routines_text(residents: list[dict]) -> str:
     out = []
     for r in residents:
@@ -327,6 +341,8 @@ def _finish(o: dict, layout: Layout) -> dict:
     o = dict(o)
     o["owner"] = None if o["owner"] == "none" else o["owner"]
     o["start"] = start_position(o, layout)
+    if o.pop("worn_now", False) and o["owner"]:
+        o["start"] = {"at": "worn", "person": o["owner"]}
     return o
 
 
@@ -361,6 +377,7 @@ def create(caller: Caller, seed: int, out: pathlib.Path, effort_note: str = "") 
     objects, dropped = [], []
     for r in residents:
         objects += _personal(caller, layout, lay["home"], residents, r, objects, dropped)
+    objects += _supplies(caller, layout, lay["home"], residents, rids, objects, dropped)
     targets = room_targets(layout, len(objects))
     for room in rooms:
         objects += _room_objects(caller, layout, residents, rids, room, targets[room], objects, "",
@@ -401,8 +418,10 @@ def _room_objects(caller, layout, residents, rids, room, target, so_far, suffix,
         by_type = collections.defaultdict(list)
         for o in so_far:
             by_type[o["type"]].append(o["id"])
-        here = [f"{o['id']} ({o['start'].get('place') or 'inside ' + o['start']['carrier']})"
-                for o in so_far if layout.room_of(_base_place(o, so_far)) == room]
+        def where(o):
+            s = o["start"]
+            return s.get("place") or (f"inside {s['carrier']}" if s["at"] == "inside" else f"worn by {s['person']}")
+        here = [f"{o['id']} ({where(o)})" for o in so_far if layout.room_of(_base_place(o, so_far)) == room]
         taken_text = (("\nAlready in this room (do not list these again): " + ", ".join(here) + ".\n"
                        if here else "")
                       + "\nAlready placed in the home, and staying there (type: names). Do not "
@@ -426,10 +445,12 @@ def _room_objects(caller, layout, residents, rids, room, target, so_far, suffix,
 
 
 def _base_place(o: dict, objects: list) -> str:
-    if o["start"]["at"] == "place":
-        return o["start"]["place"]
-    carrier = next(x for x in objects if x["id"] == o["start"]["carrier"])
-    return carrier["start"]["place"]
+    """The spot a thing is at, through any carriers; for something worn in bed,
+    the spot written for it (the bed)."""
+    start = o["start"]
+    while start["at"] == "inside":
+        start = next(x for x in objects if x["id"] == start["carrier"])["start"]
+    return start["place"] if start["at"] == "place" else o["place"]
 
 
 def summarize(spec: dict) -> str:

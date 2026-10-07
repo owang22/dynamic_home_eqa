@@ -6,11 +6,11 @@ Every object is in exactly one spot:
   {"at": "pocket", "person": rid}
   {"at": "worn",   "person": rid}                              clothes, shoes, a watch, a backpack on
   {"at": "inside", "carrier": o}                              in a bag, box or basket
-Carriers hold one level: a carrier that is inside another carrier holds nothing,
-and a carrier that holds something cannot go inside another, except clothes
-with pockets (a pair of jeans with a wallet in it can go in the laundry basket).
-pocket puts a thing into the pockets of what the resident wears; taking those
-clothes off leaves it there. Moving a carrier
+Anything can go inside anything (a bookmark in a book, an infuser in a mug, a
+pouch in a backpack), except into itself or into something already inside it.
+An object's carrier kind only decides whether what is inside it can be seen:
+closed and pockets hide it; open and none do not. pocket puts a thing into the
+pockets of what the resident wears; taking those clothes off leaves it there. Moving a carrier
 moves what is inside it. A resident who leaves the house takes what they hold,
 their pockets, and what is inside the carriers they hold.
 
@@ -67,6 +67,9 @@ class World:
         self.names = names or {r: r.title() for r in resident_ids}
         self.where = {oid: dict(o["start"]) for oid, o in objects.items()}
         self.people = {r: Resident(r, start_place[r]) for r in resident_ids}
+        for oid, pos in self.where.items():           # what they wear in bed at the start
+            if pos["at"] == "worn" and pos["person"] in self.people:
+                self.people[pos["person"]].worn.append(oid)
         for person in self.people.values():
             person.belief = {oid: {"pos": dict(o["start"]), "day": -1, "minute": 0}
                              for oid, o in objects.items()}
@@ -198,7 +201,7 @@ class World:
         ref = pos.get("ref") if pos["at"] == "place" and pos.get("ref") and self.can_see(rid, pos["ref"]) else None
         if pos["at"] == "place" and (ref or pos["rel"] in ("under", "behind", "next_to")):
             out += f" ({pos['rel'].replace('_', ' ')}{' ' + ref if ref else ''})"
-        if self.carrier_kind(oid) != "none":
+        if self.contents(oid):
             inside = [i for i in self.contents(oid) if self.can_see(rid, i)]
             if inside:
                 out += f" [holding: {', '.join(self.tag(i, rid) for i in inside)}]"
@@ -430,8 +433,6 @@ class World:
                 return False, message, 0
             settled = self._settle(oid)
             pocketed = [w for w in person.worn if self.carrier_kind(w) == "pockets"]
-            if pocketed and self.carrier_kind(oid) != "none" and self.contents(oid):
-                pocketed = []                    # a pouch with things in it: their own pocket
             if pocketed:                         # into the pockets of what they wear
                 self.where[oid] = {"at": "inside", "carrier": pocketed[-1]}
             else:
@@ -525,14 +526,11 @@ class World:
                     return False, message, 0
                 if self.holder_of(ref) is not None:
                     return False, f"{self.tag(ref, rid)} is with {self.names.get(self.holder_of(ref))}.", 0
-            if self.carrier_kind(ref) == "none":
-                return False, f"{ref} cannot hold things.", 0
-            if self.where[ref]["at"] == "inside":
-                return False, f"{ref} is itself inside something; take it out first.", 0
-            if self.carrier_kind(oid) == "pockets" and self.carrier_kind(ref) == "pockets":
-                return False, f"{oid} does not go in the pockets of {ref}.", 0
-            if self.carrier_kind(oid) not in ("none", "pockets") and self.contents(oid):
-                return False, f"{oid} has things in it; it cannot go inside {ref}.", 0
+            outer = ref
+            while self.where[outer]["at"] == "inside":
+                if self.where[outer]["carrier"] == oid:
+                    return False, f"{ref} is inside {oid}; {oid} cannot go inside it.", 0
+                outer = self.where[outer]["carrier"]
             walked = sum(self._step(rid, p, minute) for p in steps)
             self._release(person, oid)
             self.where[oid] = {"at": "inside", "carrier": ref}
