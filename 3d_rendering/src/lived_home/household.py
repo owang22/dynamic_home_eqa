@@ -12,7 +12,7 @@ import re
 from lived_home import prompts
 from lived_home.calls import Caller, to_minute
 from lived_home.layout import CONTAINER, Layout
-from lived_home.schemas import (layout_schema, residents_schema, room_objects_schema,
+from lived_home.schemas import (fixtures_schema, layout_schema, residents_schema, room_objects_schema,
                                 situations_schema)
 from lived_home.world import at_place
 
@@ -20,6 +20,7 @@ ID = re.compile(r"^[a-z0-9]+(_[a-z0-9]+)*$")
 PLACES_LO, PLACES_HI = 100, 200
 OBJECTS_LO, OBJECTS_HI, OBJECTS_TARGET = 150, 300, 220
 PERSONAL_LO, PERSONAL_HI = 18, 32
+FIXTURES_LO, FIXTURES_HI = 4, 24
 
 
 def slug(text: str) -> str:
@@ -48,6 +49,51 @@ def check_layout(spec: dict) -> str:
     if spec["entry_spot"] not in spots:
         return f"entry_spot {spec['entry_spot']} is not one of the spot ids."
     return ""
+
+
+STOVE_WORDS = ("stove", "stovetop", "range", "hob", "cooktop", "burner", "burners")
+
+
+def check_fixtures(lay: dict, lo: int, hi: int):
+    """The additions must be new, well-formed spots, and afterwards the kitchen
+    must have somewhere to cook and somewhere to wash up."""
+    existing = {s["id"] for r in lay["rooms"] for f in r["furniture"] for s in f["spots"]}
+
+    def check(ans: dict) -> str:
+        new = [s for a in ans["additions"] for s in a["spots"]]
+        problems = []
+        ids = [s["id"] for s in new]
+        clash = sorted({i for i in ids if i in existing or ids.count(i) > 1})
+        if clash:
+            problems.append(f"spot ids already used: {clash[:10]}")
+        bad = [i for i in ids if not ID.match(i)]
+        if bad:
+            problems.append(f"spot ids must be lowercase with underscores: {bad[:10]}")
+        if not lo <= len(new) <= hi:
+            problems.append(f"{len(new)} spots added; add {lo} to {hi}")
+        for room in (r["id"] for r in lay["rooms"] if "kitchen" in r["id"]):
+            words = set()
+            for r in lay["rooms"]:
+                if r["id"] == room:
+                    for f in r["furniture"]:
+                        for s in f["spots"]:
+                            words |= set(slug(s["id"] + " " + s["name"]).split("_"))
+            for a in ans["additions"]:
+                if a["room"] == room:
+                    for s in a["spots"]:
+                        words |= set(slug(s["id"] + " " + s["name"] + " " + a["fixture"]).split("_"))
+            if not words & set(STOVE_WORDS):
+                problems.append(f"the {room} still has no spot on the stove")
+            if "sink" not in words:
+                problems.append(f"the {room} still has no spot in the sink")
+        return "" if not problems else f"{len(problems)} problems: " + "; ".join(problems) + "."
+    return check
+
+
+def add_fixtures(lay: dict, ans: dict) -> None:
+    rooms = {r["id"]: r for r in lay["rooms"]}
+    for a in ans["additions"]:
+        rooms[a["room"]]["furniture"].append({"name": a["fixture"], "spots": a["spots"], "added_as_fixture": True})
 
 
 def check_residents(layout: Layout):
@@ -291,6 +337,16 @@ def create(caller: Caller, seed: int, out: pathlib.Path, effort_note: str = "") 
                       max_tokens=40000)
     residents = res["residents"]
     rids = [r["id"] for r in residents]
+
+    # appliances and fixtures (stovetop, sink, oven) that the layout call treated as
+    # not furniture; added after the residents so the spots they sleep at are unchanged
+    fix = caller.call("create/fixtures", prompts.CREATE_SYSTEM,
+                      prompts.FIXTURES_USER.format(home=lay["home"], layout=layout.describe(),
+                                                   lo=FIXTURES_LO, hi=FIXTURES_HI),
+                      fixtures_schema(rooms, FIXTURES_LO, FIXTURES_HI),
+                      check_fixtures(lay, FIXTURES_LO, FIXTURES_HI), max_tokens=30000)
+    add_fixtures(lay, fix)
+    layout = Layout.from_generated(lay)
 
     objects, dropped = [], []
     for r in residents:

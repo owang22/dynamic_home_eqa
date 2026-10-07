@@ -80,6 +80,17 @@ def layout_schema() -> dict:
                  "rooms": _arr(room, 5, 12), "entry_spot": STR})
 
 
+def fixtures_schema(rooms: list[str], lo: int, hi: int) -> dict:
+    spot = _obj({
+        "id": STR, "name": STR,
+        "kind": _enum(["surface", "container"]),
+        "hidden": BOOL,
+        "descriptions": _arr(STR, 2, 4),
+    })
+    item = _obj({"room": _enum(rooms), "fixture": STR, "spots": _arr(spot, 1, 8)})
+    return _obj({"thinking": STR, "additions": _arr(item, 1, hi)})
+
+
 def residents_schema(place_ids: list[str], rooms: list[str]) -> dict:
     routine_item = _obj({
         "days": _arr(_enum(WEEKDAYS), 1, 7),

@@ -251,3 +251,17 @@ owned by {rid}, where it would be right now in the early morning while
 everyone is asleep, following {name}'s habits.
 
 {fields}"""
+
+FIXTURES_USER = """The home: {home}
+
+Its rooms and spots so far:
+{layout}
+
+Some fixtures and appliances that people put things on or in every day may be
+missing as spots: in a kitchen the stovetop or its burners, the oven, the
+sink, a dish rack or drying mat, the dishwasher, the microwave; in a bathroom
+the sink, the bathtub edge, a shower shelf; in a laundry room the washer and
+dryer drums; anything similar elsewhere. List the ones this home has that are
+not yet spots, grouped under the room and the fixture they belong to, as spots
+with the same fields as before (id starting with the room id, name, kind,
+hidden, 2 to 4 descriptions). Add only what is missing; {lo} to {hi} spots."""
