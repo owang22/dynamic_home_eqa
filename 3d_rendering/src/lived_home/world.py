@@ -172,6 +172,9 @@ class World:
 
     def _remember(self, person: Resident, oid: str, minute: int) -> None:
         pos = dict(self.where[oid])
+        if pos["at"] == "place" and pos.get("ref") and not self.can_see(person.rid, pos["ref"]):
+            pos["ref"] = None                       # they see the thing, not what it leans on
+            pos["rel"] = "in" if self.layout.places[pos["place"]].kind == CONTAINER else "on"
         old = person.belief.get(oid)
         if old is None or old["pos"] != pos:
             person.noticed[oid] = (self.day, minute)
@@ -192,8 +195,9 @@ class World:
 
     def _label(self, oid: str, rid: str) -> str:
         pos, out = self.where[oid], oid + self.owner_tag(oid, rid)
-        if pos["at"] == "place" and (pos["ref"] or pos["rel"] not in ("on", "in")):
-            out += f" ({pos['rel'].replace('_', ' ')}{' ' + pos['ref'] if pos['ref'] else ''})"
+        ref = pos.get("ref") if pos["at"] == "place" and pos.get("ref") and self.can_see(rid, pos["ref"]) else None
+        if pos["at"] == "place" and (ref or pos["rel"] in ("under", "behind", "next_to")):
+            out += f" ({pos['rel'].replace('_', ' ')}{' ' + ref if ref else ''})"
         if self.carrier_kind(oid) != "none":
             inside = [i for i in self.contents(oid) if self.can_see(rid, i)]
             if inside:
@@ -295,26 +299,34 @@ class World:
         return oid + self.owner_tag(oid, rid)
 
     def _not_found(self, person: Resident, oid: str, minute: int) -> str:
-        """The resident looked for oid where they are and it was not there. They
-        learn only that it is not here, never where it is."""
+        """The resident looked for oid where they believed it to be, in this room, and
+        it was not there. They walk over and look (a closed drawer is opened), learn
+        what is there, and that oid is not; never where it is."""
         room = self.room_of_person(person.rid)
         believed = person.belief[oid]["pos"]
         if believed["at"] == "inside":
-            # remembered in a bag or basket: if that bag is here in the room, they look inside
             bag = believed["carrier"]
-            if self.place_of(bag) and self.layout.room_of(self.place_of(bag)) == room \
-                    or self.holder_of(bag) == person.rid:
+            bag_place = self.place_of(bag)
+            if self.holder_of(bag) == person.rid or self.can_see(person.rid, bag) or \
+                    (bag_place and self.layout.room_of(bag_place) == room
+                     and person.belief[bag]["pos"].get("place") == bag_place):
+                if bag_place and bag_place != person.at and self.holder_of(bag) != person.rid:
+                    self._step(person.rid, bag_place, minute)
                 person.belief[oid] = {"pos": {"at": "unknown", "not_at": f"inside {bag}"},
                                       "day": self.day, "minute": minute}
+                self._remember(person, bag, minute)
+                for o in self.contents(bag):
+                    self._remember(person, o, minute)
                 inside = [self.tag(o, person.rid) for o in self.contents(bag)]
                 return (f"{self.tag(oid, person.rid)} is not inside {self.tag(bag, person.rid)}. "
                         f"In it you see: {', '.join(inside) or 'nothing'}.")
         believed_place = believed.get("place") if believed["at"] == "place" else None
         if believed_place and self.layout.room_of(believed_place) == room:
+            if believed_place != person.at:
+                self._step(person.rid, believed_place, minute)   # walk over, open it, look
             person.belief[oid] = {"pos": {"at": "unknown", "not_at": believed_place},
                                   "day": self.day, "minute": minute}
-            seen = [o for o in self.things_at(believed_place) if self.can_see(person.rid, o)
-                    or believed_place == person.at]
+            seen = [o for o in self.things_at(believed_place) if self.can_see(person.rid, o)]
             return (f"{self.tag(oid, person.rid)} is not at {believed_place}. There you see: "
                     f"{', '.join(self.tag(o, person.rid) for o in seen) or 'nothing'}.")
         b = person.belief[oid]
@@ -418,6 +430,8 @@ class World:
                 return False, message, 0
             settled = self._settle(oid)
             pocketed = [w for w in person.worn if self.carrier_kind(w) == "pockets"]
+            if pocketed and self.carrier_kind(oid) != "none" and self.contents(oid):
+                pocketed = []                    # a pouch with things in it: their own pocket
             if pocketed:                         # into the pockets of what they wear
                 self.where[oid] = {"at": "inside", "carrier": pocketed[-1]}
             else:
@@ -475,12 +489,7 @@ class World:
             return self._done(rid, act, minute, person.at, person.at, 1)
         if verb == "leave_home":
             minutes = max(5, act.get("minutes") or 30)
-            carried = person.hands + person.pocket + person.worn
-            frontier = list(carried)
-            while frontier:
-                inner = [i for c in frontier for i in self.contents(c)]
-                carried += inner
-                frontier = inner
+            carried = self._carried(person)
             source, person.at, person.back_at = person.at, None, minute + minutes
             return self._done(rid, act, minute, source, "out of the house", minutes,
                               carried=carried)
@@ -509,27 +518,32 @@ class World:
 
         if ref is not None and rel == "in":
             # into a bag, box or basket
-            if self.carrier_kind(ref) == "none":
-                return False, f"{ref} cannot hold things.", 0
-            if self.where[ref]["at"] == "inside":
-                return False, f"{ref} is itself inside {self.where[ref]['carrier']}; take it out first.", 0
-            if self.carrier_kind(oid) not in ("none", "pockets") and self.contents(oid):
-                return False, f"{oid} has things in it; it cannot go inside {ref}.", 0
-            walked = 0
+            steps = []
             if self.holder_of(ref) != rid:
                 ok, message, steps = self._reach(rid, ref, minute, place if act.get("place") else None)
                 if not ok:
                     return False, message, 0
                 if self.holder_of(ref) is not None:
-                    return False, f"{ref} is with {self.holder_of(ref)}.", 0
-                walked = sum(self._step(rid, p, minute) for p in steps)
+                    return False, f"{self.tag(ref, rid)} is with {self.names.get(self.holder_of(ref))}.", 0
+            if self.carrier_kind(ref) == "none":
+                return False, f"{ref} cannot hold things.", 0
+            if self.where[ref]["at"] == "inside":
+                return False, f"{ref} is itself inside something; take it out first.", 0
+            if self.carrier_kind(oid) == "pockets" and self.carrier_kind(ref) == "pockets":
+                return False, f"{oid} does not go in the pockets of {ref}.", 0
+            if self.carrier_kind(oid) not in ("none", "pockets") and self.contents(oid):
+                return False, f"{oid} has things in it; it cannot go inside {ref}.", 0
+            walked = sum(self._step(rid, p, minute) for p in steps)
             self._release(person, oid)
             self.where[oid] = {"at": "inside", "carrier": ref}
             self._touch(person, oid, minute)
             return self._done(rid, act, minute, source, self.where[oid], walked)
 
+        walked = 0
         if ref is not None and self.where[ref] == {"at": "hand", "person": rid} and rel != "in":
             # bread on top of the plate still in their other hand: the plate goes down first
+            if place != person.at:
+                walked = self._step(rid, place, minute)
             self.where[ref] = at_place(place, "in" if kind == CONTAINER else "on", None)
             person.hands.remove(ref)
             self._touch(person, ref, minute)
@@ -547,11 +561,21 @@ class World:
             rel = "in" if kind == CONTAINER else "on"
         if ref is None and rel in ("in", "on", "on_top_of"):
             rel = "in" if kind == CONTAINER else "on"
-        walked = self._step(rid, place, minute) if place != person.at else 0
+        if place != person.at:
+            walked += self._step(rid, place, minute)
         self._release(person, oid)
         self.where[oid] = at_place(place, rel, ref)
         self._touch(person, oid, minute)
         return self._done(rid, act, minute, source, self.where[oid], walked)
+
+    def _carried(self, person: Resident) -> list:
+        carried = person.hands + person.pocket + person.worn
+        frontier = list(carried)
+        while frontier:
+            inner = [i for c in frontier for i in self.contents(c)]
+            carried += inner
+            frontier = inner
+        return carried
 
     def come_home_if_due(self, rid: str, minute: int) -> bool:
         person = self.people[rid]
@@ -560,7 +584,7 @@ class World:
             self._see(rid, minute)
             self.log.append(self._event(rid, {"verb": "come_home"}, minute,
                                         "out of the house", self.layout.entry, 0,
-                                        carried=person.hands + person.pocket + person.worn))
+                                        carried=self._carried(person)))
             return True
         return False
 
@@ -585,7 +609,22 @@ class World:
 
     def _done(self, rid, act, minute, source, dest, minutes, **extra) -> tuple[bool, str, int]:
         self.log.append(self._event(rid, act, minute, source, dest, minutes, **extra))
+        oid = act.get("object")
+        if oid in self.objects:
+            self._witness(rid, [oid] + list(extra.get("settled") or []), minute)
         return True, "", minutes
+
+    def _witness(self, rid: str, oids: list, minute: int) -> None:
+        """Everyone in the room who can see the moved things notes where they are now;
+        the actor also notes what shifted when they took something away."""
+        actor = self.people[rid]
+        for o in oids[1:]:
+            if self.can_see(rid, o):
+                self._remember(actor, o, minute)
+        for other in self.others_in_room(rid):
+            for o in oids:
+                if self.can_see(other.rid, o):
+                    self._remember(other, o, minute)
 
     def snapshot(self) -> dict:
         """Where every object is right now, with the place it sits at (through

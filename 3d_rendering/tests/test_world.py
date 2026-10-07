@@ -325,3 +325,42 @@ def test_put_on_top_of_a_thing_still_in_hand_sets_it_down_first():
     assert w.where["book_atlas"]["place"] == "living_coffee_table"
     assert w.where["mug_red"] == at_place("living_coffee_table", "on_top_of", "book_atlas")
     assert w.people["ana"].hands == []
+
+
+def test_looking_in_a_closed_drawer_walks_there_and_reports_what_is_in_it():
+    w = make()
+    w.objects["pen_blue"] = obj("pen", "kitchen_drawer", "in")
+    w.where["pen_blue"] = dict(w.objects["pen_blue"]["start"])
+    w.objects["spoon_steel"] = obj("spoon", "kitchen_drawer", "in")
+    w.where["spoon_steel"] = dict(w.objects["spoon_steel"]["start"])
+    for person in w.people.values():
+        for o in ("pen_blue", "spoon_steel"):
+            person.belief[o] = {"pos": dict(w.where[o]), "day": -1, "minute": 0}
+    w.where["pen_blue"] = at_place("office_desk")          # moved where ana did not see
+    w.apply("ana", A("go", place="kitchen_island"), 0)
+    ok, msg, _ = w.apply("ana", A("pick_up", object="pen_blue"), 1)
+    assert not ok and "spoon_steel" in msg and "office" not in msg
+    assert w.people["ana"].at == "kitchen_drawer"
+
+
+def test_hidden_reference_is_not_named_to_someone_who_cannot_see_it():
+    w = make()
+    w.apply("ana", A("go", place="kitchen_counter_by_sink"), 0)
+    w.apply("ana", A("pick_up", object="mug_red"), 0)
+    w.apply("ana", A("put_down", object="mug_red", place="kitchen_counter_by_stove", relation="behind",
+                     ref="toaster_silver"), 1)
+    w.apply("ana", A("go", place="living_coffee_table"), 2)
+    w.apply("ana", A("pick_up", object="book_novel"), 2)
+    w.apply("ana", A("put_down", object="book_novel", place="kitchen_counter_by_stove", relation="on_top_of",
+                     ref="mug_red"), 3)
+    w.apply("ben", A("go", place="kitchen_island"), 4)
+    assert "mug_red" not in w.room_view("ben")
+    assert w.people["ben"].belief["book_novel"]["pos"]["ref"] is None
+
+
+def test_others_in_the_room_see_a_move():
+    w = make()
+    w.apply("ana", A("go", place="kitchen_counter_by_sink"), 0)
+    w.apply("ben", A("go", place="kitchen_island"), 0)
+    w.apply("ana", A("pick_up", object="mug_red"), 1)
+    assert w.people["ben"].belief["mug_red"]["pos"] == {"at": "hand", "person": "ana"}

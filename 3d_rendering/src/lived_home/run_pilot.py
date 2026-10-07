@@ -128,9 +128,12 @@ class Household:
         plan = self.caller.call(f"plan/{rid}/{day + 1}", self.systems[rid], user,
                                 plan_schema(self.rooms, sorted(self.types)), check)
         acts = []
+        wake = to_minute(plan["activities"][0]["start"])
         for a in plan["activities"]:
             start, end = to_minute(a["start"]), to_minute(a["end"])
-            if end <= start:
+            if start < wake - 180:          # 00:30 sleep after 23:30 reading: still tonight
+                start += 24 * 60
+            while end <= start:
                 end += 24 * 60
             acts.append(dict(a, start_min=start, end_min=end))
         acts.sort(key=lambda a: a["start_min"])
@@ -209,6 +212,9 @@ class Household:
     def run_day(self, day: int, start_weekday: int = 0) -> dict:
         world, weekday = self.world, WEEKDAYS[(start_weekday + day) % 7]
         world.day = day + 1
+        for person in world.people.values():
+            if person.at is None and person.back_at >= 24 * 60:
+                person.back_at -= 24 * 60        # out past midnight: today's clock
         log_start = len(world.log)
         with ThreadPoolExecutor(len(self.rids)) as pool:
             got = list(pool.map(lambda r: self.plan_day(r, day, weekday), self.rids))
@@ -221,7 +227,7 @@ class Household:
         disturbances = {r: director.daily_disturbances(
             self.spec["small_disturbances"], r, day, self.variation, self.seed) for r in self.rids}
         script, current, replans, done = {r: [] for r in self.rids}, {}, {}, {}
-        failed, skipped = [], []
+        failed, skipped, dropped_after_leaving, ran = [], [], [], {r: [] for r in self.rids}
         while True:
             live = [r for r in self.rids if script[r] or pending[r]]
             if not live:
@@ -240,6 +246,7 @@ class Household:
                                     "while_out": activity["room"] == "out_of_house"})
                     continue
                 current[rid], replans[rid], done[rid] = activity, 0, []
+                ran[rid].append(activity["activity"])
                 now[rid] = max(now[rid], activity["start_min"])
                 due = [d for d in disturbances[rid] if d[0] < activity["end_min"]]
                 disturbances[rid] = [d for d in disturbances[rid] if d not in due]
@@ -253,6 +260,10 @@ class Household:
             ok, message, minutes = world.apply(rid, action, now[rid])
             if ok:
                 done[rid].append(_short(action))
+                if action.get("verb") == "leave_home" and script[rid]:
+                    dropped_after_leaving.append({"resident": rid, "time": clock(now[rid]),
+                                                  "actions": [_short(a) for a in script[rid]]})
+                    script[rid] = []
             if ok and action["verb"] == "say" and action.get("person") in self.inbox:
                 other = world.people[action["person"]]
                 o = action["person"]
@@ -288,12 +299,13 @@ class Household:
                  for r in self.rids}
         for rid in self.rids:
             last = [s for s in self.states if s["resident"] == rid][-1]
-            done = ", ".join(a["activity"] for a in plans[rid])
+            done = ", ".join(ran[rid]) or "nothing you had planned"
             self.recap[rid] = (f"You did: {done}. At the end of the day you felt stress "
                                f"{last['stress']}, tiredness {last['tiredness']}, mood "
                                f"{last['mood']}, health {last['health']} ({last['reason']}).")
         return {"plans": plans, "events": world.log[log_start:], "failed": failed,
-                "skipped_activities": skipped, "at_night": night,
+                "skipped_activities": skipped, "dropped_after_leaving": dropped_after_leaving,
+                "at_night": night,
                 "end_of_day": world.snapshot(), "active_situations": self.schedule[day]}
 
 
