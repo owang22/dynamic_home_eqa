@@ -86,9 +86,15 @@ Write:
    recurring ones that come and go (a cold, a deadline week, a visiting
    relative), and lasting changes (a new hobby, a new job schedule). Include
    one recurring situation with id "sick" where one resident gets sick for a
-   few days. For each, describe what it is like for the people it happens to,
-   and what the other resident would notice. Describe experiences and
-   feelings, not what they do with objects.
+   few days. For each:
+   - what_it_is_like: what it is like for the people it happens to, from the
+     inside: how they feel, what is on their mind, how their energy and day
+     change.
+   - what_others_notice: how those people seem to the other resident: their
+     mood, energy, how they talk and move.
+   Describe people, not things: do not mention objects, where things are or
+   what anyone does with them; how the home changes is for the residents to
+   work out themselves.
 2. 12 to 24 small disturbances of an ordinary day (a call from a parent, a
    package at the door, running out of milk). who is a resident id or
    "anyone"."""

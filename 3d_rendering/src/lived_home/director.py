@@ -22,7 +22,10 @@ def schedule_situations(situations: list[dict], days: int, seed: int,
         for d in range(first, min(days, first + length)):
             active[d].append(sid)
     by_id = {s["id"]: s for s in situations}
+    forced_days = {d for sid, first, length in forced for d in range(first, min(days, first + length))}
     for day in range(days):
+        if day in forced_days:          # a forced situation runs alone
+            continue
         for s in situations:
             if s["id"] in active[day] or len(active[day]) >= MAX_ACTIVE:
                 continue
@@ -40,6 +43,8 @@ def schedule_situations(situations: list[dict], days: int, seed: int,
                 typical = max(1, by_id[s["id"]]["typical_days"])
                 length = max(1, typical + rng.randint(-1, 1))
             for d in range(day, min(days, day + length)):
+                if d in forced_days:
+                    break
                 if s["id"] not in active[d]:
                     active[d].append(s["id"])
     return active
