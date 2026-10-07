@@ -156,6 +156,19 @@ details summary{cursor:pointer;color:var(--muted);font-size:13px}
 .minibar{display:inline-block;width:46px;height:6px;border-radius:3px;background:var(--line2);vertical-align:middle;position:relative;margin-left:6px}
 .minibar i{position:absolute;left:0;top:0;bottom:0;border-radius:3px;background:var(--pc,var(--accent))}
 .empty{color:var(--muted);font-size:13px;padding:8px 0}
+.planwrap{overflow-x:auto;margin-top:6px}
+#plan{display:block;width:100%;min-width:760px;height:auto}
+#plan text{font-family:var(--sans);fill:var(--muted)}
+#plan .rlabel{font-weight:700;fill:var(--ink);font-size:13px}
+#plan .flabel{font-size:9.5px}
+#plan .cnt{font-family:var(--mono);font-size:9px;fill:var(--ink);pointer-events:none}
+#plan .cell{cursor:pointer;stroke:var(--line);stroke-width:1}
+#plan .cell:hover{stroke:var(--ink)}
+#plan .cell.shut{stroke-dasharray:3 2;stroke:var(--muted)}
+#plan .cell.recent{stroke:var(--accent);stroke-width:2.2}
+#plan .cell.sel{stroke:var(--ink);stroke-width:2.4}
+#plan .who text{font-size:10px;font-weight:700;fill:var(--panel)}
+.plandetail{margin-top:8px;font-size:13.5px;min-height:24px}
 @media (prefers-reduced-motion:no-preference){.chip,.row{transition:background .15s}}
 </style>
 
@@ -184,6 +197,14 @@ details summary{cursor:pointer;color:var(--muted);font-size:13px}
       <div class="strips" id="strips"></div>
       <div class="hours"><span></span><div class="h"><span>00</span><span>03</span><span>06</span><span>09</span><span>12</span><span>15</span><span>18</span><span>21</span><span>24</span></div></div>
       <div class="legend" id="legend"></div>
+    </div>
+    <div class="panel" style="margin-top:12px">
+      <div class="homebar">
+        <h3 style="margin:0">Floor plan at <span id="clock3"></span></h3>
+        <span class="small">A schematic, not drawn to scale: each room's size follows how many spots it has; each box is a piece of furniture or fixture, each cell one spot, the number how many things are there. Dots are the residents. Dashed cells are closed or out of sight; green outline = something changed there in the last hour. Click a cell to list it.</span>
+      </div>
+      <div class="planwrap"><svg id="plan" role="img" aria-label="Schematic floor plan"></svg></div>
+      <div class="plandetail" id="plandetail"></div>
     </div>
     <div class="two">
       <div class="people" id="people"></div>
@@ -311,6 +332,84 @@ function describeObj(oid) { const o = OBJ[oid]; if (!o) return oid; return `${o.
 function placeName(pid) { if (!pid) return 'out of the house'; const p = PL[pid]; return p ? `${p.room.replace(/_/g, ' ')} · ${p.name}` : pid; }
 function posText(p) { if (!p) return '?'; if (p.at === 'place') return `${p.rel && p.rel !== 'on' && p.rel !== 'in' ? p.rel.replace(/_/g, ' ') + ' ' + (p.ref || '') + ' at ' : ''}${p.place}`; if (p.at === 'inside') return `inside ${p.carrier}`; if (p.at === 'worn') return `worn by ${RESBY[p.person] ? RESBY[p.person].name : p.person}`; return `${p.at} of ${RESBY[p.person] ? RESBY[p.person].name : p.person}`; }
 function dots(v, max) { let s = '<span class="dots">'; for (let i = 1; i <= max; i++) s += `<i class="${i <= v ? 'on' : ''}"></i>`; return s + '</span>'; }
+
+// ---------- floor plan (schematic) ----------
+const PLAN_W = 1200, PLAN_H = 760;
+function worst(row, side) { const s = row.reduce((a, r) => a + r.value, 0); const mx = Math.max(...row.map(r => r.value)), mn = Math.min(...row.map(r => r.value)); return Math.max(side * side * mx / (s * s), s * s / (side * side * mn)); }
+function squarify(items, x, y, w, h) {
+  const total = items.reduce((s, r) => s + r.value, 0); const k = w * h / total;
+  let rest = items.map(r => ({ key: r.key, value: r.value * k })).sort((a, b) => b.value - a.value); const out = [];
+  while (rest.length) {
+    const side = Math.min(w, h); let row = [rest[0]], best = worst(row, side), i = 1;
+    while (i < rest.length) { const cand = row.concat([rest[i]]); const wv = worst(cand, side); if (wv > best) break; row = cand; best = wv; i++; }
+    const sum = row.reduce((s, r) => s + r.value, 0);
+    if (w >= h) { const cw = sum / h; let yy = y; row.forEach(r => { const rh = r.value / cw; out.push({ key: r.key, x, y: yy, w: cw, h: rh }); yy += rh; }); x += cw; w -= cw; }
+    else { const rh = sum / w; let xx = x; row.forEach(r => { const rw = r.value / rh; out.push({ key: r.key, x: xx, y, w: rw, h: rh }); xx += rw; }); y += rh; h -= rh; }
+    rest = rest.slice(row.length);
+  }
+  return out;
+}
+const PLAN = (function () {
+  const rooms = squarify(ROOMS.map(r => ({ key: r, value: Math.max(ROOM_PLACES[r].length, 5) + 3 })), 0, 0, PLAN_W, PLAN_H);
+  const cells = {}; const boxes = [];
+  rooms.forEach(rm => {
+    const pad = 8, head = 22, gap = 3;
+    const pieces = []; const seen = {};
+    ROOM_PLACES[rm.key].forEach(pid => { const f = PL[pid].furniture; if (!(f in seen)) { seen[f] = pieces.length; pieces.push({ name: f, spots: [] }); } pieces[seen[f]].spots.push(pid); });
+    let placed = null;
+    for (const c of [26, 23, 20, 17, 15, 13, 11, 9]) {
+      const innerW = rm.w - 2 * pad; let x = 0, y = 0, rowH = 0; const pos = []; let ok = true;
+      for (const pc of pieces) {
+        const maxCols = Math.max(1, Math.min(8, Math.floor((innerW - gap) / (c + gap))));
+        const cols = Math.min(pc.spots.length, maxCols), rows = Math.ceil(pc.spots.length / cols);
+        const bw = Math.max(cols * (c + gap) + gap, Math.min(innerW, 70)), bh = 13 + rows * (c + gap) + gap;
+        if (x > 0 && x + bw > innerW) { x = 0; y += rowH + 6; rowH = 0; }
+        pos.push({ pc, x, y, bw, bh, cols }); x += bw + 6; rowH = Math.max(rowH, bh);
+      }
+      if (y + rowH <= rm.h - head - pad) { placed = { c, pos }; break; }
+      placed = { c, pos }; ok = false;
+    }
+    placed.pos.forEach(({ pc, x, y, bw, bh, cols }) => {
+      const bx = rm.x + pad + x, by = rm.y + head + y;
+      boxes.push({ room: rm.key, name: pc.name, x: bx, y: by, w: bw, h: bh });
+      pc.spots.forEach((pid, i) => { const cx = bx + 3 + (i % cols) * (placed.c + 3), cy = by + 13 + Math.floor(i / cols) * (placed.c + 3); cells[pid] = { x: cx, y: cy, s: placed.c }; });
+    });
+  });
+  return { rooms, cells, boxes };
+})();
+let PLAN_SEL = null;
+function renderPlan() {
+  const g = G(S.day, S.t);
+  const count = {}, recent = new Set();
+  D.objects.forEach(o => { const b = basePos(o.id, g); if (b.at === 'place') { count[b.place] = (count[b.place] || 0) + 1; const lm = lastMoveBefore(o.id, g); if (lm >= 0 && g - lm <= 60) recent.add(b.place); } });
+  D.events.forEach(e => { if (e.g <= g && g - e.g <= 60 && e.object && e.from && PL[e.from]) recent.add(e.from); });
+  const maxc = Math.max(1, ...Object.values(count));
+  let s = '';
+  PLAN.rooms.forEach(rm => { s += `<rect x="${rm.x + 2}" y="${rm.y + 2}" width="${rm.w - 4}" height="${rm.h - 4}" rx="8" style="fill:${roomColor(rm.key)};fill-opacity:.16;stroke:${roomColor(rm.key)};stroke-width:2"></rect><text class="rlabel" x="${rm.x + 10}" y="${rm.y + 17}">${esc(rm.key.replace(/_/g, ' '))}</text>`; });
+  PLAN.boxes.forEach(b => { const chars = Math.max(4, Math.floor(b.w / 5.4)); const name = b.name.length > chars ? b.name.slice(0, chars - 1) + '…' : b.name;
+    s += `<rect x="${b.x}" y="${b.y}" width="${b.w}" height="${b.h}" rx="4" style="fill:var(--panel);fill-opacity:.75;stroke:var(--line)"></rect><text class="flabel" x="${b.x + 3}" y="${b.y + 10}"><title>${esc(b.name)}</title>${esc(name)}</text>`; });
+  Object.entries(PLAN.cells).forEach(([pid, c]) => {
+    const n = count[pid] || 0, p = PL[pid];
+    const cls = ['cell']; if (p.kind === 'container' || p.hidden) cls.push('shut'); if (recent.has(pid)) cls.push('recent'); if (pid === PLAN_SEL) cls.push('sel');
+    const fill = n ? `color-mix(in srgb, var(--accent) ${Math.round(18 + 62 * n / maxc)}%, var(--panel))` : 'var(--panel2)';
+    s += `<rect class="${cls.join(' ')}" data-spot="${esc(pid)}" x="${c.x}" y="${c.y}" width="${c.s}" height="${c.s}" rx="3" style="fill:${fill}"><title>${esc(p.name)}${n ? ' · ' + n + ' things' : ''}</title></rect>`;
+    if (n && c.s >= 13) s += `<text class="cnt" x="${c.x + c.s / 2}" y="${c.y + c.s / 2 + 3}" text-anchor="middle">${n}</text>`;
+  });
+  const out = [];
+  RES.forEach((r, i) => { const pid = placeAt(r.id, g); if (!pid || !PLAN.cells[pid]) { out.push(r); return; } const c = PLAN.cells[pid]; const dx = i % 2 ? 7 : -7;
+    s += `<g class="who"><circle cx="${c.x + c.s / 2 + dx}" cy="${c.y - 2}" r="9" style="fill:${r.color};stroke:var(--panel);stroke-width:2"><title>${esc(r.name)} at ${esc(p_name(pid))}</title></circle><text x="${c.x + c.s / 2 + dx}" y="${c.y + 1.5}" text-anchor="middle">${esc(r.name[0])}</text></g>`; });
+  if (out.length) s += `<text x="${PLAN_W - 8}" y="${PLAN_H - 8}" text-anchor="end" style="font-size:12px;font-weight:700">out of the house: ${out.map(r => esc(r.name)).join(', ')}</text>`;
+  const svg = $('plan'); svg.setAttribute('viewBox', `0 0 ${PLAN_W} ${PLAN_H}`); svg.innerHTML = s;
+  $('clock3').textContent = `${fmt(S.t)} on ${WD[(S.day - 1) % 7]}`;
+  renderPlanDetail();
+}
+function p_name(pid) { return PL[pid] ? PL[pid].name : pid; }
+function renderPlanDetail() {
+  const pid = PLAN_SEL; if (!pid || !PL[pid]) { $('plandetail').innerHTML = '<span class="small">Click a cell to see what is there.</span>'; return; }
+  const g = G(S.day, S.t); const p = PL[pid];
+  const here = D.objects.filter(o => { const q = posAt(o.id, g); return q.at === 'place' && q.place === pid; }).map(o => o.id);
+  $('plandetail').innerHTML = `<b>${esc(p.room.replace(/_/g, ' '))} · ${esc(p.furniture)} · ${esc(p.name)}</b> <span class="mono small">${esc(pid)}</span>${p.kind === 'container' ? ' <span class="small">(closed)</span>' : ''}${p.hidden ? ' <span class="small">(out of sight)</span>' : ''}<div class="small">People call it: ${esc((p.descriptions || []).join(' / '))}</div><div class="chips" style="margin-top:4px">${here.length ? here.map(o => chip(o)).join(' ') : '<span class="small">nothing here</span>'}</div>`;
+}
 
 // ---------- Day view ----------
 function dayLabel(d) { return `${WD[(d - 1) % 7].slice(0, 3)} · day ${d}`; }
@@ -444,12 +543,12 @@ function renderTimeline() {
 }
 function markNow() { const rows = $('timeline').querySelectorAll('.row'); rows.forEach(el => el.classList.toggle('now', +el.dataset.m === S.t)); }
 function scrollToNow() { const rows = [...$('timeline').querySelectorAll('.row')]; const el = rows.find(r => +r.dataset.m >= S.t) || rows[rows.length - 1]; if (el) { const box = $('timeline'); box.scrollTop = el.offsetTop - box.offsetTop - 40; } }
-function setTime(t, scroll) { S.t = Math.max(0, Math.min(1439, Math.round(t))); $('slider').value = S.t; $('clock').textContent = fmt(S.t); renderStrips(); renderPeople(); renderHome(); markNow(); if (scroll) scrollToNow(); save(); }
+function setTime(t, scroll) { S.t = Math.max(0, Math.min(1439, Math.round(t))); $('slider').value = S.t; $('clock').textContent = fmt(S.t); renderStrips(); renderPlan(); renderPeople(); renderHome(); markNow(); if (scroll) scrollToNow(); save(); }
 function stepEvent(dir) { const ms = TL.filter(r => r.kind === 'ev' && (!S.who || r.r === S.who) && r.x.verb !== 'go').map(r => r.m); const next = dir > 0 ? ms.find(m => m > S.t) : [...ms].reverse().find(m => m < S.t); if (next != null) setTime(next, true); }
 function renderDay() {
   renderDayTabs(); buildTimeline();
   $('slider').value = S.t; $('clock').textContent = fmt(S.t);
-  renderStrips(); renderPeople(); renderHome(); renderTimeline();
+  renderStrips(); renderPlan(); renderPeople(); renderHome(); renderTimeline();
 }
 
 // ---------- Objects view ----------
@@ -566,6 +665,7 @@ const tl = () => { S.who = $('tlWho').value; S.think = $('tlThink').checked; S.m
 $('tlFind').addEventListener('input', tl);
 $('tlNow').addEventListener('click', scrollToNow);
 $('onlyRecent').addEventListener('change', e => { S.onlyRecent = e.target.checked; renderHome(); });
+$('plan').addEventListener('click', e => { const c = e.target.closest('[data-spot]'); if (!c) return; PLAN_SEL = c.dataset.spot; renderPlan(); });
 ['objFind', 'objMoved', 'objOwner'].forEach(id => $(id).addEventListener(id === 'objFind' ? 'input' : 'change', renderObjList));
 $('objlist').addEventListener('click', e => { const b = e.target.closest('button[data-obj]'); if (!b) return; S.obj = b.dataset.obj; save(); renderObjList(); renderObjDetail(); });
 document.addEventListener('click', e => {
