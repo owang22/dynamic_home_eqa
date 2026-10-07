@@ -270,3 +270,29 @@ def test_remembered_in_a_bag_that_is_here_marks_unknown_and_labels_contents():
     ok, msg, _ = w.apply("ben", A("pick_up", object="laptop_work"), 2)
     assert not ok and "not inside backpack_black" in msg
     assert w.people["ben"].belief["laptop_work"]["pos"]["at"] == "unknown"
+
+
+def test_pocket_goes_into_worn_clothes_and_stays_when_taken_off():
+    w = make()
+    for oid, o in {"jeans_blue": obj("jeans", "bed", carrier="pockets", owner="ben"),
+                   "basket_laundry": obj("basket", "bedroom_chair", carrier="open")}.items():
+        w.objects[oid] = o
+        w.where[oid] = dict(o["start"])
+    w.apply("ben", A("wear", object="jeans_blue"), 0)
+    w.apply("ben", A("go", place="entry_key_bowl"), 1)
+    assert w.apply("ben", A("pocket", object="keys_ben"), 1)[0]
+    assert w.where["keys_ben"] == {"at": "inside", "carrier": "jeans_blue"}
+    assert "keys_ben" in w.holding_view("ben")[1]
+    w.apply("ben", A("leave_home", minutes=30), 2)
+    assert "keys_ben" in w.log[-1]["carried"]
+    w.come_home_if_due("ben", 40)
+    w.apply("ben", A("go", place="bedroom_chair"), 41)
+    # jeans with keys in the pocket go into the laundry basket; keys go with them
+    ok, msg, _ = w.apply("ben", A("put_down", object="jeans_blue", relation="in", ref="basket_laundry"), 42)
+    assert ok, msg
+    assert w.place_of("keys_ben") == "bedroom_chair" and w.hidden("keys_ben")
+    assert w.holding_view("ben")[1] == "nothing"
+    # without pocketed clothes on, pocket is the person's own
+    assert w.apply("ben", A("pick_up", object="keys_ben"), 43)[0]
+    assert w.apply("ben", A("pocket", object="keys_ben"), 43)[0]
+    assert w.where["keys_ben"] == {"at": "pocket", "person": "ben"}

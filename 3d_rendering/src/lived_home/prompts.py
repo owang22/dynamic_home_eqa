@@ -164,7 +164,7 @@ finish it. Actions:
     next_to, on_top_of; ref: an object at that spot ("behind" the toaster, "on
     top of" the books). To put something in a bag, a basket, or the pocket of
     a jacket or pants lying here: relation in, ref that thing.
-  pocket (object): put something small in your pocket
+  pocket (object): put something small in a pocket of what you are wearing
   wear (object): put on clothes, shoes, a watch, glasses or a backpack; to
     take it off, pick_up or put_down
   give (object, person): hand it to someone in the same room
@@ -202,15 +202,16 @@ FIELDS = """- n: number the things 1, 2, 3, ... in the order you list them.
 - pocketable: fits in a trouser or jacket pocket.
 - carrier: whether other things in the home get put into it. open for things
   that hold other things in the open (a basket, a tray, a fruit bowl); closed
-  for bags, backpacks, boxes with lids, cases, and clothes with pockets that
-  things get left in (jackets, work pants); none otherwise (a pill bottle is
-  none: its pills are part of it).
+  for bags, backpacks, boxes with lids and cases; pockets for clothes with
+  pockets (jeans, work pants, jackets, hoodies); none otherwise (a pill bottle
+  is none: its pills are part of it).
 - place: the spot it is at. relation and ref: where it is at that spot. With
   ref 0, relation is on (a surface) or in (a container). With ref set to the n
   of another thing in your list at the same spot, it is relative to that
   thing: behind the toaster, on top of the stack of books, next to the
   kettle, or in a bag, basket or pocket of a piece of clothing (relation in,
-  ref its n). Things inside a carrier cannot themselves be carriers.
+  ref its n). Things inside a carrier cannot themselves be carriers, except
+  clothes with pockets (jeans with a wallet in them, in the laundry basket).
 """
 
 PERSONAL_USER = """The home: {home}
@@ -226,7 +227,9 @@ The residents:
 
 List {name}'s own things: what {name} carries or uses and would call theirs,
 including everything their routine and habits call for (the bag they take to
-work and what goes in it, their sports or hobby gear). Everyone has their
+work and what goes in it, their sports or hobby gear), and the clothes they
+wear and change into over a day: for work, at home in the evening, and to
+sleep in, at least one of each. Everyone has their
 phone; most people have a wallet or purse, keys, the bags they carry (and
 what is kept in them), glasses if they wear them, work things, medicine they
 take, the charger by their bed, clothes and shoes they leave out, hobby

@@ -7,7 +7,10 @@ Every object is in exactly one spot:
   {"at": "worn",   "person": rid}                              clothes, shoes, a watch, a backpack on
   {"at": "inside", "carrier": o}                              in a bag, box or basket
 Carriers hold one level: a carrier that is inside another carrier holds nothing,
-and a carrier that holds something cannot go inside another. Moving a carrier
+and a carrier that holds something cannot go inside another, except clothes
+with pockets (a pair of jeans with a wallet in it can go in the laundry basket).
+pocket puts a thing into the pockets of what the resident wears; taking those
+clothes off leaves it there. Moving a carrier
 moves what is inside it. A resident who leaves the house takes what they hold,
 their pockets, and what is inside the carriers they hold.
 
@@ -30,7 +33,8 @@ HANDS = 2
 POCKET_SLOTS = 5
 RELATIONS = ["on", "in", "under", "behind", "next_to", "on_top_of"]
 HIDING_RELATIONS = {"under", "behind"}
-CARRIER_KINDS = ["none", "open", "closed"]
+CARRIER_KINDS = ["none", "open", "closed", "pockets"]   # pockets: clothes with pockets
+SHUT = ("closed", "pockets")                               # contents not seen from outside
 
 
 def clock(minute: int) -> str:
@@ -77,9 +81,11 @@ class World:
                 if w["at"] == "inside" and w["carrier"] == carrier]
 
     def base(self, oid: str) -> dict:
-        """The position of the object, or of the carrier it is inside."""
+        """The position of the object, or of the outermost carrier it is inside."""
         pos = self.where[oid]
-        return self.where[pos["carrier"]] if pos["at"] == "inside" else pos
+        while pos["at"] == "inside":
+            pos = self.where[pos["carrier"]]
+        return pos
 
     def place_of(self, oid: str) -> Optional[str]:
         b = self.base(oid)
@@ -93,7 +99,7 @@ class World:
         """Hidden from someone standing in the room (not at the place itself)."""
         pos = self.where[oid]
         if pos["at"] == "inside":
-            if self.carrier_kind(pos["carrier"]) == "closed":
+            if self.carrier_kind(pos["carrier"]) in SHUT:
                 return True
             return self.hidden(pos["carrier"])
         if pos["at"] != "place":
@@ -153,7 +159,7 @@ class World:
             return True
         # at the place itself: open the drawer, look behind the toaster,
         # but not inside a closed bag
-        closed_bag = pos["at"] == "inside" and self.carrier_kind(pos["carrier"]) == "closed"
+        closed_bag = pos["at"] == "inside" and self.carrier_kind(pos["carrier"]) in SHUT
         return place == person.at and not closed_bag
 
     def _see(self, rid: str, minute: int) -> None:
@@ -241,12 +247,20 @@ class World:
             return "  (nothing you need to keep in mind)"
         return "\n".join(f"  {t}: " + "; ".join(items) for t, items in sorted(by_type.items()))
 
+    def pocket_items(self, rid: str) -> list[str]:
+        person = self.people[rid]
+        out = list(person.pocket)
+        for w in person.worn:
+            if self.carrier_kind(w) == "pockets":
+                out += self.contents(w)
+        return out
+
     def holding_view(self, rid: str) -> tuple[str, str, str]:
         person = self.people[rid]
         hands = [self._label(o, rid) for o in person.hands]
         worn = [self._label(o, rid) for o in person.worn]
         return (", ".join(hands) or "nothing",
-                ", ".join(self.tag(o, rid) for o in person.pocket) or "nothing",
+                ", ".join(self.tag(o, rid) for o in self.pocket_items(rid)) or "nothing",
                 ", ".join(worn) or "nothing you need to keep track of")
 
     # -------------------------------------------------------------- acting
@@ -270,7 +284,7 @@ class World:
             return True, "", [place]            # they said where it is: walk there
         if place is None or self.layout.room_of(place) != room:
             return False, self._not_found(person, oid, minute), []
-        if pos["at"] == "inside" and self.carrier_kind(pos["carrier"]) == "closed" \
+        if pos["at"] == "inside" and self.carrier_kind(pos["carrier"]) in SHUT \
                 and place != person.at:
             pass                                        # they walk over and open the bag
         steps = [] if place == person.at else [place]
@@ -393,17 +407,22 @@ class World:
                 return False, "Pocket what?", 0
             if not self.objects[oid].get("pocketable"):
                 return False, f"{oid} does not fit in a pocket.", 0
-            if oid in person.pocket:
+            in_pockets = self.pocket_items(rid)
+            if oid in in_pockets:
                 return False, f"{oid} is already in your pocket.", 0
-            if len(person.pocket) >= POCKET_SLOTS:
-                return False, f"Your pockets are full ({', '.join(person.pocket)}).", 0
+            if len(in_pockets) >= POCKET_SLOTS:
+                return False, f"Your pockets are full ({', '.join(in_pockets)}).", 0
             source = dict(self.where[oid])
             ok, message, walked = self._take(rid, oid, minute, act.get("place") or None)
             if not ok:
                 return False, message, 0
             settled = self._settle(oid)
-            self.where[oid] = {"at": "pocket", "person": rid}
-            person.pocket.append(oid)
+            pocketed = [w for w in person.worn if self.carrier_kind(w) == "pockets"]
+            if pocketed:                         # into the pockets of what they wear
+                self.where[oid] = {"at": "inside", "carrier": pocketed[-1]}
+            else:
+                self.where[oid] = {"at": "pocket", "person": rid}
+                person.pocket.append(oid)
             self._touch(person, oid, minute)
             return self._done(rid, act, minute, source, self.where[oid], walked, settled=settled)
 
@@ -457,7 +476,11 @@ class World:
         if verb == "leave_home":
             minutes = max(5, act.get("minutes") or 30)
             carried = person.hands + person.pocket + person.worn
-            carried += [i for c in list(carried) for i in self.contents(c)]
+            frontier = list(carried)
+            while frontier:
+                inner = [i for c in frontier for i in self.contents(c)]
+                carried += inner
+                frontier = inner
             source, person.at, person.back_at = person.at, None, minute + minutes
             return self._done(rid, act, minute, source, "out of the house", minutes,
                               carried=carried)
@@ -490,7 +513,7 @@ class World:
                 return False, f"{ref} cannot hold things.", 0
             if self.where[ref]["at"] == "inside":
                 return False, f"{ref} is itself inside {self.where[ref]['carrier']}; take it out first.", 0
-            if self.carrier_kind(oid) != "none" and self.contents(oid):
+            if self.carrier_kind(oid) not in ("none", "pockets") and self.contents(oid):
                 return False, f"{oid} has things in it; it cannot go inside {ref}.", 0
             walked = 0
             if self.holder_of(ref) != rid:

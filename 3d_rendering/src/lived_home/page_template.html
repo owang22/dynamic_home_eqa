@@ -355,6 +355,7 @@ function renderPeople() {
     const blocks = planBlocks(S.day, r.id); const act = blocks.find(b => b.s <= S.t && S.t < b.e);
     const held = [], pocket = [], worn = [];
     D.objects.forEach(o => { const p = posAt(o.id, g); if (p.person !== r.id) return; if (p.at === 'hand') held.push(o.id); else if (p.at === 'pocket') pocket.push(o.id); else if (p.at === 'worn') worn.push(o.id); });
+    worn.filter(w => OBJ[w].carrier === 'pockets').forEach(w => D.objects.forEach(o => { const p = posAt(o.id, g); if (p.at === 'inside' && p.carrier === w) pocket.push(o.id); }));
     const inner = oid => { const c = D.objects.filter(o => { const p = posAt(o.id, g); return p.at === 'inside' && p.carrier === oid; }).map(o => o.id); return c.length ? ` <span class="small">[${c.map(x => chip(x, 'inner')).join(' ')}]</span>` : ''; };
     const list = ids => ids.length ? ids.map(x => chip(x) + inner(x)).join(' ') : '<span class="small">nothing</span>';
     const x = actAt(r.id, g);

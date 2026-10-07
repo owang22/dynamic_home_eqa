@@ -100,9 +100,9 @@ def check_room_objects(room_places: set):
             elif o["relation"] == "in":
                 if target["carrier"] == "none":
                     problems.append(f"thing {o['n']} is in thing {ref}, which has carrier none and cannot hold things")
-                elif target["relation"] == "in" and target["ref"]:
+                elif target["relation"] == "in" and target["ref"] and target["carrier"] != "pockets":
                     problems.append(f"thing {ref} is itself inside something; thing {o['n']} cannot go inside it")
-                if o["carrier"] != "none":
+                if o["carrier"] not in ("none", "pockets"):
                     problems.append(f"thing {o['n']} is a bag or basket and cannot start inside thing {ref}")
         if not problems:
             return ""
