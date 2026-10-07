@@ -1,0 +1,579 @@
+<title>__TITLE__</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&family=Source+Serif+4:wght@600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: sticky header with tabs; Day view = time control, per-person room strips, then people | home side by side, then the day's timeline. Same family as the Situation Sim Inspector. */
+:root{
+  --bg:#f5f7f4; --panel:#ffffff; --panel2:#eef2ee; --ink:#1b2321; --muted:#5f6d68; --line:#d6ddd8; --line2:#e7ece8;
+  --accent:#137068; --accent-ink:#ffffff; --accent-soft:#d9eeea;
+  --p0:#b4562a; --p0-soft:#f6e3d8; --p1:#2f5fa6; --p1-soft:#dde7f5;
+  --think:#5f4bb0; --think-soft:#e9e5f6;
+  --bad:#b3352b; --bad-soft:#f4dcd9; --warn:#a86a12; --warn-soft:#f6ead2;
+  --seg-l:66%; --seg-s:42%;
+  --sans:"Source Sans 3",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --serif:"Source Serif 4",Georgia,"Times New Roman",serif;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#141917; --panel:#1b2220; --panel2:#222b28; --ink:#e4eae6; --muted:#98a69f; --line:#2c3733; --line2:#232d2a;
+    --accent:#4dc0b0; --accent-ink:#0f1716; --accent-soft:#193a36;
+    --p0:#e9946a; --p0-soft:#3b261b; --p1:#86aee8; --p1-soft:#1d2a3d;
+    --think:#a695e8; --think-soft:#2a2440;
+    --bad:#ef8a80; --bad-soft:#3d2320; --warn:#e3b05a; --warn-soft:#3a2d16;
+    --seg-l:42%; --seg-s:38%; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#141917; --panel:#1b2220; --panel2:#222b28; --ink:#e4eae6; --muted:#98a69f; --line:#2c3733; --line2:#232d2a;
+  --accent:#4dc0b0; --accent-ink:#0f1716; --accent-soft:#193a36;
+  --p0:#e9946a; --p0-soft:#3b261b; --p1:#86aee8; --p1-soft:#1d2a3d;
+  --think:#a695e8; --think-soft:#2a2440;
+  --bad:#ef8a80; --bad-soft:#3d2320; --warn:#e3b05a; --warn-soft:#3a2d16;
+  --seg-l:42%; --seg-s:38%; color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.45;margin:0}
+button,select,input{font:inherit;color:inherit}
+.wrap{max-width:1320px;margin:0 auto;padding-inline:16px;padding-block:0 48px}
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line)}
+header.top .wrap{display:flex;flex-wrap:wrap;align-items:center;gap:8px 18px;padding-block:10px}
+h1{font-family:var(--serif);font-weight:600;font-size:20px;margin:0;letter-spacing:.01em}
+.tabs{display:flex;gap:4px;flex-wrap:wrap}
+.tabs button{background:transparent;border:1px solid transparent;border-radius:6px;padding:5px 11px;cursor:pointer;color:var(--muted)}
+.tabs button[aria-selected="true"]{background:var(--panel);border-color:var(--line);color:var(--ink);font-weight:600}
+button:focus-visible,select:focus-visible,input:focus-visible,.chip:focus-visible,.row:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.spacer{flex:1}
+.built{font-size:12.5px;color:var(--muted)}
+main{padding-block:16px}
+h2{font-size:16px;margin:0 0 10px;font-weight:700;text-wrap:balance}
+h3{font-size:12px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin:0 0 8px;font-weight:600}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px;min-width:0}
+.small{font-size:13px;color:var(--muted)}
+.mono{font-family:var(--mono);font-size:12.5px}
+.daytabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.daytabs button{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:5px 11px;cursor:pointer;text-align:left;line-height:1.2}
+.daytabs button small{display:block;font-size:11.5px;color:var(--muted)}
+.daytabs button[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.daytabs button[aria-selected="true"] small{color:var(--accent-ink);opacity:.85}
+.daytabs button.sick{border-color:var(--bad)}
+.daytabs button:disabled{opacity:.4;cursor:default}
+.timebar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin-bottom:8px}
+.clock{font-family:var(--mono);font-size:22px;font-weight:500;min-width:70px;font-variant-numeric:tabular-nums}
+#slider{flex:1;min-width:200px;accent-color:var(--accent)}
+.btn{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:5px 10px;cursor:pointer}
+.btn:hover{border-color:var(--accent)}
+.strips{position:relative;display:flex;flex-direction:column;gap:3px;margin:6px 0 2px}
+.strow{display:grid;grid-template-columns:74px 1fr;gap:8px;align-items:center;font-size:12.5px}
+.strow .who{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.segs{position:relative;height:20px;border-radius:4px;overflow:hidden;background:var(--panel2);cursor:pointer}
+.segs.plan{height:12px;border-radius:3px}
+.seg{position:absolute;top:0;bottom:0}
+.seg.out{background:repeating-linear-gradient(45deg,var(--muted) 0 2px,transparent 2px 6px);opacity:.6}
+.seg.act{border-right:1px solid var(--panel)}
+.cursor{position:absolute;top:0;bottom:0;width:2px;background:var(--ink);pointer-events:none}
+.hours{display:grid;grid-template-columns:74px 1fr;gap:8px;font-size:11px;color:var(--muted)}
+.hours .h{display:flex;justify-content:space-between;font-family:var(--mono)}
+.legend{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:12px;margin-top:6px;color:var(--muted)}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:3px;vertical-align:-1px;margin-right:4px}
+.two{display:grid;grid-template-columns:minmax(300px,420px) 1fr;gap:14px;align-items:start;margin-top:12px}
+@media (max-width:900px){.two{grid-template-columns:1fr}}
+.people{display:flex;flex-direction:column;gap:12px}
+.person{border-left:4px solid var(--pc);background:var(--panel);border-top:1px solid var(--line);border-right:1px solid var(--line);border-bottom:1px solid var(--line);border-radius:10px;padding:12px 14px;min-width:0}
+.person .name{font-family:var(--serif);font-size:17px;font-weight:600}
+.person .where{font-size:14px;margin:2px 0 6px}
+.kv{display:grid;grid-template-columns:78px 1fr;gap:4px 10px;font-size:13.5px;margin:6px 0}
+.kv dt{color:var(--muted)} .kv dd{margin:0;min-width:0}
+.feel{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:8px 0}
+.feel div{font-size:11.5px;color:var(--muted)}
+.dots{display:flex;gap:3px;margin-top:2px}
+.dots i{width:12px;height:6px;border-radius:2px;background:var(--line)}
+.dots i.on{background:var(--pc)}
+.thought{background:var(--think-soft);border-radius:8px;padding:8px 10px;font-size:14px;margin-top:8px}
+.thought .meta{font-size:12px;color:var(--think);font-weight:600;margin-bottom:2px}
+.chips{display:flex;flex-wrap:wrap;gap:4px;min-width:0}
+.chip{font-family:var(--mono);font-size:11.5px;padding:1px 6px;border-radius:5px;background:var(--panel2);border:1px solid transparent;cursor:pointer;white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+.chip:hover{border-color:var(--accent)}
+.chip.hidden{border:1px dashed var(--muted);background:transparent}
+.chip.recent{background:var(--accent-soft);border-color:var(--accent)}
+.chip .own{font-family:var(--sans);font-weight:700;margin-left:3px}
+.chip.inner{font-size:11px;opacity:.9}
+.pill{display:inline-block;font-size:11.5px;padding:1px 8px;border-radius:999px;background:var(--panel2);color:var(--muted);margin:0 4px 2px 0}
+.pill.habit{background:var(--warn-soft);color:var(--warn);font-weight:600}
+.pill.trig{background:var(--panel2);color:var(--warn)}
+.pill.sick{background:var(--bad-soft);color:var(--bad);font-weight:600}
+.home{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
+.room{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 12px;min-width:0;border-top:5px solid var(--rc)}
+.room .rhead{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:6px}
+.room .rname{font-weight:700;font-size:14px}
+.badge{font-size:11.5px;font-weight:700;padding:1px 8px;border-radius:999px;color:var(--panel);background:var(--pc)}
+.spot{display:grid;grid-template-columns:minmax(80px,38%) 1fr;gap:3px 8px;padding:3px 0;border-top:1px solid var(--line2);font-size:12.5px;align-items:baseline}
+.spot .sn{color:var(--muted);overflow-wrap:anywhere}
+.spot .sn b{color:var(--ink);font-weight:600}
+.rbody{max-height:320px;overflow-y:auto;overflow-x:hidden}
+.home .chip,.person .chip{white-space:normal;overflow-wrap:anywhere;text-overflow:clip}
+.homebar{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;margin-bottom:8px;font-size:13px;color:var(--muted)}
+.homebar label{display:inline-flex;gap:6px;align-items:center;cursor:pointer}
+.tlbar{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:14px 0 8px;font-size:13px;color:var(--muted)}
+.tlbar label{display:inline-flex;gap:6px;align-items:center;cursor:pointer}
+.tlbar input[type=text],.tlbar select,.objside input,.objside select{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:4px 8px}
+.timeline{max-height:620px;overflow:auto;border:1px solid var(--line);border-radius:10px;background:var(--panel)}
+.row{display:grid;grid-template-columns:50px 64px 1fr;gap:0 8px;padding:4px 10px;border-bottom:1px solid var(--line2);font-size:13.5px;cursor:pointer}
+.row:hover{background:var(--panel2)}
+.row .t{font-family:var(--mono);font-size:12px;color:var(--muted);padding-top:2px}
+.row .r{font-weight:700;color:var(--pc);font-size:12.5px;padding-top:1px}
+.row .x{min-width:0;overflow-wrap:anywhere}
+.row.think .x{background:var(--think-soft);border-radius:6px;padding:4px 8px}
+.row.plan .x{background:var(--panel2);border-radius:6px;padding:4px 8px}
+.row.bad .x{color:var(--bad)}
+.row.implied{opacity:.55}
+.row.now{box-shadow:inset 3px 0 0 var(--accent)}
+.row .why{color:var(--muted);font-style:italic}
+.verb{font-weight:600}
+.more{color:var(--accent);cursor:pointer;font-size:12.5px;margin-left:4px}
+.objgrid{display:grid;grid-template-columns:300px 1fr;gap:14px;align-items:start}
+@media (max-width:860px){.objgrid{grid-template-columns:1fr}}
+.objside{position:sticky;top:calc(env(safe-area-inset-top,0px) + 64px)}
+@media (max-width:860px){.objside{position:static}}
+.objlist{max-height:70vh;overflow:auto;margin-top:8px}
+.objlist .grp{font-size:12px;color:var(--muted);margin:8px 0 3px;font-weight:600}
+.objlist button{display:block;width:100%;text-align:left;background:transparent;border:0;border-radius:6px;padding:3px 6px;cursor:pointer;font-family:var(--mono);font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.objlist button:hover{background:var(--panel2)}
+.objlist button[aria-current="true"]{background:var(--accent-soft)}
+.objlist button .n{float:right;color:var(--muted);font-family:var(--sans)}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th,td{text-align:left;padding:5px 8px;border-bottom:1px solid var(--line2);vertical-align:top}
+th{font-size:11.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);font-weight:600}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+.tablewrap{overflow-x:auto}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-bottom:14px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 12px}
+.stat b{display:block;font-size:21px;font-variant-numeric:tabular-nums;font-weight:600}
+.stat span{font-size:12px;color:var(--muted)}
+.stack{display:flex;flex-direction:column;gap:14px}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px}
+ul.plain{margin:4px 0;padding-left:18px} ul.plain li{margin:2px 0}
+details summary{cursor:pointer;color:var(--muted);font-size:13px}
+.minibar{display:inline-block;width:46px;height:6px;border-radius:3px;background:var(--line2);vertical-align:middle;position:relative;margin-left:6px}
+.minibar i{position:absolute;left:0;top:0;bottom:0;border-radius:3px;background:var(--pc,var(--accent))}
+.empty{color:var(--muted);font-size:13px;padding:8px 0}
+@media (prefers-reduced-motion:no-preference){.chip,.row{transition:background .15s}}
+</style>
+
+<header class="top"><div class="wrap">
+  <h1 id="title">__TITLE__</h1>
+  <nav class="tabs" role="tablist" id="tabs">
+    <button role="tab" data-view="day">Day</button>
+    <button role="tab" data-view="objects">Objects</button>
+    <button role="tab" data-view="household">Household</button>
+    <button role="tab" data-view="run">Run</button>
+  </nav>
+  <span class="spacer"></span>
+  <span class="built" id="built"></span>
+</div></header>
+
+<main class="wrap">
+  <section id="v-day" hidden>
+    <div class="daytabs" id="daytabs"></div>
+    <div class="panel">
+      <div class="timebar">
+        <span class="clock" id="clock">07:00</span>
+        <button class="btn" id="prevEv" title="Previous action (left arrow)">◀ action</button>
+        <input type="range" id="slider" min="0" max="1439" step="1" value="420" aria-label="Time of day">
+        <button class="btn" id="nextEv" title="Next action (right arrow)">action ▶</button>
+      </div>
+      <div class="strips" id="strips"></div>
+      <div class="hours"><span></span><div class="h"><span>00</span><span>03</span><span>06</span><span>09</span><span>12</span><span>15</span><span>18</span><span>21</span><span>24</span></div></div>
+      <div class="legend" id="legend"></div>
+    </div>
+    <div class="two">
+      <div class="people" id="people"></div>
+      <div class="panel">
+        <div class="homebar">
+          <h3 style="margin:0">The home at <span id="clock2"></span></h3>
+          <label><input type="checkbox" id="onlyRecent"> only spots that changed today</label>
+          <span><span class="chip recent" style="cursor:default">moved in the last hour</span> <span class="chip hidden" style="cursor:default">out of sight</span></span>
+        </div>
+        <div class="home" id="home"></div>
+      </div>
+    </div>
+    <div class="tlbar">
+      <h3 style="margin:0">The day, in order</h3>
+      <select id="tlWho" aria-label="Resident"><option value="">both</option></select>
+      <label><input type="checkbox" id="tlThink" checked> thoughts</label>
+      <label><input type="checkbox" id="tlMoves"> only actions on objects</label>
+      <label><input type="checkbox" id="tlWalk"> walking</label>
+      <label><input type="checkbox" id="tlBad"> only rejected</label>
+      <input type="text" id="tlFind" placeholder="find: mug, tea, sick…" aria-label="Find in the day">
+      <button class="btn" id="tlNow">Scroll to the time</button>
+    </div>
+    <div class="timeline" id="timeline"></div>
+  </section>
+
+  <section id="v-objects" hidden>
+    <div class="objgrid">
+      <div class="panel objside">
+        <input type="text" id="objFind" placeholder="find an object, type or owner" style="width:100%" aria-label="Find an object">
+        <div class="small" style="margin-top:6px;display:flex;gap:10px;flex-wrap:wrap">
+          <label><input type="checkbox" id="objMoved" checked> moved at least once</label>
+          <select id="objOwner" aria-label="Owner"><option value="">any owner</option></select>
+        </div>
+        <div class="objlist" id="objlist"></div>
+      </div>
+      <div class="stack" id="objdetail"></div>
+    </div>
+  </section>
+
+  <section id="v-household" hidden></section>
+  <section id="v-run" hidden></section>
+</main>
+
+<script type="application/json" id="data">/*__DATA__*/</script>
+<script>
+(function(){
+"use strict";
+const D = JSON.parse(document.getElementById('data').textContent);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const $ = id => document.getElementById(id);
+const fmt = m => { m = Math.max(0, Math.min(1439, Math.round(m))); return String(Math.floor(m/60)).padStart(2,'0') + ':' + String(m%60).padStart(2,'0'); };
+const toMin = s => { const [h, m] = String(s).split(':').map(Number); return h*60 + m; };
+const G = (day, minute) => (day - 1) * 1440 + minute;
+
+// ---------- reference data ----------
+const PL = {}; const ROOMS = []; const ROOM_PLACES = {};
+D.layout.places.forEach(p => { PL[p.id] = p; if (!ROOM_PLACES[p.room]) { ROOM_PLACES[p.room] = []; ROOMS.push(p.room); } ROOM_PLACES[p.room].push(p.id); });
+const ROOM_HUE = {}; ROOMS.forEach((r, i) => ROOM_HUE[r] = Math.round((i * 360 / ROOMS.length + 20) % 360));
+const roomColor = r => `hsl(${ROOM_HUE[r]} var(--seg-s) var(--seg-l))`;
+const OBJ = {}; D.objects.forEach(o => OBJ[o.id] = o);
+const RES = D.residents.map((r, i) => ({ id: r.id, name: r.name.split(' ')[0], full: r.name, i, color: `var(--p${i % 2})`, soft: `var(--p${i % 2}-soft)`, r }));
+const RESBY = {}; RES.forEach(r => RESBY[r.id] = r);
+const WD = D.weekdays;
+const sickWho = (D.subjects && D.subjects.sick) || [];
+const SIT = {}; D.situations.forEach(s => SIT[s.id] = s);
+
+// ---------- replay: where every object and person is over time ----------
+// object track: oid -> [{g, k, pos}] in event order (k = event index, for ties within a minute)
+const TRACK = {}; const CUR = {};
+D.objects.forEach(o => { TRACK[o.id] = [{ g: -1, k: -1, pos: o.start }]; CUR[o.id] = o.start; });
+const LOC = {}; RES.forEach(r => LOC[r.id] = [{ g: -1, k: -1, place: r.r.sleeps_at }]);
+const MOVES = {}; // oid -> [event index]
+D.events.forEach((e, k) => {
+  const g = G(e.day, e.minute);
+  e.g = g; e.k = k;
+  if (e.object && e.to_pos && TRACK[e.object]) {
+    TRACK[e.object].push({ g, k, pos: e.to_pos }); CUR[e.object] = e.to_pos;
+    (MOVES[e.object] = MOVES[e.object] || []).push(k);
+  }
+  (e.settled || []).forEach(o => { if (!CUR[o]) return; const p = Object.assign({}, CUR[o], { ref: null, rel: PL[CUR[o].place] && PL[CUR[o].place].kind === 'container' ? 'in' : 'on' }); TRACK[o].push({ g, k, pos: p }); CUR[o] = p; });
+  if (LOC[e.resident]) {
+    if (e.verb === 'go' || e.verb === 'come_home') LOC[e.resident].push({ g, k, place: e.to });
+    else if (e.verb === 'leave_home') LOC[e.resident].push({ g, k, place: null });
+  }
+});
+function lastAt(list, g) { let lo = 0, hi = list.length - 1, ans = list[0]; while (lo <= hi) { const m = (lo + hi) >> 1; if (list[m].g <= g) { ans = list[m]; lo = m + 1; } else hi = m - 1; } return ans; }
+const posAt = (oid, g) => lastAt(TRACK[oid], g).pos;
+function basePos(oid, g) { const p = posAt(oid, g); return p.at === 'inside' ? posAt(p.carrier, g) : p; }
+const placeAt = (rid, g) => lastAt(LOC[rid], g).place;
+function hiddenAt(oid, g) {
+  const p = posAt(oid, g);
+  if (p.at === 'inside') { const c = OBJ[p.carrier]; return (c && c.carrier === 'closed') || hiddenAt(p.carrier, g); }
+  if (p.at !== 'place') return false;
+  const pl = PL[p.place]; return !pl || pl.kind === 'container' || pl.hidden || p.rel === 'under' || p.rel === 'behind';
+}
+function lastMoveBefore(oid, g) { const t = TRACK[oid]; const e = lastAt(t, g); return e.g; }
+
+// ---------- answers ----------
+const PLANS = {}; const ACTS = {};
+D.responses.forEach(x => {
+  if (x.stage === 'plan') { (PLANS[x.day] = PLANS[x.day] || {})[x.resident] = x; }
+  else { x.g = G(x.day, toMin(x.time)); (ACTS[x.resident] = ACTS[x.resident] || []).push(x); }
+});
+Object.values(ACTS).forEach(a => a.sort((p, q) => p.g - q.g));
+function planBlocks(day, rid) {
+  const p = PLANS[day] && PLANS[day][rid]; if (!p) return [];
+  return p.activities.map(a => { const s = toMin(a.start); let e = toMin(a.end); if (e <= s) e += 1440; return Object.assign({}, a, { s, e }); });
+}
+function actAt(rid, g) { const a = ACTS[rid] || []; let ans = null; for (const x of a) { if (x.g <= g) ans = x; else break; } return ans; }
+
+// ---------- state ----------
+const S = { view: 'day', day: 1, t: 420, who: '', think: true, moves: false, walk: false, bad: false, find: '', obj: null, onlyRecent: false };
+try { const s = JSON.parse(localStorage.getItem('lived-home-view') || '{}'); ['view', 'day', 't', 'obj'].forEach(k => { if (s[k] != null) S[k] = s[k]; }); } catch (e) {}
+const save = () => { try { localStorage.setItem('lived-home-view', JSON.stringify({ view: S.view, day: S.day, t: S.t, obj: S.obj })); } catch (e) {} };
+const maxDay = Math.max(1, D.last_day || 1);
+if (S.day > maxDay) S.day = maxDay;
+
+$('built').textContent = `run ${D.run} · built ${D.built} · ${D.days_done} of ${D.schedule.length || 7} days done` + (D.last_day > D.days_done ? ` · day ${D.last_day} in progress` : '');
+
+// ---------- small renderers ----------
+function ownMark(oid) { const o = OBJ[oid]; if (!o || !o.owner || !RESBY[o.owner]) return ''; const r = RESBY[o.owner]; return `<span class="own" style="color:${r.color}" title="${esc(r.name)}'s">${esc(r.name[0])}</span>`; }
+function chip(oid, extra) { const g = G(S.day, S.t); const cls = ['chip']; if (extra) cls.push(extra); if (hiddenAt(oid, g)) cls.push('hidden'); const lm = lastMoveBefore(oid, g); if (lm >= 0 && g - lm <= 60) cls.push('recent');
+  return `<span class="${cls.join(' ')}" tabindex="0" role="button" data-obj="${esc(oid)}" title="${esc(describeObj(oid))}">${esc(oid)}${ownMark(oid)}</span>`; }
+function describeObj(oid) { const o = OBJ[oid]; if (!o) return oid; return `${o.type} · ${[o.color, o.material, o.size, o.condition].filter(Boolean).join(', ')}${o.owner ? ' · ' + (RESBY[o.owner] ? RESBY[o.owner].name + "'s" : o.owner) : ''}`; }
+function placeName(pid) { if (!pid) return 'out of the house'; const p = PL[pid]; return p ? `${p.room.replace(/_/g, ' ')} · ${p.name}` : pid; }
+function posText(p) { if (!p) return '?'; if (p.at === 'place') return `${p.rel && p.rel !== 'on' && p.rel !== 'in' ? p.rel.replace(/_/g, ' ') + ' ' + (p.ref || '') + ' at ' : ''}${p.place}`; if (p.at === 'inside') return `inside ${p.carrier}`; if (p.at === 'worn') return `worn by ${RESBY[p.person] ? RESBY[p.person].name : p.person}`; return `${p.at} of ${RESBY[p.person] ? RESBY[p.person].name : p.person}`; }
+function dots(v, max) { let s = '<span class="dots">'; for (let i = 1; i <= max; i++) s += `<i class="${i <= v ? 'on' : ''}"></i>`; return s + '</span>'; }
+
+// ---------- Day view ----------
+function dayLabel(d) { return `${WD[(d - 1) % 7].slice(0, 3)} · day ${d}`; }
+function renderDayTabs() {
+  const n = D.schedule.length || 7;
+  let h = '';
+  for (let d = 1; d <= n; d++) {
+    const sits = D.schedule[d - 1] || [];
+    const sick = sits.includes('sick');
+    const label = sits.length ? sits.map(s => s === 'sick' ? `sick (${sickWho.map(w => RESBY[w] ? RESBY[w].name : w).join(', ')})` : s.replace(/_/g, ' ')).join(', ') : 'ordinary day';
+    h += `<button role="tab" aria-selected="${d === S.day}" data-day="${d}" class="${sick ? 'sick' : ''}" ${d > maxDay ? 'disabled' : ''}>${dayLabel(d)}<small>${esc(label)}${d === D.last_day && D.last_day > D.days_done ? ' · in progress' : ''}</small></button>`;
+  }
+  $('daytabs').innerHTML = h;
+}
+function renderStrips() {
+  const d = S.day, g0 = G(d, 0);
+  let h = '';
+  const used = new Set();
+  RES.forEach(r => {
+    // where, minute by minute, as segments
+    const list = LOC[r.id]; let cur = lastAt(list, g0).place; let start = 0; const segs = [];
+    list.filter(x => x.g > g0 && x.g < g0 + 1440).forEach(x => { const m = x.g - g0; if (m > start) segs.push([start, m, cur]); cur = x.place; start = m; });
+    segs.push([start, 1440, cur]);
+    let s = '';
+    segs.forEach(([a, b, place]) => { if (b <= a) return; const left = a / 14.4, w = (b - a) / 14.4;
+      if (!place) s += `<div class="seg out" style="left:${left}%;width:${w}%" title="out of the house ${fmt(a)}–${fmt(b)}"></div>`;
+      else { const room = PL[place] ? PL[place].room : '?'; used.add(room); s += `<div class="seg" style="left:${left}%;width:${w}%;background:${roomColor(room)}" title="${esc(room.replace(/_/g, ' '))} ${fmt(a)}–${fmt(b)}"></div>`; } });
+    h += `<div class="strow"><span class="who" style="color:${r.color}">${esc(r.name)}</span><div class="segs" data-strip="1">${s}<div class="cursor" style="left:${S.t / 14.4}%"></div></div></div>`;
+    const blocks = planBlocks(d, r.id); let p = '';
+    blocks.forEach((b, i) => { const a = Math.max(0, b.s), e = Math.min(1440, b.e); if (e <= a) return;
+      p += `<div class="seg act" style="left:${a / 14.4}%;width:${(e - a) / 14.4}%;background:${b.room === 'out_of_house' ? 'var(--line)' : (i % 2 ? r.soft : 'var(--panel2)')}" title="${esc(b.start + '–' + b.end + ' ' + b.activity)}"></div>`; });
+    h += `<div class="strow"><span class="small">plan</span><div class="segs plan" data-strip="1">${p}<div class="cursor" style="left:${S.t / 14.4}%"></div></div></div>`;
+  });
+  $('strips').innerHTML = h;
+  $('legend').innerHTML = ROOMS.filter(r => used.has(r)).map(r => `<span><i style="background:${roomColor(r)}"></i>${esc(r.replace(/_/g, ' '))}</span>`).join('') + `<span><i style="background:repeating-linear-gradient(45deg,var(--muted) 0 2px,transparent 2px 6px)"></i>out of the house</span>`;
+}
+function renderPeople() {
+  const g = G(S.day, S.t);
+  let h = '';
+  RES.forEach(r => {
+    const place = placeAt(r.id, g);
+    const blocks = planBlocks(S.day, r.id); const act = blocks.find(b => b.s <= S.t && S.t < b.e);
+    const held = [], pocket = [], worn = [];
+    D.objects.forEach(o => { const p = posAt(o.id, g); if (p.person !== r.id) return; if (p.at === 'hand') held.push(o.id); else if (p.at === 'pocket') pocket.push(o.id); else if (p.at === 'worn') worn.push(o.id); });
+    const inner = oid => { const c = D.objects.filter(o => { const p = posAt(o.id, g); return p.at === 'inside' && p.carrier === oid; }).map(o => o.id); return c.length ? ` <span class="small">[${c.map(x => chip(x, 'inner')).join(' ')}]</span>` : ''; };
+    const list = ids => ids.length ? ids.map(x => chip(x) + inner(x)).join(' ') : '<span class="small">nothing</span>';
+    const x = actAt(r.id, g);
+    const st = x && x.inner_state;
+    const sick = (D.schedule[S.day - 1] || []).includes('sick') && sickWho.includes(r.id);
+    h += `<div class="person" style="--pc:${r.color}">
+      <div class="name">${esc(r.full)} ${sick ? '<span class="pill sick">sick today</span>' : ''}</div>
+      <div class="where">${place ? `<b>${esc(PL[place] ? PL[place].room.replace(/_/g, ' ') : place)}</b> · ${esc(PL[place] ? PL[place].name : '')} <span class="mono small">${esc(place)}</span>` : '<b>out of the house</b>'}</div>
+      ${act ? `<div class="small">Plan: <b style="color:var(--ink)">${esc(act.activity)}</b> (${esc(act.start)}–${esc(act.end)}${act.room === 'out_of_house' ? ', out' : ''})</div>` : '<div class="small">No planned activity at this time.</div>'}
+      <dl class="kv"><dt>holding</dt><dd><div class="chips">${list(held)}</div></dd><dt>pockets</dt><dd><div class="chips">${list(pocket)}</div></dd><dt>wearing</dt><dd><div class="chips">${list(worn)}</div></dd></dl>
+      ${st ? `<div class="feel">${[['stress', st.stress], ['tired', st.tiredness], ['mood', st.mood], ['health', st.health]].map(([k, v]) => `<div>${k} ${v}${dots(v, 3)}</div>`).join('')}</div>` : ''}
+      ${x ? `<div>${(x.habit_triggers_now || []).map(t => `<span class="pill trig" title="trigger true now">trigger: ${esc(t)}</span>`).join('')}${x.habit_followed && x.habit_followed !== 'none' ? `<span class="pill habit">follows: ${esc(x.habit_followed)}</span>` : ''}</div>
+      <div class="thought"><div class="meta">${esc(x.time)} · ${esc(x.activity || '')}${x.problem_given ? ' · after a rejected action' : ''}</div>${esc(x.thinking)}${st && st.reason ? `<div class="small" style="margin-top:4px">Feels this way because: ${esc(st.reason)}</div>` : ''}</div>` : ''}
+    </div>`;
+  });
+  $('people').innerHTML = h;
+}
+function renderHome() {
+  const g = G(S.day, S.t), g0 = G(S.day, 0);
+  const at = {}; // place -> [oid] (top level only)
+  const inside = {}; // carrier -> [oid]
+  D.objects.forEach(o => { const p = posAt(o.id, g); if (p.at === 'place') (at[p.place] = at[p.place] || []).push(o.id); else if (p.at === 'inside') (inside[p.carrier] = inside[p.carrier] || []).push(o.id); });
+  const changedToday = new Set(); D.events.forEach(e => { if (e.day === S.day && e.g <= g && e.to_pos && e.to_pos.at === 'place') changedToday.add(e.to_pos.place); if (e.day === S.day && e.g <= g && e.object) { const p0 = lastAt(TRACK[e.object], e.g - 0.5).pos; if (p0 && p0.at === 'place') changedToday.add(p0.place); } });
+  let h = '';
+  ROOMS.forEach(room => {
+    const here = RES.filter(r => { const p = placeAt(r.id, g); return p && PL[p] && PL[p].room === room; });
+    let rows = '';
+    ROOM_PLACES[room].forEach(pid => {
+      const objs = at[pid] || []; if (!objs.length) return;
+      if (S.onlyRecent && !changedToday.has(pid)) return;
+      const pl = PL[pid];
+      rows += `<div class="spot"><span class="sn" title="${esc((pl.descriptions || []).join(' / '))}"><b>${esc(pl.name)}</b>${pl.kind === 'container' ? ' · closed' : ''}${pl.hidden ? ' · out of sight' : ''}</span><div class="chips">${objs.map(o => chip(o) + (inside[o] ? ` <span class="small">[${inside[o].map(x => chip(x, 'inner')).join(' ')}]</span>` : '')).join(' ')}</div></div>`;
+    });
+    if (S.onlyRecent && !rows && !here.length) return;
+    h += `<div class="room" style="--rc:${roomColor(room)}"><div class="rhead"><span class="rname">${esc(room.replace(/_/g, ' '))}</span>${here.map(r => `<span class="badge" style="--pc:${r.color}">${esc(r.name)}</span>`).join('')}</div><div class="rbody">${rows || '<div class="empty">nothing lying out or put away here</div>'}</div></div>`;
+  });
+  $('home').innerHTML = h;
+  $('clock2').textContent = `${fmt(S.t)} on ${WD[(S.day - 1) % 7]}`;
+}
+// timeline rows for the day
+let TL = [];
+function buildTimeline() {
+  const d = S.day, rows = [];
+  RES.forEach(r => { const p = PLANS[d] && PLANS[d][r.id]; if (p && p.activities.length) rows.push({ m: toMin(p.activities[0].start) - 0.6, kind: 'plan', r: r.id, x: p }); });
+  (D.responses).forEach(x => { if (x.day === d && x.stage === 'act') rows.push({ m: toMin(x.time) + (x.problem_given ? 0.07 : -0.1), kind: 'think', r: x.resident, x }); });
+  D.events.forEach(e => { if (e.day === d) rows.push({ m: e.minute, kind: 'ev', r: e.resident, x: e }); });
+  D.failed.forEach(f => { if (f.day === d) rows.push({ m: toMin(f.time) + 0.05, kind: 'bad', r: f.resident, x: f }); });
+  rows.sort((a, b) => a.m - b.m);
+  TL = rows;
+}
+function evText(e) {
+  const v = e.verb.replace(/_/g, ' ');
+  let s = `<span class="verb">${esc(v)}</span> `;
+  if (e.verb === 'go' || e.verb === 'come_home') s += esc(placeName(e.to));
+  else if (e.verb === 'leave_home') s += `for ${e.minutes} min${e.minutes_filled ? ` <span class="small">(${esc(e.minutes_filled)}${e.minutes_as_written != null ? ', answer said ' + e.minutes_as_written : ''})</span>` : ''}${e.carried && e.carried.length ? ' carrying ' + e.carried.map(c => chip(c)).join(' ') : ''}${e.text ? ` <span class="small">“${esc(e.text)}”</span>` : ''}`;
+  else if (e.verb === 'come_home') s += '';
+  else if (e.verb === 'do') s += `${esc(e.text || '')} <span class="small">(${e.minutes} min)</span>`;
+  else if (e.verb === 'say') s += `${e.person ? 'to ' + esc(RESBY[e.person] ? RESBY[e.person].name : e.person) + ': ' : ''}“${esc(e.text || '')}”`;
+  else if (e.object) { s += chip(e.object); if (e.to_pos) s += ` → ${esc(posText(e.to_pos))}`; if (e.hidden_after) s += ' <span class="small">(out of sight)</span>'; if (e.settled) s += ` <span class="small">(now loose: ${e.settled.map(esc).join(', ')})</span>`; }
+  if (e.verb === 'come_home' && e.carried && e.carried.length) s += ' with ' + e.carried.map(c => chip(c)).join(' ');
+  if (e.why) s += ` <span class="why">${esc(e.why)}</span>`;
+  return s;
+}
+function renderTimeline() {
+  const find = S.find.trim().toLowerCase();
+  let h = '', n = 0;
+  TL.forEach((row, i) => {
+    if (S.who && row.r !== S.who) return;
+    if (S.bad && row.kind !== 'bad') return;
+    if (!S.think && (row.kind === 'think' || row.kind === 'plan')) return;
+    if (row.kind === 'ev') { const e = row.x; if (S.moves && !e.object) return; if (!S.walk && e.verb === 'go') return; }
+    if (S.moves && (row.kind === 'think' || row.kind === 'plan')) return;
+    const r = RESBY[row.r] || { name: row.r, color: 'var(--muted)' };
+    let x = '', cls = 'row';
+    if (row.kind === 'plan') { cls += ' plan'; const p = row.x; x = `<b>plans the day</b> <span class="small">stress ${p.inner_state.stress}, tired ${p.inner_state.tiredness}, mood ${p.inner_state.mood}, health ${p.inner_state.health}${p.off_routine ? ' · told to vary the day' : ''}</span><br>${esc(p.thinking)}<details><summary>${p.activities.length} activities</summary>${p.activities.map(a => `<div class="small"><span class="mono">${esc(a.start)}–${esc(a.end)}</span> ${esc(a.activity)} <i>(${esc(a.room.replace(/_/g, ' '))})</i>${a.uses && a.uses.length ? ' · uses ' + esc(a.uses.join(', ')) : ''}</div>`).join('')}</details>`; }
+    else if (row.kind === 'think') { cls += ' think'; const t = row.x; const st = t.inner_state;
+      x = `<b>${esc(t.activity || '')}</b>${t.problem_given ? ` <span class="small">· after: ${esc(t.problem_given)}</span>` : ''} <span class="small">· stress ${st.stress}, tired ${st.tiredness}, mood ${st.mood}, health ${st.health}</span> ${(t.habit_triggers_now || []).map(h => `<span class="pill trig">trigger: ${esc(h)}</span>`).join('')}${t.habit_followed && t.habit_followed !== 'none' ? `<span class="pill habit">follows: ${esc(t.habit_followed)}</span>` : ''}<br>${esc(t.thinking)}`; }
+    else if (row.kind === 'bad') { cls += ' bad'; const f = row.x; x = `<b>rejected</b> ${esc(f.action.verb)} ${esc(f.action.object || f.action.place || '')}: ${esc(f.message)}`; }
+    else { const e = row.x; if (e.implied) cls += ' implied'; x = evText(e); }
+    if (find && !(x.toLowerCase().includes(find))) return;
+    n++;
+    h += `<div class="${cls}" data-m="${Math.floor(row.m)}" tabindex="0"><span class="t">${fmt(Math.floor(row.m))}</span><span class="r" style="--pc:${r.color}">${esc(r.name)}</span><div class="x">${x}</div></div>`;
+  });
+  $('timeline').innerHTML = h || '<div class="empty" style="padding:12px">Nothing matches.</div>';
+  markNow();
+}
+function markNow() { const rows = $('timeline').querySelectorAll('.row'); rows.forEach(el => el.classList.toggle('now', +el.dataset.m === S.t)); }
+function scrollToNow() { const rows = [...$('timeline').querySelectorAll('.row')]; const el = rows.find(r => +r.dataset.m >= S.t) || rows[rows.length - 1]; if (el) { const box = $('timeline'); box.scrollTop = el.offsetTop - box.offsetTop - 40; } }
+function setTime(t, scroll) { S.t = Math.max(0, Math.min(1439, Math.round(t))); $('slider').value = S.t; $('clock').textContent = fmt(S.t); renderStrips(); renderPeople(); renderHome(); markNow(); if (scroll) scrollToNow(); save(); }
+function stepEvent(dir) { const ms = TL.filter(r => r.kind === 'ev' && (!S.who || r.r === S.who) && r.x.verb !== 'go').map(r => r.m); const next = dir > 0 ? ms.find(m => m > S.t) : [...ms].reverse().find(m => m < S.t); if (next != null) setTime(next, true); }
+function renderDay() {
+  renderDayTabs(); buildTimeline();
+  $('slider').value = S.t; $('clock').textContent = fmt(S.t);
+  renderStrips(); renderPeople(); renderHome(); renderTimeline();
+}
+
+// ---------- Objects view ----------
+function renderObjList() {
+  const f = $('objFind').value.trim().toLowerCase(), moved = $('objMoved').checked, own = $('objOwner').value;
+  const groups = {};
+  D.objects.forEach(o => { const n = (MOVES[o.id] || []).length; if (moved && !n) return; if (own && (o.owner || 'none') !== own) return;
+    if (f && !(o.id.includes(f) || o.type.includes(f) || (o.owner || '').includes(f))) return; (groups[o.type] = groups[o.type] || []).push([o.id, n]); });
+  const types = Object.keys(groups).sort((a, b) => groups[b].reduce((s, x) => s + x[1], 0) - groups[a].reduce((s, x) => s + x[1], 0) || a.localeCompare(b));
+  $('objlist').innerHTML = types.map(t => `<div class="grp">${esc(t)} · ${groups[t].length}</div>` + groups[t].map(([id, n]) => `<button data-obj="${esc(id)}" aria-current="${id === S.obj}">${esc(id)}${ownMark(id)}<span class="n">${n ? n + ' moves' : ''}</span></button>`).join('')).join('') || '<div class="empty">No object matches.</div>';
+}
+function renderObjDetail() {
+  const oid = S.obj; if (!oid || !OBJ[oid]) { $('objdetail').innerHTML = '<div class="panel empty">Pick an object on the left. Objects that moved most come first.</div>'; return; }
+  const o = OBJ[oid];
+  const moves = (MOVES[oid] || []).map(k => D.events[k]);
+  const days = D.schedule.length || 7;
+  let strip = '';
+  for (let d = 1; d <= Math.min(days, maxDay); d++) {
+    const g0 = G(d, 0); const pts = TRACK[oid].filter(x => x.g > g0 && x.g < g0 + 1440);
+    let cur = basePos(oid, g0), start = 0, s = '';
+    const seg = (a, b, p) => { if (b <= a) return; const left = a / 14.4, w = (b - a) / 14.4; if (p.at === 'place') { const room = PL[p.place] ? PL[p.place].room : '?'; s += `<div class="seg" style="left:${left}%;width:${w}%;background:${roomColor(room)}" title="${esc(p.place)} ${fmt(a)}–${fmt(b)}"></div>`; } else { const r = RESBY[p.person]; s += `<div class="seg" style="left:${left}%;width:${w}%;background:repeating-linear-gradient(45deg,${r ? r.color : 'var(--muted)'} 0 3px,transparent 3px 6px)" title="with ${esc(r ? r.name : p.person)} ${fmt(a)}–${fmt(b)}"></div>`; } };
+    pts.forEach(x => { const m = x.g - g0; seg(start, m, cur); cur = basePos(oid, x.g); start = m; });
+    seg(start, 1440, cur);
+    strip += `<div class="strow"><span class="small">${esc(WD[(d - 1) % 7].slice(0, 3))} ${d}</span><div class="segs">${s}</div></div>`;
+  }
+  const ends = []; for (let d = 1; d <= Math.min(days, D.days_done); d++) { const p = basePos(oid, G(d, 1439.9)); ends.push(`<tr><td>${esc(WD[(d - 1) % 7].slice(0, 3))} ${d}</td><td class="mono">${esc(p.at === 'place' ? p.place : 'with ' + (RESBY[p.person] ? RESBY[p.person].name : p.person))}</td><td class="small">${esc(p.at === 'place' ? placeName(p.place) : '')}</td></tr>`); }
+  const contents = D.objects.filter(x => x.start.at === 'inside' && x.start.carrier === oid).map(x => x.id);
+  $('objdetail').innerHTML = `
+    <div class="panel"><h2 class="mono" style="font-size:17px">${esc(oid)}${ownMark(oid)}</h2>
+      <dl class="kv" style="grid-template-columns:110px 1fr"><dt>type</dt><dd>${esc(o.type)}</dd><dt>looks</dt><dd>${esc([o.color, o.material, o.size, o.pattern, o.condition].filter(Boolean).join(', '))}</dd>
+      <dt>owner</dt><dd>${o.owner ? esc(RESBY[o.owner] ? RESBY[o.owner].full : o.owner) : 'nobody in particular'}</dd><dt>pocketable</dt><dd>${o.pocketable ? 'yes' : 'no'}</dd>
+      <dt>holds things</dt><dd>${o.carrier === 'none' ? 'no' : o.carrier + (contents.length ? ' · at the start: ' + contents.map(c => chip(c)).join(' ') : '')}</dd>
+      <dt>at the start</dt><dd class="mono">${esc(posText(o.start))}</dd></dl></div>
+    <div class="panel"><h3>Where it was, by day (room colours as on the Day tab; hatched = with a person)</h3><div class="strips">${strip}</div><div class="hours"><span></span><div class="h"><span>00</span><span>06</span><span>12</span><span>18</span><span>24</span></div></div></div>
+    <div class="panel"><h3>End of each finished day</h3>${ends.length ? `<div class="tablewrap"><table><tr><th>day</th><th>where</th><th></th></tr>${ends.join('')}</table></div>` : '<div class="empty">No day finished yet.</div>'}</div>
+    <div class="panel"><h3>Every move (${moves.length})</h3>${moves.length ? `<div class="tablewrap"><table><tr><th>when</th><th>who</th><th>what</th><th>to</th><th>why</th></tr>${moves.map(e => `<tr><td class="mono" style="white-space:nowrap"><a href="#" data-goto="${e.day},${e.minute}">${esc(WD[(e.day - 1) % 7].slice(0, 3))} ${fmt(e.minute)}</a></td><td style="color:${RESBY[e.resident] ? RESBY[e.resident].color : 'inherit'};font-weight:600">${esc(RESBY[e.resident] ? RESBY[e.resident].name : e.resident)}</td><td>${esc(e.verb.replace(/_/g, ' '))}</td><td class="mono">${esc(posText(e.to_pos))}</td><td class="small">${esc(e.why || '')}</td></tr>`).join('')}</table></div>` : '<div class="empty">Never moved.</div>'}</div>`;
+}
+
+// ---------- Household view ----------
+function renderHousehold() {
+  const sched = {}; (D.schedule || []).forEach((list, i) => list.forEach(s => (sched[s] = sched[s] || []).push(i + 1)));
+  const startCount = {}; D.objects.forEach(o => { if (o.start.at === 'place') startCount[o.start.place] = (startCount[o.start.place] || 0) + 1; });
+  let h = `<div class="panel" style="margin-bottom:14px"><h3>The home</h3><p style="margin:0;max-width:75ch">${esc(D.home)}</p><div class="small" style="margin-top:6px">${D.layout.places.length} spots in ${ROOMS.length} rooms · ${D.objects.length} objects · ${D.objects.filter(o => o.owner).length} owned</div></div><div class="cols">`;
+  RES.forEach(({ r, color }) => {
+    h += `<div class="panel" style="border-top:4px solid ${color}"><h2 style="font-family:var(--serif);font-size:19px">${esc(r.name)}, ${r.age}</h2><div class="small">${esc(r.job)} · sleeps at <span class="mono">${esc(r.sleeps_at)}</span></div><p style="margin:8px 0">${esc(r.personality)}</p>
+      <h3>Habits with things</h3><ul class="plain">${r.object_habits.map(x => `<li>${esc(x)}</li>`).join('')}</ul>
+      <h3 style="margin-top:10px">How they respond</h3><div class="tablewrap"><table><tr><th>habit</th><th>when</th><th>then</th><th>how often</th></tr>${r.response_habits.map(x => `<tr><td class="mono">${esc(x.id)}</td><td>${esc(x.trigger)}</td><td>${esc(x.behavior)}</td><td class="small">${esc(x.how_often)}</td></tr>`).join('')}</table></div>
+      <h3 style="margin-top:10px">What stresses them</h3><ul class="plain">${r.scheduled_stressors.map(x => `<li>${esc(x)}</li>`).join('')}</ul>
+      <details><summary>Weekly routine (${r.weekly_routine.length} entries)</summary><div class="tablewrap"><table><tr><th>days</th><th>time</th><th>activity</th><th>room</th></tr>${r.weekly_routine.map(x => `<tr><td class="small">${esc(x.days.join(' '))}</td><td class="mono" style="white-space:nowrap">${esc(x.start)}–${esc(x.end)}</td><td>${esc(x.activity)}</td><td class="small">${esc(x.room.replace(/_/g, ' '))}</td></tr>`).join('')}</table></div></details></div>`;
+  });
+  h += `</div><div class="panel" style="margin-top:14px"><h3>Situations the director can schedule (this run's days in the last column)</h3><div class="tablewrap"><table><tr><th>situation</th><th>kind</th><th>how often</th><th>can happen to</th><th>what it is like</th><th>days</th></tr>${D.situations.map(s => `<tr><td class="mono">${esc(s.id)}</td><td class="small">${esc(s.kind)}</td><td class="small">${esc(s.how_often)}</td><td class="small">${esc(s.happens_to.join(', '))}</td><td><details><summary>${esc(s.what_it_is_like.slice(0, 70))}…</summary><p style="margin:4px 0">${esc(s.what_it_is_like)}</p><p class="small" style="margin:4px 0">Others notice: ${esc(s.what_others_notice)}</p></details></td><td>${sched[s.id] ? `<b>${sched[s.id].join(', ')}</b>${s.id === 'sick' && sickWho.length ? ` <span class="small">(${esc(sickWho.join(', '))})</span>` : ''}` : ''}</td></tr>`).join('')}</table></div></div>
+  <div class="panel" style="margin-top:14px"><h3>Small disturbances</h3><ul class="plain">${D.disturbances.map(x => `<li><span class="small">${esc(x.who)}:</span> ${esc(x.text)}</li>`).join('')}</ul></div>
+  <div class="panel" style="margin-top:14px"><h3>Rooms, furniture and spots (number = objects there at the start)</h3><div class="cols">${ROOMS.map(room => { const fur = {}; ROOM_PLACES[room].forEach(pid => (fur[PL[pid].furniture] = fur[PL[pid].furniture] || []).push(PL[pid]));
+    return `<div><div style="font-weight:700;border-bottom:3px solid ${roomColor(room)};margin-bottom:4px">${esc(room.replace(/_/g, ' '))}</div>${Object.entries(fur).map(([f, ps]) => `<div class="small" style="margin-top:4px"><b style="color:var(--ink)">${esc(f)}</b></div>${ps.map(p => `<div style="font-size:13px;padding-left:10px"><span class="mono">${esc(p.id)}</span> ${startCount[p.id] ? `<b>${startCount[p.id]}</b>` : ''} <span class="small">${p.kind === 'container' ? 'closed · ' : ''}${p.hidden ? 'out of sight · ' : ''}${esc((p.descriptions || []).join(' / '))}</span></div>`).join('')}`).join('')}</div>`; }).join('')}</div></div>`;
+  $('v-household').innerHTML = h;
+}
+
+// ---------- Run view ----------
+function renderRun() {
+  const real = D.events.filter(e => !e.implied && e.verb !== 'come_home');
+  const cost = Object.values(D.calls_by_day).reduce((s, b) => s + b.cost, 0);
+  const calls = Object.values(D.calls_by_day).reduce((s, b) => s + b.calls, 0);
+  const moved = new Set(D.events.filter(e => e.object && e.to_pos).map(e => e.object));
+  let h = `<div class="stats">
+    <div class="stat"><b>${D.days_done}${D.last_day > D.days_done ? ' + 1' : ''}</b><span>days lived${D.last_day > D.days_done ? ' (one in progress)' : ''}</span></div>
+    <div class="stat"><b>${calls}</b><span>model calls for the days</span></div>
+    <div class="stat"><b>$${cost.toFixed(2)}</b><span>for the days (+ $${(D.create_cost || 0).toFixed(2)} creating the household)</span></div>
+    <div class="stat"><b>${real.length}</b><span>actions carried out</span></div>
+    <div class="stat"><b>${(100 * D.failed.length / Math.max(1, real.length + D.failed.length)).toFixed(1)}%</b><span>of attempted actions rejected (${D.failed.length})</span></div>
+    <div class="stat"><b>${moved.size}</b><span>of ${D.objects.length} objects moved</span></div></div>`;
+  const per = [];
+  for (let d = 1; d <= maxDay; d++) { const ev = D.events.filter(e => e.day === d && !e.implied && e.verb !== 'come_home'); const f = D.failed.filter(x => x.day === d).length; const b = D.calls_by_day[String(d)] || { calls: 0, cost: 0 };
+    per.push(`<tr><td>${esc(dayLabel(d))}</td><td>${esc((D.schedule[d - 1] || []).join(', ') || '–')}</td><td class="num">${ev.length}</td><td class="num">${f}</td><td class="num">${new Set(ev.filter(e => e.object && e.to_pos).map(e => e.object)).size}</td><td class="num">${b.calls}</td><td class="num">$${b.cost.toFixed(2)}</td></tr>`); }
+  h += `<div class="panel" style="margin-bottom:14px"><h3>By day</h3><div class="tablewrap"><table><tr><th>day</th><th>situations</th><th class="num">actions</th><th class="num">rejected</th><th class="num">objects moved</th><th class="num">calls</th><th class="num">cost</th></tr>${per.join('')}</table></div></div>`;
+  // habits
+  const acts = D.responses.filter(x => x.stage === 'act');
+  let hb = '';
+  RES.forEach(({ r, color }) => { const mine = acts.filter(x => x.resident === r.id); r.response_habits.forEach(x => { const trig = mine.filter(a => (a.habit_triggers_now || []).includes(x.id)); const fol = mine.filter(a => a.habit_followed === x.id); const both = fol.filter(a => (a.habit_triggers_now || []).includes(x.id));
+    hb += `<tr><td style="color:${color};font-weight:600">${esc(RESBY[r.id].name)}</td><td><span class="mono">${esc(x.id)}</span><div class="small">when ${esc(x.trigger)}</div></td><td class="small">${esc(x.how_often)}</td><td class="num">${trig.length} of ${mine.length}</td><td class="num">${fol.length}</td><td class="num">${both.length}</td><td class="small">${[...new Set(fol.map(a => a.day))].join(', ') || '–'}</td></tr>`; }); });
+  h += `<div class="panel" style="margin-bottom:14px"><h3>Response habits: answers that said the trigger was true, and answers that followed the habit</h3><div class="tablewrap"><table><tr><th>who</th><th>habit</th><th>stated</th><th class="num">trigger true</th><th class="num">followed</th><th class="num">followed with trigger</th><th>days followed</th></tr>${hb}</table></div></div>`;
+  // feelings
+  let fe = '';
+  for (let d = 1; d <= maxDay; d++) RES.forEach(({ r, color }) => { const st = D.responses.filter(x => x.day === d && x.resident === r.id).map(x => x.inner_state); if (!st.length) return; const m = k => st.reduce((s, x) => s + x[k], 0) / st.length;
+    fe += `<tr><td>${esc(dayLabel(d))}</td><td style="color:${color};font-weight:600">${esc(RESBY[r.id].name)}</td>${['stress', 'tiredness', 'mood', 'health'].map(k => `<td class="num">${m(k).toFixed(1)}<span class="minibar" style="--pc:${color}"><i style="width:${m(k) / 3 * 100}%"></i></span></td>`).join('')}<td class="num">${st.length}</td></tr>`; });
+  h += `<div class="panel" style="margin-bottom:14px"><h3>How they felt, mean over each day's answers (0 to 3; health 3 = well, mood 3 = good)</h3><div class="tablewrap"><table><tr><th>day</th><th>who</th><th class="num">stress</th><th class="num">tiredness</th><th class="num">mood</th><th class="num">health</th><th class="num">answers</th></tr>${fe}</table></div></div>`;
+  // rejections
+  h += `<div class="panel"><h3>Every rejected action (${D.failed.length})</h3><div class="tablewrap"><table><tr><th>when</th><th>who</th><th>tried</th><th>what the engine said</th></tr>${D.failed.map(f => `<tr><td class="mono" style="white-space:nowrap"><a href="#" data-goto="${f.day},${toMin(f.time)}">${esc(WD[(f.day - 1) % 7].slice(0, 3))} ${esc(f.time)}</a></td><td style="color:${RESBY[f.resident] ? RESBY[f.resident].color : 'inherit'};font-weight:600">${esc(RESBY[f.resident] ? RESBY[f.resident].name : f.resident)}</td><td class="mono">${esc(f.action.verb)} ${esc(f.action.object || f.action.place || '')}</td><td class="small">${esc(f.message)}</td></tr>`).join('')}</table></div></div>`;
+  $('v-run').innerHTML = h;
+}
+
+// ---------- wiring ----------
+function show(view) {
+  S.view = view; save();
+  document.querySelectorAll('#tabs button').forEach(b => b.setAttribute('aria-selected', b.dataset.view === view));
+  ['day', 'objects', 'household', 'run'].forEach(v => $('v-' + v).hidden = v !== view);
+  if (view === 'day') renderDay();
+  if (view === 'objects') { renderObjList(); renderObjDetail(); }
+  if (view === 'household') renderHousehold();
+  if (view === 'run') renderRun();
+}
+$('tabs').addEventListener('click', e => { const b = e.target.closest('button'); if (b) show(b.dataset.view); });
+$('daytabs').addEventListener('click', e => { const b = e.target.closest('button'); if (!b || b.disabled) return; S.day = +b.dataset.day; const first = D.events.find(x => x.day === S.day); S.t = first ? first.minute : 420; save(); renderDay(); });
+$('slider').addEventListener('input', e => setTime(+e.target.value, false));
+$('slider').addEventListener('change', () => scrollToNow());
+$('prevEv').addEventListener('click', () => stepEvent(-1));
+$('nextEv').addEventListener('click', () => stepEvent(1));
+$('strips').addEventListener('click', e => { const s = e.target.closest('[data-strip]'); if (!s) return; const box = s.getBoundingClientRect(); setTime((e.clientX - box.left) / box.width * 1440, true); });
+document.addEventListener('keydown', e => { if (S.view !== 'day' || /input|select|textarea/i.test((e.target.tagName || ''))) return; if (e.key === 'ArrowRight') { stepEvent(1); e.preventDefault(); } if (e.key === 'ArrowLeft') { stepEvent(-1); e.preventDefault(); } });
+$('timeline').addEventListener('click', e => { if (e.target.closest('[data-obj]') || e.target.closest('summary')) return; const r = e.target.closest('.row'); if (r) setTime(+r.dataset.m, false); });
+$('tlWho').innerHTML += RES.map(r => `<option value="${esc(r.id)}">${esc(r.name)}</option>`).join('');
+$('objOwner').innerHTML += RES.map(r => `<option value="${esc(r.id)}">${esc(r.name)}'s</option>`).join('') + '<option value="none">nobody\'s</option>';
+const tl = () => { S.who = $('tlWho').value; S.think = $('tlThink').checked; S.moves = $('tlMoves').checked; S.walk = $('tlWalk').checked; S.bad = $('tlBad').checked; S.find = $('tlFind').value; renderTimeline(); };
+['tlWho', 'tlThink', 'tlMoves', 'tlWalk', 'tlBad'].forEach(id => $(id).addEventListener('change', tl));
+$('tlFind').addEventListener('input', tl);
+$('tlNow').addEventListener('click', scrollToNow);
+$('onlyRecent').addEventListener('change', e => { S.onlyRecent = e.target.checked; renderHome(); });
+['objFind', 'objMoved', 'objOwner'].forEach(id => $(id).addEventListener(id === 'objFind' ? 'input' : 'change', renderObjList));
+$('objlist').addEventListener('click', e => { const b = e.target.closest('button[data-obj]'); if (!b) return; S.obj = b.dataset.obj; save(); renderObjList(); renderObjDetail(); });
+document.addEventListener('click', e => {
+  const c = e.target.closest('.chip[data-obj]'); if (c) { S.obj = c.dataset.obj; show('objects'); window.scrollTo(0, 0); return; }
+  const a = e.target.closest('a[data-goto]'); if (a) { e.preventDefault(); const [d, m] = a.dataset.goto.split(',').map(Number); S.day = d; S.t = m; show('day'); setTime(m, true); }
+});
+document.addEventListener('keydown', e => { if (e.key === 'Enter') { const c = e.target.closest && e.target.closest('.chip[data-obj]'); if (c) c.click(); } });
+if (!S.obj) { let best = null, n = -1; Object.entries(MOVES).forEach(([k, v]) => { if (v.length > n) { n = v.length; best = k; } }); S.obj = best; }
+const h0 = (location.hash || '').slice(1); if (['day', 'objects', 'household', 'run'].includes(h0)) S.view = h0;
+show(S.view);
+})();
+</script>
