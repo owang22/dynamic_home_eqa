@@ -171,19 +171,22 @@ class Household:
     @staticmethod
     def _away_minutes(action: dict, activity: dict, pending: list, now: int) -> None:
         """Time away comes from the resident's own plan when the answer leaves it
-        out, or when it would bring them home in the middle of a planned
-        out-of-house stretch (back from the commute, out again for work)."""
+        out or gives too little: if the current activity is out of the house, or
+        an out-of-house stretch starts within the hour, they are away until that
+        stretch ends (back from the commute, out again for work would otherwise
+        happen). Home activities in between are skipped as missed."""
         block_end = None
         for a in [activity] + pending:
-            if a["room"] != "out_of_house":
-                if block_end is not None or a is not activity:
+            out = a["room"] == "out_of_house"
+            if block_end is None:
+                if out and (a is activity or a["start_min"] <= now + 60):
+                    block_end = a["end_min"]
+                elif a is not activity and a["start_min"] > now + 60:
                     break
                 continue
-            if block_end is None and a is not activity and a["start_min"] > now + 30:
+            if not out or a["start_min"] > block_end + 15:
                 break
-            if block_end is not None and a["start_min"] > block_end + 15:
-                break
-            block_end = max(block_end or 0, a["end_min"])
+            block_end = max(block_end, a["end_min"])
         given = action.get("minutes") or 0
         if block_end is None:
             if not given:

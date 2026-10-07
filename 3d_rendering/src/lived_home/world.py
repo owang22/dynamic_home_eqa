@@ -245,7 +245,8 @@ class World:
         person = self.people[rid]
         hands = [self._label(o, rid) for o in person.hands]
         worn = [self._label(o, rid) for o in person.worn]
-        return (", ".join(hands) or "nothing", ", ".join(person.pocket) or "nothing",
+        return (", ".join(hands) or "nothing",
+                ", ".join(self.tag(o, rid) for o in person.pocket) or "nothing",
                 ", ".join(worn) or "nothing you need to keep track of")
 
     # -------------------------------------------------------------- acting
@@ -262,7 +263,7 @@ class World:
             return True, "", []
         if holder is not None:
             if self.can_see(rid, oid):
-                return False, f"{oid} is with {holder}.", []
+                return False, f"{self.tag(oid, rid)} is with {self.names.get(holder, holder)}.", []
             return False, self._not_found(person, oid, minute), []
         place = self.place_of(oid)
         if place is not None and named == place and self.layout.room_of(place) != room:
@@ -275,6 +276,10 @@ class World:
         steps = [] if place == person.at else [place]
         return True, "", steps
 
+    def tag(self, oid: str, rid: str) -> str:
+        """An id as a resident would think of it: with its owner when it has one."""
+        return oid + self.owner_tag(oid, rid)
+
     def _not_found(self, person: Resident, oid: str, minute: int) -> str:
         """The resident looked for oid where they are and it was not there. They
         learn only that it is not here, never where it is."""
@@ -286,15 +291,15 @@ class World:
                                   "day": self.day, "minute": minute}
             seen = [o for o in self.things_at(believed_place) if self.can_see(person.rid, o)
                     or believed_place == person.at]
-            return (f"{oid} is not at {believed_place}. There you see: "
-                    f"{', '.join(seen) or 'nothing'}.")
+            return (f"{self.tag(oid, person.rid)} is not at {believed_place}. There you see: "
+                    f"{', '.join(self.tag(o, person.rid) for o in seen) or 'nothing'}.")
         b = person.belief[oid]
         if b["pos"]["at"] == "unknown":
             last = "and you do not know where it is"
         else:
             when = "at the start" if b["day"] < 0 else f"day {b['day']} {clock(b['minute'])}"
             last = f"you last saw it {self.describe(b['pos'], person.rid)} ({when})"
-        return f"You do not see {oid} anywhere you can reach in the {room}; {last}."
+        return f"You do not see {self.tag(oid, person.rid)} anywhere you can reach in the {room}; {last}."
 
     def _step(self, rid: str, place: str, minute: int) -> int:
         """A walk the resident's action implies. Returns minutes (1 across rooms)."""

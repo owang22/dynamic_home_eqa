@@ -27,3 +27,11 @@ def test_away_minutes_from_plan():
     a = {"verb": "leave_home", "minutes": 0}
     Household._away_minutes(a, act("living", 600, 660), [act("out_of_house", 900, 960)], 610)
     assert a["minutes"] == 30 and a["minutes_filled"] == "default"
+
+
+def test_away_minutes_skip_one_home_activity_before_work():
+    # leaving at the end of dressing; "collect equipment" (home) then work out of house
+    a = {"verb": "leave_home", "minutes": 0}
+    Household._away_minutes(a, act("kitchen", 345, 390), [act("entry", 390, 405), act("out_of_house", 405, 990),
+                                                           act("entry", 990, 1020)], 370)
+    assert a["minutes"] == 990 - 370
