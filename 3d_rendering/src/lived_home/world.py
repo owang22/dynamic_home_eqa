@@ -447,7 +447,7 @@ class World:
             other = self.people.get(act.get("person") or "")
             if other is None or other.rid == rid:
                 return False, "Give it to whom?", 0
-            if oid not in person.hands and oid not in person.pocket and oid not in person.worn:
+            if self.holder_of(oid) != rid:          # hands, pockets, worn, or in a bag they carry
                 return False, f"You are not holding {oid}.", 0
             if other.at is None or self.layout.room_of(other.at) != self.room_of_person(rid):
                 return False, f"{other.rid} is not in this room.", 0
@@ -491,7 +491,7 @@ class World:
         oid = act.get("object") or None
         if oid is None:
             return False, "Put down what?", 0
-        if oid not in person.hands and oid not in person.pocket and oid not in person.worn:
+        if self.holder_of(oid) != rid:          # hands, pockets, worn, or in a bag they carry
             return False, f"You are not holding {oid}.", 0
         place = act.get("place") or person.at
         if place not in self.layout.places:

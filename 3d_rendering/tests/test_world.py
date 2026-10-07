@@ -296,3 +296,18 @@ def test_pocket_goes_into_worn_clothes_and_stays_when_taken_off():
     assert w.apply("ben", A("pick_up", object="keys_ben"), 43)[0]
     assert w.apply("ben", A("pocket", object="keys_ben"), 43)[0]
     assert w.where["keys_ben"] == {"at": "pocket", "person": "ben"}
+
+
+def test_put_down_and_give_from_pocket_of_worn_clothes():
+    w = make()
+    w.objects["jeans_blue"] = obj("jeans", "bed", carrier="pockets", owner="ben")
+    w.where["jeans_blue"] = dict(w.objects["jeans_blue"]["start"])
+    w.apply("ben", A("wear", object="jeans_blue"), 0)
+    w.apply("ben", A("go", place="entry_key_bowl"), 1)
+    w.apply("ben", A("pocket", object="keys_ben"), 1)
+    ok, msg, _ = w.apply("ben", A("put_down", object="keys_ben", place="entry_table"), 2)
+    assert ok, msg
+    w.apply("ben", A("pocket", object="keys_ben"), 3)
+    w.apply("ana", A("go", place="entry_coat_hooks"), 3)
+    ok, msg, _ = w.apply("ben", A("give", object="keys_ben", person="ana"), 4)
+    assert ok, msg
