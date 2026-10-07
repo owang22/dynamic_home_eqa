@@ -81,18 +81,18 @@ class FakeClient:
         out, carriers = [], []
         for i in range(arr["minItems"]):
             kind, carrier = TYPES[(i + len(room)) % len(TYPES)]
-            oid = f"{kind.replace(' ', '_')}_{room}_{i}"
+            n = i + 1
             place = rng.choice([p for p in places if not p.endswith("s3")] or places)
-            relation, ref = "on", ""
+            relation, ref = "on", 0
             here = [c for c in carriers if c[1] == place]
             if carrier == "none" and here and rng.random() < 0.5:
                 relation, ref = "in", here[0][0]
-            out.append({"id": oid, "type": kind, "color": "red", "material": "plastic",
+            out.append({"n": n, "type": kind, "looks": f"{room} {i}", "color": "red", "material": "plastic",
                         "size": "small", "pattern": "plain", "condition": "worn",
                         "owner": rng.choice(owners), "pocketable": kind in POCKETABLE,
                         "carrier": carrier, "place": place, "relation": relation, "ref": ref})
             if carrier != "none":
-                carriers.append((oid, place))
+                carriers.append((n, place))
         return {"thinking": "fake", "objects": out}
 
     def _situations(self):

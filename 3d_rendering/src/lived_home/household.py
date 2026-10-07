@@ -69,37 +69,74 @@ def check_residents(layout: Layout):
     return check
 
 
-def check_room_objects(room_places: set, taken: set, layout: Layout):
+def check_room_objects(room_places: set):
+    """The rules the model must decide: numbering, references, carriers.
+    Ids are not the model's job (see compose_ids)."""
     def check(ans: dict) -> str:
-        seen: dict[str, dict] = {}
-        for o in ans["objects"]:
-            oid, kind = o["id"], slug(o["type"])
-            if not ID.match(oid):
-                return f"Object id {oid} must be lowercase with underscores."
-            if oid in seen or oid in taken:
-                return f"Object id {oid} is already used; make it describe what sets this one apart."
-            if not kind or not oid.startswith(kind):
-                return f"Object id {oid} must start with its type ({kind})."
-            if oid == kind:
-                return f"Object id {oid} must add what sets it apart from other {o['type']}s."
+        objs = ans["objects"]
+        by_n = {o["n"]: o for o in objs}
+        problems = []
+        if len(by_n) != len(objs):
+            problems.append("each thing needs its own n")
+        for o in objs:
+            if not o["type"].strip():
+                problems.append(f"thing {o['n']} has no type")
             if o["place"] not in room_places:
-                return f"{oid} is at {o['place']}, which is not a spot in this room."
+                problems.append(f"thing {o['n']} is at {o['place']}, which is not a spot in this room")
             ref = o["ref"]
-            if ref:
-                if ref not in seen:
-                    return f"{oid} has ref {ref}, which is not an object listed before it in this room."
-                if seen[ref]["place"] != o["place"]:
-                    return f"{oid} is at {o['place']} but its ref {ref} is at {seen[ref]['place']}."
-                if o["relation"] == "in":
-                    if seen[ref]["carrier"] == "none":
-                        return f"{oid} is in {ref}, but {ref} has carrier none; it cannot hold things."
-                    if seen[ref]["relation"] == "in" and seen[ref]["ref"]:
-                        return f"{ref} is itself inside something; {oid} cannot go inside it."
-                    if o["carrier"] != "none":
-                        return f"{oid} is a carrier; it cannot start inside {ref}."
-            seen[oid] = o
-        return ""
+            if not ref:
+                continue
+            target = by_n.get(ref)
+            if target is None or ref == o["n"]:
+                problems.append(f"thing {o['n']} has ref {ref}, which is not another thing in your list")
+                continue
+            chain, cur = {o["n"]}, ref
+            while cur and cur in by_n and cur not in chain:
+                chain.add(cur)
+                cur = by_n[cur]["ref"]
+            if cur in chain:
+                problems.append(f"things {o['n']} and {ref} refer to each other in a loop")
+            elif target["place"] != o["place"]:
+                problems.append(f"thing {o['n']} is at {o['place']} but its ref {ref} is at {target['place']}")
+            elif o["relation"] == "in":
+                if target["carrier"] == "none":
+                    problems.append(f"thing {o['n']} is in thing {ref}, which has carrier none and cannot hold things")
+                elif target["relation"] == "in" and target["ref"]:
+                    problems.append(f"thing {ref} is itself inside something; thing {o['n']} cannot go inside it")
+                if o["carrier"] != "none":
+                    problems.append(f"thing {o['n']} is a bag or basket and cannot start inside thing {ref}")
+        if not problems:
+            return ""
+        return f"{len(problems)} problems: " + "; ".join(problems) + "."
     return check
+
+
+def compose_ids(objects: list, taken: set, rids) -> None:
+    """id = type + looks, in place. Resident names are dropped from the looks.
+    A clash with an id already in the home takes the next attribute that tells
+    it apart (material, condition, pattern, color), then a number. References
+    (ref = another thing's n) become ids."""
+    used = set(taken)
+    by_n = {}
+    for o in objects:
+        o["type"] = o["type"].strip().lower()
+        kind = slug(o["type"])
+        look = [w for w in slug(o["looks"]).split("_") if w and w not in rids and w not in kind.split("_")]
+        oid = "_".join([kind] + look) if look else f"{kind}_{slug(o['color'])}"
+        for extra in (o["material"], o["condition"], o["pattern"], o["color"]):
+            if oid not in used:
+                break
+            w = slug(extra)
+            if w and w not in oid.split("_"):
+                oid = f"{oid}_{w}"
+        base, k = oid, 2
+        while oid in used:
+            oid, k = f"{base}_{k}", k + 1
+        used.add(oid)
+        o["id"] = oid
+        by_n[o["n"]] = oid
+    for o in objects:
+        o["ref"] = by_n.get(o["ref"], "") if o["ref"] else ""
 
 
 def check_situations(spec: dict) -> str:
@@ -150,7 +187,7 @@ def create(caller: Caller, seed: int, out: pathlib.Path, effort_note: str = "") 
     rooms = list(layout.rooms)
 
     res = caller.call("create/residents", prompts.CREATE_SYSTEM,
-                      prompts.RESIDENTS_USER.format(layout=layout.describe()),
+                      prompts.RESIDENTS_USER.format(home=lay["home"], layout=layout.describe()),
                       residents_schema(layout.place_ids, rooms), check_residents(layout),
                       max_tokens=40000)
     residents = res["residents"]
@@ -192,8 +229,11 @@ def _room_objects(caller, layout, residents, rids, room, target, so_far, suffix)
         by_type = collections.defaultdict(list)
         for o in so_far:
             by_type[o["type"]].append(o["id"])
-        taken_text = ("\nAlready in other rooms (do not reuse these ids; add more instances "
-                      "of a type where the home would have them):\n"
+        taken_text = ("\nAlready placed in other rooms, and staying there (type: names). Do not "
+                      "add a second one of something a person has only one of (their phone, "
+                      "wallet, house keys, work laptop, everyday glasses); do add more instances "
+                      "of types a home has several of (mugs, chargers, towels, books), looking "
+                      "different from these:\n"
                       + "\n".join(f"  {t}: {', '.join(ids)}" for t, ids in sorted(by_type.items())))
     else:
         taken_text = ""
@@ -204,11 +244,11 @@ def _room_objects(caller, layout, residents, rids, room, target, so_far, suffix)
                                                   room=room, spots=spots, lo=lo, hi=hi,
                                                   taken=taken_text),
                       room_objects_schema(room_places, rids, lo, hi),
-                      check_room_objects(set(room_places), taken, layout), max_tokens=40000)
+                      check_room_objects(set(room_places)), max_tokens=40000)
+    compose_ids(ans["objects"], taken, rids)
     out = []
     for o in ans["objects"]:
         o = dict(o)
-        o["type"] = o["type"].strip().lower()
         o["owner"] = None if o["owner"] == "none" else o["owner"]
         o["start"] = start_position(o, layout)
         out.append(o)
@@ -233,6 +273,11 @@ def summarize(spec: dict) -> str:
              f"- situations: {len(spec['situations'])}; disturbances: {len(spec['small_disturbances'])}",
              "", "## Objects per room", ""]
     lines += [f"- {room}: {rooms[room]} objects, {len(ids)} places" for room, ids in layout.rooms.items()]
+    owned = collections.Counter((o["owner"], o["type"]) for o in spec["objects"] if o["owner"])
+    lines += ["", "## One person owning several of a type (check none is a duplicate of a one-off thing)", ""]
+    lines += [f"- {owner}: {t} x{c}: " + ", ".join(o["id"] for o in spec["objects"]
+                                                  if o["owner"] == owner and o["type"] == t)
+              for (owner, t), c in sorted(owned.items()) if c > 1] or ["- none"]
     lines += ["", "## Types with several instances", ""]
     lines += [f"- {t}: {c}" for t, c in types.most_common() if c >= 2]
     return "\n".join(lines) + "\n"

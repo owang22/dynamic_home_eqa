@@ -103,7 +103,7 @@ def residents_schema(place_ids: list[str], rooms: list[str]) -> dict:
 
 def room_objects_schema(place_ids: list[str], owners: list[str], lo: int, hi: int) -> dict:
     obj = _obj({
-        "id": STR, "type": STR,
+        "n": {"type": "integer"}, "type": STR, "looks": STR,
         "color": STR, "material": STR, "size": _enum(SIZES),
         "pattern": STR, "condition": STR,
         "owner": _enum(owners + ["none"]),
@@ -111,7 +111,7 @@ def room_objects_schema(place_ids: list[str], owners: list[str], lo: int, hi: in
         "carrier": _enum(CARRIER_KINDS),
         "place": _enum(place_ids),
         "relation": _enum(RELATIONS),
-        "ref": STR,
+        "ref": {"type": "integer"},
     })
     return _obj({"thinking": STR, "objects": _arr(obj, lo, hi)})
 

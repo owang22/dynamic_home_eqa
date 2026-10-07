@@ -25,7 +25,9 @@ the floor next to the shoe rack. Aim for {lo} to {hi} spots in total.
 
 - Room ids: short, lowercase, underscores (kitchen, main_bedroom).
 - Spot ids: unique across the home, lowercase with underscores, starting with
-  the room id (kitchen_counter_left_end, main_bedroom_nightstand_ben_drawer).
+  the room id (kitchen_counter_left_end, main_bedroom_nightstand_left_drawer).
+- Do not name the residents yet; describe furniture by where it is (the left
+  nightstand, the window side of the bed), not by who uses it.
 - name: what the spot is, in a few words.
 - kind: surface if things on it are out in the open; container if it closes
   (a drawer, cabinet, fridge, closet, hamper, lidded bin).
@@ -36,7 +38,9 @@ the floor next to the shoe rack. Aim for {lo} to {hi} spots in total.
 - entry_spot: the spot id just inside the front door, where someone coming
   home first stands."""
 
-RESIDENTS_USER = """The home:
+RESIDENTS_USER = """The home: {home}
+
+Its rooms and spots:
 {layout}
 
 Write the two adults who live here. For each:
@@ -69,26 +73,30 @@ glasses, books, medicine, chargers, bags, cooking things, hobby things,
 clothes they leave lying around). Skip furniture, appliances and anything
 fixed in place.
 
+- n: number the things 1, 2, 3, ... in the order you list them.
 - type: a plain lowercase noun shared by every instance of that kind of thing
   ("mug", "phone charger", "reading glasses", "tote bag").
+- looks: 1 to 4 words that tell this one apart from the others of its type by
+  how it looks ("red ceramic", "white chipped", "usb c braided"). Not who owns
+  it. Its name in the simulation is made from type and looks (mug_red_ceramic).
 - Many types have several instances across the home: a home has 4 to 8 mugs,
   several chargers, 2 pairs of reading glasses. Put each where it belongs.
 - color, material, size, pattern ("plain" if none), condition ("new", "worn",
   "chipped", ...).
-- id: the type with underscores, then what tells it apart from the others of
-  its type (mug_red_ceramic, mug_white_chipped, phone_charger_usb_c_white).
-- owner: a resident id only where people would say whose it is ("Ben's work
-  laptop"); otherwise none.
+- owner: a resident id only where people in the home would say whose it is
+  ("her work laptop", "his running watch", her phone, his work boots). Most
+  things are none: mugs, chargers, mail, kitchen things, shared toiletries,
+  books on a shared shelf.
 - pocketable: fits in a trouser or jacket pocket.
 - carrier: open for things that hold other things in the open (a basket, a
   tray, a fruit bowl); closed for bags, backpacks, boxes with lids and cases;
   none otherwise.
 - place: the spot it is at. relation and ref: where it is at that spot. With
-  ref empty, relation is on (a surface) or in (a container). With ref set to
-  another object id from your list in this room, it is relative to that
-  object: behind the toaster, on top of the stack of books, next to the
-  kettle, or in a bag or basket (relation in, ref the bag). A ref must be an
-  object at the same spot, listed before it.
+  ref 0, relation is on (a surface) or in (a container). With ref set to the n
+  of another thing in your list at the same spot, it is relative to that
+  thing: behind the toaster, on top of the stack of books, next to the
+  kettle, or in a bag or basket (relation in, ref the bag's n). Things inside
+  a bag or basket cannot themselves be bags or baskets.
 {taken}"""
 
 SITUATIONS_USER = """The residents:
