@@ -191,7 +191,7 @@ class World:
         if self.carrier_kind(oid) != "none":
             inside = [i for i in self.contents(oid) if self.can_see(rid, i)]
             if inside:
-                out += f" [holding: {', '.join(inside)}]"
+                out += f" [holding: {', '.join(self.tag(i, rid) for i in inside)}]"
         return out
 
     def room_view(self, rid: str) -> str:
@@ -285,6 +285,16 @@ class World:
         learn only that it is not here, never where it is."""
         room = self.room_of_person(person.rid)
         believed = person.belief[oid]["pos"]
+        if believed["at"] == "inside":
+            # remembered in a bag or basket: if that bag is here in the room, they look inside
+            bag = believed["carrier"]
+            if self.place_of(bag) and self.layout.room_of(self.place_of(bag)) == room \
+                    or self.holder_of(bag) == person.rid:
+                person.belief[oid] = {"pos": {"at": "unknown", "not_at": f"inside {bag}"},
+                                      "day": self.day, "minute": minute}
+                inside = [self.tag(o, person.rid) for o in self.contents(bag)]
+                return (f"{self.tag(oid, person.rid)} is not inside {self.tag(bag, person.rid)}. "
+                        f"In it you see: {', '.join(inside) or 'nothing'}.")
         believed_place = believed.get("place") if believed["at"] == "place" else None
         if believed_place and self.layout.room_of(believed_place) == room:
             person.belief[oid] = {"pos": {"at": "unknown", "not_at": believed_place},

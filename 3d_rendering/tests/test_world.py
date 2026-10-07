@@ -252,3 +252,21 @@ def test_do_at_named_spot_walks_there():
     w = make()
     ok, _, minutes = w.apply("ana", A("do", place="kitchen_stovetop", minutes=10, text="cook"), 0)
     assert ok and minutes == 11 and w.people["ana"].at == "kitchen_stovetop"
+
+
+def test_remembered_in_a_bag_that_is_here_marks_unknown_and_labels_contents():
+    w = World(pilot_layout(), make().objects, ["ana", "ben"], {"ana": "bed", "ben": "bed"},
+              names={"ana": "Ana", "ben": "Ben"})
+    # ana takes ben's laptop out of his backpack while ben is elsewhere
+    w.apply("ana", A("go", place="entry_table"), 0)
+    assert "laptop_work" not in w.room_view("ana")            # closed bag: contents not seen
+    w.apply("ana", A("pick_up", object="backpack_black"), 0)
+    assert "laptop_work (Ben's)" in w.holding_view("ana")[0]  # holding it: contents seen, labelled
+    w.apply("ana", A("pick_up", object="laptop_work"), 0)
+    w.apply("ana", A("put_down", object="backpack_black"), 0)
+    w.apply("ana", A("go", place="living_coffee_table"), 1)
+    w.apply("ana", A("put_down", object="laptop_work"), 1)
+    w.apply("ben", A("go", place="entry_key_bowl"), 2)
+    ok, msg, _ = w.apply("ben", A("pick_up", object="laptop_work"), 2)
+    assert not ok and "not inside backpack_black" in msg
+    assert w.people["ben"].belief["laptop_work"]["pos"]["at"] == "unknown"
