@@ -19,7 +19,7 @@ from lived_home.world import at_place
 ID = re.compile(r"^[a-z0-9]+(_[a-z0-9]+)*$")
 PLACES_LO, PLACES_HI = 100, 200
 OBJECTS_LO, OBJECTS_HI, OBJECTS_TARGET = 150, 300, 220
-PERSONAL_LO, PERSONAL_HI = 30, 60
+PERSONAL_LO, PERSONAL_HI = 18, 32
 
 
 def slug(text: str) -> str:
@@ -195,6 +195,71 @@ def residents_text(residents: list[dict]) -> str:
     return "\n".join(out)
 
 
+ESSENTIALS = {"phone": ("phone",), "keys": ("key", "keys"),
+              "wallet or purse": ("wallet", "purse", "cardholder", "card_holder")}
+
+
+def missing_essentials(objects: list, rid: str) -> list[str]:
+    """Everyday things a person always has, checked by the words of their types."""
+    mine = [slug(o["type"]).split("_") for o in objects if o["owner"] == rid]
+    out = []
+    for name, words in ESSENTIALS.items():
+        if name == "phone":
+            ok = any(w[-1] == "phone" for w in mine)
+        else:
+            ok = any(set(w) & set(words) or "_".join(w) in words for w in mine)
+        if not ok:
+            out.append(name)
+    return out
+
+
+def _personal(caller, layout, home, residents, r, so_far, dropped) -> list[dict]:
+    rid, name = r["id"], r["name"].split()[0]
+    others = [o for o in so_far if o["owner"] and o["owner"] != rid]
+    others_text = ("\nAlready listed for the others (do not list these for " + name + "): "
+                   + ", ".join(o["id"] for o in others) + ".\n") if others else ""
+    taken = {o["id"]: {"owner": o["owner"], "place": o["place"], "type": o["type"],
+                       "looks": set(o.get("look_words") or [])} for o in so_far}
+    ans = caller.call(f"create/personal/{rid}", prompts.CREATE_SYSTEM,
+                      prompts.PERSONAL_USER.format(
+                          home=home, layout=layout.describe(), residents=residents_text(residents),
+                          name=name, rid=rid, routine=routines_text([r]), others=others_text,
+                          lo=PERSONAL_LO, hi=PERSONAL_HI, fields=prompts.FIELDS),
+                      room_objects_schema(layout.place_ids, [rid], PERSONAL_LO, PERSONAL_HI,
+                                          owner_required=True),
+                      check_room_objects(set(layout.place_ids)), max_tokens=40000)
+    dropped += compose_ids(ans["objects"], taken, [x["id"] for x in residents])
+    out = [_finish(o, layout) for o in ans["objects"]]
+    missing = missing_essentials(out, rid)
+    if missing:
+        for o in out:
+            taken[o["id"]] = {"owner": o["owner"], "place": o["place"], "type": o["type"],
+                              "looks": set(o.get("look_words") or [])}
+        add = caller.call(f"create/personal/{rid}/essentials", prompts.CREATE_SYSTEM,
+                          prompts.ESSENTIALS_USER.format(
+                              layout=layout.describe(), name=name, rid=rid,
+                              about=residents_text([r]), missing=" and ".join(missing),
+                              fields=prompts.FIELDS),
+                          room_objects_schema(layout.place_ids, [rid], len(missing), len(missing) + 1,
+                                              owner_required=True),
+                          check_room_objects(set(layout.place_ids)), max_tokens=20000)
+        dropped += compose_ids(add["objects"], taken, [x["id"] for x in residents])
+        extra = [_finish(o, layout) for o in add["objects"]]
+        for o in extra:
+            o["added_as_essential"] = True
+        out += extra
+    return out
+
+
+def routines_text(residents: list[dict]) -> str:
+    out = []
+    for r in residents:
+        out.append(f"{r['id']}:")
+        out += [f"  {', '.join(x['days'])} {x['start']}-{x['end']} {x['activity']} ({x['room']})"
+                for x in r["weekly_routine"]]
+    return "\n".join(out)
+
+
 def room_targets(layout: Layout, already: int = 0) -> dict:
     total = len(layout.places)
     left = max(OBJECTS_TARGET - already, 40)
@@ -227,16 +292,9 @@ def create(caller: Caller, seed: int, out: pathlib.Path, effort_note: str = "") 
     residents = res["residents"]
     rids = [r["id"] for r in residents]
 
-    personal = caller.call("create/personal", prompts.CREATE_SYSTEM,
-                           prompts.PERSONAL_USER.format(home=lay["home"], layout=layout.describe(),
-                                                        residents=residents_text(residents),
-                                                        lo=PERSONAL_LO, hi=PERSONAL_HI,
-                                                        fields=prompts.FIELDS),
-                           room_objects_schema(layout.place_ids, rids, PERSONAL_LO, PERSONAL_HI,
-                                               owner_required=True),
-                           check_room_objects(set(layout.place_ids)), max_tokens=40000)
-    dropped = compose_ids(personal["objects"], {}, rids)
-    objects: list[dict] = [_finish(o, layout) for o in personal["objects"]]
+    objects, dropped = [], []
+    for r in residents:
+        objects += _personal(caller, layout, lay["home"], residents, r, objects, dropped)
     targets = room_targets(layout, len(objects))
     for room in rooms:
         objects += _room_objects(caller, layout, residents, rids, room, targets[room], objects, "",

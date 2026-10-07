@@ -74,3 +74,11 @@ def test_owned_clash_with_other_owner_is_the_same_thing():
     taken = {"phone_blue_rubber_case": {"owner": "daniel", "place": "x", "type": "phone", "looks": {"blue", "rubber", "case"}}}
     objs = [thing(1, "phone", "blue rubber case", owner="mara", place="dining")]
     assert len(compose_ids(objs, taken, ["mara", "daniel"])) == 1
+
+
+def test_missing_essentials_by_type_words():
+    from lived_home.household import missing_essentials
+    objs = [{"type": "phone", "owner": "mara"}, {"type": "house keys", "owner": "mara"},
+            {"type": "phone charger", "owner": "ben"}, {"type": "purse", "owner": "ben"}]
+    assert missing_essentials(objs, "mara") == ["wallet or purse"]
+    assert missing_essentials(objs, "ben") == ["phone", "keys"]

@@ -221,15 +221,30 @@ Its rooms and spots:
 The residents:
 {residents}
 
-First, each resident's own things: what they carry or use themselves and
-would call theirs. Everyone has their phone; most people have a wallet or
-purse, keys, the bags they carry (and what is kept in them), glasses if they
-wear them, work things, medicine they take, the charger by their bed, clothes
-and shoes they leave out, hobby things. One of each where a person has one;
-several only where people really keep several. {lo} to {hi} things in all,
-about half for each resident.
+{name}'s weekly routine:
+{routine}
 
+List {name}'s own things: what {name} carries or uses and would call theirs,
+including everything their routine and habits call for (the bag they take to
+work and what goes in it, their sports or hobby gear). Everyone has their
+phone; most people have a wallet or purse, keys, the bags they carry (and
+what is kept in them), glasses if they wear them, work things, medicine they
+take, the charger by their bed, clothes and shoes they leave out, hobby
+things. One of each where a person has one; several only where people really
+keep several. {lo} to {hi} things; owner is {rid} for all of them.
+{others}
 It is early morning and both are still asleep: put each thing where it would
-be right now, following their habits with things. Any spot in the home.
+be right now, following {name}'s habits with things. Any spot in the home.
+
+{fields}"""
+
+ESSENTIALS_USER = """The home's rooms and spots:
+{layout}
+
+{name} ({rid}): {about}
+
+{name}'s things listed so far have no {missing}. Add exactly that: {missing},
+owned by {rid}, where it would be right now in the early morning while
+everyone is asleep, following {name}'s habits.
 
 {fields}"""
