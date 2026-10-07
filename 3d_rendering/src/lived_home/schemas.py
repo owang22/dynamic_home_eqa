@@ -11,7 +11,7 @@ import json
 from lived_home.world import CARRIER_KINDS, RELATIONS
 
 WEEKDAYS = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"]
-VERBS = ["go", "pick_up", "put_down", "pocket", "give", "do", "say", "leave_home"]
+VERBS = ["go", "pick_up", "put_down", "pocket", "wear", "give", "do", "say", "leave_home"]
 HOW_OFTEN_HABIT = ["almost always", "most times", "sometimes"]
 HOW_OFTEN_SITUATION = ["rarely", "about monthly", "about every two weeks", "about weekly"]
 SITUATION_KINDS = ["one_off", "recurring", "lasting"]

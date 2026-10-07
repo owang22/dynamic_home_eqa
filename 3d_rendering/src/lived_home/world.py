@@ -4,6 +4,7 @@ Every object is in exactly one spot:
   {"at": "place",  "place": p, "rel": r, "ref": o or None}   on/in/under/... a place
   {"at": "hand",   "person": rid}                              in a hand (two each)
   {"at": "pocket", "person": rid}
+  {"at": "worn",   "person": rid}                              clothes, shoes, a watch, a backpack on
   {"at": "inside", "carrier": o}                              in a bag, box or basket
 Carriers hold one level: a carrier that is inside another carrier holds nothing,
 and a carrier that holds something cannot go inside another. Moving a carrier
@@ -46,6 +47,7 @@ class Resident:
     at: Optional[str]                          # place id, or None while out of the house
     hands: list = field(default_factory=list)
     pocket: list = field(default_factory=list)
+    worn: list = field(default_factory=list)
     back_at: int = -1                          # minute of return while out
     belief: dict = field(default_factory=dict)    # object -> {"pos", "day", "minute"}
     touched: dict = field(default_factory=dict)   # object -> (day, minute)
@@ -54,9 +56,11 @@ class Resident:
 
 class World:
     def __init__(self, layout: Layout, objects: dict, resident_ids: list[str],
-                 start_place: dict) -> None:
-        """objects: id -> {type, attributes..., owner, pocketable, carrier, start}."""
+                 start_place: dict, names: Optional[dict] = None) -> None:
+        """objects: id -> {type, attributes..., owner, pocketable, carrier, start}.
+        names: resident id -> first name, for labels like "(Daniel's)"."""
         self.layout, self.objects = layout, objects
+        self.names = names or {r: r.title() for r in resident_ids}
         self.where = {oid: dict(o["start"]) for oid, o in objects.items()}
         self.people = {r: Resident(r, start_place[r]) for r in resident_ids}
         for person in self.people.values():
@@ -83,7 +87,7 @@ class World:
 
     def holder_of(self, oid: str) -> Optional[str]:
         b = self.base(oid)
-        return b["person"] if b["at"] in ("hand", "pocket") else None
+        return b["person"] if b["at"] in ("hand", "pocket", "worn") else None
 
     def hidden(self, oid: str) -> bool:
         """Hidden from someone standing in the room (not at the place itself)."""
@@ -119,6 +123,8 @@ class World:
             return f"inside {pos['carrier']}"
         if pos["at"] == "unknown":
             return f"not at {pos['not_at']} when you looked; you do not know where"
+        if pos["at"] == "worn":
+            return "worn by you" if pos["person"] == rid else f"worn by {pos['person']}"
         who = "your" if pos["person"] == rid else f"{pos['person']}'s"
         return f"in {who} {pos['at']}"
 
@@ -136,8 +142,8 @@ class World:
             if holder == rid:
                 return True
             other = self.people[holder]
-            in_hand = (self.where[oid]["at"] == "hand" or
-                       (pos["at"] == "inside" and self.where[pos["carrier"]]["at"] == "hand"
+            in_hand = (self.where[oid]["at"] in ("hand", "worn") or
+                       (pos["at"] == "inside" and self.where[pos["carrier"]]["at"] in ("hand", "worn")
                         and self.carrier_kind(pos["carrier"]) == "open"))
             return in_hand and other.at is not None and self.layout.room_of(other.at) == room
         place = self.place_of(oid)
@@ -172,8 +178,14 @@ class World:
             self._remember(person, inner, minute)
 
     # --------------------------------------------------------- views for prompts
+    def owner_tag(self, oid: str, rid: str) -> str:
+        owner = self.objects[oid].get("owner")
+        if not owner:
+            return ""
+        return " (yours)" if owner == rid else f" ({self.names.get(owner, owner)}'s)"
+
     def _label(self, oid: str, rid: str) -> str:
-        pos, out = self.where[oid], oid
+        pos, out = self.where[oid], oid + self.owner_tag(oid, rid)
         if pos["at"] == "place" and (pos["ref"] or pos["rel"] not in ("on", "in")):
             out += f" ({pos['rel'].replace('_', ' ')}{' ' + pos['ref'] if pos['ref'] else ''})"
         if self.carrier_kind(oid) != "none":
@@ -224,25 +236,27 @@ class World:
             b = person.belief[oid]
             when = "where it was at the start" if b["day"] < 0 else f"day {b['day']} {clock(b['minute'])}"
             by_type.setdefault(self.objects[oid]["type"], []).append(
-                f"{oid} {self.describe(b['pos'], rid)} (last seen {when})")
+                f"{oid}{self.owner_tag(oid, rid)} {self.describe(b['pos'], rid)} (last seen {when})")
         if not by_type:
             return "  (nothing you need to keep in mind)"
         return "\n".join(f"  {t}: " + "; ".join(items) for t, items in sorted(by_type.items()))
 
-    def holding_view(self, rid: str) -> tuple[str, str]:
+    def holding_view(self, rid: str) -> tuple[str, str, str]:
         person = self.people[rid]
         hands = [self._label(o, rid) for o in person.hands]
-        return ", ".join(hands) or "nothing", ", ".join(person.pocket) or "nothing"
+        worn = [self._label(o, rid) for o in person.worn]
+        return (", ".join(hands) or "nothing", ", ".join(person.pocket) or "nothing",
+                ", ".join(worn) or "nothing you need to keep track of")
 
     # -------------------------------------------------------------- acting
-    def _reach(self, rid: str, oid: str, minute: int) -> tuple[bool, str, list]:
+    def _reach(self, rid: str, oid: str, minute: int, named: Optional[str] = None) -> tuple[bool, str, list]:
         """Can the resident get their hands on oid from where they stand? Walking
         to another place in the same room is allowed and returned as a step."""
         person = self.people[rid]
         pos = self.where[oid]
         room = self.room_of_person(rid)
         holder = self.holder_of(oid)
-        if pos["at"] in ("hand", "pocket") and pos["person"] == rid:
+        if pos["at"] in ("hand", "pocket", "worn") and pos["person"] == rid:
             return True, "", []
         if holder == rid:                               # inside a carrier they hold
             return True, "", []
@@ -251,6 +265,8 @@ class World:
                 return False, f"{oid} is with {holder}.", []
             return False, self._not_found(person, oid, minute), []
         place = self.place_of(oid)
+        if place is not None and named == place and self.layout.room_of(place) != room:
+            return True, "", [place]            # they said where it is: walk there
         if place is None or self.layout.room_of(place) != room:
             return False, self._not_found(person, oid, minute), []
         if pos["at"] == "inside" and self.carrier_kind(pos["carrier"]) == "closed" \
@@ -274,13 +290,16 @@ class World:
                     f"{', '.join(seen) or 'nothing'}.")
         return f"You do not see {oid} anywhere you can reach in the {room}."
 
-    def _step(self, rid: str, place: str, minute: int) -> None:
+    def _step(self, rid: str, place: str, minute: int) -> int:
+        """A walk the resident's action implies. Returns minutes (1 across rooms)."""
         person = self.people[rid]
+        cross = self.layout.room_of(place) != self.room_of_person(rid)
         source, person.at = person.at, place
         self._see(rid, minute)
-        self.log.append(self._event(rid, {"verb": "go", "place": place,
-                                          "why": "(walked over within the room)"},
-                                    minute, source, place, 0, implied=True))
+        why = "(walked to the spot named)" if cross else "(walked over within the room)"
+        self.log.append(self._event(rid, {"verb": "go", "place": place, "why": why},
+                                    minute, source, place, int(cross), implied=True))
+        return int(cross)
 
     def _settle(self, oid: str) -> list[str]:
         """oid was taken away: things recorded relative to it (on top of it,
@@ -294,20 +313,21 @@ class World:
                 moved.append(other)
         return moved
 
-    def _take(self, rid: str, oid: str, minute: int) -> tuple[bool, str]:
+    def _take(self, rid: str, oid: str, minute: int, named: Optional[str] = None) -> tuple[bool, str, int]:
         """Take oid out of wherever it is into the resident's control (not yet
-        placed into a hand or pocket)."""
-        ok, message, steps = self._reach(rid, oid, minute)
+        placed into a hand, pocket or onto them). Returns minutes walked."""
+        ok, message, steps = self._reach(rid, oid, minute, named)
         if not ok:
-            return False, message
-        for place in steps:
-            self._step(rid, place, minute)
-        person = self.people[rid]
-        if oid in person.hands:
-            person.hands.remove(oid)
-        if oid in person.pocket:
-            person.pocket.remove(oid)
-        return True, ""
+            return False, message, 0
+        walked = sum(self._step(rid, place, minute) for place in steps)
+        self._release(self.people[rid], oid)
+        return True, "", walked
+
+    @staticmethod
+    def _release(person: Resident, oid: str) -> None:
+        for slot in (person.hands, person.pocket, person.worn):
+            if oid in slot:
+                slot.remove(oid)
 
     def apply(self, rid: str, act: dict, minute: int) -> tuple[bool, str, int]:
         """Carry out one action. Returns (done, message, minutes taken)."""
@@ -335,14 +355,14 @@ class World:
             if len(person.hands) >= HANDS:
                 return False, f"Your hands are full ({', '.join(person.hands)}).", 0
             source = dict(self.where[oid])
-            ok, message = self._take(rid, oid, minute)
+            ok, message, walked = self._take(rid, oid, minute, act.get("place") or None)
             if not ok:
                 return False, message, 0
             settled = self._settle(oid)
             self.where[oid] = {"at": "hand", "person": rid}
             person.hands.append(oid)
             self._touch(person, oid, minute)
-            return self._done(rid, act, minute, source, self.where[oid], 0, settled=settled)
+            return self._done(rid, act, minute, source, self.where[oid], walked, settled=settled)
 
         if verb == "put_down":
             return self._put_down(rid, act, minute)
@@ -357,14 +377,29 @@ class World:
             if len(person.pocket) >= POCKET_SLOTS:
                 return False, f"Your pockets are full ({', '.join(person.pocket)}).", 0
             source = dict(self.where[oid])
-            ok, message = self._take(rid, oid, minute)
+            ok, message, walked = self._take(rid, oid, minute, act.get("place") or None)
             if not ok:
                 return False, message, 0
             settled = self._settle(oid)
             self.where[oid] = {"at": "pocket", "person": rid}
             person.pocket.append(oid)
             self._touch(person, oid, minute)
-            return self._done(rid, act, minute, source, self.where[oid], 0, settled=settled)
+            return self._done(rid, act, minute, source, self.where[oid], walked, settled=settled)
+
+        if verb == "wear":
+            if oid is None:
+                return False, "Wear what?", 0
+            if oid in person.worn:
+                return False, f"You are already wearing {oid}.", 0
+            source = dict(self.where[oid])
+            ok, message, walked = self._take(rid, oid, minute, act.get("place") or None)
+            if not ok:
+                return False, message, 0
+            settled = self._settle(oid)
+            self.where[oid] = {"at": "worn", "person": rid}
+            person.worn.append(oid)
+            self._touch(person, oid, minute)
+            return self._done(rid, act, minute, source, self.where[oid], walked, settled=settled)
 
         if verb == "give":
             if oid is None:
@@ -372,14 +407,14 @@ class World:
             other = self.people.get(act.get("person") or "")
             if other is None or other.rid == rid:
                 return False, "Give it to whom?", 0
-            if oid not in person.hands and oid not in person.pocket:
+            if oid not in person.hands and oid not in person.pocket and oid not in person.worn:
                 return False, f"You are not holding {oid}.", 0
             if other.at is None or self.layout.room_of(other.at) != self.room_of_person(rid):
                 return False, f"{other.rid} is not in this room.", 0
             if len(other.hands) >= HANDS:
                 return False, f"{other.rid}'s hands are full.", 0
             source = dict(self.where[oid])
-            self._take(rid, oid, minute)
+            self._release(person, oid)
             self.where[oid] = {"at": "hand", "person": other.rid}
             other.hands.append(oid)
             self._touch(person, oid, minute)
@@ -395,7 +430,7 @@ class World:
             return self._done(rid, act, minute, person.at, person.at, 1)
         if verb == "leave_home":
             minutes = max(5, act.get("minutes") or 30)
-            carried = person.hands + person.pocket
+            carried = person.hands + person.pocket + person.worn
             carried += [i for c in list(carried) for i in self.contents(c)]
             source, person.at, person.back_at = person.at, None, minute + minutes
             return self._done(rid, act, minute, source, "out of the house", minutes,
@@ -407,13 +442,11 @@ class World:
         oid = act.get("object") or None
         if oid is None:
             return False, "Put down what?", 0
-        if oid not in person.hands and oid not in person.pocket:
+        if oid not in person.hands and oid not in person.pocket and oid not in person.worn:
             return False, f"You are not holding {oid}.", 0
         place = act.get("place") or person.at
         if place not in self.layout.places:
             return False, f"There is no place called {place}.", 0
-        if self.layout.room_of(place) != self.room_of_person(rid):
-            return False, f"{place} is not in this room; go there first.", 0
         rel = act.get("relation") or ""
         if rel not in RELATIONS:
             rel = ""
@@ -433,18 +466,18 @@ class World:
                 return False, f"{ref} is itself inside {self.where[ref]['carrier']}; take it out first.", 0
             if self.carrier_kind(oid) != "none" and self.contents(oid):
                 return False, f"{oid} has things in it; it cannot go inside {ref}.", 0
+            walked = 0
             if self.holder_of(ref) != rid:
-                ok, message, steps = self._reach(rid, ref, minute)
+                ok, message, steps = self._reach(rid, ref, minute, place if act.get("place") else None)
                 if not ok:
                     return False, message, 0
                 if self.holder_of(ref) is not None:
                     return False, f"{ref} is with {self.holder_of(ref)}.", 0
-                for p in steps:
-                    self._step(rid, p, minute)
-            self._take(rid, oid, minute)
+                walked = sum(self._step(rid, p, minute) for p in steps)
+            self._release(person, oid)
             self.where[oid] = {"at": "inside", "carrier": ref}
             self._touch(person, oid, minute)
-            return self._done(rid, act, minute, source, self.where[oid], 0)
+            return self._done(rid, act, minute, source, self.where[oid], walked)
 
         if ref is not None:
             if self.where[ref]["at"] != "place" or self.where[ref]["place"] != place:
@@ -456,12 +489,11 @@ class World:
             rel = "in" if kind == CONTAINER else "on"
         if ref is None and rel in ("in", "on", "on_top_of"):
             rel = "in" if kind == CONTAINER else "on"
-        if place != person.at:
-            self._step(rid, place, minute)
-        self._take(rid, oid, minute)
+        walked = self._step(rid, place, minute) if place != person.at else 0
+        self._release(person, oid)
         self.where[oid] = at_place(place, rel, ref)
         self._touch(person, oid, minute)
-        return self._done(rid, act, minute, source, self.where[oid], 0)
+        return self._done(rid, act, minute, source, self.where[oid], walked)
 
     def come_home_if_due(self, rid: str, minute: int) -> bool:
         person = self.people[rid]
@@ -470,7 +502,7 @@ class World:
             self._see(rid, minute)
             self.log.append(self._event(rid, {"verb": "come_home"}, minute,
                                         "out of the house", self.layout.entry, 0,
-                                        carried=person.hands + person.pocket))
+                                        carried=person.hands + person.pocket + person.worn))
             return True
         return False
 
@@ -487,6 +519,9 @@ class World:
                "person": act.get("person") or None, "why": act.get("why")}
         if act.get("verb") == "put_down":
             out["relation"], out["ref"] = act.get("relation") or None, act.get("ref") or None
+        for k in ("minutes_filled", "minutes_as_written"):
+            if k in act:
+                out[k] = act[k]
         out.update(extra)
         return out
 

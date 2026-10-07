@@ -147,7 +147,7 @@ What is going on today:
 {situations}
 {events}
 {view}
-In your hands: {hands}. In your pockets: {pocket}.
+In your hands: {hands}. In your pockets: {pocket}. Wearing: {worn}.
 
 Where you remember things being (what matters now):
 {memory}
@@ -156,14 +156,17 @@ Everything else is where you last saw it.
 Write what you do, step by step, until this activity ends around {end} or you
 finish it. Actions:
   go (place): walk to a spot
-  pick_up (object): take it from the spot you are at, from a bag you hold, or
-    from your pocket; you need a free hand
+  pick_up (object, optional place): take it from the spot you are at (or the
+    spot you name, and you walk there), from a bag you hold, or from your
+    pocket; you need a free hand
   put_down (object, optional place, relation, ref): put it at the spot you are
-    at (or another spot in this room). relation: on, in, under, behind,
+    at (or the spot you name, and you walk there). relation: on, in, under, behind,
     next_to, on_top_of; ref: an object at that spot ("behind" the toaster, "on
     top of" the books). To put something in a bag, a basket, or the pocket of
     a jacket or pants lying here: relation in, ref that thing.
   pocket (object): put something small in your pocket
+  wear (object): put on clothes, shoes, a watch, glasses or a backpack; to
+    take it off, pick_up or put_down
   give (object, person): hand it to someone in the same room
   do (minutes, text): spend time on something, like "cook pasta" or "read"
   say (person, text): say something to someone
@@ -177,8 +180,8 @@ there instead. Say how you feel now, which of your response habits' triggers
 are true for you right now, and which habit you are following, if any."""
 
 BEDTIME = """
-After this activity you go to sleep. Put down whatever you are still holding
-before you sleep."""
+After this activity you go to sleep. Before you sleep, put down whatever you
+are still holding and take off what you have been wearing today."""
 
 FIELDS = """- n: number the things 1, 2, 3, ... in the order you list them.
 - type: a plain lowercase noun shared by every instance of that kind of thing

@@ -55,7 +55,8 @@ class Household:
             can = next(s["happens_to"] for s in spec["situations"] if s["id"] == sid)
             self.subjects[sid] = [f[3]] if len(f) > 3 else [rng.choice(sorted(can))]
         self.world = World(self.layout, self.objects, self.rids,
-                           {r: self.people[r]["sleeps_at"] for r in self.rids})
+                           {r: self.people[r]["sleeps_at"] for r in self.rids},
+                           names={r: self.people[r]["name"].split()[0] for r in self.rids})
         self.rooms = list(self.layout.rooms)
         self.systems = {r: self._system(r) for r in self.rids}
         self.act_schemas = {}
@@ -141,10 +142,11 @@ class Household:
                                       "off_routine": off, **plan})
 
     def act(self, rid: str, day: int, weekday: str, activity: dict, minute: int,
-            rest: list[dict], events: list[str], problem: str, last: bool) -> list[dict]:
+            rest: list[dict], events: list[str], problem: str, last: bool,
+            done: list = ()) -> list[dict]:
         heard = [f"At {t} {who} {how}: {text}" for t, who, how, text in self.inbox[rid]]
         self.inbox[rid] = []
-        hands, pocket = self.world.holding_view(rid)
+        hands, pocket, worn = self.world.holding_view(rid)
         user = prompts.ACT_USER.format(
             time=clock(minute), weekday=weekday, day=day + 1,
             activity=activity["activity"], start=activity["start"], end=activity["end"],
@@ -152,9 +154,11 @@ class Household:
             rest="; ".join(f"{a['start']} {a['activity']}" for a in rest[:6]) or "nothing",
             situations=self._situations_for(rid, day),
             events="\n".join(events + heard) + ("\n" if events or heard else ""),
-            view=self.world.room_view(rid), hands=hands, pocket=pocket,
+            view=self.world.room_view(rid), hands=hands, pocket=pocket, worn=worn,
             memory=self.world.memory_view(rid, set(activity.get("uses") or [])),
-            problem=f"\nThat did not work: {problem}\n" if problem else "",
+            problem=(f"\nSo far in this activity you have: {'; '.join(done) or 'done nothing yet'}.\n"
+                     f"Then this did not work: {problem}\n"
+                     "Carry on from here; do not repeat what you already did.\n") if problem else "",
             bedtime=prompts.BEDTIME if last else "")
         out = self.caller.call(f"act/{rid}/{day + 1}/{clock(minute)}/{len(self.thoughts)}",
                                self.systems[rid], user, self.act_schemas[rid])
@@ -163,6 +167,32 @@ class Household:
                                       "stage": "act", "activity": activity["activity"],
                                       "problem_given": problem or None, **out})
         return out["actions"]
+
+    @staticmethod
+    def _away_minutes(action: dict, activity: dict, pending: list, now: int) -> None:
+        """Time away comes from the resident's own plan when the answer leaves it
+        out, or when it would bring them home in the middle of a planned
+        out-of-house stretch (back from the commute, out again for work)."""
+        block_end = None
+        for a in [activity] + pending:
+            if a["room"] != "out_of_house":
+                if block_end is not None or a is not activity:
+                    break
+                continue
+            if block_end is None and a is not activity and a["start_min"] > now + 30:
+                break
+            if block_end is not None and a["start_min"] > block_end + 15:
+                break
+            block_end = max(block_end or 0, a["end_min"])
+        given = action.get("minutes") or 0
+        if block_end is None:
+            if not given:
+                action["minutes"], action["minutes_filled"] = 30, "default"
+            return
+        need = block_end - now
+        if need > given:
+            action["minutes_as_written"] = given
+            action["minutes"], action["minutes_filled"] = need, "from the plan"
 
     def _note(self, rid, day, minute, stage, out) -> None:
         self.states.append({"day": day + 1, "time": clock(minute or 0), "minute": minute,
@@ -187,7 +217,7 @@ class Household:
         now = {r: plans[r][0]["start_min"] for r in self.rids}
         disturbances = {r: director.daily_disturbances(
             self.spec["small_disturbances"], r, day, self.variation, self.seed) for r in self.rids}
-        script, current, replans = {r: [] for r in self.rids}, {}, {}
+        script, current, replans, done = {r: [] for r in self.rids}, {}, {}, {}
         failed, skipped = [], []
         while True:
             live = [r for r in self.rids if script[r] or pending[r]]
@@ -206,7 +236,7 @@ class Household:
                                     "now": clock(now[rid]),
                                     "while_out": activity["room"] == "out_of_house"})
                     continue
-                current[rid], replans[rid] = activity, 0
+                current[rid], replans[rid], done[rid] = activity, 0, []
                 now[rid] = max(now[rid], activity["start_min"])
                 due = [d for d in disturbances[rid] if d[0] < activity["end_min"]]
                 disturbances[rid] = [d for d in disturbances[rid] if d not in due]
@@ -215,16 +245,27 @@ class Household:
                                        pending[rid], events, "", not pending[rid])
                 continue
             action = script[rid].pop(0)
+            if action.get("verb") == "leave_home":
+                self._away_minutes(action, current[rid], pending[rid], now[rid])
             ok, message, minutes = world.apply(rid, action, now[rid])
+            if ok:
+                done[rid].append(_short(action))
             if ok and action["verb"] == "say" and action.get("person") in self.inbox:
                 other = world.people[action["person"]]
-                if other.at is None:
+                o = action["person"]
+                asleep = (now[rid] < plans[o][0]["start_min"]
+                          or (not pending[o] and o in current and "sleep" in current[o]["activity"].lower()
+                              and now[rid] >= current[o]["start_min"]))
+                if asleep:
+                    pass                                   # they are asleep and do not hear it
+                elif other.at is None:
                     how = "texted you"
                 elif world.room_of_person(rid) == world.room_of_person(other.rid):
                     how = "said to you"
                 else:
                     how = "called out to you from another room"
-                self.inbox[action["person"]].append((clock(now[rid]), rid, how, action.get("text")))
+                if not asleep:
+                    self.inbox[o].append((clock(now[rid]), rid, how, action.get("text")))
             if not ok:
                 failed.append({"day": day + 1, "time": clock(now[rid]), "resident": rid,
                                "activity": current[rid]["activity"], "action": action,
@@ -236,7 +277,7 @@ class Household:
                     tried = f"{action['verb']} {action.get('object') or action.get('place') or ''}"
                     script[rid] = self.act(rid, day, weekday, current[rid], now[rid],
                                            pending[rid], [], f"You tried to {tried.strip()}. {message}",
-                                           not pending[rid])
+                                           not pending[rid], done[rid])
             now[rid] += minutes
             self._flush_events()
         self._flush_events()
@@ -251,6 +292,16 @@ class Household:
         return {"plans": plans, "events": world.log[log_start:], "failed": failed,
                 "skipped_activities": skipped, "at_night": night,
                 "end_of_day": world.snapshot(), "active_situations": self.schedule[day]}
+
+
+def _short(a: dict) -> str:
+    bits = [a.get("verb", "")]
+    for k in ("object", "place", "person"):
+        if a.get(k):
+            bits.append(a[k])
+    if a.get("verb") in ("do", "say") and a.get("text"):
+        bits.append(f'"{a["text"][:60]}"')
+    return " ".join(bits)
 
 
 def make_client(model: str, fake: bool, effort: str):

@@ -202,3 +202,36 @@ def test_say_to_self_rejected():
     assert not ok
     assert w.apply("ana", A("say", person="ben", text="hi"), 0)[0]
     assert w.apply("ana", A("say", person="", text="where are my keys"), 0)[0]
+
+
+def test_wear_frees_hands_and_leaves_with_person():
+    w = make()
+    w.objects["shirt_blue"] = obj("shirt", "bed")
+    w.where["shirt_blue"] = dict(w.objects["shirt_blue"]["start"])
+    assert w.apply("ben", A("wear", object="shirt_blue"), 0)[0]
+    assert w.people["ben"].hands == [] and w.where["shirt_blue"] == {"at": "worn", "person": "ben"}
+    w.apply("ben", A("go", place="entry_table"), 1)
+    assert w.apply("ben", A("wear", object="backpack_black"), 1)[0]
+    w.apply("ben", A("leave_home", minutes=60), 2)
+    assert {"shirt_blue", "backpack_black", "laptop_work"} <= set(w.log[-1]["carried"])
+    w.come_home_if_due("ben", 70)
+    ok, msg, _ = w.apply("ben", A("put_down", object="shirt_blue", place="entry_coat_hooks"), 70)
+    assert ok, msg
+
+
+def test_owner_labels_in_views():
+    w = World(pilot_layout(), make().objects, ["ana", "ben"], {"ana": "bed", "ben": "bed"},
+              names={"ana": "Ana", "ben": "Ben"})
+    w.apply("ana", A("go", place="entry_table"), 0)
+    assert "backpack_black (Ben's)" in w.room_view("ana")
+    assert "phone_ana (yours)" in w.memory_view("ana", set())
+
+
+def test_named_spot_in_another_room_walks_there():
+    w = make()
+    ok, msg, minutes = w.apply("ana", A("pick_up", object="mug_red", place="kitchen_counter_by_sink"), 0)
+    assert ok and minutes == 1 and w.people["ana"].at == "kitchen_counter_by_sink"
+    ok, msg, _ = w.apply("ana", A("pick_up", object="book_novel", place="dining_table"), 2)
+    assert not ok and "living" not in msg                # in another room, not where she said
+    ok, msg, minutes = w.apply("ana", A("put_down", object="mug_red", place="living_coffee_table"), 3)
+    assert ok and minutes == 1 and w.room_of_person("ana") == "living_room"
