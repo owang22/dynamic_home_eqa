@@ -67,8 +67,10 @@ The residents:
 Now fill the {room}. Its spots:
 {spots}
 
-List {lo} to {hi} things that are in the {room} at the start: the things
-these two people own and move around in daily life (phones, keys, mugs,
+Add {lo} to {hi} more things that are in the {room} at the start, besides
+any already placed there (listed at the end). Every thing you list is a new,
+separate thing: the things these two people own and move around in daily
+life (phones, keys, mugs,
 glasses, books, medicine, chargers, bags, cooking things, hobby things,
 clothes they leave lying around). Skip furniture, appliances and anything
 fixed in place.
@@ -153,8 +155,8 @@ finish it. Actions:
   put_down (object, optional place, relation, ref): put it at the spot you are
     at (or another spot in this room). relation: on, in, under, behind,
     next_to, on_top_of; ref: an object at that spot ("behind" the toaster, "on
-    top of" the books). To put something in a bag or basket: relation in, ref
-    the bag.
+    top of" the books). To put something in a bag, a basket, or the pocket of
+    a jacket or pants lying here: relation in, ref that thing.
   pocket (object): put something small in your pocket
   give (object, person): hand it to someone in the same room
   do (minutes, text): spend time on something, like "cook pasta" or "read"
@@ -187,15 +189,17 @@ FIELDS = """- n: number the things 1, 2, 3, ... in the order you list them.
   things are none: mugs, chargers, mail, kitchen things, shared toiletries,
   books on a shared shelf.
 - pocketable: fits in a trouser or jacket pocket.
-- carrier: open for things that hold other things in the open (a basket, a
-  tray, a fruit bowl); closed for bags, backpacks, boxes with lids and cases;
-  none otherwise.
+- carrier: whether other things in the home get put into it. open for things
+  that hold other things in the open (a basket, a tray, a fruit bowl); closed
+  for bags, backpacks, boxes with lids, cases, and clothes with pockets that
+  things get left in (jackets, work pants); none otherwise (a pill bottle is
+  none: its pills are part of it).
 - place: the spot it is at. relation and ref: where it is at that spot. With
   ref 0, relation is on (a surface) or in (a container). With ref set to the n
   of another thing in your list at the same spot, it is relative to that
   thing: behind the toaster, on top of the stack of books, next to the
-  kettle, or in a bag or basket (relation in, ref the bag's n). Things inside
-  a bag or basket cannot themselves be bags or baskets.
+  kettle, or in a bag, basket or pocket of a piece of clothing (relation in,
+  ref its n). Things inside a carrier cannot themselves be carriers.
 """
 
 PERSONAL_USER = """The home: {home}

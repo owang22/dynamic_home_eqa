@@ -24,7 +24,7 @@ def test_ids_come_from_type_and_looks_without_names():
 
 def test_clash_takes_next_attribute_then_number():
     objs = [thing(1, "mug", "red"), thing(2, "mug", "red"), thing(3, "mug", "red")]
-    compose_ids(objs, {"mug_red": None}, [])
+    compose_ids(objs, {"mug_red": {"owner": None, "place": "elsewhere", "type": "mug", "looks": {"red"}}}, [])
     assert [o["id"] for o in objs] == ["mug_red_ceramic", "mug_red_ceramic_worn", "mug_red_ceramic_worn_plain"]
 
 
@@ -48,7 +48,29 @@ def test_semantic_problems_listed_together():
 def test_owned_thing_described_again_is_dropped_but_shared_kept():
     objs = [thing(1, "reading glasses", "tortoiseshell frames", owner="mara"),
             thing(2, "mug", "red"), thing(3, "watch", "silver", ref=1, rel="next_to", owner="mara")]
-    dropped = compose_ids(objs, {"reading_glasses_tortoiseshell_frames": "mara", "mug_red": None}, ["mara"])
+    dropped = compose_ids(objs, {"reading_glasses_tortoiseshell_frames": {"owner": "mara", "place": "x", "type": "reading glasses", "looks": {"tortoiseshell", "frames"}},
+                                 "mug_red": {"owner": None, "place": "elsewhere", "type": "mug", "looks": {"red"}}}, ["mara"])
     assert [o["id"] for o in dropped] == ["reading_glasses_tortoiseshell_frames"]
     assert [o["id"] for o in objs] == ["mug_red_ceramic", "watch_silver"]
     assert objs[1]["ref"] == ""
+
+
+def test_thing_in_a_bag_takes_the_bags_spot():
+    objs = [thing(1, "tote bag", "canvas", carrier="open", place="hook"),
+            thing(2, "gloves", "gray", ref=1, rel="in", place="floor")]
+    assert check_room_objects({"hook", "floor"})({"objects": objs}) == ""
+    compose_ids(objs, {}, [])
+    assert objs[1]["place"] == "hook" and objs[1]["place_as_written"] == "floor"
+
+
+def test_same_type_same_spot_shared_look_is_dropped():
+    taken = {"fruit_bowl_blue_stoneware": {"owner": None, "place": "a", "type": "fruit bowl", "looks": {"blue", "stoneware"}}}
+    objs = [thing(1, "fruit bowl", "blue glazed", carrier="open"), thing(2, "apple", "red", ref=1, rel="in")]
+    dropped = compose_ids(objs, taken, [])
+    assert [o["n"] for o in dropped] == [1] and objs[0]["ref"] == ""
+
+
+def test_owned_clash_with_other_owner_is_the_same_thing():
+    taken = {"phone_blue_rubber_case": {"owner": "daniel", "place": "x", "type": "phone", "looks": {"blue", "rubber", "case"}}}
+    objs = [thing(1, "phone", "blue rubber case", owner="mara", place="dining")]
+    assert len(compose_ids(objs, taken, ["mara", "daniel"])) == 1

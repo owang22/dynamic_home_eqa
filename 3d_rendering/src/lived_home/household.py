@@ -97,8 +97,6 @@ def check_room_objects(room_places: set):
                 cur = by_n[cur]["ref"]
             if cur in chain:
                 problems.append(f"things {o['n']} and {ref} refer to each other in a loop")
-            elif target["place"] != o["place"]:
-                problems.append(f"thing {o['n']} is at {o['place']} but its ref {ref} is at {target['place']}")
             elif o["relation"] == "in":
                 if target["carrier"] == "none":
                     problems.append(f"thing {o['n']} is in thing {ref}, which has carrier none and cannot hold things")
@@ -113,13 +111,26 @@ def check_room_objects(room_places: set):
 
 
 def compose_ids(objects: list, taken: dict, rids) -> list:
-    """id = type + looks, in place. Resident names are dropped from the looks.
-    A clash with an id already in the home takes the next attribute that tells
-    it apart (material, condition, pattern, color), then a number. References
-    (ref = another thing's n) become ids. taken: id -> owner of things already
-    in the home. A thing whose id matches one the same person already owns is
-    the same thing described again: it is dropped, and returned."""
-    used = set(taken)
+    """id = type + looks, in place; resident names are dropped from the looks.
+    References (ref = another thing's n) become ids, and a thing placed
+    relative to another takes that thing's spot.
+
+    taken: id -> {owner, place, type, looks} for things already in the home. A
+    thing is the same thing described again, and is dropped and returned, when
+    its id matches one already placed and either is owned, or when a thing of
+    the same type already sits at the same spot sharing a word of its looks.
+    Otherwise a clash takes the next attribute that tells it apart (material,
+    condition, pattern, color), then a number."""
+    by_num = {o["n"]: o for o in objects}
+    for o in objects:      # spot from the thing referred to (both were asked for; they can disagree)
+        root, seen = o, set()
+        while root["ref"] and root["ref"] in by_num and root["n"] not in seen:
+            seen.add(root["n"])
+            root = by_num[root["ref"]]
+        if root is not o and root["place"] != o["place"]:
+            o["place_as_written"] = o["place"]
+            o["place"] = root["place"]
+    used = dict(taken)
     by_n, dropped = {}, []
     for o in objects:
         o["type"] = o["type"].strip().lower()
@@ -127,22 +138,25 @@ def compose_ids(objects: list, taken: dict, rids) -> list:
         look = [w for w in slug(o["looks"]).split("_") if w and w not in rids and w not in kind.split("_")]
         oid = "_".join([kind] + look) if look else f"{kind}_{slug(o['color'])}"
         owner = None if o.get("owner") in (None, "none") else o["owner"]
-        if owner and taken.get(oid, "-") == owner:
-            o["id"] = oid
+        same = taken.get(oid)
+        twin = next((tid for tid, x in taken.items() if x["type"] == o["type"]
+                     and x["place"] == o["place"] and set(look) & x["looks"]), None)
+        if (same and (same["owner"] or owner)) or twin:
+            o["id"], o["same_as"] = oid, (oid if same else twin)
             dropped.append(o)
             by_n[o["n"]] = None
             continue
         for extra in (o["material"], o["condition"], o["pattern"], o["color"]):
             if oid not in used:
                 break
-            w = slug(extra)
-            if w and w not in oid.split("_"):
-                oid = f"{oid}_{w}"
+            words = [w for w in slug(extra).split("_") if w and w not in oid.split("_")]
+            if words:
+                oid = "_".join([oid] + words)
         base, k = oid, 2
         while oid in used:
             oid, k = f"{base}_{k}", k + 1
-        used.add(oid)
-        o["id"] = oid
+        used[oid] = {"owner": owner, "place": o["place"], "type": o["type"], "looks": set(look)}
+        o["id"], o["look_words"] = oid, look
         by_n[o["n"]] = oid
     for o in objects:
         o["ref"] = (by_n.get(o["ref"]) or "") if o["ref"] else ""
@@ -254,7 +268,8 @@ def create(caller: Caller, seed: int, out: pathlib.Path, effort_note: str = "") 
 def _room_objects(caller, layout, residents, rids, room, target, so_far, suffix,
                   dropped: list) -> list[dict]:
     room_places = layout.places_in(room)
-    taken = {o["id"]: o["owner"] for o in so_far}
+    taken = {o["id"]: {"owner": o["owner"], "place": o["place"], "type": o["type"],
+                       "looks": set(o.get("look_words") or [])} for o in so_far}
     spots = "\n".join(f"  {p} ({layout.places[p].name}"
                       f"{', closed' if layout.places[p].kind == CONTAINER else ''}"
                       f"{', out of sight' if layout.places[p].hidden else ''})" for p in room_places)
@@ -264,7 +279,8 @@ def _room_objects(caller, layout, residents, rids, room, target, so_far, suffix,
             by_type[o["type"]].append(o["id"])
         here = [f"{o['id']} ({o['start'].get('place') or 'inside ' + o['start']['carrier']})"
                 for o in so_far if layout.room_of(_base_place(o, so_far)) == room]
-        taken_text = (("\nAlready in this room: " + ", ".join(here) + ".\n" if here else "")
+        taken_text = (("\nAlready in this room (do not list these again): " + ", ".join(here) + ".\n"
+                       if here else "")
                       + "\nAlready placed in the home, and staying there (type: names). Do not "
                       "add a second one of something a person has only one of (their phone, "
                       "wallet, house keys, work laptop, everyday glasses); do add more instances "
