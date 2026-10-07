@@ -48,7 +48,7 @@ def test_pick_up_walks_within_room_but_not_across_rooms():
     w = make()
     ok, msg, _ = w.apply("ana", A("pick_up", object="mug_red"), 0)
     assert not ok and "mug_red" in msg                  # bedroom, mug is in the kitchen
-    assert "kitchen_counter_by_sink" not in msg         # does not reveal where it is
+    assert "you last saw it" in msg                      # her memory, not a lookup
     w.apply("ana", A("go", place="kitchen_island"), 0)
     ok, _, _ = w.apply("ana", A("pick_up", object="mug_red"), 1)
     assert ok and w.people["ana"].at == "kitchen_counter_by_sink"
@@ -232,6 +232,23 @@ def test_named_spot_in_another_room_walks_there():
     ok, msg, minutes = w.apply("ana", A("pick_up", object="mug_red", place="kitchen_counter_by_sink"), 0)
     assert ok and minutes == 1 and w.people["ana"].at == "kitchen_counter_by_sink"
     ok, msg, _ = w.apply("ana", A("pick_up", object="book_novel", place="dining_table"), 2)
-    assert not ok and "living" not in msg                # in another room, not where she said
+    assert not ok and "you last saw it" in msg          # in another room, not where she said
     ok, msg, minutes = w.apply("ana", A("put_down", object="mug_red", place="living_coffee_table"), 3)
     assert ok and minutes == 1 and w.room_of_person("ana") == "living_room"
+
+
+def test_not_found_reminds_own_memory_only():
+    w = make()
+    w.apply("ben", A("go", place="kitchen_counter_by_sink"), 0)
+    w.apply("ben", A("pick_up", object="mug_red"), 0)
+    w.apply("ben", A("go", place="living_coffee_table"), 1)
+    w.apply("ben", A("put_down", object="mug_red"), 2)
+    w.apply("ana", A("go", place="bed"), 3)
+    ok, msg, _ = w.apply("ana", A("pick_up", object="mug_red"), 4)
+    assert not ok and "kitchen_counter_by_sink" in msg and "living" not in msg
+
+
+def test_do_at_named_spot_walks_there():
+    w = make()
+    ok, _, minutes = w.apply("ana", A("do", place="kitchen_stovetop", minutes=10, text="cook"), 0)
+    assert ok and minutes == 11 and w.people["ana"].at == "kitchen_stovetop"

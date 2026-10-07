@@ -176,8 +176,10 @@ finish it. Actions:
     comes along.
 Use empty strings and 0 for fields an action does not need. If you look for
 something and it is not where you expected, you will be told what you see
-there instead. Say how you feel now, which of your response habits' triggers
-are true for you right now, and which habit you are following, if any."""
+there instead. Say how you feel now (stress 0 calm to 3 very stressed; tiredness 0 rested to 3 exhausted; mood 0
+bad to 3 good; health 0 very unwell to 3 well), which of
+your response habits' triggers are true for you right now, and which habit
+you are following, if any."""
 
 BEDTIME = """
 After this activity you go to sleep. Before you sleep, put down whatever you

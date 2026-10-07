@@ -288,7 +288,13 @@ class World:
                     or believed_place == person.at]
             return (f"{oid} is not at {believed_place}. There you see: "
                     f"{', '.join(seen) or 'nothing'}.")
-        return f"You do not see {oid} anywhere you can reach in the {room}."
+        b = person.belief[oid]
+        if b["pos"]["at"] == "unknown":
+            last = "and you do not know where it is"
+        else:
+            when = "at the start" if b["day"] < 0 else f"day {b['day']} {clock(b['minute'])}"
+            last = f"you last saw it {self.describe(b['pos'], person.rid)} ({when})"
+        return f"You do not see {oid} anywhere you can reach in the {room}; {last}."
 
     def _step(self, rid: str, place: str, minute: int) -> int:
         """A walk the resident's action implies. Returns minutes (1 across rooms)."""
@@ -422,7 +428,12 @@ class World:
             return self._done(rid, act, minute, source, self.where[oid], 1)
 
         if verb == "do":
-            return self._done(rid, act, minute, person.at, person.at, max(1, act.get("minutes") or 1))
+            walked = 0
+            named = act.get("place") or ""
+            if named in self.layout.places and named != person.at:
+                walked = self._step(rid, named, minute)
+            return self._done(rid, act, minute, person.at, person.at,
+                              walked + max(1, act.get("minutes") or 1))
         if verb == "say":
             to = act.get("person") or ""
             if to and (to == rid or to not in self.people):
