@@ -16,6 +16,7 @@ import collections
 import json
 import os
 import pathlib
+import random
 from concurrent.futures import ThreadPoolExecutor
 
 from lived_home import director, prompts
@@ -43,7 +44,16 @@ class Household:
         self.objects = {o["id"]: o for o in spec["objects"]}
         self.types = collections.Counter(o["type"] for o in spec["objects"])
         self.situations = {s["id"]: s for s in spec["situations"]}
-        self.schedule = director.schedule_situations(spec["situations"], days, seed, forced)
+        self.schedule = director.schedule_situations(
+            spec["situations"], days, seed, [f[:3] for f in forced])
+        # a forced situation happens to the residents named, or to one of those it can
+        # happen to, chosen with the seed; saved with the schedule as ground truth
+        self.subjects = {}
+        rng = random.Random(f"{seed}-subjects")
+        for f in forced:
+            sid = f[0]
+            can = next(s["happens_to"] for s in spec["situations"] if s["id"] == sid)
+            self.subjects[sid] = [f[3]] if len(f) > 3 else [rng.choice(sorted(can))]
         self.world = World(self.layout, self.objects, self.rids,
                            {r: self.people[r]["sleeps_at"] for r in self.rids})
         self.rooms = list(self.layout.rooms)
@@ -79,7 +89,12 @@ class Household:
             while d >= 0 and sid in self.schedule[d]:
                 run, d = run + 1, d - 1
             when = "starts today" if run == 1 else f"day {run} of this"
-            text = s["what_it_is_like"] if rid in s["happens_to"] else s["what_others_notice"]
+            who = self.subjects.get(sid, s["happens_to"])
+            text = s["what_it_is_like"] if rid in who else s["what_others_notice"]
+            if sid in self.subjects:
+                names = " and ".join(self.people[w]["name"] for w in who if w != rid)
+                text = (f"This is happening to you{' and ' + names if names else ''}. " if rid in who
+                        else f"This is happening to {names}, not to you. ") + text
             out.append(f"{text} ({when})")
         return lines(out) if out else "- Nothing unusual."
 
@@ -188,7 +203,8 @@ class Household:
                 if activity["end_min"] <= now[rid] and pending[rid]:
                     skipped.append({"resident": rid, "activity": activity["activity"],
                                     "planned": f"{activity['start']}-{activity['end']}",
-                                    "now": clock(now[rid])})
+                                    "now": clock(now[rid]),
+                                    "while_out": activity["room"] == "out_of_house"})
                     continue
                 current[rid], replans[rid] = activity, 0
                 now[rid] = max(now[rid], activity["start_min"])
@@ -255,7 +271,7 @@ def main() -> None:
                     help="0 to 1: how often a day strays from routine, and how many small disturbances")
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--sick", default="2:3",
-                    help="first day (0-based) and length of the forced 'sick' situation; 'none' to skip")
+                    help="first day (0-based):length[:resident] of the forced 'sick' situation; 'none' to skip")
     ap.add_argument("--out", type=pathlib.Path, required=True)
     ap.add_argument("--household", type=pathlib.Path,
                     help="reuse this household.json instead of creating one")
@@ -277,9 +293,14 @@ def main() -> None:
           f"calls {caller.calls}, ${caller.cost:.2f}", flush=True)
     if args.create_only:
         return
-    forced = [] if args.sick == "none" else [("sick", *map(int, args.sick.split(":")))]
+    forced = []
+    if args.sick != "none":
+        parts = args.sick.split(":")
+        forced = [("sick", int(parts[0]), int(parts[1]), *parts[2:3])]
     home = Household(caller, spec, args.days, args.variation, args.seed, forced, args.out)
     (args.out / "schedule.json").write_text(json.dumps(home.schedule, indent=1))
+    (args.out / "subjects.json").write_text(json.dumps(home.subjects, indent=1))
+    print(f"forced situations happen to: {home.subjects}", flush=True)
     print(f"act schema uses enums: {home.enums}", flush=True)
     for day in range(args.days):
         result = home.run_day(day)

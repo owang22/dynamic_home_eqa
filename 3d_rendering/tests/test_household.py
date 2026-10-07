@@ -18,20 +18,20 @@ def thing(n, type_, looks, ref=0, rel="on", carrier="none", place="a", **kw):
 def test_ids_come_from_type_and_looks_without_names():
     objs = [thing(1, "Mug", "Red Ceramic"), thing(2, "t-shirt", "mara blue"),
             thing(3, "hand cream", "unscented tube")]
-    compose_ids(objs, set(), ["mara", "daniel"])
+    compose_ids(objs, {}, ["mara", "daniel"])
     assert [o["id"] for o in objs] == ["mug_red_ceramic", "t_shirt_blue", "hand_cream_unscented_tube"]
 
 
 def test_clash_takes_next_attribute_then_number():
     objs = [thing(1, "mug", "red"), thing(2, "mug", "red"), thing(3, "mug", "red")]
-    compose_ids(objs, {"mug_red"}, [])
+    compose_ids(objs, {"mug_red": None}, [])
     assert [o["id"] for o in objs] == ["mug_red_ceramic", "mug_red_ceramic_worn", "mug_red_ceramic_worn_plain"]
 
 
 def test_refs_become_ids():
     objs = [thing(1, "tote bag", "canvas", carrier="closed"), thing(2, "wallet", "brown", ref=1, rel="in")]
     assert check_room_objects({"a"})({"objects": objs}) == ""
-    compose_ids(objs, set(), [])
+    compose_ids(objs, {}, [])
     assert objs[1]["ref"] == "tote_bag_canvas"
 
 
@@ -43,3 +43,12 @@ def test_semantic_problems_listed_together():
     msg = check_room_objects({"a"})({"objects": objs})
     assert "loop" in msg and "cannot hold things" in msg and "cannot start inside" in msg
     assert "not another thing" in msg
+
+
+def test_owned_thing_described_again_is_dropped_but_shared_kept():
+    objs = [thing(1, "reading glasses", "tortoiseshell frames", owner="mara"),
+            thing(2, "mug", "red"), thing(3, "watch", "silver", ref=1, rel="next_to", owner="mara")]
+    dropped = compose_ids(objs, {"reading_glasses_tortoiseshell_frames": "mara", "mug_red": None}, ["mara"])
+    assert [o["id"] for o in dropped] == ["reading_glasses_tortoiseshell_frames"]
+    assert [o["id"] for o in objs] == ["mug_red_ceramic", "watch_silver"]
+    assert objs[1]["ref"] == ""

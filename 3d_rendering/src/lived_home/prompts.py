@@ -73,31 +73,7 @@ glasses, books, medicine, chargers, bags, cooking things, hobby things,
 clothes they leave lying around). Skip furniture, appliances and anything
 fixed in place.
 
-- n: number the things 1, 2, 3, ... in the order you list them.
-- type: a plain lowercase noun shared by every instance of that kind of thing
-  ("mug", "phone charger", "reading glasses", "tote bag").
-- looks: 1 to 4 words that tell this one apart from the others of its type by
-  how it looks ("red ceramic", "white chipped", "usb c braided"). Not who owns
-  it. Its name in the simulation is made from type and looks (mug_red_ceramic).
-- Many types have several instances across the home: a home has 4 to 8 mugs,
-  several chargers, 2 pairs of reading glasses. Put each where it belongs.
-- color, material, size, pattern ("plain" if none), condition ("new", "worn",
-  "chipped", ...).
-- owner: a resident id only where people in the home would say whose it is
-  ("her work laptop", "his running watch", her phone, his work boots). Most
-  things are none: mugs, chargers, mail, kitchen things, shared toiletries,
-  books on a shared shelf.
-- pocketable: fits in a trouser or jacket pocket.
-- carrier: open for things that hold other things in the open (a basket, a
-  tray, a fruit bowl); closed for bags, backpacks, boxes with lids and cases;
-  none otherwise.
-- place: the spot it is at. relation and ref: where it is at that spot. With
-  ref 0, relation is on (a surface) or in (a container). With ref set to the n
-  of another thing in your list at the same spot, it is relative to that
-  thing: behind the toaster, on top of the stack of books, next to the
-  kettle, or in a bag or basket (relation in, ref the bag's n). Things inside
-  a bag or basket cannot themselves be bags or baskets.
-{taken}"""
+{fields}{taken}"""
 
 SITUATIONS_USER = """The residents:
 {residents}
@@ -183,8 +159,10 @@ finish it. Actions:
   give (object, person): hand it to someone in the same room
   do (minutes, text): spend time on something, like "cook pasta" or "read"
   say (person, text): say something to someone
-  leave_home (minutes, text): go out; what is in your hands, pockets and the
-    bags you hold comes along
+  leave_home (minutes, text): go out until you are back home; minutes is the
+    whole time away, covering every out-of-house activity in a row (commute
+    and work together). What is in your hands, pockets and the bags you hold
+    comes along.
 Use empty strings and 0 for fields an action does not need. If you look for
 something and it is not where you expected, you will be told what you see
 there instead. Say how you feel now, which of your response habits' triggers
@@ -193,3 +171,50 @@ are true for you right now, and which habit you are following, if any."""
 BEDTIME = """
 After this activity you go to sleep. Put down whatever you are still holding
 before you sleep."""
+
+FIELDS = """- n: number the things 1, 2, 3, ... in the order you list them.
+- type: a plain lowercase noun shared by every instance of that kind of thing
+  ("mug", "phone charger", "reading glasses", "tote bag").
+- looks: 1 to 4 words that tell this one apart from the others of its type by
+  how it looks ("red ceramic", "white chipped", "usb c braided"). Not who owns
+  it. Its name in the simulation is made from type and looks (mug_red_ceramic).
+- Many types have several instances across the home: a home has 4 to 8 mugs,
+  several chargers, 2 pairs of reading glasses. Put each where it belongs.
+- color, material, size, pattern ("plain" if none), condition ("new", "worn",
+  "chipped", ...).
+- owner: a resident id only where people in the home would say whose it is
+  ("her work laptop", "his running watch", her phone, his work boots). Most
+  things are none: mugs, chargers, mail, kitchen things, shared toiletries,
+  books on a shared shelf.
+- pocketable: fits in a trouser or jacket pocket.
+- carrier: open for things that hold other things in the open (a basket, a
+  tray, a fruit bowl); closed for bags, backpacks, boxes with lids and cases;
+  none otherwise.
+- place: the spot it is at. relation and ref: where it is at that spot. With
+  ref 0, relation is on (a surface) or in (a container). With ref set to the n
+  of another thing in your list at the same spot, it is relative to that
+  thing: behind the toaster, on top of the stack of books, next to the
+  kettle, or in a bag or basket (relation in, ref the bag's n). Things inside
+  a bag or basket cannot themselves be bags or baskets.
+"""
+
+PERSONAL_USER = """The home: {home}
+
+Its rooms and spots:
+{layout}
+
+The residents:
+{residents}
+
+First, each resident's own things: what they carry or use themselves and
+would call theirs. Everyone has their phone; most people have a wallet or
+purse, keys, the bags they carry (and what is kept in them), glasses if they
+wear them, work things, medicine they take, the charger by their bed, clothes
+and shoes they leave out, hobby things. One of each where a person has one;
+several only where people really keep several. {lo} to {hi} things in all,
+about half for each resident.
+
+It is early morning and both are still asleep: put each thing where it would
+be right now, following their habits with things. Any spot in the home.
+
+{fields}"""

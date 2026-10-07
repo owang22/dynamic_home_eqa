@@ -39,7 +39,8 @@ def load(run: pathlib.Path) -> dict:
     return {"spec": spec, "days": days, "schedule": schedule,
             "events": jl(run / "events.jsonl"), "responses": jl(run / "responses.jsonl"),
             "failed": jl(run / "failed.jsonl"), "calls": jl(run / "calls.jsonl"),
-            "usage": json.loads((run / "usage.json").read_text()) if (run / "usage.json").exists() else {}}
+            "usage": json.loads((run / "usage.json").read_text()) if (run / "usage.json").exists() else {},
+            "subjects": json.loads((run / "subjects.json").read_text()) if (run / "subjects.json").exists() else {}}
 
 
 def where(snap: dict) -> str:
@@ -169,10 +170,11 @@ def report(r: dict) -> str:
         held = {rid: v["hands"] for rid, v in day.get("at_night", {}).items() if v["hands"]}
         if held:
             out.append(f"- day {d}: still holding at night: {held}")
-        if day.get("skipped_activities"):
-            out.append(f"- day {d}: activities skipped because their time had passed: "
+        missed = [s for s in day.get("skipped_activities", []) if not s.get("while_out")]
+        if missed:
+            out.append(f"- day {d}: home activities skipped because their time had passed: "
                        + "; ".join(f"{s['resident']} {s['activity']} ({s['planned']}, now {s['now']})"
-                                   for s in day["skipped_activities"]))
+                                   for s in missed))
 
     # 2. per type
     out.append("\n## 2. Object types: instances moved, and where each instance ended each day\n")
@@ -231,11 +233,13 @@ def report(r: dict) -> str:
     out.append("\n## 4. Sick days against normal days\n")
     sick_days = [d + 1 for d, active in enumerate(r["schedule"]) if "sick" in active]
     sick = next((s for s in spec["situations"] if s["id"] == "sick"), None)
-    out.append(f"Sick days: {sick_days}; sick: {sick['happens_to'] if sick else '?'}\n")
+    subjects = r.get("subjects") or {}
+    sick_who = subjects.get("sick") or (sick["happens_to"] if sick else [])
+    out.append(f"Sick days: {sick_days}; sick: {sick_who}\n")
     done_days = sorted({e["day"] for e in events})
     for res in spec["residents"]:
         rid = res["id"]
-        role = "sick" if sick and rid in sick["happens_to"] else "the other resident"
+        role = "sick" if rid in sick_who else "the other resident"
         out.append(f"### {rid} ({role})\n")
         out.append("| day | sick day | wake | sleep | minutes out | objects moved | rooms by actions | stress | tired | mood | health |")
         out.append("|---|---|---|---|---|---|---|---|---|---|---|")

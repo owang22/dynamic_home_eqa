@@ -19,6 +19,7 @@ from lived_home.world import at_place
 ID = re.compile(r"^[a-z0-9]+(_[a-z0-9]+)*$")
 PLACES_LO, PLACES_HI = 100, 200
 OBJECTS_LO, OBJECTS_HI, OBJECTS_TARGET = 150, 300, 220
+PERSONAL_LO, PERSONAL_HI = 30, 60
 
 
 def slug(text: str) -> str:
@@ -111,18 +112,26 @@ def check_room_objects(room_places: set):
     return check
 
 
-def compose_ids(objects: list, taken: set, rids) -> None:
+def compose_ids(objects: list, taken: dict, rids) -> list:
     """id = type + looks, in place. Resident names are dropped from the looks.
     A clash with an id already in the home takes the next attribute that tells
     it apart (material, condition, pattern, color), then a number. References
-    (ref = another thing's n) become ids."""
+    (ref = another thing's n) become ids. taken: id -> owner of things already
+    in the home. A thing whose id matches one the same person already owns is
+    the same thing described again: it is dropped, and returned."""
     used = set(taken)
-    by_n = {}
+    by_n, dropped = {}, []
     for o in objects:
         o["type"] = o["type"].strip().lower()
         kind = slug(o["type"])
         look = [w for w in slug(o["looks"]).split("_") if w and w not in rids and w not in kind.split("_")]
         oid = "_".join([kind] + look) if look else f"{kind}_{slug(o['color'])}"
+        owner = None if o.get("owner") in (None, "none") else o["owner"]
+        if owner and taken.get(oid, "-") == owner:
+            o["id"] = oid
+            dropped.append(o)
+            by_n[o["n"]] = None
+            continue
         for extra in (o["material"], o["condition"], o["pattern"], o["color"]):
             if oid not in used:
                 break
@@ -136,7 +145,10 @@ def compose_ids(objects: list, taken: set, rids) -> None:
         o["id"] = oid
         by_n[o["n"]] = oid
     for o in objects:
-        o["ref"] = by_n.get(o["ref"], "") if o["ref"] else ""
+        o["ref"] = (by_n.get(o["ref"]) or "") if o["ref"] else ""
+    for o in dropped:
+        objects.remove(o)
+    return dropped
 
 
 def check_situations(spec: dict) -> str:
@@ -169,10 +181,18 @@ def residents_text(residents: list[dict]) -> str:
     return "\n".join(out)
 
 
-def room_targets(layout: Layout) -> dict:
+def room_targets(layout: Layout, already: int = 0) -> dict:
     total = len(layout.places)
-    return {room: max(4, round(OBJECTS_TARGET * len(ids) / total))
+    left = max(OBJECTS_TARGET - already, 40)
+    return {room: max(3, round(left * len(ids) / total))
             for room, ids in layout.rooms.items()}
+
+
+def _finish(o: dict, layout: Layout) -> dict:
+    o = dict(o)
+    o["owner"] = None if o["owner"] == "none" else o["owner"]
+    o["start"] = start_position(o, layout)
+    return o
 
 
 def create(caller: Caller, seed: int, out: pathlib.Path, effort_note: str = "") -> dict:
@@ -193,10 +213,20 @@ def create(caller: Caller, seed: int, out: pathlib.Path, effort_note: str = "") 
     residents = res["residents"]
     rids = [r["id"] for r in residents]
 
-    objects: list[dict] = []
-    targets = room_targets(layout)
+    personal = caller.call("create/personal", prompts.CREATE_SYSTEM,
+                           prompts.PERSONAL_USER.format(home=lay["home"], layout=layout.describe(),
+                                                        residents=residents_text(residents),
+                                                        lo=PERSONAL_LO, hi=PERSONAL_HI,
+                                                        fields=prompts.FIELDS),
+                           room_objects_schema(layout.place_ids, rids, PERSONAL_LO, PERSONAL_HI,
+                                               owner_required=True),
+                           check_room_objects(set(layout.place_ids)), max_tokens=40000)
+    dropped = compose_ids(personal["objects"], {}, rids)
+    objects: list[dict] = [_finish(o, layout) for o in personal["objects"]]
+    targets = room_targets(layout, len(objects))
     for room in rooms:
-        objects += _room_objects(caller, layout, residents, rids, room, targets[room], objects, "")
+        objects += _room_objects(caller, layout, residents, rids, room, targets[room], objects, "",
+                                 dropped)
     passes = 0
     while len(objects) < OBJECTS_LO and passes < 3:
         passes += 1
@@ -204,7 +234,7 @@ def create(caller: Caller, seed: int, out: pathlib.Path, effort_note: str = "") 
         room = min(rooms, key=lambda r: counts[r] / len(layout.rooms[r]))
         need = OBJECTS_LO - len(objects) + 10
         objects += _room_objects(caller, layout, residents, rids, room, need, objects,
-                                 f"/more{passes}")
+                                 f"/more{passes}", dropped)
 
     sit = caller.call("create/situations", prompts.CREATE_SYSTEM,
                       prompts.SITUATIONS_USER.format(residents=residents_text(residents)),
@@ -212,16 +242,19 @@ def create(caller: Caller, seed: int, out: pathlib.Path, effort_note: str = "") 
 
     spec = {"seed": seed, "home": home, "layout_thinking": lay["thinking"],
             "layout": layout.to_json(), "residents": residents, "objects": objects,
-            "situations": sit["situations"], "small_disturbances": sit["small_disturbances"]}
+            "situations": sit["situations"], "small_disturbances": sit["small_disturbances"],
+            "dropped_duplicates": [{"id": o["id"], "owner": o["owner"], "place": o["place"]}
+                                   for o in dropped]}
     out.mkdir(parents=True, exist_ok=True)
     (out / "household.json").write_text(json.dumps(spec, indent=1))
     (out / "household_summary.md").write_text(summarize(spec))
     return spec
 
 
-def _room_objects(caller, layout, residents, rids, room, target, so_far, suffix) -> list[dict]:
+def _room_objects(caller, layout, residents, rids, room, target, so_far, suffix,
+                  dropped: list) -> list[dict]:
     room_places = layout.places_in(room)
-    taken = {o["id"] for o in so_far}
+    taken = {o["id"]: o["owner"] for o in so_far}
     spots = "\n".join(f"  {p} ({layout.places[p].name}"
                       f"{', closed' if layout.places[p].kind == CONTAINER else ''}"
                       f"{', out of sight' if layout.places[p].hidden else ''})" for p in room_places)
@@ -229,7 +262,10 @@ def _room_objects(caller, layout, residents, rids, room, target, so_far, suffix)
         by_type = collections.defaultdict(list)
         for o in so_far:
             by_type[o["type"]].append(o["id"])
-        taken_text = ("\nAlready placed in other rooms, and staying there (type: names). Do not "
+        here = [f"{o['id']} ({o['start'].get('place') or 'inside ' + o['start']['carrier']})"
+                for o in so_far if layout.room_of(_base_place(o, so_far)) == room]
+        taken_text = (("\nAlready in this room: " + ", ".join(here) + ".\n" if here else "")
+                      + "\nAlready placed in the home, and staying there (type: names). Do not "
                       "add a second one of something a person has only one of (their phone, "
                       "wallet, house keys, work laptop, everyday glasses); do add more instances "
                       "of types a home has several of (mugs, chargers, towels, books), looking "
@@ -242,17 +278,18 @@ def _room_objects(caller, layout, residents, rids, room, target, so_far, suffix)
                       prompts.OBJECTS_USER.format(layout=layout.describe(),
                                                   residents=residents_text(residents),
                                                   room=room, spots=spots, lo=lo, hi=hi,
-                                                  taken=taken_text),
+                                                  fields=prompts.FIELDS, taken=taken_text),
                       room_objects_schema(room_places, rids, lo, hi),
                       check_room_objects(set(room_places)), max_tokens=40000)
-    compose_ids(ans["objects"], taken, rids)
-    out = []
-    for o in ans["objects"]:
-        o = dict(o)
-        o["owner"] = None if o["owner"] == "none" else o["owner"]
-        o["start"] = start_position(o, layout)
-        out.append(o)
-    return out
+    dropped += compose_ids(ans["objects"], taken, rids)
+    return [_finish(o, layout) for o in ans["objects"]]
+
+
+def _base_place(o: dict, objects: list) -> str:
+    if o["start"]["at"] == "place":
+        return o["start"]["place"]
+    carrier = next(x for x in objects if x["id"] == o["start"]["carrier"])
+    return carrier["start"]["place"]
 
 
 def summarize(spec: dict) -> str:
