@@ -156,7 +156,7 @@ def check_room_objects(room_places: set):
     return check
 
 
-def compose_ids(objects: list, taken: dict, rids) -> list:
+def compose_ids(objects: list, taken: dict, rids, owner: str = None) -> list:
     """id = type + looks, in place; resident names are dropped from the looks.
     References (ref = another thing's n) become ids, and a thing placed
     relative to another takes that thing's spot.
@@ -166,7 +166,11 @@ def compose_ids(objects: list, taken: dict, rids) -> list:
     its id matches one already placed and either is owned, or when a thing of
     the same type already sits at the same spot sharing a word of its looks.
     Otherwise a clash takes the next attribute that tells it apart (material,
-    condition, pattern, color), then a number."""
+    condition, pattern, color), then a number.
+
+    owner: set for a call that lists one person's own things. Every thing in it
+    is theirs, so a look-alike owned by someone else is a different thing
+    (two brown wallets in one drawer), and only that person's own things count."""
     by_num = {o["n"]: o for o in objects}
     for o in objects:      # spot from the thing referred to (both were asked for; they can disagree)
         root, seen = o, set()
@@ -183,11 +187,14 @@ def compose_ids(objects: list, taken: dict, rids) -> list:
         kind = slug(o["type"])
         look = [w for w in slug(o["looks"]).split("_") if w and w not in rids and w not in kind.split("_")]
         oid = "_".join([kind] + look) if look else f"{kind}_{slug(o['color'])}"
-        owner = None if o.get("owner") in (None, "none") else o["owner"]
+        mine = None if o.get("owner") in (None, "none") else o["owner"]
         same = taken.get(oid)
         twin = next((tid for tid, x in taken.items() if x["type"] == o["type"]
-                     and x["place"] == o["place"] and set(look) & x["looks"]), None)
-        if (same and (same["owner"] or owner)) or twin:
+                     and x["place"] == o["place"] and set(look) & x["looks"]
+                     and (owner is None or x["owner"] == owner)), None)
+        if owner is not None and same and same["owner"] != owner:
+            same = None
+        if (same and (same["owner"] or mine)) or twin:
             o["id"], o["same_as"] = oid, (oid if same else twin)
             dropped.append(o)
             by_n[o["n"]] = None
@@ -201,7 +208,7 @@ def compose_ids(objects: list, taken: dict, rids) -> list:
         base, k = oid, 2
         while oid in used:
             oid, k = f"{base}_{k}", k + 1
-        used[oid] = {"owner": owner, "place": o["place"], "type": o["type"], "looks": set(look)}
+        used[oid] = {"owner": mine, "place": o["place"], "type": o["type"], "looks": set(look)}
         o["id"], o["look_words"] = oid, look
         by_n[o["n"]] = oid
     for o in objects:
@@ -274,7 +281,7 @@ def _personal(caller, layout, home, residents, r, so_far, dropped) -> list[dict]
                       room_objects_schema(layout.place_ids, [rid], PERSONAL_LO, PERSONAL_HI,
                                           owner_required=True),
                       check_room_objects(set(layout.place_ids)), max_tokens=40000)
-    dropped += compose_ids(ans["objects"], taken, [x["id"] for x in residents])
+    dropped += compose_ids(ans["objects"], taken, [x["id"] for x in residents], owner=rid)
     out = [_finish(o, layout) for o in ans["objects"]]
     missing = missing_essentials(out, rid)
     if missing:
@@ -289,11 +296,14 @@ def _personal(caller, layout, home, residents, r, so_far, dropped) -> list[dict]
                           room_objects_schema(layout.place_ids, [rid], len(missing), len(missing) + 1,
                                               owner_required=True),
                           check_room_objects(set(layout.place_ids)), max_tokens=20000)
-        dropped += compose_ids(add["objects"], taken, [x["id"] for x in residents])
+        dropped += compose_ids(add["objects"], taken, [x["id"] for x in residents], owner=rid)
         extra = [_finish(o, layout) for o in add["objects"]]
         for o in extra:
             o["added_as_essential"] = True
         out += extra
+        still = missing_essentials(out, rid)
+        if still:
+            raise RuntimeError(f"{rid} still has no {', '.join(still)} after the follow-up call")
     return out
 
 

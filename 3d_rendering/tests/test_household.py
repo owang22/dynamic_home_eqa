@@ -82,3 +82,13 @@ def test_missing_essentials_by_type_words():
             {"type": "phone charger", "owner": "ben"}, {"type": "purse", "owner": "ben"}]
     assert missing_essentials(objs, "mara") == ["wallet or purse"]
     assert missing_essentials(objs, "ben") == ["phone", "keys"]
+
+
+def test_personal_call_keeps_a_lookalike_owned_by_someone_else():
+    taken = {"wallet_brown_leather": {"owner": "mara", "place": "drawer", "type": "wallet", "looks": {"brown", "leather"}}}
+    objs = [thing(1, "wallet", "brown bifold", owner="daniel", place="drawer"),
+            thing(2, "keys", "truck", owner="daniel", place="drawer")]
+    assert compose_ids(objs, taken, ["mara", "daniel"], owner="daniel") == []
+    objs = [thing(1, "wallet", "brown leather", owner="daniel", place="drawer")]
+    assert compose_ids(objs, taken, ["mara", "daniel"], owner="daniel") == []
+    assert objs[0]["id"] != "wallet_brown_leather"

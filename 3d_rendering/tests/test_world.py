@@ -311,3 +311,17 @@ def test_put_down_and_give_from_pocket_of_worn_clothes():
     w.apply("ana", A("go", place="entry_coat_hooks"), 3)
     ok, msg, _ = w.apply("ben", A("give", object="keys_ben", person="ana"), 4)
     assert ok, msg
+
+
+def test_put_on_top_of_a_thing_still_in_hand_sets_it_down_first():
+    w = make()
+    w.apply("ana", A("go", place="kitchen_counter_by_sink"), 0)
+    w.apply("ana", A("pick_up", object="mug_red"), 0)
+    w.apply("ana", A("go", place="living_coffee_table"), 1)
+    w.apply("ana", A("pick_up", object="book_atlas"), 1)
+    ok, msg, _ = w.apply("ana", A("put_down", object="mug_red", place="living_coffee_table",
+                                  relation="on_top_of", ref="book_atlas"), 2)
+    assert ok, msg
+    assert w.where["book_atlas"]["place"] == "living_coffee_table"
+    assert w.where["mug_red"] == at_place("living_coffee_table", "on_top_of", "book_atlas")
+    assert w.people["ana"].hands == []

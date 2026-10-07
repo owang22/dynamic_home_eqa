@@ -528,6 +528,15 @@ class World:
             self._touch(person, oid, minute)
             return self._done(rid, act, minute, source, self.where[oid], walked)
 
+        if ref is not None and self.where[ref] == {"at": "hand", "person": rid} and rel != "in":
+            # bread on top of the plate still in their other hand: the plate goes down first
+            self.where[ref] = at_place(place, "in" if kind == CONTAINER else "on", None)
+            person.hands.remove(ref)
+            self._touch(person, ref, minute)
+            self.log.append(self._event(rid, {"verb": "put_down", "object": ref,
+                                              "why": "(set down first, to put something on it)"},
+                                        minute, {"at": "hand", "person": rid}, self.where[ref], 0,
+                                        implied=True))
         if ref is not None:
             if self.where[ref]["at"] != "place" or self.where[ref]["place"] != place:
                 return False, (f"{ref} is not at {place}; you can only put {oid} "
