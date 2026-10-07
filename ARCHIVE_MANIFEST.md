@@ -1,3 +1,31 @@
+# 2026-10-07: prior strands moved into `prior_work/` (inside the repo)
+
+To start the `3d_rendering/` work on a clean top level, every earlier strand was moved with a plain
+`mv` into `prior_work/` under the **same relative paths**; git records them as renames, so
+`git log --follow` still traces each file. Moved: `src/{baselines, beliefsim, dynbelief, homer,
+households, icc, revamp_v2, self_improve, situation_sim, stronger_model, rendered_look}`,
+`results/` (including the 16 GB of untracked run cells in `results/self_improve`), `reports/`,
+`superseded/`, `archive/`, `coordination/`, `corl2026_workshops/`, `atus/`, `banks/`, `casas/`,
+`configs/`, `profiles/`, `visualization/`, `docs/`, `tests/` (except `test_hosted_adapter.py`), and
+the loose files `run_pipeline.sh`, `serve_qwen38.sh`, `TRANSFER.md`, `run3_return_watcher_abl.log`.
+
+Stayed at the top: `src/dynamic_home_eqa`, `data/`, `third_party/`, `llm_prior_cache/`, `env.sh`,
+`pyproject.toml`, `README.md`, this file.
+
+**What this breaks, on purpose:** the moved packages are no longer on the import path
+(`pip install -e .` puts only `src/` there), and their scripts read paths like `results/...`
+relative to the repo root. To run one again, put `prior_work/src` on `PYTHONPATH` and run from
+`prior_work/`.
+
+**What was changed so the kept code still works:** the price table the spend cap reads moved from
+`src/revamp_v2/hosted_rates.yaml` to `src/dynamic_home_eqa/generation/hosted_rates.yaml`. Every
+`.gitignore` rule with a path in it was copied with a `prior_work/` prefix so nothing ignored
+became staged. Checked after the move: every module in `dynamic_home_eqa` imports except two
+scripts that were already broken (`e2_headline_comparison` was deleted in 2f2afa4c1), and
+`tests/test_hosted_adapter.py` passes.
+
+---
+
 # What was moved out of this repository, 2026-09-29
 
 The repository had grown to **190,024 tracked files and 9.0 GB**, which is more than a language

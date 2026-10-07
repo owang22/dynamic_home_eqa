@@ -1,5 +1,13 @@
 # dynamic_home_eqa
 
+**2026-10-07: current work is `3d_rendering/`** (the `lived_home` generator: LLM residents
+roleplay a home and every object moves only because a resident carried it). All earlier
+strands moved to **`prior_work/`** under the same relative paths, so every path below now
+starts with `prior_work/` (for example `prior_work/src/revamp_v2/generate_dataset.py`). The
+code there no longer imports from the installed package; see `ARCHIVE_MANIFEST.md`.
+What stayed at the top: `src/dynamic_home_eqa` (the model client, response cache and spend
+cap that the new work reuses), `data/`, `third_party/`, `llm_prior_cache/`.
+
 ## The synthetic household dataset
 
 **`data/household_dataset.jsonl`** — ten simulated households over 21

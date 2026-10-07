@@ -1,7 +1,7 @@
 """Spend guard for the hosted-generation pilot (Task 1.5).
 
 Every hosted response is priced from a small committed rate table
-(src/revamp_v2/hosted_rates.yaml) and accumulated into a FILE-BACKED
+(hosted_rates.yaml next to this file; moved from src/revamp_v2 on 2026-10-07) and accumulated into a FILE-BACKED
 ledger, because the pilot spans several CLI invocations (generate.py,
 then story_calendar.py) and the $5 cap is one cap for the whole pilot,
 not per process. Crossing the cap raises SpendCapExceeded with a spend
@@ -29,7 +29,7 @@ import os
 import pathlib
 
 _REPO_ROOT = pathlib.Path(__file__).resolve().parents[3]
-DEFAULT_RATES = _REPO_ROOT / "src" / "revamp_v2" / "hosted_rates.yaml"
+DEFAULT_RATES = pathlib.Path(__file__).resolve().parent / "hosted_rates.yaml"
 DEFAULT_CAP = 5.0
 DEFAULT_LEDGER = "/tmp/dynamic-home-eqa-hosted-spend.json"
 
