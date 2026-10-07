@@ -1,0 +1,1451 @@
+{
+ "rigs": {
+  "raised": {
+   "label": "Raised camera, 1.0 m",
+   "detection": {
+    "detector": "google/owlv2-base-patch16-ensemble",
+    "queries": {
+     "mug": "a mug",
+     "glass": "a drinking glass",
+     "towel": "a folded towel",
+     "book": "a book",
+     "water_bottle": "a water bottle",
+     "razor": "a razor",
+     "charger": "a phone charger",
+     "notebook": "a notebook",
+     "tablet": "a tablet computer",
+     "glasses": "a pair of glasses",
+     "medication": "a pill bottle"
+    },
+    "sightings": 3508,
+    "recall_by_pixels": {
+     "0.1": {
+      "400-1000": [
+       704,
+       1141
+      ],
+      "1000-3000": [
+       876,
+       1111
+      ],
+      "3000-": [
+       783,
+       844
+      ],
+      "200-400": [
+       210,
+       412
+      ]
+     },
+     "0.2": {
+      "400-1000": [
+       545,
+       1141
+      ],
+      "1000-3000": [
+       806,
+       1111
+      ],
+      "3000-": [
+       772,
+       844
+      ],
+      "200-400": [
+       109,
+       412
+      ]
+     },
+     "0.3": {
+      "400-1000": [
+       364,
+       1141
+      ],
+      "1000-3000": [
+       668,
+       1111
+      ],
+      "3000-": [
+       770,
+       844
+      ],
+      "200-400": [
+       63,
+       412
+      ]
+     }
+    },
+    "recall_by_kind": {
+     "0.1": {
+      "glass": [
+       5,
+       531
+      ],
+      "mug": [
+       596,
+       648
+      ],
+      "water_bottle": [
+       618,
+       631
+      ],
+      "razor": [
+       183,
+       214
+      ],
+      "towel": [
+       606,
+       607
+      ],
+      "book": [
+       391,
+       478
+      ],
+      "glasses": [
+       47,
+       101
+      ],
+      "charger": [
+       77,
+       194
+      ],
+      "medication": [
+       50,
+       104
+      ]
+     },
+     "0.2": {
+      "glass": [
+       3,
+       531
+      ],
+      "mug": [
+       399,
+       648
+      ],
+      "water_bottle": [
+       611,
+       631
+      ],
+      "razor": [
+       139,
+       214
+      ],
+      "towel": [
+       605,
+       607
+      ],
+      "book": [
+       337,
+       478
+      ],
+      "glasses": [
+       47,
+       101
+      ],
+      "charger": [
+       59,
+       194
+      ],
+      "medication": [
+       32,
+       104
+      ]
+     },
+     "0.3": {
+      "glass": [
+       1,
+       531
+      ],
+      "mug": [
+       270,
+       648
+      ],
+      "water_bottle": [
+       599,
+       631
+      ],
+      "razor": [
+       64,
+       214
+      ],
+      "towel": [
+       589,
+       607
+      ],
+      "book": [
+       246,
+       478
+      ],
+      "glasses": [
+       43,
+       101
+      ],
+      "charger": [
+       43,
+       194
+      ],
+      "medication": [
+       10,
+       104
+      ]
+     }
+    },
+    "false_alarms_per_empty_picture": {
+     "0.1": 0.53,
+     "0.2": 0.065,
+     "0.3": 0.05
+    },
+    "empty_pictures": 200,
+    "distinct_empty_frames": 138,
+    "distinct_frames_with_things": 1685,
+    "distinct_thing_place_moment_by_kind": {
+     "glass": 157,
+     "mug": 202,
+     "water_bottle": 211,
+     "razor": 108,
+     "towel": 314,
+     "book": 169,
+     "glasses": 40,
+     "charger": 76,
+     "medication": 53
+    },
+    "false_alarm_note": "An upper bound on hallucination: an audit found most of these boxes sit on a tracked thing that was too small or cut by the edge to count, or on an untracked object of the home (a book on a bookshelf, a towel on a pillow)."
+   },
+   "matching": {
+    "dinov2": {
+     "right_by_kind": {
+      "glass": [
+       470,
+       494
+      ],
+      "mug": [
+       348,
+       549
+      ],
+      "water_bottle": [
+       517,
+       597
+      ],
+      "razor": [
+       167,
+       182
+      ],
+      "towel": [
+       498,
+       607
+      ],
+      "book": [
+       341,
+       421
+      ],
+      "charger": [
+       74,
+       138
+      ]
+     },
+     "right_by_pixels": {
+      "400-1000": [
+       774,
+       1070
+      ],
+      "1000-3000": [
+       917,
+       1074
+      ],
+      "3000-": [
+       724,
+       844
+      ]
+     },
+     "chance_by_kind": {
+      "glass": 0.3333333333333333,
+      "mug": 0.3333333333333333,
+      "water_bottle": 0.5,
+      "razor": 0.5,
+      "towel": 0.3333333333333333,
+      "book": 0.3333333333333333,
+      "charger": 0.5
+     },
+     "majority_guess_by_kind": {
+      "glass": 0.672,
+      "mug": 0.63,
+      "water_bottle": 0.601,
+      "razor": 1.0,
+      "towel": 0.593,
+      "book": 1.0,
+      "charger": 1.0
+     },
+     "right_among_this_households_models": {
+      "glass": [
+       482,
+       494
+      ],
+      "mug": [
+       394,
+       549
+      ],
+      "water_bottle": [
+       517,
+       597
+      ],
+      "towel": [
+       541,
+       607
+      ]
+     },
+     "right_among_all_24_models": {
+      "glass": [
+       395,
+       494
+      ],
+      "mug": [
+       185,
+       549
+      ],
+      "water_bottle": [
+       347,
+       597
+      ],
+      "razor": [
+       52,
+       182
+      ],
+      "towel": [
+       498,
+       607
+      ],
+      "book": [
+       303,
+       421
+      ],
+      "glasses": [
+       13,
+       58
+      ],
+      "charger": [
+       60,
+       138
+      ],
+      "medication": [
+       35,
+       50
+      ]
+     },
+     "right_kind_among_all_24_models": {
+      "glass": [
+       400,
+       494
+      ],
+      "mug": [
+       227,
+       549
+      ],
+      "water_bottle": [
+       382,
+       597
+      ],
+      "razor": [
+       54,
+       182
+      ],
+      "towel": [
+       592,
+       607
+      ],
+      "book": [
+       372,
+       421
+      ],
+      "glasses": [
+       13,
+       58
+      ],
+      "charger": [
+       60,
+       138
+      ],
+      "medication": [
+       35,
+       50
+      ]
+     },
+     "distinct_thing_place_moment_by_kind": {
+      "glass": 149,
+      "mug": 195,
+      "water_bottle": 181,
+      "razor": 95,
+      "towel": 314,
+      "book": 152,
+      "glasses": 40,
+      "charger": 72,
+      "medication": 33
+     }
+    },
+    "siglip": {
+     "right_by_kind": {
+      "glass": [
+       182,
+       494
+      ],
+      "mug": [
+       266,
+       549
+      ],
+      "water_bottle": [
+       525,
+       597
+      ],
+      "razor": [
+       176,
+       182
+      ],
+      "towel": [
+       498,
+       607
+      ],
+      "book": [
+       312,
+       421
+      ],
+      "charger": [
+       135,
+       138
+      ]
+     },
+     "right_by_pixels": {
+      "400-1000": [
+       585,
+       1070
+      ],
+      "1000-3000": [
+       775,
+       1074
+      ],
+      "3000-": [
+       734,
+       844
+      ]
+     },
+     "chance_by_kind": {
+      "glass": 0.3333333333333333,
+      "mug": 0.3333333333333333,
+      "water_bottle": 0.5,
+      "razor": 0.5,
+      "towel": 0.3333333333333333,
+      "book": 0.3333333333333333,
+      "charger": 0.5
+     },
+     "majority_guess_by_kind": {
+      "glass": 0.672,
+      "mug": 0.63,
+      "water_bottle": 0.601,
+      "razor": 1.0,
+      "towel": 0.593,
+      "book": 1.0,
+      "charger": 1.0
+     },
+     "right_among_this_households_models": {
+      "glass": [
+       185,
+       494
+      ],
+      "mug": [
+       267,
+       549
+      ],
+      "water_bottle": [
+       525,
+       597
+      ],
+      "towel": [
+       577,
+       607
+      ]
+     },
+     "right_among_all_24_models": {
+      "glass": [
+       176,
+       494
+      ],
+      "mug": [
+       179,
+       549
+      ],
+      "water_bottle": [
+       379,
+       597
+      ],
+      "razor": [
+       92,
+       182
+      ],
+      "towel": [
+       484,
+       607
+      ],
+      "book": [
+       265,
+       421
+      ],
+      "glasses": [
+       31,
+       58
+      ],
+      "charger": [
+       55,
+       138
+      ],
+      "medication": [
+       3,
+       50
+      ]
+     },
+     "right_kind_among_all_24_models": {
+      "glass": [
+       297,
+       494
+      ],
+      "mug": [
+       262,
+       549
+      ],
+      "water_bottle": [
+       392,
+       597
+      ],
+      "razor": [
+       97,
+       182
+      ],
+      "towel": [
+       592,
+       607
+      ],
+      "book": [
+       336,
+       421
+      ],
+      "glasses": [
+       31,
+       58
+      ],
+      "charger": [
+       55,
+       138
+      ],
+      "medication": [
+       3,
+       50
+      ]
+     },
+     "distinct_thing_place_moment_by_kind": {
+      "glass": 149,
+      "mug": 195,
+      "water_bottle": 181,
+      "razor": 95,
+      "towel": 314,
+      "book": 152,
+      "glasses": 40,
+      "charger": 72,
+      "medication": 33
+     }
+    },
+    "vjepa2": {
+     "right_by_kind": {
+      "glass": [
+       384,
+       494
+      ],
+      "mug": [
+       262,
+       549
+      ],
+      "water_bottle": [
+       368,
+       597
+      ],
+      "razor": [
+       181,
+       182
+      ],
+      "towel": [
+       131,
+       607
+      ],
+      "book": [
+       145,
+       421
+      ],
+      "charger": [
+       78,
+       138
+      ]
+     },
+     "right_by_pixels": {
+      "400-1000": [
+       497,
+       1070
+      ],
+      "1000-3000": [
+       699,
+       1074
+      ],
+      "3000-": [
+       353,
+       844
+      ]
+     },
+     "chance_by_kind": {
+      "glass": 0.3333333333333333,
+      "mug": 0.3333333333333333,
+      "water_bottle": 0.5,
+      "razor": 0.5,
+      "towel": 0.3333333333333333,
+      "book": 0.3333333333333333,
+      "charger": 0.5
+     },
+     "majority_guess_by_kind": {
+      "glass": 0.672,
+      "mug": 0.63,
+      "water_bottle": 0.601,
+      "razor": 1.0,
+      "towel": 0.593,
+      "book": 1.0,
+      "charger": 1.0
+     },
+     "right_among_this_households_models": {
+      "glass": [
+       416,
+       494
+      ],
+      "mug": [
+       431,
+       549
+      ],
+      "water_bottle": [
+       368,
+       597
+      ],
+      "towel": [
+       372,
+       607
+      ]
+     },
+     "right_among_all_24_models": {
+      "glass": [
+       58,
+       494
+      ],
+      "mug": [
+       20,
+       549
+      ],
+      "water_bottle": [
+       89,
+       597
+      ],
+      "razor": [
+       4,
+       182
+      ],
+      "towel": [
+       101,
+       607
+      ],
+      "book": [
+       17,
+       421
+      ],
+      "glasses": [
+       41,
+       58
+      ],
+      "charger": [
+       16,
+       138
+      ],
+      "medication": [
+       6,
+       50
+      ]
+     },
+     "right_kind_among_all_24_models": {
+      "glass": [
+       58,
+       494
+      ],
+      "mug": [
+       21,
+       549
+      ],
+      "water_bottle": [
+       111,
+       597
+      ],
+      "razor": [
+       4,
+       182
+      ],
+      "towel": [
+       250,
+       607
+      ],
+      "book": [
+       98,
+       421
+      ],
+      "glasses": [
+       41,
+       58
+      ],
+      "charger": [
+       16,
+       138
+      ],
+      "medication": [
+       6,
+       50
+      ]
+     },
+     "distinct_thing_place_moment_by_kind": {
+      "glass": 149,
+      "mug": 195,
+      "water_bottle": 181,
+      "razor": 95,
+      "towel": 314,
+      "book": 152,
+      "glasses": 40,
+      "charger": 72,
+      "medication": 33
+     }
+    }
+   },
+   "crops": 3096,
+   "moments": 40
+  },
+  "go2": {
+   "label": "Go2 camera, 0.37 m",
+   "detection": {
+    "detector": "google/owlv2-base-patch16-ensemble",
+    "queries": {
+     "mug": "a mug",
+     "glass": "a drinking glass",
+     "towel": "a folded towel",
+     "book": "a book",
+     "water_bottle": "a water bottle",
+     "razor": "a razor",
+     "charger": "a phone charger",
+     "notebook": "a notebook",
+     "tablet": "a tablet computer",
+     "glasses": "a pair of glasses",
+     "medication": "a pill bottle"
+    },
+    "sightings": 1883,
+    "recall_by_pixels": {
+     "0.1": {
+      "400-1000": [
+       440,
+       615
+      ],
+      "200-400": [
+       318,
+       591
+      ],
+      "3000-": [
+       281,
+       289
+      ],
+      "1000-3000": [
+       342,
+       388
+      ]
+     },
+     "0.2": {
+      "400-1000": [
+       354,
+       615
+      ],
+      "200-400": [
+       238,
+       591
+      ],
+      "3000-": [
+       272,
+       289
+      ],
+      "1000-3000": [
+       341,
+       388
+      ]
+     },
+     "0.3": {
+      "400-1000": [
+       244,
+       615
+      ],
+      "200-400": [
+       127,
+       591
+      ],
+      "3000-": [
+       232,
+       289
+      ],
+      "1000-3000": [
+       319,
+       388
+      ]
+     }
+    },
+    "recall_by_kind": {
+     "0.1": {
+      "glass": [
+       0,
+       258
+      ],
+      "water_bottle": [
+       523,
+       541
+      ],
+      "towel": [
+       591,
+       649
+      ],
+      "book": [
+       101,
+       140
+      ],
+      "glasses": [
+       12,
+       39
+      ],
+      "razor": [
+       15,
+       27
+      ],
+      "mug": [
+       118,
+       145
+      ],
+      "charger": [
+       3,
+       15
+      ],
+      "medication": [
+       18,
+       69
+      ]
+     },
+     "0.2": {
+      "glass": [
+       0,
+       258
+      ],
+      "water_bottle": [
+       490,
+       541
+      ],
+      "towel": [
+       526,
+       649
+      ],
+      "book": [
+       80,
+       140
+      ],
+      "glasses": [
+       12,
+       39
+      ],
+      "razor": [
+       3,
+       27
+      ],
+      "mug": [
+       81,
+       145
+      ],
+      "charger": [
+       2,
+       15
+      ],
+      "medication": [
+       11,
+       69
+      ]
+     },
+     "0.3": {
+      "glass": [
+       0,
+       258
+      ],
+      "water_bottle": [
+       420,
+       541
+      ],
+      "towel": [
+       424,
+       649
+      ],
+      "book": [
+       14,
+       140
+      ],
+      "glasses": [
+       12,
+       39
+      ],
+      "razor": [
+       1,
+       27
+      ],
+      "mug": [
+       50,
+       145
+      ],
+      "charger": [
+       1,
+       15
+      ],
+      "medication": [
+       0,
+       69
+      ]
+     }
+    },
+    "false_alarms_per_empty_picture": {
+     "0.1": 1.025,
+     "0.2": 0.25,
+     "0.3": 0.075
+    },
+    "empty_pictures": 200,
+    "distinct_empty_frames": 150,
+    "distinct_frames_with_things": 928,
+    "distinct_thing_place_moment_by_kind": {
+     "glass": 112,
+     "water_bottle": 233,
+     "towel": 349,
+     "book": 75,
+     "glasses": 31,
+     "razor": 16,
+     "mug": 64,
+     "charger": 13,
+     "medication": 36
+    },
+    "false_alarm_note": "An upper bound on hallucination: an audit found most of these boxes sit on a tracked thing that was too small or cut by the edge to count, or on an untracked object of the home (a book on a bookshelf, a towel on a pillow)."
+   },
+   "matching": {
+    "dinov2": {
+     "right_by_kind": {
+      "glass": [
+       129,
+       144
+      ],
+      "water_bottle": [
+       283,
+       363
+      ],
+      "towel": [
+       392,
+       578
+      ],
+      "book": [
+       65,
+       88
+      ],
+      "razor": [
+       16,
+       19
+      ],
+      "charger": [
+       4,
+       4
+      ],
+      "mug": [
+       44,
+       54
+      ]
+     },
+     "right_by_pixels": {
+      "400-1000": [
+       338,
+       577
+      ],
+      "3000-": [
+       259,
+       289
+      ],
+      "1000-3000": [
+       336,
+       384
+      ]
+     },
+     "chance_by_kind": {
+      "glass": 0.3333333333333333,
+      "water_bottle": 0.5,
+      "towel": 0.3333333333333333,
+      "book": 0.3333333333333333,
+      "razor": 0.5,
+      "charger": 0.5,
+      "mug": 0.3333333333333333
+     },
+     "majority_guess_by_kind": {
+      "glass": 0.792,
+      "water_bottle": 0.545,
+      "towel": 0.516,
+      "book": 1.0,
+      "razor": 1.0,
+      "charger": 1.0,
+      "mug": 0.926
+     },
+     "right_among_this_households_models": {
+      "glass": [
+       131,
+       144
+      ],
+      "water_bottle": [
+       283,
+       363
+      ],
+      "towel": [
+       508,
+       578
+      ],
+      "mug": [
+       53,
+       54
+      ]
+     },
+     "right_among_all_24_models": {
+      "glass": [
+       117,
+       144
+      ],
+      "water_bottle": [
+       166,
+       363
+      ],
+      "towel": [
+       306,
+       578
+      ],
+      "book": [
+       57,
+       88
+      ],
+      "glasses": [
+       8,
+       8
+      ],
+      "razor": [
+       4,
+       19
+      ],
+      "charger": [
+       2,
+       4
+      ],
+      "medication": [
+       22,
+       34
+      ],
+      "mug": [
+       19,
+       54
+      ]
+     },
+     "right_kind_among_all_24_models": {
+      "glass": [
+       124,
+       144
+      ],
+      "water_bottle": [
+       212,
+       363
+      ],
+      "towel": [
+       414,
+       578
+      ],
+      "book": [
+       70,
+       88
+      ],
+      "glasses": [
+       8,
+       8
+      ],
+      "razor": [
+       4,
+       19
+      ],
+      "charger": [
+       2,
+       4
+      ],
+      "medication": [
+       22,
+       34
+      ],
+      "mug": [
+       19,
+       54
+      ]
+     },
+     "distinct_thing_place_moment_by_kind": {
+      "glass": 81,
+      "water_bottle": 158,
+      "towel": 280,
+      "book": 60,
+      "glasses": 4,
+      "razor": 14,
+      "charger": 4,
+      "medication": 22,
+      "mug": 40
+     }
+    },
+    "siglip": {
+     "right_by_kind": {
+      "glass": [
+       114,
+       144
+      ],
+      "water_bottle": [
+       297,
+       363
+      ],
+      "towel": [
+       248,
+       578
+      ],
+      "book": [
+       60,
+       88
+      ],
+      "razor": [
+       19,
+       19
+      ],
+      "charger": [
+       4,
+       4
+      ],
+      "mug": [
+       50,
+       54
+      ]
+     },
+     "right_by_pixels": {
+      "400-1000": [
+       341,
+       577
+      ],
+      "3000-": [
+       241,
+       289
+      ],
+      "1000-3000": [
+       210,
+       384
+      ]
+     },
+     "chance_by_kind": {
+      "glass": 0.3333333333333333,
+      "water_bottle": 0.5,
+      "towel": 0.3333333333333333,
+      "book": 0.3333333333333333,
+      "razor": 0.5,
+      "charger": 0.5,
+      "mug": 0.3333333333333333
+     },
+     "majority_guess_by_kind": {
+      "glass": 0.792,
+      "water_bottle": 0.545,
+      "towel": 0.516,
+      "book": 1.0,
+      "razor": 1.0,
+      "charger": 1.0,
+      "mug": 0.926
+     },
+     "right_among_this_households_models": {
+      "glass": [
+       114,
+       144
+      ],
+      "water_bottle": [
+       297,
+       363
+      ],
+      "towel": [
+       410,
+       578
+      ],
+      "mug": [
+       50,
+       54
+      ]
+     },
+     "right_among_all_24_models": {
+      "glass": [
+       111,
+       144
+      ],
+      "water_bottle": [
+       133,
+       363
+      ],
+      "towel": [
+       207,
+       578
+      ],
+      "book": [
+       60,
+       88
+      ],
+      "glasses": [
+       8,
+       8
+      ],
+      "razor": [
+       7,
+       19
+      ],
+      "charger": [
+       2,
+       4
+      ],
+      "medication": [
+       1,
+       34
+      ],
+      "mug": [
+       26,
+       54
+      ]
+     },
+     "right_kind_among_all_24_models": {
+      "glass": [
+       113,
+       144
+      ],
+      "water_bottle": [
+       136,
+       363
+      ],
+      "towel": [
+       437,
+       578
+      ],
+      "book": [
+       83,
+       88
+      ],
+      "glasses": [
+       8,
+       8
+      ],
+      "razor": [
+       7,
+       19
+      ],
+      "charger": [
+       2,
+       4
+      ],
+      "medication": [
+       1,
+       34
+      ],
+      "mug": [
+       26,
+       54
+      ]
+     },
+     "distinct_thing_place_moment_by_kind": {
+      "glass": 81,
+      "water_bottle": 158,
+      "towel": 280,
+      "book": 60,
+      "glasses": 4,
+      "razor": 14,
+      "charger": 4,
+      "medication": 22,
+      "mug": 40
+     }
+    },
+    "vjepa2": {
+     "right_by_kind": {
+      "glass": [
+       83,
+       144
+      ],
+      "water_bottle": [
+       226,
+       363
+      ],
+      "towel": [
+       0,
+       578
+      ],
+      "book": [
+       15,
+       88
+      ],
+      "razor": [
+       19,
+       19
+      ],
+      "charger": [
+       4,
+       4
+      ],
+      "mug": [
+       37,
+       54
+      ]
+     },
+     "right_by_pixels": {
+      "400-1000": [
+       239,
+       577
+      ],
+      "3000-": [
+       22,
+       289
+      ],
+      "1000-3000": [
+       123,
+       384
+      ]
+     },
+     "chance_by_kind": {
+      "glass": 0.3333333333333333,
+      "water_bottle": 0.5,
+      "towel": 0.3333333333333333,
+      "book": 0.3333333333333333,
+      "razor": 0.5,
+      "charger": 0.5,
+      "mug": 0.3333333333333333
+     },
+     "majority_guess_by_kind": {
+      "glass": 0.792,
+      "water_bottle": 0.545,
+      "towel": 0.516,
+      "book": 1.0,
+      "razor": 1.0,
+      "charger": 1.0,
+      "mug": 0.926
+     },
+     "right_among_this_households_models": {
+      "glass": [
+       118,
+       144
+      ],
+      "water_bottle": [
+       226,
+       363
+      ],
+      "towel": [
+       280,
+       578
+      ],
+      "mug": [
+       48,
+       54
+      ]
+     },
+     "right_among_all_24_models": {
+      "glass": [
+       14,
+       144
+      ],
+      "water_bottle": [
+       9,
+       363
+      ],
+      "towel": [
+       0,
+       578
+      ],
+      "book": [
+       0,
+       88
+      ],
+      "glasses": [
+       4,
+       8
+      ],
+      "razor": [
+       0,
+       19
+      ],
+      "charger": [
+       0,
+       4
+      ],
+      "medication": [
+       12,
+       34
+      ],
+      "mug": [
+       5,
+       54
+      ]
+     },
+     "right_kind_among_all_24_models": {
+      "glass": [
+       14,
+       144
+      ],
+      "water_bottle": [
+       10,
+       363
+      ],
+      "towel": [
+       223,
+       578
+      ],
+      "book": [
+       8,
+       88
+      ],
+      "glasses": [
+       4,
+       8
+      ],
+      "razor": [
+       0,
+       19
+      ],
+      "charger": [
+       0,
+       4
+      ],
+      "medication": [
+       12,
+       34
+      ],
+      "mug": [
+       5,
+       54
+      ]
+     },
+     "distinct_thing_place_moment_by_kind": {
+      "glass": 81,
+      "water_bottle": 158,
+      "towel": 280,
+      "book": 60,
+      "glasses": 4,
+      "razor": 14,
+      "charger": 4,
+      "medication": 22,
+      "mug": 40
+     }
+    }
+   },
+   "crops": 1292,
+   "moments": 40
+  }
+ },
+ "note": "Detection: OWLv2 (open weights), asked for each kind of thing by a short phrase; a stored sighting counts as detected when a box of that kind overlaps the true box by at least half. Recall is by the thing's size in pixels in the 960-wide render and by kind. Many pictures repeat, so 'distinct thing, place, moment' is the honest sample size. The false-alarm rate is an upper bound on hallucination: an audit found most such boxes sit on a tracked thing too small or cut to count, or on an untracked object of the home. Look-alikes: the true box is cropped and embedded, and matched against the four-view reference renders. 'Among this household's models' is what a search must decide (two things of a kind here); 'majority guess' is the score of always naming the commoner one, the trivial baseline. Below about 1,000 pixels the crops are smears a person could not judge. This household has no two identical things, so the control that should sit at chance could not be run. 40 of the 248 question times were sampled; 200 empty pictures."
+}

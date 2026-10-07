@@ -1,0 +1,366 @@
+[
+ {
+  "n": 7,
+  "topic": "Search policies for things that move",
+  "claim": "With objects that move, first-guess accuracy was about 0.27 for a count of past places, 0.28 for last-seen, 0.29 for a Bayesian count with priors and 0.35 for a learned model. Looks needed to find it: about 4.6, 6.3, 3.5 and 3.6.",
+  "source": "Scene Graph Memory, Kurenkov et al., May 2023",
+  "url": "https://arxiv.org/abs/2305.17537",
+  "so": "Last-seen is a good first guess and the worst sequence of guesses. A hand-built count model with priors matched the learned model on looks; the learned model was clearly better on the first guess (0.35 against 0.29, with 0.45 the best possible).",
+  "audit": "confirmed",
+  "audit_note": "All eight numbers match. Accuracy and looks come from two different tasks in the table. Spread over 100 environments is large (looks: 4.6 \u00b1 1.6, 6.3 \u00b1 2.2, 3.5 \u00b1 0.8, 3.6 \u00b1 1.0). The best possible first-guess accuracy is only 0.45."
+ },
+ {
+  "n": 8,
+  "topic": "Search policies for things that move",
+  "claim": "With true perception: overall success 35.2% for a map that goes where the thing was last stored, 80.0% when a language model is given the history, 95.2% with a per-place model of how long things stay. With real perception: 29.6%, 58.4%, 71.6%. Three weeks on a real robot, 25 queries: 72% against 56% and 36%.",
+  "source": "Predictive Spatio-Temporal Scene Graphs, Saavedra-Ruiz et al., Apr 2026",
+  "url": "https://arxiv.org/abs/2605.00121",
+  "so": "An explicit time model per place beat handing the history to a language model, with true and with real perception. A classical periodic model did as well as their new one.",
+  "audit": "partly",
+  "audit_note": "The first version of this claim gave only the true-perception numbers. A classical periodic model ties their method in the headline test. Objects follow a known weekly schedule.",
+  "reviewer_note": "The plan reviewer read the paper and reports that in its test with a changed schedule the new filter scores 83.2% against 72.0% for the classical periodic model. That is the condition closest to this project's change of routine. Not yet re-checked."
+ },
+ {
+  "n": 9,
+  "topic": "Search policies for things that move",
+  "claim": "With true perception, a simple rule (go to the stored place, check, revise on failure) reached about 67% success, above published systems at about 20%, 48% and 59%.",
+  "source": "EvoNav-Bench, Wang et al., Sep 2026",
+  "url": "https://arxiv.org/abs/2609.08292",
+  "so": "A small fix on top of a strong system helped while perception was perfect, and did not once a detector was used. This is not evidence that simple rules alone are hard to beat.",
+  "audit": "confirmed",
+  "audit_note": "With detected perception the ranking reverses: a published system scores 54.8 and the simple rule 49.0. Forgetting everything each stage also beats the published systems with true perception. 365 stages, no error bars; the published systems were adapted by the benchmark authors.",
+  "reviewer_note": "The plan reviewer reports that the 'simple rule' is not simple: all three heuristics sit on a full memory system with a large vision-language model choosing targets and checking arrivals. By its arithmetic the reversal with detected perception is about 1.6 standard errors. Not yet re-checked."
+ },
+ {
+  "n": 10,
+  "topic": "Search policies for things that move",
+  "claim": "With one language model, letting it supply only the chance of finding the object in each place, with a planner choosing the order, cost 4.0 to 11.8% less than letting the model choose. With another model the result ranged from 7.6% less to 14% more. Real robot, 5 trials: 15.1 m against 21.3 m.",
+  "source": "Paudel et al., Mar 2026",
+  "url": "https://arxiv.org/abs/2603.23800",
+  "so": "The idea (models supply probabilities, a planner chooses) is sound, but the measured advantage depends on the model and the prompt.",
+  "audit": "partly",
+  "audit_note": "4.0 to 11.8% is with one language model. With another, two prompt variants cost up to 7.6% less and one cost about 14% more. The real-robot figure is 5 trials. No error bars."
+ },
+ {
+  "n": 15,
+  "topic": "Search policies for things that move",
+  "claim": "A model predicting where household objects will be, trained on four weeks of routine-driven data, reached about 58%, 50% and 51% first-guess success on three habit types, against 48%, 48% and 27% for Scene Graph Memory. It uses true object positions and has no last-seen baseline.",
+  "source": "FlowMaps, Argenziano et al., Jun 2026",
+  "url": "https://arxiv.org/abs/2606.20209",
+  "so": "The closest published work to this project's policy question; it skips perception and the last-seen comparison.",
+  "audit": "confirmed",
+  "audit_note": "Habit 2 is 50.5%. The advantage is at the first guess only: given 5 to 10 guesses, Scene Graph Memory is level or ahead on two of three habit types. A separate model is trained per habit type on about 2,700 environments. About 610 episodes per habit, no error bars; the real-world part is one demonstration."
+ },
+ {
+  "n": 11,
+  "topic": "Telling one object from another of its kind",
+  "claim": "To verify whether a candidate is a specific personal object, one view with attribute-by-attribute questions scored 0.844; adding views scored 0.848 to 0.850, within the \u00b11.3-point margin. With true boxes the single view scored 0.875.",
+  "source": "PInVerify, Jiang et al., May 2026",
+  "url": "https://arxiv.org/abs/2605.30639",
+  "so": "Extra views reject more look-alikes and more true matches; overall accuracy stays flat. Which view to take mattered little. Our tags say 11 of 24 objects are only identifiable from some sides, so this needs testing here.",
+  "audit": "partly",
+  "audit_note": "The first version of this claim said 0.889 with true boxes; that figure is a fine-tuned agent, and the single-view method with true boxes scores 0.875. Extra views are not neutral: accuracy on true matches falls from 0.652 to 0.596 while rejection of same-kind look-alikes rises from 0.918 to 0.965. The paper has one author.",
+  "reviewer_note": "The plan reviewer notes the paper's abstract gives the fine-tuned agent 85.6%, against 0.889 in the fact-checker's note. Unresolved."
+ },
+ {
+  "n": 12,
+  "topic": "Telling one object from another of its kind",
+  "claim": "Finding a specific personal object among same-kind distractors succeeded 14.8% of the time with image matching (DINOv2), 9.6% with CLIP image features, and 3.1 to 7.3% with text descriptions.",
+  "source": "PInNED, Barsellotti et al., Oct 2024",
+  "url": "https://arxiv.org/abs/2410.18195",
+  "so": "A reference picture did better than a description in this one comparison of different pipelines. The authors name same-kind distractors as the main difficulty; the table also fits the reading that most failures were in finding the object at all.",
+  "audit": "partly",
+  "audit_note": "The first version of this claim gave 4.5% for text; that is one text method, and text methods range from 3.1% to 7.3%. Removing the same-kind distractors only lifts the best method from 14.8% to 23.1%. The methods compared are different pipelines, not one method with two inputs."
+ },
+ {
+  "n": 13,
+  "topic": "Telling one object from another of its kind",
+  "claim": "With 3 to 6 same-kind objects in one image, open 7-8B vision-language models attached an attribute to the wrong one 13.7 to 34.0% of the time; a tight crop of the target cut this by up to 19 points.",
+  "source": "InstaBind-Lite, Xu et al., Aug 2026",
+  "url": "https://arxiv.org/abs/2608.16805",
+  "so": "Cropping each candidate is not a reliable fix on current models. Test it on ours before relying on it.",
+  "audit": "confirmed",
+  "audit_note": "The 34% and the 19-point improvement are both the oldest model tested. For the two best open models (about 14% wrong) the effect of cropping is not distinguishable from zero, and for two commercial models it made things worse. The crop used the true box."
+ },
+ {
+  "n": 1,
+  "topic": "Training in simulation, working on real robots",
+  "claim": "A navigation policy trained on HSSD homes reached 10% success on a real robot with no real data, against 50% for one trained on scans of real homes. Fine-tuning in a phone scan of the test place raised these to about 40-50% and 70%.",
+  "source": "EmbodiedSplat, Chhablani et al., Sep 2025",
+  "url": "https://arxiv.org/abs/2509.17430",
+  "so": "Weak evidence (10 episodes), but it points one way: do not rely on HSSD pictures to teach a model to see, and a phone scan of the real place helps.",
+  "audit": "confirmed",
+  "audit_note": "10 episodes in one room on one robot: 10% is 1 of 10 and 50% is 5 of 10. The paper says its scene was unlike the scanned homes, which earlier work had at 90%."
+ },
+ {
+  "n": 2,
+  "topic": "Training in simulation, working on real robots",
+  "claim": "Trained only in simulation with a frozen pretrained image encoder, a policy reached 83.3% real-world object-navigation success on a Stretch robot.",
+  "source": "PoliFormer, Zeng et al., Jun 2024",
+  "url": "https://arxiv.org/abs/2406.20083",
+  "so": "Keep any image encoder frozen.",
+  "audit": "confirmed",
+  "audit_note": "83.3% is 15 of 18 tasks. The earlier imitation policy reaches the same 83.3% once given an off-the-shelf detector."
+ },
+ {
+  "n": 3,
+  "topic": "Training in simulation, working on real robots",
+  "claim": "A policy trained by imitating shortest-path experts in simulation reached about 50% real-world success; most failures were recognising the target, and with true detection it reached about 85% in simulation.",
+  "source": "SPOC, Ehsani et al., Dec 2023",
+  "url": "https://arxiv.org/abs/2312.02976",
+  "so": "The weak part is recognising the target, in simulation and in reality alike. Adding a detector closed most of the gap.",
+  "audit": "confirmed",
+  "audit_note": "The same table shows 83.3% real success when the policy is given boxes from an off-the-shelf detector. Without it, simulation to real is 55 to 50, a small drop."
+ },
+ {
+  "n": 4,
+  "topic": "Training in simulation, working on real robots",
+  "claim": "A policy trained on 12M simulated samples with on-policy correction reached 75% real success, against 44% for the same model trained on 1.2M real samples by plain imitation. With 1.2M simulated samples it reached 22%. With the same 12M simulated samples, plain imitation gave 23% and on-policy correction 80%.",
+  "source": "FAINT, Suomela et al., Sep 2025",
+  "url": "https://arxiv.org/abs/2509.11791",
+  "so": "Simulated data did not beat real data at equal size. What the paper supports: scale plus correcting the policy on its own mistakes.",
+  "audit": "partly",
+  "audit_note": "The 75% model had ten times the data (12M against 1.2M samples) and on-policy correction; the real-data model had neither. With equal data the simulated model scored 22% against 44% for real. The task is following a route of images, not finding objects."
+ },
+ {
+  "n": 5,
+  "topic": "Training in simulation, working on real robots",
+  "claim": "Training data was generated only in simulation with camera height randomised from 0.25 m to 1.25 m; the policy ran on a Unitree Go2 with no real data.",
+  "source": "NavDP, Cai et al., May 2025",
+  "url": "https://arxiv.org/abs/2505.08712",
+  "so": "Randomise camera height across the range a Go2 can carry.",
+  "audit": "confirmed",
+  "audit_note": "The camera gives colour and depth, not colour alone. Training only at low heights dropped a taller robot from 90% to 20% in one scene while the Go2 held.",
+  "reviewer_note": "The plan reviewer notes the 0.25 to 1.25 m range covers several robots with the camera on top, pitched 0 to 30 degrees down. It does not show a Go2 carrying a camera at 1.25 m."
+ },
+ {
+  "n": 18,
+  "topic": "Training in simulation, working on real robots",
+  "claim": "Fine-tuning a 7B video-language model on 25,000 question-answer examples made from simulated videos raised its score on a real-video benchmark by 8.4 points.",
+  "source": "SIMS-V, Brown et al., Nov 2025",
+  "url": "https://arxiv.org/abs/2511.04668",
+  "so": "Simulated question-answer data can help on real video; a route for later, not now.",
+  "audit": "confirmed",
+  "audit_note": "The training questions were designed to match the benchmark's question formats. On the debiased benchmark the gain is 7.7."
+ },
+ {
+  "n": 19,
+  "topic": "Training in simulation, working on real robots",
+  "claim": "An end-to-end learned policy fell from 77% success in simulation to 23% in real homes; a modular method reached 90% in the same homes.",
+  "source": "Gervet et al., Dec 2022",
+  "url": "https://arxiv.org/abs/2212.00922",
+  "so": "Build the system from separate parts (where to look, is this it) before trying one learned model.",
+  "audit": "confirmed",
+  "audit_note": "60 real episodes per method over 6 homes."
+ },
+ {
+  "n": 6,
+  "topic": "Perception costs",
+  "claim": "In HSSD homes, task success for a language-model planner with learned skills fell from 0.57 with true perception to 0.30 with a perception pipeline built from camera images.",
+  "source": "PARTNR, Meta, Nov 2024",
+  "url": "https://arxiv.org/abs/2411.00081",
+  "so": "Expect a large drop when true labels are replaced by a detector; measure it as its own step.",
+  "audit": "confirmed",
+  "audit_note": "0.57 is the planner with learned low-level skills, not the best planner (0.73 with perfect skills). The degraded condition still uses some simulator information to match furniture."
+ },
+ {
+  "n": 16,
+  "topic": "Perception costs",
+  "claim": "In a gridworld, four models detected outdated memory entries with F1 above 0.88 from text; from images of the same grids F1 ranged from 0.887 down to 0.067.",
+  "source": "When Memory Lies, Sun and Zhang, Aug 2026",
+  "url": "https://arxiv.org/abs/2608.04574",
+  "so": "A result with text observations does not predict the result with pictures, and the ordering of models can change.",
+  "audit": "confirmed",
+  "audit_note": "Six models were tested. The drop depends on the model: one lost nothing from text to images, one lost 0.13, one 0.60, one 0.83. The setting is an 8 by 8 grid drawn as a picture."
+ },
+ {
+  "n": 21,
+  "topic": "Perception costs",
+  "claim": "Open detectors and segmenters worked on path-traced renders but failed on simpler renders, often returning empty or wrong-class boxes for everyday objects.",
+  "source": "VoLo, Chen et al., Jun 2026 (appendix)",
+  "url": "https://arxiv.org/abs/2606.07723",
+  "so": "Detector quality on our renders is unknown until measured.",
+  "audit": "confirmed",
+  "audit_note": "An observation in an appendix with no measurements, on tabletop scenes. The authors attribute it to the renderer without a controlled test."
+ },
+ {
+  "n": 17,
+  "topic": "Close neighbours",
+  "claim": "Multi-day household traces grounded in HSSD scenes, with observations given as text; 310 memory questions.",
+  "source": "WorldLines, Zhang et al., Jun 2026",
+  "url": "https://arxiv.org/abs/2606.18847",
+  "so": "Same scene source as ours, no pictures.",
+  "audit": "confirmed",
+  "audit_note": "The authors list visual observations and real robot logs as future work."
+ },
+ {
+  "n": 22,
+  "topic": "Close neighbours",
+  "claim": "A memory benchmark in Habitat with HSSD scenes; the best model used as-is reached 27.3%, and a fine-tuned one 52.4%.",
+  "source": "FindingDory, Yadav et al., Jun 2025",
+  "url": "https://arxiv.org/abs/2506.15635",
+  "so": "Same simulator and scenes; one session, not many days.",
+  "audit": "partly",
+  "audit_note": "27.3% is the best model used as-is. A fine-tuned model reaches 52.4%. The score is for choosing the right remembered frame, not for reaching the object."
+ },
+ {
+  "n": 14,
+  "topic": "Practical",
+  "claim": "The habitat-sim README says that beyond v0.3.4 the project no longer receives active development or maintenance from Meta.",
+  "source": "habitat-sim repository",
+  "url": "https://github.com/facebookresearch/habitat-sim",
+  "so": "Stay on Habitat for now, but store the world's state separately from rendering so it can be rendered elsewhere.",
+  "audit": "confirmed",
+  "audit_note": "The banner was added on 7 May 2026. The repository is not archived and was last pushed on 21 July 2026."
+ },
+ {
+  "n": 20,
+  "topic": "Practical",
+  "claim": "The CoRL 2026 workshop 'Memory for Robot Foundation Models' lists a submission deadline of 30 September 2026, Anywhere on Earth.",
+  "source": "Workshop page",
+  "url": "https://corl2026-memory.github.io/",
+  "so": "Time-sensitive; check the page.",
+  "audit": "confirmed",
+  "audit_note": "23:59 Anywhere on Earth on 30 September is 11:59 UTC on 1 October 2026. Four pages, non-archival. Project notes had this as 24 September."
+ },
+ {
+  "n": 23,
+  "topic": "Generative models as renderers",
+  "claim": "A 2B open model generates photo-like video from a simulator's depth, segmentation, edges and blur, in 65 GB of GPU memory, about 12 to 15 minutes per 6-second clip on one H100. Its report gives one transfer result: a real-robot policy trained on its output succeeded 24 of 30 times against 5 of 30 with ordinary image augmentation.",
+  "source": "Cosmos-Transfer2.5, NVIDIA, Oct 2025",
+  "url": "https://arxiv.org/abs/2511.00062",
+  "so": "Runnable on this machine. The simulator keeps control of what is where; the model only decides appearance. Nothing enforces that the same mug looks the same from two positions or on two days, which must be tested.",
+  "audit": "not checked",
+  "audit_note": "Read on the model card and the report's HTML page by a searcher without web search; not fact-checked."
+ },
+ {
+  "n": 24,
+  "topic": "Generative models as renderers",
+  "claim": "Generating training images from a simulator's depth and masks with an image model, then training an RGB-only policy, gave a real quadruped 85% success against 35% for texture randomisation on one task, and 100% against 50% on another.",
+  "source": "LucidSim, Yu et al., MIT, Oct 2024",
+  "url": "https://arxiv.org/abs/2411.00083",
+  "so": "The same idea with a lighter model and a quadruped; MIT licence.",
+  "audit": "not checked",
+  "audit_note": "Read on the paper's HTML page; not fact-checked."
+ },
+ {
+  "n": 25,
+  "topic": "Generative models as renderers",
+  "claim": "A video model conditioned on an animated mesh whose surface points carry tracking IDs keeps each surface's appearance consistent across frames.",
+  "source": "DAR, Chen et al., Aug 2026",
+  "url": "https://arxiv.org/abs/2608.00094",
+  "so": "The closest published match to 'the same object, the same look, from every position'. No code confirmed.",
+  "audit": "not checked",
+  "audit_note": "Abstract only."
+ },
+ {
+  "n": 26,
+  "topic": "Generative models as renderers",
+  "claim": "Open interactive world models hold a generated scene consistent for about a minute (Matrix-Game 3.0, open, Mar 2026; Genie 3, closed). A benchmark for whether a model remembers a place on revisiting it exists because this fails.",
+  "source": "Matrix-Game 3.0; Genie 3; R2M-Bench (Aug 2026)",
+  "url": "https://arxiv.org/abs/2608.27328",
+  "so": "A generated world cannot replace the simulator for a benchmark that needs the truth over a month. Use generators as renderers, not as worlds.",
+  "audit": "not checked",
+  "audit_note": "Read on GitHub, the product page and an abstract; not fact-checked."
+ },
+ {
+  "n": 27,
+  "topic": "Generative models as renderers",
+  "claim": "Habitat-Sim extended with Gaussian-splat scenes and driven photo-real avatars, at 50 to 120 frames a second; objects are static and HSSD is not supported out of the box.",
+  "source": "Habitat-GS, Xia et al., ZJU3DV, Apr 2026",
+  "url": "https://arxiv.org/abs/2604.12626",
+  "so": "The one verified route to photo-real people inside Habitat; would need the home re-captured as splats.",
+  "audit": "not checked",
+  "audit_note": "Read on the paper page and GitHub; not fact-checked."
+ },
+ {
+  "n": 28,
+  "topic": "JEPA and latent world models",
+  "claim": "A frozen 1B video encoder plus a 300M action-conditioned predictor trained on under 62 hours of robot video planned pick-and-place on a real arm zero-shot (65 to 80% on cup and box tasks) at about 16 seconds per action; a pixel-generating model took 4 minutes per action and scored 0 to 20%.",
+  "source": "V-JEPA 2 and V-JEPA 2-AC, Meta FAIR, Jun 2025",
+  "url": "https://arxiv.org/abs/2506.09985",
+  "so": "Predicting features rather than pictures is far cheaper for planning. Nothing released is at home scale; it would need our own rendered trajectories.",
+  "audit": "not checked",
+  "audit_note": "Read on the paper's page by a searcher without web search; not fact-checked."
+ },
+ {
+  "n": 29,
+  "topic": "JEPA and latent world models",
+  "claim": "V-JEPA 2.1 adds dense features and matches DINOv3 on depth and simple segmentation, but still trails it on cluttered indoor scenes (47.9 against 55.9 mIoU on ADE20K), which its authors attribute to too few cluttered scenes in pretraining.",
+  "source": "V-JEPA 2.1, Meta FAIR, Mar 2026",
+  "url": "https://arxiv.org/abs/2603.14482",
+  "so": "For finding small things in cluttered rooms, DINOv3 remains the better frozen encoder on published numbers.",
+  "audit": "not checked",
+  "audit_note": "Read on the paper's page by a searcher without web search; not fact-checked."
+ },
+ {
+  "n": 30,
+  "topic": "JEPA and latent world models",
+  "claim": "In zero-shot re-identification of kitchen objects, I-JEPA had the lowest ranking quality of five encoders (mAP 0.32 against 0.42 for DINOv2 and 0.45 for SAM3), though a good nearest neighbour.",
+  "source": "Zero-shot object re-identification in egocentric kitchen videos, May 2026",
+  "url": "https://arxiv.org/abs/2605.26383",
+  "so": "Telling look-alikes apart is the job JEPA features are weakest at in the one direct test found. Try V-JEPA 2.1 once as a third embedding; expect no gain. Tried on 30 Sep: V-JEPA 2 ViT-L scored below DINOv2 on nearly every kind in our own look-alike test, and below chance on towels. See Findings.",
+  "audit": "not checked",
+  "audit_note": "Read on the paper's page by a searcher without web search; not fact-checked."
+ },
+ {
+  "n": 31,
+  "topic": "JEPA and latent world models",
+  "claim": "Two independent studies found DINOv2/v3 features beat V-JEPA features as the state of an action-conditioned world model, naming coarse object localisation as the cause; a third found V-JEPA 2.1 best for long-horizon rollouts in a navigation world model and DINOv2 best for one-step prediction.",
+  "source": "JEPA world models study (Dec 2025); DUET-DINO (Sep 2026); Guo et al. (Aug 2026)",
+  "url": "https://arxiv.org/abs/2512.24497",
+  "so": "No single winner. For 'imagine the view before walking', the encoder choice is an experiment, not a given.",
+  "audit": "not checked",
+  "audit_note": "Read on the paper's page by a searcher without web search; not fact-checked."
+ },
+ {
+  "n": 32,
+  "topic": "JEPA and latent world models",
+  "claim": "An audit of released JEPA world-model checkpoints found that distance in feature space ranks candidate actions badly even when closed-loop success looks fine; replanning hides the fault.",
+  "source": "ARC-Bench, Aug 2026",
+  "url": "https://arxiv.org/abs/2609.05461",
+  "so": "If a predicted-feature score is used to choose a camera position, it must be checked against the rule policies on looks and metres, not only on final success.",
+  "audit": "not checked",
+  "audit_note": "Read on the paper's page by a searcher without web search; not fact-checked."
+ },
+ {
+  "n": 33,
+  "topic": "JEPA and latent world models",
+  "claim": "Bayesian surprise in V-JEPA 2 feature space, used to decide which episodes a robot stores, beat prior robot memory methods by at least 12 points on temporal, spatial and yes/no questions.",
+  "source": "Surprise-gated robot episodic memory, Jun 2026",
+  "url": "https://arxiv.org/abs/2606.03787",
+  "so": "The one JEPA use with a robot-memory result: noticing that a place changed since the last visit. Test it inside one home with plain DINOv3 distance as the control.",
+  "audit": "not checked",
+  "audit_note": "Read on the paper's page by a searcher without web search; not fact-checked."
+ },
+ {
+  "n": 34,
+  "topic": "JEPA and latent world models",
+  "claim": "A frozen video encoder's prediction error worked as a novelty detector across driving datasets but fell to chance on a fair single-dataset test; a supervised probe on the same features had almost twice the precision.",
+  "source": "Asleep at the Wheel, Aug 2026",
+  "url": "https://arxiv.org/abs/2608.01336",
+  "so": "JEPA surprise detects a change of domain more than a change within one; a change detector for our rooms must be tested with lighting and viewpoint held fixed.",
+  "audit": "not checked",
+  "audit_note": "Read on the paper's page by a searcher without web search; not fact-checked."
+ },
+ {
+  "n": 35,
+  "topic": "JEPA and latent world models",
+  "claim": "A 15M-parameter action-conditioned latent world model trained from pixels in hours on one GPU plans in under a second and assigns higher surprise to objects that teleport.",
+  "source": "LeWorldModel, Maes, LeCun, Balestriero and others, Mar 2026",
+  "url": "https://arxiv.org/abs/2603.19312",
+  "so": "The cheapest route to a 'what would I see from there' model on our trajectories, if one is ever wanted.",
+  "audit": "not checked",
+  "audit_note": "Read on the paper's page by a searcher without web search; not fact-checked."
+ },
+ {
+  "n": 36,
+  "topic": "JEPA and latent world models",
+  "claim": "A JEPA-style latent world model over map tokens with a global spatial memory, trained on object-search trajectories in Habitat, beat its reproduced baseline on success and path efficiency; simulation only, numbers not in the abstract.",
+  "source": "GLAM, Sep 2026",
+  "url": "https://arxiv.org/abs/2609.14561",
+  "so": "The closest published JEPA use to our task; worth reading in full before any world-model work here.",
+  "audit": "not checked",
+  "audit_note": "Read on the paper's page by a searcher without web search; not fact-checked."
+ }
+]

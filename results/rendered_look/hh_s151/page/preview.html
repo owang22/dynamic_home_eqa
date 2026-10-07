@@ -102,6 +102,52 @@ th{text-align:left;font-weight:500;font-size:11px;letter-spacing:.08em;text-tran
 td{padding:6px 10px 6px 0;border-bottom:1px solid var(--faint);vertical-align:top}
 td .go{border:0;background:none;padding:0;color:var(--robot);text-decoration:underline;font-size:13px}
 .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px}
+nav.tabs{display:flex;flex-wrap:wrap;gap:4px;border-bottom:1px solid var(--line);padding-bottom:0}
+nav.tabs button{border:1px solid transparent;border-bottom:0;background:none;padding:8px 14px;font-family:var(--cond);
+  font-weight:600;font-size:16px;color:var(--soft);border-radius:5px 5px 0 0;margin-bottom:-1px}
+nav.tabs button[aria-selected="true"]{color:var(--ink);background:var(--panel);border-color:var(--line)}
+.page{display:flex;flex-direction:column;gap:18px}
+.prose{max-width:74ch;display:flex;flex-direction:column;gap:10px}
+.prose p{margin:0}
+.prose ul,.prose ol{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px}
+h3{font-family:var(--cond);font-weight:600;font-size:15px;margin:0;letter-spacing:.01em}
+.goal{display:grid;grid-template-columns:34px minmax(0,1fr);gap:4px 12px;padding:12px 0;border-top:1px solid var(--faint)}
+.goal:first-of-type{border-top:0}
+.goal .num{font-family:var(--mono);font-size:13px;color:var(--soft);padding-top:2px}
+.goal h3{grid-column:2}
+.goal p,.goal ul{grid-column:2;margin:0;max-width:74ch}
+.goal ul{padding-left:18px;display:flex;flex-direction:column;gap:4px}
+.goal .why{color:var(--soft);font-size:14px}
+.state{font-size:12px;border-radius:99px;padding:1px 8px;border:1px solid currentColor;white-space:nowrap;margin-left:8px;
+  font-family:var(--sans);font-weight:400;vertical-align:1px}
+.state.s-done{color:var(--seen)} .state.s-now{color:var(--robot)} .state.s-next{color:var(--soft)}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px}
+.claim{display:grid;grid-template-columns:minmax(0,1fr);gap:4px;padding:12px 0;border-top:1px solid var(--faint)}
+.claim:first-of-type{border-top:0}
+.claim .src{font-size:13px;color:var(--soft)}
+.claim .src a{color:var(--robot)}
+.claim .ctx{font-size:14px;color:var(--soft);border-left:3px solid var(--line);padding-left:10px}
+.claim .so{font-size:14px}
+.pill.partly{color:var(--small)}
+.heat{border-collapse:separate;border-spacing:3px;min-width:560px}
+.heat th{border:0;padding:4px 8px;text-transform:none;letter-spacing:0;font-size:13px;color:var(--soft);font-weight:500}
+.heat td{border:0;border-radius:4px;padding:9px 8px;text-align:center;font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:14px}
+.heat td.rowname{text-align:left;font-family:var(--sans);background:none;padding-left:0}
+.heat tr.total td{font-weight:600}
+.strip{display:flex;flex-direction:column;gap:4px}
+.strip img{width:100%;border-radius:4px;display:block}
+.strip .cols{display:grid;grid-template-columns:repeat(5,1fr);font-size:12px;color:var(--soft);text-align:center;font-family:var(--mono)}
+.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.card{border:1px solid var(--line);border-radius:6px;background:var(--panel);overflow:hidden;display:flex;flex-direction:column}
+.card img{width:100%;display:block;background:#EBEBEB}
+.card div{padding:10px 12px;display:flex;flex-direction:column;gap:4px;font-size:13px}
+.card b{font-size:14px;font-weight:600}
+.card .dim{color:var(--soft)}
+.audit{display:grid;grid-template-columns:minmax(0,1fr);gap:4px;padding:14px 0;border-top:1px solid var(--faint)}
+.audit:first-of-type{border-top:0}
+.audit dl{display:grid;grid-template-columns:110px minmax(0,1fr);gap:4px 12px;margin:0;font-size:14px}
+.audit dt{color:var(--soft)} .audit dd{margin:0}
+@media (max-width:560px){.audit dl{grid-template-columns:minmax(0,1fr)}}
 details{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:12px 16px}
 summary{cursor:pointer;font-family:var(--cond);font-weight:600;font-size:17px}
 details ul{margin:10px 0 0;padding-left:18px;max-width:80ch;display:flex;flex-direction:column;gap:6px}
@@ -110,9 +156,218 @@ details ul{margin:10px 0 0;padding-left:18px;max-width:80ch;display:flex;flex-di
 <div class="wrap">
   <header>
     <h1>Dana and Felix at Home</h1>
-    <p class="lede">A simulated household placed in a real 3D home. Pick a day and a time, then a room, and see what a robot's camera shows from where it stands. Every label on a picture comes from that picture: a thing is marked only if its own pixels are in the frame.</p>
-    <p class="lede">The study asks a robot where things are. Its questions are about 13 of this household's things, so those 13 are the ones placed in the home.</p>
+    <p class="lede">Working towards a robot that finds a named thing in a home by searching well. This page holds the plan, the evidence behind it, a simulated household to explore, what has been measured so far, and every independent check that was run.</p>
   </header>
+
+  <nav class="tabs" role="tablist" aria-label="Sections">
+    <button role="tab" id="t-plan" data-tab="plan" aria-selected="true">Plan</button>
+    <button role="tab" id="t-evidence" data-tab="evidence" aria-selected="false">Evidence</button>
+    <button role="tab" id="t-explore" data-tab="explore" aria-selected="false">Explore the home</button>
+    <button role="tab" id="t-findings" data-tab="findings" aria-selected="false">Findings</button>
+    <button role="tab" id="t-audits" data-tab="audits" aria-selected="false">Audits</button>
+  </nav>
+
+  <div class="page" id="p-plan">
+  <section class="box">
+    <h2>The aim</h2>
+    <div class="prose">
+      <p>A robot that is asked for a specific thing in a home and finds it with few looks and little travel. It decides where to look next from what it has seen before and what it sees during the search, and it can move closer or to another side when it is not sure what it is looking at.</p>
+      <p>The work is in simulation first: a household whose belongings move about over a month as its residents follow daily routines, placed in a real 3D home. For ten days in the middle one resident is unwell and the routine changes. The real check is on a Unitree Go2 in one apartment and a lab space.</p>
+    </div>
+  </section>
+
+  <div class="two">
+    <section class="box">
+      <h2>What would count as success</h2>
+      <div class="prose"><ul>
+        <li><b>In simulation:</b> on homes held back for testing, and with a detector in place of true labels, a policy finds things in fewer looks and fewer metres than last-seen and most-frequent, by at least twice the standard error across homes.</li>
+        <li><b>On the robot:</b> what the Go2's camera shows from a set of positions in the real apartment agrees with what the simulator shows from the same positions in a scan of that apartment. This is counted over a few hundred looks, which is enough to measure; 20 searches are not enough to rank policies.</li>
+        <li><b>A result that would stop the work:</b> the simulator's pictures do not predict what the robot sees, or no policy beats the mix of last-seen and most-frequent once a detector is in place.</li>
+      </ul>
+      <p style="color:var(--soft);font-size:14px">These are proposed, for Oliver to change. No dates are set here.</p></div>
+    </section>
+    <section class="box">
+      <h2>What would be new</h2>
+      <div class="prose"><ul>
+        <li>Belongings that move because residents follow routines, seen through rendered pictures where a look can miss the thing. The closest work uses true positions (FlowMaps), text (WorldLines), or moves things arbitrarily (EvoNav-Bench).</li>
+        <li>A look that found nothing is ambiguous: the thing moved, or it was there and not seen. The searches found nobody measuring this in a home with routines.</li>
+        <li>Search measured from a quadruped's camera height, where much of a home is out of view.</li>
+        <li>Last-seen and most-frequent rules on the same scale as learned predictors and language models, in looks and metres.</li>
+      </ul></div>
+    </section>
+  </div>
+
+  <div class="two">
+    <section class="box">
+      <h2>Decisions made by Oliver</h2>
+      <div class="prose"><ul>
+        <li><b>Policies first.</b> The starting policy is hand-built from where the thing was last seen and where it is most often. Learned policies come later and are judged against it.</li>
+        <li><b>Photos at chosen positions.</b> The viewer has 42 positions in this home; more are needed. Continuous video is not needed yet.</li>
+        <li><b>Targets are named by appearance</b> ("the squat navy mug with a round badge"). Naming by owner comes later.</li>
+        <li><b>No opening of cupboards or drawers.</b> A Go2 cannot, so things inside them cannot be found.</li>
+        <li><b>The change of routine</b> is one test condition, not the centre of the work.</li>
+        <li><b>Compute:</b> one 96 GB GPU now, possibly one or two H100s.</li>
+      </ul></div>
+    </section>
+    <section class="box">
+      <h2>What the evidence changed</h2>
+      <div class="prose"><ul>
+        <li><b>Camera height limits what can be found.</b> In this home, from 1.0 m everything is in view; from 0.30 m most of what is on tables and counters is not. How much is lost between those heights depends on how seeing is counted. See Findings.</li>
+        <li><b>Recognition is the weak part</b> in real object search, more than exploring. Policies ranked with true labels can change rank once a detector is used, so every policy comparison is run both ways.</li>
+        <li><b>Simple explicit models do well on the number of looks; learned models do better on the first guess.</b> Under a changed schedule one newer model beat a classical one by 11 points.</li>
+        <li><b>A reference picture did better than a description</b> in the one comparison found, so the target is given both ways and the two are compared.</li>
+        <li><b>Do not rely on these renders to teach a model to see.</b> The evidence is thin (10 real episodes) but points one way.</li>
+        <li><b>The real-robot results cited rest on 5 to 60 trials</b>, most on 25 or fewer.</li>
+      </ul>
+      <p style="color:var(--soft);font-size:14px">Each is traced to its source, with an independent checker's verdict, under Evidence.</p></div>
+    </section>
+  </div>
+
+  <section class="box">
+    <h2>Proposed goals, in order</h2>
+    <div>
+      <div class="goal"><span class="num">1</span><h3>Settle the camera, with the real robot <span class="state s-now">in progress</span></h3>
+        <ul><li>Oliver's answers to the first two open questions below.</li>
+        <li>About ten photographs from the robot's own camera: a kitchen counter, a table, a bedside table and the floor, from near and from a few metres back.</li>
+        <li>The simulated study repeated at the robot's own camera height and lens, with the upward tilt the body allows.</li></ul>
+        <p class="why">Done when: a camera height and mount are chosen, and the simulator shows the same things in and out of view as the photographs do. Why first: every later number depends on it, and the photographs settle it faster than more rendering.</p></div>
+      <div class="goal"><span class="num">2</span><h3>A search benchmark that runs on stored pictures <span class="state s-next">next</span></h3>
+        <ul><li>A set of camera positions per home, with the walking distance between each pair.</li>
+        <li>Pictures stored for every position at every question time, so a search is a sequence of lookups and needs no rendering.</li>
+        <li>The robot ends a search by declaring a thing found, or by answering that it cannot be found. About a fifth of asked-about things are out of the house or in a closed cupboard at any moment.</li>
+        <li>The score: right thing found, wrong thing declared found, "cannot be found" when that is true or false, number of looks, metres walked. Reported by day, and split by whether the thing moved since it was last seen.</li></ul>
+        <p class="why">Done when: a policy can be run over a month of questions in seconds. Why: a look has no cost in the current setup, so searching well cannot be measured.</p></div>
+      <div class="goal"><span class="num">3</span><h3>Measure perception on our pictures <span class="state s-next">next</span></h3>
+        <ul><li>Three numbers, kept separate: does a detector find the thing; does matching against a reference picture pick the right one of two look-alikes; does a vision-language model choose correctly.</li>
+        <li>From these, the chance of seeing a thing that is there, by size, distance and contrast. Goal 4 needs this.</li>
+        <li>Two controls: two copies of the same model must come out at chance, and two different kinds of thing near 100%.</li></ul>
+        <p class="why">Done when: each number is reported with its spread over homes. Why before policies: one study in the same simulator lost about half its success when true labels were replaced, and these detectors have not been measured on picking out one specific object in our renders.</p></div>
+      <div class="goal"><span class="num">4</span><h3>Reference policies, run twice <span class="state s-next">next</span></h3>
+        <ul><li>Random; household common sense (where such a thing usually is); last-seen, going next to the places it was seen before that; most-frequent; a weighted mix of the two.</li>
+        <li>A rule that looks where (chance it is there &times; chance of seeing it if it is) &divide; walking distance is largest, and lowers a place's chance after a look that found nothing.</li>
+        <li>A per-place estimate of how long things stay where they were seen.</li>
+        <li>Two upper bounds: the best order given the true chances, and going straight to the true place.</li>
+        <li>Every policy is run once with true labels and once with the perception measured in goal 3.</li></ul>
+        <p class="why">Done when: looks and metres are reported for each, by day through the change of routine. Any learned policy has to beat these.</p></div>
+      <div class="goal"><span class="num">5</span><h3>Moving closer or to another side <span class="state s-next">later</span></h3>
+        <p>Add near and far positions and other sides for each place. Decide when another view is worth its cost. 11 of our 24 objects can only be identified from some sides; the one study found says extra views reject more look-alikes and also more true matches.</p></div>
+      <div class="goal"><span class="num">6</span><h3>More homes, and a check of the simulator itself <span class="state s-next">later</span></h3>
+        <ul><li>Tens of homes with several households each, some held back for testing. First the hand-written link between places and furniture has to become automatic.</li>
+        <li>All of each household's things placed, not only the 13 asked about, so that rooms are as cluttered as they should be.</li>
+        <li>A comparison of where the generator puts things against a real record of where things are in homes.</li></ul></div>
+      <div class="goal"><span class="num">7</span><h3>The real check on the Go2 <span class="state s-next">later</span></h3>
+        <ul><li>Scan the apartment with a phone and load the scan into the simulator.</li>
+        <li>From matched positions, compare what the robot's camera shows with what the simulator shows, over a few hundred looks.</li>
+        <li>Work out how the robot gets to a chosen position. The software for this exists but is reported to drift.</li>
+        <li>Then a small number of full searches, as a demonstration and not as a ranking of policies.</li></ul></div>
+      <div class="goal"><span class="num">8</span><h3>Learned parts, only where they beat the rules <span class="state s-next">later</span></h3>
+        <p>A learned predictor of where things will be; a small vision-language model tuned to choose among candidate positions. One published chooser of this kind was trained on four A100 GPUs.</p></div>
+    </div>
+  </section>
+
+  <div class="two">
+    <section class="box">
+      <h2>Risks</h2>
+      <div class="prose"><ul>
+        <li><b>The household is authored.</b> How much sits on tables and counters is a setting of the generator, and hand-built rules are being tested on a hand-built generator.</li>
+        <li><b>One home so far</b>, with dark walls and only 13 things placed.</li>
+        <li><b>18 of the 24 object models have a recorded fault</b>, and nothing renders see-through.</li>
+        <li><b>A raised camera</b> changes the robot's balance and what it can walk under.</li>
+        <li><b>Getting the real robot to a chosen position</b> is not solved here.</li>
+        <li><b>The literature was gathered in one day</b>, preferring work since October 2024. Older work on searching for objects is thin here.</li>
+      </ul></div>
+    </section>
+    <section class="box">
+      <h2>Open questions for Oliver</h2>
+      <div class="prose"><ol>
+        <li><b>Which Go2 is it</b> (Air, Pro, X or EDU), and does it have an added camera or the expansion dock? Unitree supports programming on the X (partly) and the EDU; community software reaches the camera and movement on the others.</li>
+        <li><b>Is a raised camera acceptable</b>, and how high? In this home a camera at 1.0 m has everything in view; at 0.7 m what sits back on a counter is often missed.</li>
+        <li><b>Can you take the ten photographs in goal 1?</b></li>
+        <li><b>Is anything from this going to the workshop?</b> Its deadline is 30 September 2026, 23:59 Anywhere on Earth.</li>
+      </ol></div>
+    </section>
+  </div>
+
+  <div class="two">
+    <section class="box">
+      <h2>Not now</h2>
+      <div class="prose"><ul>
+        <li>Continuous video and world models.</li>
+        <li>Policies that go from pixels straight to motor commands. Most of what they learn is low-level movement, which chosen camera positions remove.</li>
+        <li>Animated residents.</li>
+        <li>Changing simulator. Habitat is no longer maintained by Meta beyond version 0.3.4.</li>
+      </ul></div>
+    </section>
+    <section class="box">
+      <h2>Words used on this page</h2>
+      <div class="prose"><ul>
+        <li><b>Moment:</b> one day and time of the simulated month. 91 are rendered: 13 days at 7 times each.</li>
+        <li><b>Placement:</b> one thing resting somewhere at one moment. 13 things over 91 moments give 1,183; in 917 the thing is somewhere it can be drawn, and in the rest it is in a closed cupboard or out of the house.</li>
+        <li><b>Look:</b> one picture from one camera position.</li>
+        <li><b>In view:</b> at least 200 of the thing's pixels are in a 960 by 720 picture, the edge of the picture does not cut it, and at least half of what it shows at its best is showing.</li>
+        <li><b>Clear:</b> in view, at least 600 pixels, and not dark on a dark surface.</li>
+      </ul></div>
+    </section>
+  </div>
+</div>
+  <div class="page" id="p-evidence" hidden>
+  <section class="box">
+    <h2>What others have found</h2>
+    <div class="prose">
+      <p>Five literature searches were run on 30 September 2026, preferring work from October 2024 onward. The 22 claims this plan leans on hardest were then given to an independent checker with no knowledge of the plan, who read each paper in full.</p>
+      <p id="evSummary" style="color:var(--soft)"></p>
+      <p style="color:var(--soft);font-size:14px">"Partly" means the numbers were right but attached to the wrong condition, or a condition was left out that changes the reading. Those claims are reworded here to what the paper supports.</p>
+    </div>
+  </section>
+  <div id="evList" class="page"></div>
+</div>
+  <div class="page" id="p-findings" hidden>
+  <section class="box">
+    <h2>What a camera at each height can see</h2>
+    <div class="prose">
+      <p>The same household at the same 91 moments, photographed from five camera heights. Each cell is the share of placements in which the thing is in view from that height. The Go2's own camera is at about 0.37 m.</p>
+      <p>Every place with something on it was photographed from up to eight camera positions in its room, chosen by the same rule at every height. "Best position" counts the thing if any picture taken at that moment shows it, which measures what the height allows. "Chosen position" uses only the first position for each place, which is what the viewer on this page does.</p>
+      <p><b>What holds under every way of counting that was tried:</b> from 1.0 m everything is in view, and from 0.30 m most of what is on tables and counters is not. <b>What does not hold steady:</b> the sizes at 0.30 to 0.70 m. See the second table.</p>
+    </div>
+    <div class="tabs" role="group" aria-label="Which count to show" id="heatPick"></div>
+    <div class="scroll"><table class="heat" id="heat"></table></div>
+    <p class="caption" id="heatNote" style="margin:0"></p>
+    <div class="note" id="heatCaveat"></div>
+    <h3>How far the numbers move with the way of counting</h3>
+    <div class="scroll"><table id="sens" style="min-width:720px"></table></div>
+    <p class="caption" id="sensNote" style="margin:0"></p>
+    <details style="border:0;padding:0;background:none"><summary style="font-size:15px">The same, place by place</summary>
+      <div class="scroll" style="margin-top:10px"><table class="heat" id="heatPlaces"></table></div></details>
+  </section>
+  <section class="box">
+    <h2>The Go2's own camera</h2>
+    <div class="prose">
+      <p>The same study at 0.37 m with a 100 degree lens, which is what Unitree's documents give for the built-in camera. Each row limits how far up the robot may tilt its body to look. Counted from the best of up to eight positions per place.</p>
+    </div>
+    <div class="scroll"><table class="heat" id="heatGo2"></table></div>
+    <p class="caption" id="go2Note" style="margin:0"></p>
+  </section>
+  <section class="box">
+    <h2>The same place at the same moment, from each height</h2>
+    <p class="caption" style="margin:0">From the one chosen position at each height. A box is drawn when at least 200 of the thing's pixels are in the picture, which is looser than the "in view" rule in the tables: at 0.45 m the top of the blue bottle is boxed but does not count as in view.</p>
+    <div id="strips" class="page"></div>
+  </section>
+  <section class="box">
+    <h2>The 24 object models and their tags</h2>
+    <div class="prose"><p>Each model was rendered from four sides and tagged from those pictures. Two independent checkers then tested the tags: one described each picture without seeing the tags, the other matched the shuffled descriptions back to the pictures (24 of 24 correct).</p></div>
+    <div class="gallery" id="gallery"></div>
+  </section>
+</div>
+  <div class="page" id="p-audits" hidden>
+  <section class="box">
+    <h2>Independent checks</h2>
+    <div class="prose"><p>Each check was done by a separate agent that was told as little as possible about how the work was made or what it was expected to show, and was asked to be blunt. Findings were compared with the evidence before acting on them; a few were misreadings and are listed as such.</p></div>
+    <div id="auditList"></div>
+  </section>
+</div>
+
+  <div class="page" id="p-explore" hidden>
+  <p class="lede">A simulated household placed in a real 3D home. Pick a day and a time, then a room, and see what a robot's camera shows from where it stands, here at 1.3 m. Every label on a picture comes from that picture: a thing is marked only if its own pixels are in the frame. The study's questions are about 13 of this household's things, so those 13 are the ones placed.</p>
 
   <section class="when" aria-label="Day and time">
     <div class="now">
@@ -172,6 +427,7 @@ details ul{margin:10px 0 0;padding-left:18px;max-width:80ch;display:flex;flex-di
     <summary>What is simplified, and what stands in for what</summary>
     <ul id="notes"></ul>
   </details>
+  </div>
 </div>
 
 <script>
@@ -263,7 +519,6 @@ function draw(){
   Array.prototype.forEach.call(document.querySelectorAll("[data-day]"),function(b){b.setAttribute("aria-pressed",String(+b.dataset.day===m.day))});
   Array.prototype.forEach.call(document.querySelectorAll("[data-time]"),function(b){b.setAttribute("aria-pressed",String(b.dataset.time===m.clock))});
   if(!S.view)S.view=keep();
-  try{history.replaceState(null,"","#d"+m.day+".t"+m.clock.replace(":","")+"."+S.room+(S.view?"."+S.view:""))}catch(e){}
   drawMap();drawTabs();drawPicture();drawReport();drawAll();
 }
 function drawMap(){
@@ -289,9 +544,9 @@ function drawMap(){
     var d=viewByName(v.view),eye=v.eye||d.eye,aim=v.target||d.target,ex=eye[0],ez=eye[2],a=Math.atan2(aim[2]-ez,aim[0]-ex),L=1.1,on=v.view===S.view;
     var half=(D.lens_degrees||75)*Math.PI/360;
     var p1=[ex+L*Math.cos(a-half),ez+L*Math.sin(a-half)],p2=[ex+L*Math.cos(a+half),ez+L*Math.sin(a+half)];
-    if(on){var c=svg("polygon",{"class":"cone on",points:[ex,ez,p1[0],p1[1],p2[0],p2[1]].join(" ")});
+    if(on){var c=svg("polygon",{"class":"cone on",points:[ex,ez,p1[0],p1[1],p2[0],p2[1]].join(" "),"pointer-events":"none"});
       c.appendChild(svg("title",null,viewLabel(d)));s.appendChild(c)}
-    var k=svg("rect",{"class":"cam",x:ex-(on?.15:.1),y:ez-(on?.15:.1),width:on?.3:.2,height:on?.3:.2,rx:.04,opacity:on?1:.55});
+    var k=svg("rect",{"class":"cam",x:ex-(on?.17:.14),y:ez-(on?.17:.14),width:on?.34:.28,height:on?.34:.28,rx:.05,opacity:on?1:.6});
     k.appendChild(svg("title",null,viewLabel(d)));k.addEventListener("click",function(){pick(S.room,v.view)});s.appendChild(k)});
   Object.keys(m.things).forEach(function(id){var t=m.things[id];if(!t.shown)return;
     var c=svg("circle",{"class":"thing",cx:t.x,cy:t.z,r:.11,fill:colourOf(owner(id)),style:"cursor:pointer"});
@@ -419,13 +674,101 @@ function drawAll(){
     row(thingName(id),colourOf(owner(id)),x.looks_like,
       x.shown?cap(ROOM[x.room]||x.room)+", on the "+x.furniture+(x.on_top_of?" (on top of "+thingName(x.on_top_of)+")":""):cap(x.why_not_shown||"no place"),id,x.shown)});
 }
+var TABS=["plan","evidence","explore","findings","audits"];
+function showTab(name){TABS.forEach(function(t){$("p-"+t).hidden=t!==name;$("t-"+t).setAttribute("aria-selected",String(t===name))});
+  if(name==="explore"&&D)drawPicture()}
+TABS.forEach(function(t){$("t-"+t).addEventListener("click",function(){showTab(t)})});
+function getJSON(u){return fetch(u).then(function(r){return r.json()})}
+
+getJSON("evidence.json").then(function(E){
+  var c={confirmed:0,partly:0};E.forEach(function(e){c[e.audit]=(c[e.audit]||0)+1});
+  $("evSummary").textContent="Checker's verdicts: "+c.confirmed+" confirmed as stated, "+c.partly+" partly right. In the partly-right ones every number was in the paper but was attached to the wrong condition, or a condition was missing.";
+  var box=$("evList"),topic=null,sec=null;
+  E.forEach(function(e){
+    if(e.topic!==topic){topic=e.topic;sec=el("section",{"class":"box"});sec.appendChild(el("h2",null,topic));box.appendChild(sec)}
+    var d=el("div",{"class":"claim"}),head=el("div");
+    head.appendChild(document.createTextNode(e.claim+" "));
+    head.appendChild(el("span",{"class":"pill "+(e.audit==="confirmed"?"seen":"partly")},e.audit==="confirmed"?"checker: confirmed":"checker: partly right, reworded"));
+    d.appendChild(head);
+    var src=el("div",{"class":"src"});var a=el("a",{href:e.url,target:"_blank",rel:"noopener"},e.source);src.appendChild(a);d.appendChild(src);
+    if(e.audit_note)d.appendChild(el("div",{"class":"ctx"},"What the checker found in the paper: "+e.audit_note));
+    if(e.reviewer_note)d.appendChild(el("div",{"class":"ctx"},e.reviewer_note));
+    d.appendChild(el("div",{"class":"so"},"For this project: "+e.so));
+    sec.appendChild(d)});
+}).catch(function(){$("evSummary").textContent="The evidence list could not be loaded."});
+
+getJSON("audits.json").then(function(A){var box=$("auditList");
+  A.forEach(function(a){var d=el("div",{"class":"audit"});d.appendChild(el("h3",null,a.what+" \u00b7 "+a.when));
+    var dl=el("dl");[["Was shown",a.shown],["Found",a.found],["Changed",a.did],["Not acted on",a.declined]].forEach(function(r){
+      if(!r[1])return;dl.appendChild(el("dt",null,r[0]));dl.appendChild(el("dd",null,r[1]))});d.appendChild(dl);box.appendChild(d)})});
+
+function shade(v){ // one hue, light to dark; text stays in an ink colour
+  var a=[205,226,251],b=[28,92,171],t=Math.max(0,Math.min(1,v));
+  var c=a.map(function(x,i){return Math.round(x+(b[i]-x)*t)});
+  return {bg:"rgb("+c.join(",")+")",ink:t>0.55?"#FFFFFF":"#10243A"}}
+getJSON("height_study.json").then(function(S){
+  var hs=Object.keys(S.heights).sort();
+  var OPTIONS=[["in view, best position","In view, best position"],["clear, best position","Clear, best position"],["in view, chosen position","In view, chosen position"]],pickd=OPTIONS[0][0];
+  function table(t,rows,first){while(t.firstChild)t.removeChild(t.firstChild);
+    var h=el("tr");h.appendChild(el("th",null,first));hs.forEach(function(x){h.appendChild(el("th",null,"camera at "+x+" m"))});t.appendChild(h);
+    rows.forEach(function(r){var tr=el("tr",r[2]?{"class":r[2]}:{});tr.appendChild(el("td",{"class":"rowname"},r[0]));
+      hs.forEach(function(x){var g=r[1](S.heights[x])||{placed:0},v=g.placed?g[pickd]/g.placed:0,c=shade(v);
+        var td=el("td",{title:(g[pickd]||0)+" of "+g.placed+" placements"},g.placed?Math.round(v*100)+"%":"");
+        if(g.placed){td.style.background=c.bg;td.style.color=c.ink}tr.appendChild(td)});t.appendChild(tr)})}
+  function drawHeat(){
+    var H0=S.heights[hs[0]];
+    var rows=S.bands.map(function(b){return [b+" ("+H0.by_band[b].placed+")",function(H){return H.by_band[b]}]});
+    rows.push(["everything ("+H0.everything.placed+")",function(H){return H.everything},"total"]);
+    rows.push(["everything but towels ("+H0["everything but towels"].placed+")",function(H){return H["everything but towels"]},"total"]);
+    table($("heat"),rows,"The thing rests");
+    var places=Object.keys(H0.by_place).sort(function(a,b){return H0.by_place[b].placed-H0.by_place[a].placed});
+    table($("heatPlaces"),places.map(function(p){var name=(D&&D.places[p]?D.places[p].called:p);
+      return [name+" ("+H0.by_place[p].placed+")",function(H){return H.by_place[p]}]}),"Place");
+    Array.prototype.forEach.call($("heatPick").children,function(b){b.setAttribute("aria-pressed",String(b.dataset.k===pickd))});
+    $("heatNote").textContent="In brackets: how many placements fall in that row. "+cap(pickd.split(",")[0])+" means "+S.levels[pickd.split(",")[0]]+". Hover a cell for counts.";}
+  OPTIONS.forEach(function(o){var b=el("button",{"class":"tab","data-k":o[0],"aria-pressed":"false"},o[1]);
+    b.addEventListener("click",function(){pickd=o[0];drawHeat()});$("heatPick").appendChild(b)});
+  $("heatCaveat").textContent="One household in one home. The 917 placements are repeats of 13 things in 25 places: "+S.sensitivity.pairs["table height"]+" distinct thing-and-place pairs at table height and "+S.sensitivity.pairs["counter height"]+" at counter height, and one razor and one dark mug at two sinks are 43% of the counter-height placements. The rule for 'in view' is set by hand: an independent recount found it passes a near-black mug on a black counter that a person cannot see, and fails a bottle top that a person can. Lens 75 degrees, free tilt; the 0.30 m run has no whole-room pictures because of a fault since fixed in the code.";
+  var st=$("sens"),sh=el("tr");sh.appendChild(el("th",null,"Way of counting (best position)"));hs.forEach(function(x){sh.appendChild(el("th",null,x+" m"))});st.appendChild(sh);
+  Object.keys(S.sensitivity.rows).forEach(function(k){var tr=el("tr");tr.appendChild(el("td",null,cap(k)));
+    hs.forEach(function(x){var c=S.sensitivity.rows[k][x];tr.appendChild(el("td",{style:"font-family:var(--mono);font-size:13px;white-space:nowrap"},
+      Math.round(c.everything*100)+" \u00b7 "+Math.round(c["table height"]*100)+" \u00b7 "+Math.round(c["counter height"]*100)))});st.appendChild(tr)});
+  $("sensNote").textContent="Each cell: everything \u00b7 table height \u00b7 counter height, in percent. The half-of-its-best rule alone moves table height at 0.30 m from 12 to 43 and counter height at 0.70 m from 49 to 82.";
+  if(S.go2&&S.go2.by_tilt_limit){var G=S.go2.by_tilt_limit,t=$("heatGo2"),h=el("tr");h.appendChild(el("th",null,"Tilt allowed"));
+    S.bands.concat(["everything","everything but towels"]).forEach(function(b){h.appendChild(el("th",null,b.split(",")[0]))});t.appendChild(h);
+    Object.keys(G).forEach(function(k){var tr=el("tr");tr.appendChild(el("td",{"class":"rowname"},k==="level"?"level only":k==="any tilt"?"any":"up to "+k));
+      S.bands.map(function(b){return G[k].by_band[b]}).concat([G[k].everything,G[k]["everything but towels"]]).forEach(function(g){
+        var v=g.placed?g["in view"]/g.placed:0,c=shade(v),td=el("td",{title:g["in view"]+" of "+g.placed+" placements in view; "+g.clear+" clear"},Math.round(v*100)+"%");
+        td.style.background=c.bg;td.style.color=c.ink;tr.appendChild(td)});t.appendChild(tr)});
+    $("go2Note").textContent="Rendered 960 pixels across and counted as if 1,280, the real camera's width. Unitree's documents disagree on the lens (100 or 120 degrees) and the camera height is worked out from the robot's model, not published. The tilt the body actually reaches is not verified. Hover a cell for counts."}
+  window._redrawHeat=drawHeat;drawHeat();
+}).catch(function(){$("heatNote").textContent="The height study could not be loaded."});
+getJSON("heights/index.json").then(function(L){var box=$("strips");
+  L.forEach(function(o){var d=el("div",{"class":"strip"});
+    d.appendChild(el("h3",null,o.view.replace(/_/g," ")+" \u00b7 day "+o.day+", "+o.clock+" \u00b7 "+o.things.length+(o.things.length===1?" thing":" things")+" on it"));
+    d.appendChild(el("img",{src:"heights/"+o.view+".jpg",alt:"The same place from five camera heights",loading:"lazy"}));
+    var c=el("div",{"class":"cols"});o.per_height.forEach(function(r){c.appendChild(el("span",null,r.height+" m \u00b7 "+r.seen+" of "+r.things_on_it+" boxed"))});
+    d.appendChild(c);box.appendChild(d)})});
+getJSON("tags.json").then(function(T){var g=$("gallery");
+  Object.keys(T).sort().forEach(function(k){var t=T[k],c=el("div",{"class":"card"});
+    c.appendChild(el("img",{src:"tags/"+k+".jpg",alt:t.short,loading:"lazy"}));var d=el("div");
+    d.appendChild(el("b",null,cap(t.short.replace(/^the /,""))));
+    d.appendChild(el("span",null,cap(t.kind)+" \u00b7 "+t.colours.join(", ")+" \u00b7 "+t.size_cm.join(" \u00d7 ")+" cm"));
+    d.appendChild(el("span",{"class":"dim"},"Markings: "+t.markings+"."));
+    d.appendChild(el("span",{"class":"dim"},"Identified from: "+t.identified_from+"."));
+    if(t.lost_at_a_distance)d.appendChild(el("span",{"class":"dim"},"At a distance: "+t.lost_at_a_distance+"."));
+    d.appendChild(el("span",{"class":"dim"},"A checker shown only the picture called it: "+t.a_blind_checker_called_it+"."));
+    if(t.faults_in_the_model.length)d.appendChild(el("span",{"class":"dim"},"Faults in the model: "+t.faults_in_the_model.join("; ")+"."));
+    c.appendChild(d);g.appendChild(c)})});
+
 fetch("data.json").then(function(r){return r.json()}).then(function(d){
-  D=d;build();
+  D=d;build();if(window._redrawHeat)window._redrawHeat();
   var start=0;D.moments.forEach(function(m,i){if(m.day===17&&m.clock==="23:30")start=i});
   S.m=start;S.room="bedroom_1";
   // a link may name a moment, a room and a picture: #d17.t2330.bedroom_1.bedroom_1_whole_1
   var h=(location.hash||"").slice(1).split(".");
-  if(h.length>=2&&h[0].charAt(0)==="d"){D.moments.forEach(function(m,i){
+  if(h.length===1&&TABS.indexOf(h[0])>=0)showTab(h[0]);
+  if(h.length>=2&&h[0].charAt(0)==="d"){showTab("explore");D.moments.forEach(function(m,i){
       if("d"+m.day===h[0]&&"t"+m.clock.replace(":","")===h[1])S.m=i});
     if(h[2]&&ROOM[h[2]])S.room=h[2];if(h[3])S.view=h[3]}
   S.view=keep();draw();

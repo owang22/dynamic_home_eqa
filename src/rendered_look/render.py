@@ -19,6 +19,8 @@ from rendered_look import timeline, views
 from rendered_look.world import FIRST_PERSON_ID, FIRST_THING_ID, REPO, BANKS, World
 
 DAY = 86400
+SUFFIX = ("" if abs(views.EYE - 1.3) < 1e-6 else f"_eye{views.EYE:.2f}") + (
+    "" if abs(views.LENS - 75) < 1e-6 else f"_lens{views.LENS:.0f}")
 SEEN_AT_LEAST = 200     # pixels, in a 960 x 720 picture, for a thing to count as seen
 HARD_TO_MAKE_OUT = 0.35  # less than this share of its pixels differs in brightness from the surroundings
 DARK = 0.16              # brightness, 0 to 1, below which a thing on a dark ground is lost
@@ -50,7 +52,8 @@ class Scene:
                 for place, s in self.world.surfaces.items()}
 
     def _views(self) -> List[dict]:
-        path = self.out / "views.json"
+        more = "" if views.OTHER_POSITIONS == 3 else f"_with{views.OTHER_POSITIONS}others"
+        path = self.out / f"views{SUFFIX}{more}.json"
         if path.exists():
             return json.load(path.open())
         middles, found = self.middles(), []
@@ -60,7 +63,9 @@ class Scene:
             found += views.whole_room_views(self.world, room, here)
             for place, middle in here.items():
                 if place in used:
-                    view = views.close_view(self.world, room, place, middle)
+                    cells = self.world.surfaces[place].xz
+                    spread = cells[np.linspace(0, len(cells) - 1, min(24, len(cells))).astype(int)]
+                    view = views.close_view(self.world, room, place, middle, spread)
                     if view:
                         found.append(view)
                     else:
@@ -146,7 +151,11 @@ class Scene:
             if in_the_way <= PERSON_IN_THE_WAY:
                 break
         in_the_way, n, stand, shot = least
+        up = np.degrees(np.arctan2(stand["target"][1] - stand["eye"][1],
+                                   np.hypot(stand["target"][0] - stand["eye"][0],
+                                            stand["target"][2] - stand["eye"][2])))
         stood_at = {"eye": stand["eye"], "target": stand["target"], "stepped_aside": n > 0,
+                    "degrees_up": round(float(up), 1),
                     "share_of_picture_a_person_blocks": round(in_the_way, 3)}
         ids = shot["ids"]
         home_look = __import__("rendered_look.home", fromlist=["look_from"])
@@ -188,11 +197,14 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--days", type=int, nargs="+", required=True)
     parser.add_argument("--times", nargs="+", required=True)
+    parser.add_argument("--every-position", action="store_true",
+                        help="a study, not for the page: for each place with something on it, look from "
+                             "every kept camera position and record what each shows; saves no pictures")
     parser.add_argument("--every-view", action="store_true",
                         help="also render close views of places with nothing on them")
     args = parser.parse_args()
     scene = Scene()
-    frames = scene.out / "frames"
+    frames = scene.out / f"frames{SUFFIX}"
     frames.mkdir(exist_ok=True)
     moments = []
     for day in args.days:
@@ -208,6 +220,16 @@ def main() -> None:
                     there = [t for t in moment["things"].values() if t.get("shown") and t["place"] == view["place"]]
                     if there:
                         aim = np.mean([[t["x"], t["y"] + 0.05, t["z"]] for t in there], axis=0)
+                if args.every_position:
+                    if view["kind"] == "one place":
+                        shots = [scene.picture(dict(view, eye=stand["eye"], target=stand["target"], otherwise=[]), aim)
+                                 for stand in [view] + view.get("otherwise", [])]
+                    else:
+                        shots = [scene.picture(dict(view, otherwise=[]))]
+                    moment["views"].append({"view": view["name"],
+                                            "from_each_position": [s["in_picture"] for s in shots],
+                                            "degrees_up": [s["stood_at"]["degrees_up"] for s in shots]})
+                    continue
                 result = scene.picture(view, aim)
                 # the same things at the same spots in the same view give the same picture
                 said = json.dumps([view["name"], result["stood_at"]["eye"]] + sorted(
@@ -219,10 +241,13 @@ def main() -> None:
                 moment["views"].append({"view": view["name"], "file": name,
                                         "in_picture": result["in_picture"], **result["stood_at"]})
             moments.append(moment)
-            seen = {p["what"] for v in moment["views"] for p in v["in_picture"] if p["seen"]}
+            seen = {p["what"] for v in moment["views"]
+                    for shown in ([v["in_picture"]] if "in_picture" in v else v["from_each_position"])
+                    for p in shown if p["seen"]}
             print(f"day {day} {clock} [{moment['stage']}]: {len(moment['views'])} pictures, "
                   f"{len(seen)} things and people seen")
-    (scene.out / "moments.json").write_text(json.dumps(moments))
+    name = f"every_position{SUFFIX or '_eye1.30'}.json" if args.every_position else f"moments{SUFFIX}.json"
+    (scene.out / name).write_text(json.dumps(moments))
     scene.world.close()
 
 

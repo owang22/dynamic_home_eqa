@@ -7,7 +7,14 @@ import numpy as np
 
 from rendered_look import home
 
-EYE = 1.3  # metres above the floor; about the head camera of a Stretch robot
+import os
+
+# Metres above the floor. 1.3 is about the head camera of a Stretch robot; a
+# quadruped's camera is far lower. Set RENDERED_LOOK_EYE to render from another height.
+EYE = float(os.environ.get("RENDERED_LOOK_EYE", "1.3"))
+# A tall camera looks a little down to take in a room; a low one looks level.
+WHOLE_ROOM_LOOK = -0.35 if EYE >= 1.0 else 0.0
+LENS = float(os.environ.get("RENDERED_LOOK_LENS", "75"))
 
 
 def capture(sim, eye, target) -> dict:
@@ -17,7 +24,8 @@ def capture(sim, eye, target) -> dict:
             "depth": seen["depth"].copy()}
 
 
-def world_points(sim, depth: np.ndarray, hfov: float = 75.0) -> np.ndarray:
+def world_points(sim, depth: np.ndarray, hfov: Optional[float] = None) -> np.ndarray:
+    hfov = LENS if hfov is None else hfov
     import quaternion
     height, width = depth.shape
     focal = (width / 2) / np.tan(np.radians(hfov) / 2)
@@ -62,11 +70,14 @@ def whole_room_views(world, room: str, targets: Dict[str, Tuple[float, float, fl
     for x, z in standing_points(world.sim, region, 0.5):
         for heading in np.arange(0, 2 * np.pi, np.pi / 6):
             eye = np.array([x, floor + EYE, z])
-            target = eye + np.array([np.cos(heading), -0.35, np.sin(heading)])
+            target = eye + np.array([np.cos(heading), WHOLE_ROOM_LOOK, np.sin(heading)])
             shot = capture(world.sim, eye, target)
-            if blocked_share(shot["depth"]) > 0.12:
-                continue
             points = world_points(world.sim, shot["depth"])
+            # Something close to the camera blocks the view; the floor does not. A low camera
+            # looking level has the floor within 0.7 m in over 12% of the picture, and this
+            # rule used to reject every whole-room position at 0.30 m because of it.
+            if float(((shot["depth"] < CROWDED_BY) & (points[..., 1] > floor + 0.08)).mean()) > 0.12:
+                continue
             in_view = {}
             for place, middle in targets.items():
                 near = np.linalg.norm(points - np.array(middle), axis=-1) < 0.25
@@ -107,46 +118,78 @@ def whole_room_views(world, room: str, targets: Dict[str, Tuple[float, float, fl
     return chosen
 
 
-def close_view(world, room: str, place: str, middle: Tuple[float, float, float]) -> Optional[dict]:
-    """The camera position from which the most of one place's surface is seen."""
-    floor = float(world.regions[world.binding.ROOMS[room]]["floor_height"])
-    best, tried, every = None, 0, []
-    for distance in (0.8, 1.1, 1.4, 1.9, 2.5):
+def lines_of_sight(sim, depth: np.ndarray, points: np.ndarray, hfov: Optional[float] = None) -> np.ndarray:
+    """For each world point: is it inside the picture with nothing in front of it?"""
+    hfov = LENS if hfov is None else hfov
+    import quaternion
+    height, width = depth.shape
+    focal = (width / 2) / np.tan(np.radians(hfov) / 2)
+    state = sim.get_agent(0).get_state()
+    seen_from = (points - np.asarray(state.position)) @ quaternion.as_rotation_matrix(state.rotation)
+    ahead = -seen_from[:, 2]
+    clear = np.zeros(len(points), dtype=bool)
+    for i in np.flatnonzero(ahead > 0.15):
+        col = int(width / 2 + focal * seen_from[i, 0] / ahead[i])
+        row = int(height / 2 - focal * seen_from[i, 1] / ahead[i])
+        if 20 <= col < width - 20 and 20 <= row < height - 20:
+            clear[i] = depth[row, col] >= ahead[i] - 0.05   # the depth picture is distance along the view
+    return clear
+
+
+OTHER_POSITIONS = int(os.environ.get("RENDERED_LOOK_OTHER_POSITIONS", "3"))
+LOW, TALL = 0.04, 0.12   # metres above the surface: the top of a flat thing, the top of a small upright one
+
+
+def close_view(world, room: str, place: str, middle: Tuple[float, float, float],
+               spots: Optional[np.ndarray] = None) -> Optional[dict]:
+    """Where to stand so that a thing resting on this place would show.
+
+    The same rule at every camera height: over a spread of spots on the
+    surface, count how many have a clear line to a point 4 cm and 12 cm above
+    them. A tall camera sees the surface itself; a low one sees only what
+    sticks up above the edge, and sees it best from further back.
+    """
+    region = world.regions[world.binding.ROOMS[room]]
+    floor = float(region["floor_height"])
+    if spots is None or not len(spots):
+        spots = np.array([[middle[0], middle[2]]])
+    marks = np.array([[x, middle[1] + lift, z] for x, z in spots for lift in (LOW, TALL)])
+    every, tried = [], 0
+    for distance in (0.8, 1.1, 1.4, 1.9, 2.5, 3.2):
         for bearing in np.arange(0, 2 * np.pi, np.pi / 8):
             x = middle[0] + distance * np.cos(bearing)
             z = middle[2] + distance * np.sin(bearing)
-            point = np.array([x, floor, z], dtype=np.float32)
-            if not world.sim.pathfinder.is_navigable(point, 0.3):
+            if not world.sim.pathfinder.is_navigable(np.array([x, floor, z], dtype=np.float32), 0.3):
                 continue
-            if not home.inside(x, z, world.regions[world.binding.ROOMS[room]]["poly_loop"]):
+            if not home.inside(x, z, region["poly_loop"]):
                 continue
             eye = np.array([x, floor + EYE, z])
-            shot = capture(world.sim, eye, middle)
-            points = world_points(world.sim, shot["depth"])
-            flat = np.hypot(points[..., 0] - middle[0], points[..., 2] - middle[2]) < 0.4
-            level = np.abs(points[..., 1] - middle[1]) < 0.06
-            shown = int((flat & level).sum())
-            steep = np.degrees(np.arctan2(EYE + floor - middle[1], distance))
-            score = int(shown * distance ** 2 / (1 + 0.3 * distance)
-                        * (1.0 - min(1.0, 3 * blocked_share(shot["depth"])))
-                        * (1.0 if steep <= 40 else (40.0 / steep) ** 2))
-            if shown < 120:
-                score = 0
+            aim = np.array(middle) + np.array([0.0, (LOW + TALL) / 2, 0.0])
+            shot = capture(world.sim, eye, aim)
+            clear = lines_of_sight(world.sim, shot["depth"], marks)
             tried += 1
-            if score > 0:
-                every.append({"eye": eye.tolist(), "target": list(middle), "score": score})
-            if best is None or score > best["score"]:
-                best = {"eye": eye.tolist(), "target": list(middle), "score": score, "pixels_of_the_surface": shown}
-    if best is None or best["score"] < 120:
-        print(f"{place}: {tried} camera positions tried, best shows "
-              f"{best['score'] if best else 0} pixels of the surface")
+            low, tall = float(clear[0::2].mean()), float(clear[1::2].mean())
+            if tall <= 0:
+                continue
+            steep = abs(np.degrees(np.arctan2(EYE + floor - middle[1], distance)))
+            worth = ((0.6 * low + 0.4 * tall) / (0.6 + distance)
+                     * (1.0 - min(1.0, 3 * blocked_share(shot["depth"])))
+                     * (1.0 if steep <= 40 else (40.0 / steep) ** 2))
+            every.append({"eye": eye.tolist(), "target": aim.tolist(), "score": worth,
+                          "share_of_spots_a_flat_thing_shows": round(low, 2),
+                          "share_of_spots_an_upright_thing_shows": round(tall, 2),
+                          "metres_back": distance})
+    if not every:
+        print(f"{place}: {tried} camera positions tried; from none would a thing on it show")
         return None
+    every.sort(key=lambda c: -c["score"])
+    best = every[0]
     best["otherwise"], used = [], [best["eye"]]
-    for c in sorted(every, key=lambda c: -c["score"]):
+    for c in every[1:]:
         if all(np.hypot(c["eye"][0] - u[0], c["eye"][2] - u[2]) >= 0.6 for u in used):
             best["otherwise"].append({"eye": c["eye"], "target": c["target"]})
             used.append(c["eye"])
-        if len(best["otherwise"]) == 3:
+        if len(best["otherwise"]) == OTHER_POSITIONS:
             break
     best.update(name=f"{room}_{place}", room=room, kind="one place", place=place)
     return best

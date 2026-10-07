@@ -14,8 +14,14 @@ REPO = pathlib.Path(__file__).resolve().parents[2]
 MODELS = pathlib.Path(__file__).with_name("asked_about_models.json")
 BANKS = REPO / "results/self_improve/varied_homes/ten_homes/banks"
 
-HFOV = 75   # at 90 degrees, upright things near the edge of the frame look tilted
-VIEW = dict(width=960, height=720, hfov=HFOV)
+import os
+
+# Degrees across. At 90, upright things near the edge of the frame look tilted, so 75 is
+# the default. RENDERED_LOOK_LENS and RENDERED_LOOK_SHAPE copy a particular camera,
+# e.g. 100 and 960x540 for the Unitree Go2's own wide camera.
+HFOV = float(os.environ.get("RENDERED_LOOK_LENS", "75"))
+_wide, _tall = (int(v) for v in os.environ.get("RENDERED_LOOK_SHAPE", "960x720").split("x"))
+VIEW = dict(width=_wide, height=_tall, hfov=HFOV)
 FIRST_THING_ID = 5000     # ids in the picture of ids: furniture below, things and people above
 FIRST_PERSON_ID = 9000
 LIES_FLAT = {"razor", "book", "notebook", "tablet", "glasses", "charger", "towel"}

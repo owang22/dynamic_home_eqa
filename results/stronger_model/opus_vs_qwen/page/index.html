@@ -1,0 +1,347 @@
+<title>Opus and Qwen Side by Side</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<style>
+  /* Layout: the Searching Robot Live page's system (panels on a cool ground, IBM Plex, one teal accent),
+     with two model colours added: Opus blue, Qwen orange. A day plot on top, a reader underneath. */
+  :root{
+    --ink:#12171c; --ink2:#3d4a50; --muted:#69787d; --faint:#93a1a5;
+    --ground:#f3f6f5; --panel:#fff; --rule:#dde5e3; --rule2:#eef3f1;
+    --accent:#0f6b62; --accent-soft:#e2efec;
+    --opus:#0072B2; --opus-soft:#e3eef7; --qwen:#c77f00; --qwen-soft:#fbf0dc;
+    --shade:#f6ece9; --shade-ink:#9a4a3c;
+    --ok-bg:#e3f2e9; --ok-ink:#1d7a4c; --bad-bg:#fae9e7; --bad-ink:#a83a32;
+    --add:#009E73; --rev:#E69F00; --aside:#8e8e8e;
+    --sans:"IBM Plex Sans",ui-sans-serif,system-ui,sans-serif;
+    --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  }
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+    --ink:#e8efee; --ink2:#bcc9c7; --muted:#8fa09e; --faint:#6b7b79;
+    --ground:#0e1413; --panel:#151d1c; --rule:#25302e; --rule2:#1c2523;
+    --accent:#4fd0c0; --accent-soft:#13302d;
+    --opus:#56b4e9; --opus-soft:#122a3a; --qwen:#f0b54a; --qwen-soft:#3a2c10;
+    --shade:#2a1c19; --shade-ink:#e7a596;
+    --ok-bg:#16351f; --ok-ink:#8fe0a8; --bad-bg:#3b1a1a; --bad-ink:#f3a3a3;
+    --add:#3fcf9f; --rev:#f0b54a; --aside:#7d8b89; color-scheme:dark;
+  }}
+  :root[data-theme="dark"]{
+    --ink:#e8efee; --ink2:#bcc9c7; --muted:#8fa09e; --faint:#6b7b79;
+    --ground:#0e1413; --panel:#151d1c; --rule:#25302e; --rule2:#1c2523;
+    --accent:#4fd0c0; --accent-soft:#13302d;
+    --opus:#56b4e9; --opus-soft:#122a3a; --qwen:#f0b54a; --qwen-soft:#3a2c10;
+    --shade:#2a1c19; --shade-ink:#e7a596;
+    --ok-bg:#16351f; --ok-ink:#8fe0a8; --bad-bg:#3b1a1a; --bad-ink:#f3a3a3;
+    --add:#3fcf9f; --rev:#f0b54a; --aside:#7d8b89; color-scheme:dark;
+  }
+  *{box-sizing:border-box}
+  body{background:var(--ground);color:var(--ink);font-family:var(--sans);font-size:14px;line-height:1.55}
+  .wrap{padding-inline:16px;padding-block:18px 44px;max-width:1220px;margin:0 auto}
+  h1{font-size:20px;font-weight:600;margin:0;letter-spacing:-0.01em;text-wrap:balance}
+  .sub{color:var(--muted);font-size:13px;margin:4px 0 0;max-width:78ch}
+  header.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--panel);
+             border:1px solid var(--rule);border-radius:10px;padding:10px 12px;margin:16px 0 0;
+             display:flex;flex-wrap:wrap;gap:8px 14px;align-items:flex-end}
+  .fld{display:flex;flex-direction:column;gap:3px}
+  .fld > span{font-size:10px;text-transform:uppercase;letter-spacing:.09em;color:var(--faint);font-weight:600}
+  select,.nav button{font-family:var(--sans);font-size:13px;padding:5px 8px;border-radius:6px;border:1px solid var(--rule);
+         background:var(--panel);color:var(--ink)}
+  .nav{display:flex;gap:6px;align-items:center}
+  .nav button{cursor:pointer;min-width:34px}
+  select:focus-visible,.nav button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+  .daytag{font-size:12.5px;color:var(--ink2);padding-bottom:5px}
+  .card{background:var(--panel);border:1px solid var(--rule);border-radius:10px;padding:14px;margin-top:14px;min-width:0}
+  .card h2{font-size:14px;font-weight:600;margin:0 0 3px}
+  .card p.note{font-size:12.5px;color:var(--muted);margin:0 0 10px;max-width:80ch}
+  .finds{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:10px;margin-top:8px}
+  .find{border:1px solid var(--rule2);border-radius:8px;padding:10px 12px;font-size:12.5px;color:var(--ink2)}
+  .find b{display:block;color:var(--ink);font-size:13px;margin-bottom:3px}
+  .legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:12.5px;color:var(--ink2);margin-top:8px}
+  .legend span{display:inline-flex;align-items:center;gap:7px}
+  .sw{width:22px;height:10px;display:inline-block}
+  svg text{font-family:var(--sans)}
+  .reader{display:grid;grid-template-columns:210px minmax(0,1fr);gap:14px;align-items:start}
+  @media (max-width:760px){.reader{grid-template-columns:1fr}}
+  .side{border:1px solid var(--rule);border-radius:9px;overflow:hidden}
+  .side button{display:block;width:100%;text-align:left;border:0;border-bottom:1px solid var(--rule2);
+               background:transparent;color:var(--ink2);font-family:var(--sans);font-size:12.5px;
+               padding:9px 11px;cursor:pointer;line-height:1.35}
+  .side button:last-child{border-bottom:0}
+  .side button[aria-pressed="true"]{background:var(--accent-soft);color:var(--accent);font-weight:600}
+  .side button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+  #rdBody{max-height:min(80vh,960px);overflow-y:auto;padding-right:6px;min-width:0}
+  .dayhead{display:flex;flex-wrap:wrap;gap:8px;align-items:baseline;margin-bottom:10px}
+  .dayhead h3{font-size:15px;margin:0}
+  .pill{font-size:10.5px;font-weight:600;padding:2px 7px;border-radius:99px;white-space:nowrap}
+  .pill.sick{background:var(--shade);color:var(--shade-ink)} .pill.well{background:var(--rule2);color:var(--muted)}
+  .pill.right{background:var(--ok-bg);color:var(--ok-ink)} .pill.wrong{background:var(--bad-bg);color:var(--bad-ink)}
+  .pill.n{background:var(--rule2);color:var(--muted)}
+  .two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px}
+  @media (max-width:900px){.two{grid-template-columns:minmax(0,1fr)}}
+  .col h4{font-size:11px;text-transform:uppercase;letter-spacing:.08em;margin:2px 0 8px;font-weight:600;
+          padding:5px 9px;border-radius:6px}
+  .col.opus h4{background:var(--opus-soft);color:var(--opus)} .col.qwen h4{background:var(--qwen-soft);color:var(--qwen)}
+  .entry{border-left:3px solid var(--rule);padding:2px 0 2px 10px;margin:0 0 12px}
+  .entry .lab{font-size:11.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+  .entry .said{margin:3px 0 0;white-space:pre-wrap;word-break:break-word;font-size:13px}
+  .entry .cond{margin:2px 0 0;font-size:12px;color:var(--muted)}
+  .entry .reason{margin:5px 0 0;padding:7px 9px;background:var(--rule2);border-radius:6px;
+                 white-space:pre-wrap;word-break:break-word;font-size:12.5px;color:var(--ink2)}
+  .entry.added{border-left-color:var(--add)} .entry.revised{border-left-color:var(--rev)}
+  .entry.aside{border-left-color:var(--aside)} .entry.standing{border-left-color:var(--rule)}
+  .entry.aside .said{color:var(--muted)}
+  .q{margin:0 0 14px} .q dt{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--faint);font-weight:600}
+  .q dd{margin:3px 0 0;white-space:pre-wrap;word-break:break-word;font-size:13px;color:var(--ink2)}
+  .trow{border-bottom:1px solid var(--rule2)}
+  .trow summary{cursor:pointer;display:block;padding:8px 2px;line-height:1.8}
+  .trow summary > *{margin-right:8px}
+  .trow summary::-webkit-details-marker{display:none}
+  .obj{font-family:var(--mono);font-size:12.5px}
+  .time{font-variant-numeric:tabular-nums;color:var(--muted);font-size:12.5px}
+  .tbody{padding:4px 2px 14px 10px}
+  .quote{font-size:13px;color:var(--ink2);background:var(--rule2);border:1px solid var(--rule);
+         border-radius:7px;padding:9px 12px;margin:4px 0 10px;white-space:pre-wrap;overflow-wrap:break-word;line-height:1.6}
+  .who{font-size:12px;font-weight:600;margin-top:6px}
+  .who.opus{color:var(--opus)} .who.qwen{color:var(--qwen)}
+  pre.words{white-space:pre-wrap;word-break:break-word;font-family:var(--mono);font-size:12px;background:var(--rule2);
+            border:1px solid var(--rule);border-radius:7px;padding:11px 13px;color:var(--ink2)}
+  .thin{color:var(--faint)}
+  .empty{color:var(--muted);font-size:13px;padding:8px 0}
+  .colday{cursor:pointer}
+</style>
+
+<div class="wrap">
+  <h1>Opus and Qwen Side by Side</h1>
+  <p class="sub">Two models, the same 49 days in the same home, the same sightings. Each night each writes its own notes;
+    each day each chooses which room to open first. One resident is unwell on days 14 to 23 and again on days 32 to 41 (shaded).
+    Neither model is ever told. <b>Click a day on the plot to read what both wrote that day.</b></p>
+
+  <header class="bar">
+    <label class="fld"><span>Home</span><select id="cHh">
+      <option value="hh_s2_t03">hh_s2: Tomas and Ines</option>
+      <option value="hh_s32_t03">hh_s32: Leo, Aisha and Elena</option>
+      <option value="hh_s48_t03">hh_s48: Marco and Priya</option></select></label>
+    <label class="fld"><span>Objects on the plot</span><select id="cSlice">
+      <option value="all">every object asked about</option>
+      <option value="mv">only the ones that move</option></select></label>
+    <div class="fld"><span>Day</span><div class="nav">
+      <button id="prev" aria-label="Previous day">&larr;</button>
+      <select id="cDay" aria-label="Day"></select>
+      <button id="next" aria-label="Next day">&rarr;</button></div></div>
+    <div class="daytag" id="dayTag"></div>
+  </header>
+
+  <section class="card">
+    <h2>What the comparison found</h2>
+    <p class="note">Three homes, one run each. Both models read exactly the record the robot built in the original Qwen run.
+      Opus is a fresh Claude call per prompt with no tools; Qwen is plain Qwen3.8, the study's own model.</p>
+    <div class="finds">
+      <div class="find"><b>Opus's notes see both spells; Qwen's see neither</b>Opus records the change starting and
+        ending on the right night, both times, in all three homes. Qwen's notes record where things were on the latest day
+        and never record any change. A blind reader preferred Opus's notes in all three homes.</div>
+      <div class="find"><b>Opus forms the hypothesis, then forgets it</b>On night 32 Opus links the second spell to the first
+        in all three homes. Where it rewrote the note holding the first spell (hh_s2 night 32, hh_s48 night 34) the link is gone
+        within two nights. Where it set the note aside (hh_s32) it kept the link and predicted the return "around day 41"; it came on day 42.</div>
+      <div class="find"><b>Where they look first barely differs</b>Over the 14 days scored, Opus as chooser is 1.9 points ahead
+        (2 standard errors 1.5). Given Qwen's notes instead of its own, Opus changes its first room on 8 or 9 of 336 questions per home:
+        the choice follows the sightings, not the notes.</div>
+      <div class="find"><b>Never told about illness</b>No prompt mentions illness or health. In the home, only small things change:
+        the ill person's vitamins and glass move to the bedside and the blanket to the bed. Opus names illness as a possibility on night 14
+        in all three homes, then settles on "leave or a holiday" because the person is up and about.</div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2 id="chTitle">First room was the right one, by day</h2>
+    <p class="note" id="chNote"></p>
+    <div style="overflow-x:auto"><svg id="ch" viewBox="0 0 900 300" width="100%" style="min-width:600px;display:block" role="img" aria-label="Share of questions where the first room opened was right, by day, for each model"></svg></div>
+    <div class="legend">
+      <span><svg class="sw" viewBox="0 0 22 10"><line x1="0" y1="5" x2="22" y2="5" stroke="var(--qwen)" stroke-width="2.5"/></svg>Qwen, with its own notes (every day)</span>
+      <span><svg class="sw" viewBox="0 0 22 10"><circle cx="11" cy="5" r="4" fill="var(--opus)"/></svg>Opus, with its own notes (scored days only)</span>
+      <span><svg class="sw" viewBox="0 0 22 10"><circle cx="11" cy="5" r="3.5" fill="var(--panel)" stroke="var(--opus)" stroke-width="1.8"/></svg>Opus, given Qwen's notes</span>
+      <span><svg class="sw" viewBox="0 0 22 10"><rect width="22" height="10" fill="var(--shade)"/></svg>resident unwell</span>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="dayhead"><h3 id="rdTitle"></h3><span id="rdPill"></span><span class="thin" id="rdSub"></span></div>
+    <div class="reader">
+      <div class="side" role="group" aria-label="What to read">
+        <button data-v="changes" aria-pressed="true">note changes tonight, and why</button>
+        <button data-v="beliefs" aria-pressed="false">what each believed tonight</button>
+        <button data-v="notes" aria-pressed="false">all notes as they stood tonight</button>
+        <button data-v="choices" aria-pressed="false">where each looked first today</button>
+        <button data-v="words" aria-pressed="false">the instructions, word for word</button>
+      </div>
+      <div id="rdBody" tabindex="0" aria-live="polite"><p class="empty">Loading the home's records&hellip;</p></div>
+    </div>
+  </section>
+</div>
+
+<script>
+const S = {hh: "hh_s2_t03", day: 32, view: "changes", slice: "all"};
+const cache = {}; let words = null;
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const sick = d => (d >= 14 && d <= 23) || (d >= 32 && d <= 41);
+const period = d => d < 14 ? "normal" : d <= 23 ? "unwell, first spell" : d <= 31 ? "back to normal" : d <= 41 ? "unwell, second spell" : "back to normal again";
+const hhmm = t => { t = t % 86400; return String(Math.floor(t/3600)).padStart(2,"0") + ":" + String(Math.floor(t%3600/60)).padStart(2,"0"); };
+const room = r => esc(String(r ?? "").replace(/_/g, " "));
+
+async function load(hh) {
+  if (!cache[hh]) cache[hh] = await (await fetch(`data_${hh}.json`)).json();
+  return cache[hh];
+}
+async function loadWords() { if (!words) words = await (await fetch("words.json")).json(); return words; }
+
+// notes as they stood at the end of night n: each note's latest version written on or before n
+function notesAt(list, n) {
+  const out = [];
+  for (const c of list) {
+    let cur = null;
+    for (const v of c.v) if (v.d <= n) cur = v;
+    if (cur) out.push({id: c.id, ...cur});
+  }
+  return out;
+}
+function changesOn(list, n) {
+  const out = [];
+  for (const c of list) c.v.forEach((v, i) => {
+    if (v.d !== n) return;
+    let kind = i === 0 ? "added" : "revised";
+    if (i > 0 && v.st !== c.v[i-1].st) kind = v.st === "still standing" ? "brought back" : "set aside";
+    out.push({id: c.id, kind, ...v, before: i > 0 ? c.v[i-1].s : null});
+  });
+  return out;
+}
+
+function drawChart(data) {
+  const svg = $("ch"), W = 900, H = 300, L = 46, R = 12, T = 14, B = 34;
+  const days = Array.from({length: 49}, (_, i) => i + 1);
+  const x = d => L + (d - 1) * (W - L - R) / 48;
+  const ymin = 40, ymax = 100, y = v => T + (ymax - v) * (H - T - B) / (ymax - ymin);
+  const qs = data.questions.filter(q => S.slice === "all" || q.m);
+  const by = {}; for (const q of qs) (by[q.d] ||= []).push(q);
+  const pct = (arr, f) => arr.length ? 100 * arr.filter(f).length / arr.length : null;
+  let g = "";
+  for (const [a, b] of [[14, 23], [32, 41]])
+    g += `<rect x="${x(a) - 7}" y="${T}" width="${x(b) - x(a) + 14}" height="${H - T - B}" fill="var(--shade)"/>`;
+  for (let v = ymin; v <= ymax; v += 10)
+    g += `<line x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}" stroke="var(--rule2)"/><text x="${L - 7}" y="${y(v) + 4}" text-anchor="end" font-size="11" fill="var(--muted)">${v}%</text>`;
+  for (const d of [1, 7, 14, 21, 24, 28, 32, 35, 42, 49])
+    g += `<text x="${x(d)}" y="${H - B + 16}" text-anchor="middle" font-size="11" fill="var(--muted)">${d}</text>`;
+  g += `<text x="${(L + W - R) / 2}" y="${H - 4}" text-anchor="middle" font-size="11" fill="var(--faint)">day</text>`;
+  g += `<line x1="${x(S.day)}" x2="${x(S.day)}" y1="${T}" y2="${H - B}" stroke="var(--accent)" stroke-width="1.5" stroke-dasharray="3 3"/>`;
+  const clip = v => Math.max(ymin, v);
+  let path = "", low = "";
+  for (const d of days) {
+    const v = pct(by[d] || [], q => q.qr === q.true); if (v === null) continue;
+    path += (path ? "L" : "M") + x(d).toFixed(1) + "," + y(clip(v)).toFixed(1);
+    if (v < ymin) low += `<text x="${x(d)}" y="${y(ymin) + 12}" text-anchor="middle" font-size="9" fill="var(--qwen)">${Math.round(v)}</text>`;
+  }
+  g += `<path d="${path}" fill="none" stroke="var(--qwen)" stroke-width="2.2" stroke-linejoin="round"/>` + low;
+  for (const d of days) {
+    const arr = (by[d] || []).filter(q => q.oor); if (!arr.length) continue;
+    const a = pct(arr, q => q.oor === q.true), b = pct(arr, q => q.oqr === q.true);
+    g += `<circle cx="${x(d)}" cy="${y(clip(b))}" r="4.2" fill="var(--panel)" stroke="var(--opus)" stroke-width="1.8"/>`;
+    g += `<circle cx="${x(d)}" cy="${y(clip(a))}" r="4" fill="var(--opus)"/>`;
+  }
+  for (const d of days)
+    g += `<rect class="colday" data-d="${d}" x="${x(d) - 8}" y="${T}" width="16" height="${H - T - B}" fill="transparent"><title>day ${d}: click to read</title></rect>`;
+  svg.innerHTML = g;
+  svg.querySelectorAll(".colday").forEach(r => r.addEventListener("click", () => setDay(+r.dataset.d)));
+  const n = qs.filter(q => q.d === 1).length;
+  $("chNote").textContent = `About ${n || 24} questions a day in this home${S.slice === "mv" ? " (only the objects that move)" : ""}, so one question is about ${Math.round(100 / Math.max(n, 1))} points on a single day. Opus was asked only on days 12-16, 24-26, 32-34 and 42-44.`;
+}
+
+function entry(e, kind) {
+  const cls = kind || (e.kind === "added" ? "added" : e.kind === "revised" ? "revised" : e.kind === "set aside" ? "aside" : e.kind === "brought back" ? "added" : "standing");
+  return `<div class="entry ${cls}"><div class="lab">${esc(e.id)}${e.kind ? " &middot; " + esc(e.kind) : ""}${e.st && e.st !== "still standing" ? " &middot; " + esc(e.st) : ""}${kind === "standing" ? " &middot; last written night " + e.d : ""}</div>
+    <div class="said">${esc(e.s)}</div>${e.h ? `<div class="cond">when true: ${esc(e.h)}</div>` : ""}
+    ${e.y ? `<div class="reason">why: ${esc(e.y)}</div>` : ""}
+    ${e.before && e.kind === "revised" ? `<div class="cond">it had said: ${esc(e.before)}</div>` : ""}</div>`;
+}
+
+function viewChanges(data) {
+  const col = m => {
+    const ch = changesOn(data.notes[m], S.day);
+    return `<div class="col ${m}"><h4>${m === "opus" ? "Opus" : "Qwen"}: ${ch.length} change${ch.length === 1 ? "" : "s"} on night ${S.day}</h4>
+      ${ch.length ? ch.map(e => entry(e)).join("") : `<p class="empty">No note changed tonight.</p>`}</div>`;
+  };
+  return `<p class="note">Each note a model added, rewrote, set aside or brought back at the end of day ${S.day}, with the reason it gave.
+    A rewrite replaces the old wording in what the model sees from then on; the old wording is shown here under the new one.</p>
+    <div class="two">${col("opus")}${col("qwen")}</div>`;
+}
+function viewNotes(data) {
+  const col = m => {
+    const ns = notesAt(data.notes[m], S.day);
+    const st = ns.filter(e => e.st === "still standing"), as = ns.filter(e => e.st !== "still standing");
+    return `<div class="col ${m}"><h4>${m === "opus" ? "Opus" : "Qwen"}: ${st.length} standing, ${as.length} set aside</h4>
+      ${st.map(e => entry(e, "standing")).join("")}${as.length ? `<p class="thin" style="font-size:12px;margin:10px 0 6px">Set aside (still shown to the model, marked as not true at the moment):</p>` + as.map(e => entry(e, "aside")).join("") : ""}</div>`;
+  };
+  return `<p class="note">Everything each model saw as its memory when it began day ${S.day + 1}.</p><div class="two">${col("opus")}${col("qwen")}</div>`;
+}
+function viewBeliefs(data) {
+  const keys = [["routines", "Each person's normal day"], ["anything_changed", "Has anything changed?"], ["why", "Why?"],
+                ["happened_before", "Has this happened before?"], ["expect_tomorrow", "What tomorrow brings, and how long it lasts"]];
+  const col = m => {
+    const b = data.beliefs[m][S.day];
+    const body = b ? keys.map(([k, lab]) => `<dl class="q"><dt>${lab}</dt><dd>${esc(b[k])}</dd></dl>`).join("")
+      : `<p class="empty">${m === "qwen" ? "Qwen's answers were cut short when the graphics card failed, after night " + Math.max(0, ...Object.keys(data.beliefs.qwen).map(Number)) + ". They will be added when it is repaired." : "No answers on night 0."}</p>`;
+    return `<div class="col ${m}"><h4>${m === "opus" ? "Opus" : "Qwen"}, night ${S.day}</h4>${body}</div>`;
+  };
+  return `<p class="note">Five fixed questions asked every night before the notes are written, with the same view the note writer has:
+    that day's sightings and the notes as they stood. The questions never mention illness.</p><div class="two">${col("opus")}${col("qwen")}</div>`;
+}
+function viewChoices(data) {
+  const qs = data.questions.filter(q => q.d === S.day && (S.slice === "all" || q.m));
+  if (!qs.length) return `<p class="empty">No questions on this day.</p>`;
+  const has = qs.some(q => q.oor);
+  const pill = (r, t, who) => r ? `<span class="pill ${r === t ? "right" : "wrong"}">${who}: ${room(r)}</span>` : "";
+  const rows = qs.map(q => `<details class="trow"><summary><span class="time">${hhmm(q.t)}</span><span class="obj">${esc(q.o)}</span>
+      <span class="thin">is in ${room(q.true)}</span>${pill(q.qr, q.true, "Qwen")}${pill(q.oor, q.true, "Opus")}${pill(q.oqr, q.true, "Opus on Qwen's notes")}</summary>
+      <div class="tbody"><div class="who qwen">Qwen, with its own notes: ${room(q.qr)} first. The robot then opened: ${q.opened.map(room).join(" &rarr; ")}</div>
+      <div class="quote">${esc(q.qy)}</div>
+      ${q.oor ? `<div class="who opus">Opus, with its own notes: ${room(q.oor)} first</div><div class="quote">${esc(q.ooy)}</div>
+      <div class="who opus">Opus, given Qwen's notes: ${room(q.oqr)} first</div><div class="quote">${esc(q.oqy)}</div>` : ""}</div></details>`).join("");
+  const sum = (f) => qs.filter(f).length;
+  return `<p class="note">${qs.length} questions on day ${S.day}. Qwen right first time on ${sum(q => q.qr === q.true)}${has ? `, Opus on ${sum(q => q.oor === q.true)}, Opus given Qwen's notes on ${sum(q => q.oqr === q.true)}` : "; Opus was not asked on this day (scored days: 12-16, 24-26, 32-34, 42-44)"}.
+    Click a question for each model's reasoning. Only the first room is compared: what came after depended on what the robot found.</p>${rows}`;
+}
+async function viewWords() {
+  const w = await loadWords();
+  return `<p class="note">The fixed text both models were given. The notes instructions are the same for both; so are the room-choice instructions.</p>
+    <h4 style="font-size:13px;margin:8px 0 4px">Nightly notes: system line</h4><pre class="words">${esc(w.notes_system || "")}</pre>
+    <h4 style="font-size:13px;margin:12px 0 4px">Nightly notes: the prompt (shown for day 2; the day's sightings and the notes are cut out)</h4><pre class="words">${esc(w.notes || "")}</pre>
+    <h4 style="font-size:13px;margin:12px 0 4px">The five nightly questions (added in place of the notes instructions, same view)</h4><pre class="words">${esc(w.belief)}</pre>
+    <h4 style="font-size:13px;margin:12px 0 4px">Choosing the first room: one full prompt (${esc(w.choice_note)})</h4><pre class="words">${esc(w.choice_system)}\n\n${esc(w.choice)}</pre>`;
+}
+
+async function render() {
+  const data = await load(S.hh);
+  drawChart(data);
+  $("cDay").value = S.day;
+  $("dayTag").textContent = `${period(S.day)}`;
+  $("rdTitle").textContent = `${S.hh.replace("_t03", "")}, day ${S.day}`;
+  $("rdPill").innerHTML = `<span class="pill ${sick(S.day) ? "sick" : "well"}">${period(S.day)}</span>`;
+  $("rdSub").textContent = `${data.who[0]}, ${data.who[1]}, is the one who falls ill. Also living here: ${data.who[2]}.`;
+  document.querySelectorAll(".side button").forEach(b => b.setAttribute("aria-pressed", b.dataset.v === S.view));
+  const body = $("rdBody");
+  body.innerHTML = S.view === "changes" ? viewChanges(data) : S.view === "notes" ? viewNotes(data)
+    : S.view === "beliefs" ? viewBeliefs(data) : S.view === "choices" ? viewChoices(data) : await viewWords();
+  body.scrollTop = 0;
+}
+function setDay(d) { S.day = Math.min(49, Math.max(1, d)); render(); }
+
+const daySel = $("cDay");
+for (let d = 1; d <= 49; d++) daySel.insertAdjacentHTML("beforeend", `<option value="${d}">${d}${sick(d) ? " (unwell)" : ""}</option>`);
+daySel.addEventListener("change", () => setDay(+daySel.value));
+$("prev").addEventListener("click", () => setDay(S.day - 1));
+$("next").addEventListener("click", () => setDay(S.day + 1));
+$("cHh").addEventListener("change", e => { S.hh = e.target.value; render(); });
+$("cSlice").addEventListener("change", e => { S.slice = e.target.value; render(); });
+document.querySelectorAll(".side button").forEach(b => b.addEventListener("click", () => { S.view = b.dataset.v; render(); }));
+document.addEventListener("keydown", e => {
+  if (e.target.tagName === "SELECT" || e.target.tagName === "INPUT") return;
+  if (e.key === "ArrowLeft") setDay(S.day - 1); if (e.key === "ArrowRight") setDay(S.day + 1);
+});
+render().catch(err => { $("rdBody").innerHTML = `<p class="empty">The home's records did not load (${esc(err.message)}). Reload the page to try again.</p>`; });
+</script>

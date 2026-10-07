@@ -1,0 +1,519 @@
+164 positions, 248 searches, perception: in view; findable at the time asked: 155 (n = 1 household)
+costs: 5 metres' worth per look, 10 per look into an occupied room, budgets 60
+model policy: fake nearest, stands where last seen
+
+search 6: d1q20 for glass_felix, 8 look(s), outcome: ran out of budget (answers by the fake model nearest)
+
+===== step 1: messages sent =====
+--- system ---
+You direct a home robot that is searching for one thing. It can walk to a place and look at it, or look across a whole room. Each look costs walking plus a fixed charge per look, and a penalty if the room it looks into has a resident in it. You see only what the robot itself has seen. Answer with JSON: first "why" (your reasons, under 600 characters), then "next": the id of the place to look at next, exactly as listed, or "cannot be found" to stop and answer that the thing cannot be found now.
+--- user ---
+Find: glass_felix (cream tumbler with a navy and white 'Corona Extra' label).
+Now: day 1, 20:40.
+
+The robot has never seen it.
+
+Places it can look at, nearest first, with the walk from where it stands now:
+  dining_table_d1 (in dining): 0.0 m
+  whole_room:living (in living): 1.1 m
+  armchair_l1 (in living): 1.4 m
+  whole_room:dining (in dining): 1.9 m
+  sideboard_d1 (in dining): 2.0 m
+  side_table_l1 (in living): 2.2 m
+  couch_l1 (in living): 2.2 m
+  floor_l_l1 (in living): 2.2 m
+  bookshelf_l1 (in living): 2.2 m
+  coffee_table_l1 (in living): 2.3 m
+  counter_k1 (in kitchen): 2.4 m
+  pantry_shelf_k1 (in kitchen): 2.8 m
+  whole_room:kitchen (in kitchen): 2.9 m
+  kitchen_table_k1 (in kitchen): 3.0 m
+  sink_k1 (in kitchen): 3.1 m
+  dish_rack_k1 (in kitchen): 3.2 m
+  whole_room:entry (in entry): 5.5 m
+  entry_table_e1 (in entry): 5.5 m
+  entry_hook_e1 (in entry): 6.6 m
+  desk_o1 (in office): 6.7 m
+  entry_floor_e1 (in entry): 6.7 m
+  whole_room:office (in office): 7.5 m
+  bathroom_shelf_ba1 (in bathroom): 8.8 m
+  towel_rack_ba1 (in bathroom): 9.1 m
+  sink_ba_ba1 (in bathroom): 9.2 m
+  whole_room:bathroom (in bathroom): 9.2 m
+  bed_b1 (in bedroom_1): 9.5 m
+  nightstand_b1 (in bedroom_1): 9.7 m
+  whole_room:bedroom_1 (in bedroom_1): 9.9 m
+  bedroom_floor_b1 (in bedroom_1): 10.1 m
+  whole_room:bedroom_2 (in bedroom_2): 10.5 m
+  bedroom_floor_b2 (in bedroom_2): 10.9 m
+  desk_b1 (in bedroom_1): 12.4 m
+  nightstand_b2 (in bedroom_2): 13.4 m
+
+Each look costs 5 on top of the metres walked, and 10 more if a resident is in the room it looks into; the robot does not know in advance who is where. At most 12 looks per search (12 left).
+Budget left for this search, counting metres and look charges only: 60.0. Penalties already charged are not shown. Naming a place marked too far ends the search.
+Over the month, 37.5% of the time the thing asked about cannot be seen from any position (put away, carried, or out of every camera's view), so "cannot be found" is a real option.
+
+Where should the robot look next? Give "why" first, then "next" (a place id above or "cannot be found").
+--- enum sent for 'next' ---
+["dining_table_d1", "whole_room:living", "armchair_l1", "whole_room:dining", "sideboard_d1", "side_table_l1", "couch_l1", "floor_l_l1", "bookshelf_l1", "coffee_table_l1", "counter_k1", "pantry_shelf_k1", "whole_room:kitchen", "kitchen_table_k1", "sink_k1", "dish_rack_k1", "whole_room:entry", "entry_table_e1", "entry_hook_e1", "desk_o1", "entry_floor_e1", "whole_room:office", "bathroom_shelf_ba1", "towel_rack_ba1", "sink_ba_ba1", "whole_room:bathroom", "bed_b1", "nightstand_b1", "whole_room:bedroom_1", "bedroom_floor_b1", "whole_room:bedroom_2", "bedroom_floor_b2", "desk_b1", "nightstand_b2", "cannot be found"]
+--- answer (fake nearest) ---
+dining_table_d1
+
+===== step 2: messages sent =====
+--- system ---
+You direct a home robot that is searching for one thing. It can walk to a place and look at it, or look across a whole room. Each look costs walking plus a fixed charge per look, and a penalty if the room it looks into has a resident in it. You see only what the robot itself has seen. Answer with JSON: first "why" (your reasons, under 600 characters), then "next": the id of the place to look at next, exactly as listed, or "cannot be found" to stop and answer that the thing cannot be found now.
+--- user ---
+Find: glass_felix (cream tumbler with a navy and white 'Corona Extra' label).
+Now: day 1, 20:40.
+
+The robot has never seen it.
+
+Places it can look at, nearest first, with the walk from where it stands now:
+  whole_room:living (in living): 1.1 m
+  dining_table_d1 (in dining): 1.2 m  <- looked at in this search: did not see it (saw: a person)
+  armchair_l1 (in living): 1.4 m
+  whole_room:dining (in dining): 1.9 m
+  sideboard_d1 (in dining): 2.0 m
+  side_table_l1 (in living): 2.2 m
+  couch_l1 (in living): 2.2 m
+  floor_l_l1 (in living): 2.2 m
+  bookshelf_l1 (in living): 2.2 m
+  coffee_table_l1 (in living): 2.3 m
+  counter_k1 (in kitchen): 2.4 m
+  pantry_shelf_k1 (in kitchen): 2.8 m
+  whole_room:kitchen (in kitchen): 2.9 m
+  kitchen_table_k1 (in kitchen): 3.0 m
+  sink_k1 (in kitchen): 3.1 m
+  dish_rack_k1 (in kitchen): 3.2 m
+  whole_room:entry (in entry): 5.5 m
+  entry_table_e1 (in entry): 5.5 m
+  entry_hook_e1 (in entry): 6.6 m
+  desk_o1 (in office): 6.7 m
+  entry_floor_e1 (in entry): 6.7 m
+  whole_room:office (in office): 7.5 m
+  bathroom_shelf_ba1 (in bathroom): 8.8 m
+  towel_rack_ba1 (in bathroom): 9.1 m
+  sink_ba_ba1 (in bathroom): 9.2 m
+  whole_room:bathroom (in bathroom): 9.2 m
+  bed_b1 (in bedroom_1): 9.5 m
+  nightstand_b1 (in bedroom_1): 9.7 m
+  whole_room:bedroom_1 (in bedroom_1): 9.9 m
+  bedroom_floor_b1 (in bedroom_1): 10.1 m
+  whole_room:bedroom_2 (in bedroom_2): 10.5 m
+  bedroom_floor_b2 (in bedroom_2): 10.9 m
+  desk_b1 (in bedroom_1): 12.4 m
+  nightstand_b2 (in bedroom_2): 13.4 m
+
+Each look costs 5 on top of the metres walked, and 10 more if a resident is in the room it looks into; the robot does not know in advance who is where. At most 12 looks per search (11 left).
+Budget left for this search, counting metres and look charges only: 55.0. Penalties already charged are not shown. Naming a place marked too far ends the search.
+Over the month, 37.5% of the time the thing asked about cannot be seen from any position (put away, carried, or out of every camera's view), so "cannot be found" is a real option.
+
+Where should the robot look next? Give "why" first, then "next" (a place id above or "cannot be found").
+--- enum sent for 'next' ---
+["whole_room:living", "armchair_l1", "whole_room:dining", "sideboard_d1", "side_table_l1", "couch_l1", "floor_l_l1", "bookshelf_l1", "coffee_table_l1", "counter_k1", "pantry_shelf_k1", "whole_room:kitchen", "kitchen_table_k1", "sink_k1", "dish_rack_k1", "whole_room:entry", "entry_table_e1", "entry_hook_e1", "desk_o1", "entry_floor_e1", "whole_room:office", "bathroom_shelf_ba1", "towel_rack_ba1", "sink_ba_ba1", "whole_room:bathroom", "bed_b1", "nightstand_b1", "whole_room:bedroom_1", "bedroom_floor_b1", "whole_room:bedroom_2", "bedroom_floor_b2", "desk_b1", "nightstand_b2", "cannot be found"]
+--- answer (fake nearest) ---
+armchair_l1
+
+===== step 3: messages sent =====
+--- system ---
+You direct a home robot that is searching for one thing. It can walk to a place and look at it, or look across a whole room. Each look costs walking plus a fixed charge per look, and a penalty if the room it looks into has a resident in it. You see only what the robot itself has seen. Answer with JSON: first "why" (your reasons, under 600 characters), then "next": the id of the place to look at next, exactly as listed, or "cannot be found" to stop and answer that the thing cannot be found now.
+--- user ---
+Find: glass_felix (cream tumbler with a navy and white 'Corona Extra' label).
+Now: day 1, 20:40.
+
+The robot has never seen it.
+
+Places it can look at, nearest first, with the walk from where it stands now:
+  side_table_l1 (in living): 0.8 m
+  whole_room:living (in living): 0.8 m
+  armchair_l1 (in living): 0.8 m  <- looked at in this search: did not see it (saw: a person)
+  couch_l1 (in living): 0.8 m
+  bookshelf_l1 (in living): 0.8 m
+  floor_l_l1 (in living): 0.9 m
+  coffee_table_l1 (in living): 0.9 m
+  counter_k1 (in kitchen): 2.1 m
+  dining_table_d1 (in dining): 2.2 m  <- looked at in this search: did not see it (saw: a person)
+  pantry_shelf_k1 (in kitchen): 2.5 m
+  kitchen_table_k1 (in kitchen): 2.6 m
+  sink_k1 (in kitchen): 2.8 m
+  whole_room:dining (in dining): 2.9 m
+  dish_rack_k1 (in kitchen): 3.0 m
+  sideboard_d1 (in dining): 3.0 m
+  whole_room:kitchen (in kitchen): 3.2 m
+  whole_room:entry (in entry): 4.2 m
+  entry_table_e1 (in entry): 4.2 m
+  entry_hook_e1 (in entry): 5.2 m
+  desk_o1 (in office): 5.3 m
+  entry_floor_e1 (in entry): 5.3 m
+  whole_room:office (in office): 6.2 m
+  bathroom_shelf_ba1 (in bathroom): 7.5 m
+  towel_rack_ba1 (in bathroom): 7.8 m
+  sink_ba_ba1 (in bathroom): 7.8 m
+  whole_room:bathroom (in bathroom): 7.9 m
+  bed_b1 (in bedroom_1): 8.2 m
+  nightstand_b1 (in bedroom_1): 8.3 m
+  whole_room:bedroom_1 (in bedroom_1): 8.5 m
+  bedroom_floor_b1 (in bedroom_1): 8.7 m
+  whole_room:bedroom_2 (in bedroom_2): 9.2 m
+  bedroom_floor_b2 (in bedroom_2): 9.5 m
+  desk_b1 (in bedroom_1): 11.0 m
+  nightstand_b2 (in bedroom_2): 12.0 m
+
+Each look costs 5 on top of the metres walked, and 10 more if a resident is in the room it looks into; the robot does not know in advance who is where. At most 12 looks per search (10 left).
+Budget left for this search, counting metres and look charges only: 48.6. Penalties already charged are not shown. Naming a place marked too far ends the search.
+Over the month, 37.5% of the time the thing asked about cannot be seen from any position (put away, carried, or out of every camera's view), so "cannot be found" is a real option.
+
+Where should the robot look next? Give "why" first, then "next" (a place id above or "cannot be found").
+--- enum sent for 'next' ---
+["side_table_l1", "whole_room:living", "couch_l1", "bookshelf_l1", "floor_l_l1", "coffee_table_l1", "counter_k1", "pantry_shelf_k1", "kitchen_table_k1", "sink_k1", "whole_room:dining", "dish_rack_k1", "sideboard_d1", "whole_room:kitchen", "whole_room:entry", "entry_table_e1", "entry_hook_e1", "desk_o1", "entry_floor_e1", "whole_room:office", "bathroom_shelf_ba1", "towel_rack_ba1", "sink_ba_ba1", "whole_room:bathroom", "bed_b1", "nightstand_b1", "whole_room:bedroom_1", "bedroom_floor_b1", "whole_room:bedroom_2", "bedroom_floor_b2", "desk_b1", "nightstand_b2", "cannot be found"]
+--- answer (fake nearest) ---
+side_table_l1
+
+===== step 4: messages sent =====
+--- system ---
+You direct a home robot that is searching for one thing. It can walk to a place and look at it, or look across a whole room. Each look costs walking plus a fixed charge per look, and a penalty if the room it looks into has a resident in it. You see only what the robot itself has seen. Answer with JSON: first "why" (your reasons, under 600 characters), then "next": the id of the place to look at next, exactly as listed, or "cannot be found" to stop and answer that the thing cannot be found now.
+--- user ---
+Find: glass_felix (cream tumbler with a navy and white 'Corona Extra' label).
+Now: day 1, 20:40.
+
+The robot has never seen it.
+
+Places it can look at, nearest first, with the walk from where it stands now:
+  armchair_l1 (in living): 0.1 m  <- looked at in this search: did not see it (saw: a person)
+  bookshelf_l1 (in living): 0.2 m
+  coffee_table_l1 (in living): 0.2 m
+  couch_l1 (in living): 0.3 m
+  whole_room:living (in living): 0.5 m
+  floor_l_l1 (in living): 0.5 m
+  side_table_l1 (in living): 0.8 m  <- looked at in this search: did not see it (nothing)
+  counter_k1 (in kitchen): 2.6 m
+  dining_table_d1 (in dining): 2.9 m  <- looked at in this search: did not see it (saw: a person)
+  pantry_shelf_k1 (in kitchen): 3.0 m
+  kitchen_table_k1 (in kitchen): 3.1 m
+  sink_k1 (in kitchen): 3.3 m
+  dish_rack_k1 (in kitchen): 3.5 m
+  whole_room:entry (in entry): 3.5 m
+  entry_table_e1 (in entry): 3.5 m
+  whole_room:kitchen (in kitchen): 3.6 m
+  whole_room:dining (in dining): 3.6 m
+  sideboard_d1 (in dining): 3.8 m
+  desk_o1 (in office): 4.5 m
+  entry_hook_e1 (in entry): 4.5 m
+  entry_floor_e1 (in entry): 4.6 m
+  whole_room:office (in office): 5.4 m
+  bathroom_shelf_ba1 (in bathroom): 6.8 m
+  towel_rack_ba1 (in bathroom): 7.1 m
+  sink_ba_ba1 (in bathroom): 7.1 m
+  whole_room:bathroom (in bathroom): 7.2 m
+  bed_b1 (in bedroom_1): 7.4 m
+  nightstand_b1 (in bedroom_1): 7.6 m
+  whole_room:bedroom_1 (in bedroom_1): 7.8 m
+  bedroom_floor_b1 (in bedroom_1): 8.0 m
+  whole_room:bedroom_2 (in bedroom_2): 8.5 m
+  bedroom_floor_b2 (in bedroom_2): 8.8 m
+  desk_b1 (in bedroom_1): 10.3 m
+  nightstand_b2 (in bedroom_2): 11.3 m
+
+Each look costs 5 on top of the metres walked, and 10 more if a resident is in the room it looks into; the robot does not know in advance who is where. At most 12 looks per search (9 left).
+Budget left for this search, counting metres and look charges only: 42.9. Penalties already charged are not shown. Naming a place marked too far ends the search.
+Over the month, 37.5% of the time the thing asked about cannot be seen from any position (put away, carried, or out of every camera's view), so "cannot be found" is a real option.
+
+Where should the robot look next? Give "why" first, then "next" (a place id above or "cannot be found").
+--- enum sent for 'next' ---
+["bookshelf_l1", "coffee_table_l1", "couch_l1", "whole_room:living", "floor_l_l1", "counter_k1", "pantry_shelf_k1", "kitchen_table_k1", "sink_k1", "dish_rack_k1", "whole_room:entry", "entry_table_e1", "whole_room:kitchen", "whole_room:dining", "sideboard_d1", "desk_o1", "entry_hook_e1", "entry_floor_e1", "whole_room:office", "bathroom_shelf_ba1", "towel_rack_ba1", "sink_ba_ba1", "whole_room:bathroom", "bed_b1", "nightstand_b1", "whole_room:bedroom_1", "bedroom_floor_b1", "whole_room:bedroom_2", "bedroom_floor_b2", "desk_b1", "nightstand_b2", "cannot be found"]
+--- answer (fake nearest) ---
+bookshelf_l1
+
+===== step 5: messages sent =====
+--- system ---
+You direct a home robot that is searching for one thing. It can walk to a place and look at it, or look across a whole room. Each look costs walking plus a fixed charge per look, and a penalty if the room it looks into has a resident in it. You see only what the robot itself has seen. Answer with JSON: first "why" (your reasons, under 600 characters), then "next": the id of the place to look at next, exactly as listed, or "cannot be found" to stop and answer that the thing cannot be found now.
+--- user ---
+Find: glass_felix (cream tumbler with a navy and white 'Corona Extra' label).
+Now: day 1, 20:40.
+
+The robot has never seen it.
+
+Places it can look at, nearest first, with the walk from where it stands now:
+  coffee_table_l1 (in living): 0.1 m
+  armchair_l1 (in living): 0.2 m  <- looked at in this search: did not see it (saw: a person)
+  couch_l1 (in living): 0.2 m
+  floor_l_l1 (in living): 0.6 m
+  whole_room:living (in living): 0.6 m
+  bookshelf_l1 (in living): 0.6 m  <- looked at in this search: did not see it (nothing)
+  side_table_l1 (in living): 0.8 m  <- looked at in this search: did not see it (nothing)
+  counter_k1 (in kitchen): 2.6 m
+  dining_table_d1 (in dining): 3.0 m  <- looked at in this search: did not see it (saw: a person)
+  pantry_shelf_k1 (in kitchen): 3.0 m
+  kitchen_table_k1 (in kitchen): 3.1 m
+  sink_k1 (in kitchen): 3.3 m
+  whole_room:entry (in entry): 3.3 m
+  entry_table_e1 (in entry): 3.3 m
+  dish_rack_k1 (in kitchen): 3.4 m
+  whole_room:kitchen (in kitchen): 3.6 m
+  whole_room:dining (in dining): 3.7 m
+  sideboard_d1 (in dining): 3.8 m
+  entry_hook_e1 (in entry): 4.4 m
+  desk_o1 (in office): 4.4 m
+  entry_floor_e1 (in entry): 4.5 m
+  whole_room:office (in office): 5.3 m
+  bathroom_shelf_ba1 (in bathroom): 6.6 m
+  towel_rack_ba1 (in bathroom): 7.0 m
+  sink_ba_ba1 (in bathroom): 7.0 m
+  whole_room:bathroom (in bathroom): 7.1 m
+  bed_b1 (in bedroom_1): 7.3 m
+  nightstand_b1 (in bedroom_1): 7.5 m
+  whole_room:bedroom_1 (in bedroom_1): 7.7 m
+  bedroom_floor_b1 (in bedroom_1): 7.9 m
+  whole_room:bedroom_2 (in bedroom_2): 8.3 m
+  bedroom_floor_b2 (in bedroom_2): 8.7 m
+  desk_b1 (in bedroom_1): 10.2 m
+  nightstand_b2 (in bedroom_2): 11.2 m
+
+Each look costs 5 on top of the metres walked, and 10 more if a resident is in the room it looks into; the robot does not know in advance who is where. At most 12 looks per search (8 left).
+Budget left for this search, counting metres and look charges only: 37.7. Penalties already charged are not shown. Naming a place marked too far ends the search.
+Over the month, 37.5% of the time the thing asked about cannot be seen from any position (put away, carried, or out of every camera's view), so "cannot be found" is a real option.
+
+Where should the robot look next? Give "why" first, then "next" (a place id above or "cannot be found").
+--- enum sent for 'next' ---
+["coffee_table_l1", "couch_l1", "floor_l_l1", "whole_room:living", "counter_k1", "pantry_shelf_k1", "kitchen_table_k1", "sink_k1", "whole_room:entry", "entry_table_e1", "dish_rack_k1", "whole_room:kitchen", "whole_room:dining", "sideboard_d1", "entry_hook_e1", "desk_o1", "entry_floor_e1", "whole_room:office", "bathroom_shelf_ba1", "towel_rack_ba1", "sink_ba_ba1", "whole_room:bathroom", "bed_b1", "nightstand_b1", "whole_room:bedroom_1", "bedroom_floor_b1", "whole_room:bedroom_2", "bedroom_floor_b2", "desk_b1", "nightstand_b2", "cannot be found"]
+--- answer (fake nearest) ---
+coffee_table_l1
+
+===== step 6: messages sent =====
+--- system ---
+You direct a home robot that is searching for one thing. It can walk to a place and look at it, or look across a whole room. Each look costs walking plus a fixed charge per look, and a penalty if the room it looks into has a resident in it. You see only what the robot itself has seen. Answer with JSON: first "why" (your reasons, under 600 characters), then "next": the id of the place to look at next, exactly as listed, or "cannot be found" to stop and answer that the thing cannot be found now.
+--- user ---
+Find: glass_felix (cream tumbler with a navy and white 'Corona Extra' label).
+Now: day 1, 20:40.
+
+The robot has never seen it.
+
+Places it can look at, nearest first, with the walk from where it stands now:
+  armchair_l1 (in living): 0.2 m  <- looked at in this search: did not see it (saw: a person)
+  couch_l1 (in living): 0.2 m
+  floor_l_l1 (in living): 0.5 m
+  bookshelf_l1 (in living): 0.6 m  <- looked at in this search: did not see it (nothing)
+  whole_room:living (in living): 0.6 m
+  coffee_table_l1 (in living): 0.7 m  <- looked at in this search: did not see it (nothing)
+  side_table_l1 (in living): 0.8 m  <- looked at in this search: did not see it (nothing)
+  counter_k1 (in kitchen): 2.7 m
+  dining_table_d1 (in dining): 3.1 m  <- looked at in this search: did not see it (saw: a person)
+  pantry_shelf_k1 (in kitchen): 3.1 m
+  kitchen_table_k1 (in kitchen): 3.2 m
+  whole_room:entry (in entry): 3.2 m
+  entry_table_e1 (in entry): 3.2 m
+  sink_k1 (in kitchen): 3.4 m
+  dish_rack_k1 (in kitchen): 3.5 m
+  whole_room:kitchen (in kitchen): 3.7 m
+  whole_room:dining (in dining): 3.8 m
+  sideboard_d1 (in dining): 3.9 m
+  entry_hook_e1 (in entry): 4.3 m
+  desk_o1 (in office): 4.3 m
+  entry_floor_e1 (in entry): 4.4 m
+  whole_room:office (in office): 5.2 m
+  bathroom_shelf_ba1 (in bathroom): 6.5 m
+  towel_rack_ba1 (in bathroom): 6.9 m
+  sink_ba_ba1 (in bathroom): 6.9 m
+  whole_room:bathroom (in bathroom): 7.0 m
+  bed_b1 (in bedroom_1): 7.2 m
+  nightstand_b1 (in bedroom_1): 7.4 m
+  whole_room:bedroom_1 (in bedroom_1): 7.6 m
+  bedroom_floor_b1 (in bedroom_1): 7.8 m
+  whole_room:bedroom_2 (in bedroom_2): 8.3 m
+  bedroom_floor_b2 (in bedroom_2): 8.6 m
+  desk_b1 (in bedroom_1): 10.1 m
+  nightstand_b2 (in bedroom_2): 11.1 m
+
+Each look costs 5 on top of the metres walked, and 10 more if a resident is in the room it looks into; the robot does not know in advance who is where. At most 12 looks per search (7 left).
+Budget left for this search, counting metres and look charges only: 32.6. Penalties already charged are not shown. Naming a place marked too far ends the search.
+Over the month, 37.5% of the time the thing asked about cannot be seen from any position (put away, carried, or out of every camera's view), so "cannot be found" is a real option.
+
+Where should the robot look next? Give "why" first, then "next" (a place id above or "cannot be found").
+--- enum sent for 'next' ---
+["couch_l1", "floor_l_l1", "whole_room:living", "counter_k1", "pantry_shelf_k1", "kitchen_table_k1", "whole_room:entry", "entry_table_e1", "sink_k1", "dish_rack_k1", "whole_room:kitchen", "whole_room:dining", "sideboard_d1", "entry_hook_e1", "desk_o1", "entry_floor_e1", "whole_room:office", "bathroom_shelf_ba1", "towel_rack_ba1", "sink_ba_ba1", "whole_room:bathroom", "bed_b1", "nightstand_b1", "whole_room:bedroom_1", "bedroom_floor_b1", "whole_room:bedroom_2", "bedroom_floor_b2", "desk_b1", "nightstand_b2", "cannot be found"]
+--- answer (fake nearest) ---
+couch_l1
+
+===== step 7: messages sent =====
+--- system ---
+You direct a home robot that is searching for one thing. It can walk to a place and look at it, or look across a whole room. Each look costs walking plus a fixed charge per look, and a penalty if the room it looks into has a resident in it. You see only what the robot itself has seen. Answer with JSON: first "why" (your reasons, under 600 characters), then "next": the id of the place to look at next, exactly as listed, or "cannot be found" to stop and answer that the thing cannot be found now.
+--- user ---
+Find: glass_felix (cream tumbler with a navy and white 'Corona Extra' label).
+Now: day 1, 20:40.
+
+The robot has never seen it.
+
+Places it can look at, nearest first, with the walk from where it stands now:
+  armchair_l1 (in living): 0.3 m  <- looked at in this search: did not see it (saw: a person)
+  floor_l_l1 (in living): 0.7 m
+  bookshelf_l1 (in living): 0.8 m  <- looked at in this search: did not see it (nothing)
+  whole_room:living (in living): 0.8 m
+  coffee_table_l1 (in living): 0.9 m  <- looked at in this search: did not see it (nothing)
+  side_table_l1 (in living): 1.0 m  <- looked at in this search: did not see it (nothing)
+  couch_l1 (in living): 1.2 m  <- looked at in this search: did not see it (nothing)
+  counter_k1 (in kitchen): 2.5 m
+  pantry_shelf_k1 (in kitchen): 2.9 m
+  dining_table_d1 (in dining): 2.9 m  <- looked at in this search: did not see it (saw: a person)
+  kitchen_table_k1 (in kitchen): 3.0 m
+  sink_k1 (in kitchen): 3.2 m
+  whole_room:entry (in entry): 3.3 m
+  entry_table_e1 (in entry): 3.3 m
+  dish_rack_k1 (in kitchen): 3.4 m
+  whole_room:kitchen (in kitchen): 3.5 m
+  whole_room:dining (in dining): 3.6 m
+  sideboard_d1 (in dining): 3.8 m
+  entry_hook_e1 (in entry): 4.4 m
+  desk_o1 (in office): 4.5 m
+  entry_floor_e1 (in entry): 4.5 m
+  whole_room:office (in office): 5.3 m
+  bathroom_shelf_ba1 (in bathroom): 6.6 m
+  towel_rack_ba1 (in bathroom): 6.9 m
+  sink_ba_ba1 (in bathroom): 7.0 m
+  whole_room:bathroom (in bathroom): 7.0 m
+  bed_b1 (in bedroom_1): 7.3 m
+  nightstand_b1 (in bedroom_1): 7.5 m
+  whole_room:bedroom_1 (in bedroom_1): 7.7 m
+  bedroom_floor_b1 (in bedroom_1): 7.9 m
+  whole_room:bedroom_2 (in bedroom_2): 8.3 m
+  bedroom_floor_b2 (in bedroom_2): 8.7 m
+  desk_b1 (in bedroom_1): 10.2 m
+  nightstand_b2 (in bedroom_2): 11.2 m
+
+Each look costs 5 on top of the metres walked, and 10 more if a resident is in the room it looks into; the robot does not know in advance who is where. At most 12 looks per search (6 left).
+Budget left for this search, counting metres and look charges only: 27.4. Penalties already charged are not shown. Naming a place marked too far ends the search.
+Over the month, 37.5% of the time the thing asked about cannot be seen from any position (put away, carried, or out of every camera's view), so "cannot be found" is a real option.
+
+Where should the robot look next? Give "why" first, then "next" (a place id above or "cannot be found").
+--- enum sent for 'next' ---
+["floor_l_l1", "whole_room:living", "counter_k1", "pantry_shelf_k1", "kitchen_table_k1", "sink_k1", "whole_room:entry", "entry_table_e1", "dish_rack_k1", "whole_room:kitchen", "whole_room:dining", "sideboard_d1", "entry_hook_e1", "desk_o1", "entry_floor_e1", "whole_room:office", "bathroom_shelf_ba1", "towel_rack_ba1", "sink_ba_ba1", "whole_room:bathroom", "bed_b1", "nightstand_b1", "whole_room:bedroom_1", "bedroom_floor_b1", "whole_room:bedroom_2", "bedroom_floor_b2", "desk_b1", "nightstand_b2", "cannot be found"]
+--- answer (fake nearest) ---
+floor_l_l1
+
+===== step 8: messages sent =====
+--- system ---
+You direct a home robot that is searching for one thing. It can walk to a place and look at it, or look across a whole room. Each look costs walking plus a fixed charge per look, and a penalty if the room it looks into has a resident in it. You see only what the robot itself has seen. Answer with JSON: first "why" (your reasons, under 600 characters), then "next": the id of the place to look at next, exactly as listed, or "cannot be found" to stop and answer that the thing cannot be found now.
+--- user ---
+Find: glass_felix (cream tumbler with a navy and white 'Corona Extra' label).
+Now: day 1, 20:40.
+
+The robot has never seen it.
+
+Places it can look at, nearest first, with the walk from where it stands now:
+  side_table_l1 (in living): 0.3 m  <- looked at in this search: did not see it (nothing)
+  bookshelf_l1 (in living): 0.3 m  <- looked at in this search: did not see it (nothing)
+  coffee_table_l1 (in living): 0.4 m  <- looked at in this search: did not see it (nothing)
+  whole_room:living (in living): 0.5 m
+  armchair_l1 (in living): 0.5 m  <- looked at in this search: did not see it (saw: a person)
+  floor_l_l1 (in living): 0.7 m  <- looked at in this search: did not see it (nothing)
+  couch_l1 (in living): 1.0 m  <- looked at in this search: did not see it (nothing)
+  counter_k1 (in kitchen): 3.1 m
+  entry_table_e1 (in entry): 3.2 m
+  whole_room:entry (in entry): 3.2 m
+  dining_table_d1 (in dining): 3.5 m  <- looked at in this search: did not see it (saw: a person)
+  pantry_shelf_k1 (in kitchen): 3.5 m
+  kitchen_table_k1 (in kitchen): 3.7 m
+  sink_k1 (in kitchen): 3.8 m
+  dish_rack_k1 (in kitchen): 4.0 m
+  desk_o1 (in office): 4.1 m
+  whole_room:kitchen (in kitchen): 4.2 m
+  whole_room:dining (in dining): 4.2 m
+  entry_hook_e1 (in entry): 4.3 m
+  sideboard_d1 (in dining): 4.3 m
+  entry_floor_e1 (in entry): 4.4 m
+  whole_room:office (in office): 5.0 m
+  bathroom_shelf_ba1 (in bathroom): 6.5 m
+  towel_rack_ba1 (in bathroom): 6.8 m
+  sink_ba_ba1 (in bathroom): 6.9 m
+  whole_room:bathroom (in bathroom): 7.0 m
+  bed_b1 (in bedroom_1): 7.2 m
+  nightstand_b1 (in bedroom_1): 7.4 m
+  whole_room:bedroom_1 (in bedroom_1): 7.6 m
+  bedroom_floor_b1 (in bedroom_1): 7.8 m
+  whole_room:bedroom_2 (in bedroom_2): 8.2 m
+  bedroom_floor_b2 (in bedroom_2): 8.6 m
+  desk_b1 (in bedroom_1): 10.1 m
+  nightstand_b2 (in bedroom_2): 11.1 m
+
+Each look costs 5 on top of the metres walked, and 10 more if a resident is in the room it looks into; the robot does not know in advance who is where. At most 12 looks per search (5 left).
+Budget left for this search, counting metres and look charges only: 21.6. Penalties already charged are not shown. Naming a place marked too far ends the search.
+Over the month, 37.5% of the time the thing asked about cannot be seen from any position (put away, carried, or out of every camera's view), so "cannot be found" is a real option.
+
+Where should the robot look next? Give "why" first, then "next" (a place id above or "cannot be found").
+--- enum sent for 'next' ---
+["whole_room:living", "counter_k1", "entry_table_e1", "whole_room:entry", "pantry_shelf_k1", "kitchen_table_k1", "sink_k1", "dish_rack_k1", "desk_o1", "whole_room:kitchen", "whole_room:dining", "entry_hook_e1", "sideboard_d1", "entry_floor_e1", "whole_room:office", "bathroom_shelf_ba1", "towel_rack_ba1", "sink_ba_ba1", "whole_room:bathroom", "bed_b1", "nightstand_b1", "whole_room:bedroom_1", "bedroom_floor_b1", "whole_room:bedroom_2", "bedroom_floor_b2", "desk_b1", "nightstand_b2", "cannot be found"]
+--- answer (fake nearest) ---
+counter_k1
+
+===== step 9: messages sent =====
+--- system ---
+You direct a home robot that is searching for one thing. It can walk to a place and look at it, or look across a whole room. Each look costs walking plus a fixed charge per look, and a penalty if the room it looks into has a resident in it. You see only what the robot itself has seen. Answer with JSON: first "why" (your reasons, under 600 characters), then "next": the id of the place to look at next, exactly as listed, or "cannot be found" to stop and answer that the thing cannot be found now.
+--- user ---
+Find: glass_felix (cream tumbler with a navy and white 'Corona Extra' label).
+Now: day 1, 20:40.
+
+The robot has never seen it.
+
+Places it can look at, nearest first, with the walk from where it stands now:
+  pantry_shelf_k1 (in kitchen): 0.5 m
+  kitchen_table_k1 (in kitchen): 0.6 m
+  counter_k1 (in kitchen): 0.7 m  <- looked at in this search: did not see it (saw: a person)
+  sink_k1 (in kitchen): 0.8 m
+  dish_rack_k1 (in kitchen): 0.8 m
+  whole_room:kitchen (in kitchen): 1.1 m
+  whole_room:living (in living): 1.4 m
+  whole_room:dining (in dining): 1.6 m
+  dining_table_d1 (in dining): 1.8 m  <- looked at in this search: did not see it (saw: a person)
+  sideboard_d1 (in dining): 2.1 m
+  armchair_l1 (in living): 2.7 m  <- looked at in this search: did not see it (saw: a person)
+  floor_l_l1 (in living): 2.8 m  <- looked at in this search: did not see it (nothing)
+  coffee_table_l1 (in living): 3.0 m  <- looked at in this search: did not see it (nothing)
+  bookshelf_l1 (in living): 3.1 m  <- looked at in this search: did not see it (nothing)
+  couch_l1 (in living): 3.2 m  <- looked at in this search: did not see it (nothing)
+  side_table_l1 (in living): 3.4 m  <- looked at in this search: did not see it (nothing)
+  whole_room:entry (in entry): 5.7 m
+  entry_table_e1 (in entry): 5.7 m
+  entry_hook_e1 (in entry): 6.8 m
+  desk_o1 (in office): 6.9 m
+  entry_floor_e1 (in entry): 6.9 m
+  whole_room:office (in office): 7.8 m
+  bathroom_shelf_ba1 (in bathroom): 9.1 m  [too far for the budget left]
+  towel_rack_ba1 (in bathroom): 9.4 m  [too far for the budget left]
+  sink_ba_ba1 (in bathroom): 9.4 m  [too far for the budget left]
+  whole_room:bathroom (in bathroom): 9.5 m  [too far for the budget left]
+  bed_b1 (in bedroom_1): 9.7 m  [too far for the budget left]
+  nightstand_b1 (in bedroom_1): 9.9 m  [too far for the budget left]
+  whole_room:bedroom_1 (in bedroom_1): 10.1 m  [too far for the budget left]
+  bedroom_floor_b1 (in bedroom_1): 10.3 m  [too far for the budget left]
+  whole_room:bedroom_2 (in bedroom_2): 10.8 m  [too far for the budget left]
+  bedroom_floor_b2 (in bedroom_2): 11.1 m  [too far for the budget left]
+  desk_b1 (in bedroom_1): 12.6 m  [too far for the budget left]
+  nightstand_b2 (in bedroom_2): 13.6 m  [too far for the budget left]
+
+Each look costs 5 on top of the metres walked, and 10 more if a resident is in the room it looks into; the robot does not know in advance who is where. At most 12 looks per search (4 left).
+Budget left for this search, counting metres and look charges only: 13.5. Penalties already charged are not shown. Naming a place marked too far ends the search.
+Over the month, 37.5% of the time the thing asked about cannot be seen from any position (put away, carried, or out of every camera's view), so "cannot be found" is a real option.
+
+Where should the robot look next? Give "why" first, then "next" (a place id above or "cannot be found").
+--- enum sent for 'next' ---
+["pantry_shelf_k1", "kitchen_table_k1", "sink_k1", "dish_rack_k1", "whole_room:kitchen", "whole_room:living", "whole_room:dining", "sideboard_d1", "whole_room:entry", "entry_table_e1", "entry_hook_e1", "desk_o1", "entry_floor_e1", "whole_room:office", "cannot be found"]
+--- answer (fake nearest) ---
+pantry_shelf_k1
+
+===== response schema (at each step 'next' is pinned to the enum printed above) =====
+{
+ "type": "object",
+ "properties": {
+  "why": {
+   "type": "string",
+   "maxLength": 600
+  },
+  "next": {
+   "type": "string"
+  }
+ },
+ "required": [
+  "why",
+  "next"
+ ],
+ "additionalProperties": false
+}

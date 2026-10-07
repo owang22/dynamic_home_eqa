@@ -7,7 +7,7 @@ from typing import Dict, List
 import numpy as np
 
 from rendered_look import home
-from rendered_look.world import FIRST_PERSON_ID, steady_number
+from rendered_look.world import FIRST_PERSON_ID, HFOV, steady_number
 
 DAY = 86400
 
@@ -90,7 +90,7 @@ class People:
                 shot = views.capture(self.world.sim, np.array(view["eye"]), np.array(view["target"]))
                 depth = shot["depth"]
                 height, width = depth.shape
-                focal = (width / 2) / np.tan(np.radians(75.0) / 2)
+                focal = (width / 2) / np.tan(np.radians(HFOV) / 2)
                 state = self.world.sim.get_agent(0).get_state()
                 turn = quaternion.as_rotation_matrix(state.rotation)
                 for i, (x, z) in enumerate(spots):

@@ -28,8 +28,10 @@ REPO = pathlib.Path(__file__).resolve().parents[2]
 HSSD = pathlib.Path(os.environ.get(
     "HSSD_DIR", "/mnt/nvme/oliver/robot/datasets/moving-eqa/scene_datasets/hssd-hab"))
 OBJAVERSE_GLBS = pathlib.Path("/mnt/nvme/oliver/robot/objaverse_cache/hf-objaverse-v1/glbs")
-CATALOGUE = REPO / "data/objects/external_props"
-POOL = REPO / "data/objects/external_props_candidates"
+# Commit 0dabda25d (2026-09-29) moved the model catalogue out of the repository.
+ARCHIVE = REPO.parent / "dynamic_home_eqa_archive"
+CATALOGUE = ARCHIVE / "data/objects/external_props"
+POOL = ARCHIVE / "data/objects/external_props_candidates"
 BANKS = REPO / "results/self_improve/varied_homes/ten_homes/banks"
 OUT = REPO / "results/rendered_look/asked_about_models"
 

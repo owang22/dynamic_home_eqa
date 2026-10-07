@@ -1,0 +1,52 @@
+# rare_movers_v1: varied_v2 exactly, plus two objects that move a few times a month and whose
+# every move has a cause the robot can see (src/situation_sim/rare_movers.py). The households,
+# the calendar, the illness, the activities, the asked-about class list and the 24-a-day
+# question draw are varied_v2's; the base simulation is byte-identical and the rare movers
+# are appended after it. Built by make_rare_movers.py in this folder.
+name: rare_movers_v1
+sim_dir: ../../../../data/situation_sim/self_improve/rare_movers_v1
+events_file: ../scenario/events_varied.yaml
+activities_file: ../scenario/activities_varied.yaml
+
+day0: Monday
+days: 32
+calendar:
+  - {name: lead,   days: [0, 13],  day_kind: weekday, suppress_random_events: true}
+  - {name: sick,   days: [14, 23], day_kind: weekday, suppress_random_events: true,
+     force_events: [{event: unwell_spell, resident: resident_1}]}
+  - {name: return, days: [24, 31], day_kind: weekday, suppress_random_events: true}
+
+events:
+  rain:              {weekday: 0.0, weekend: 0.0}
+  guest_visit:       {weekday: 0.0, weekend: 0.0}
+  late_work:         {weekday: 0.0, weekend: 0.0}
+  grocery_delivery:  {weekday: 0.0, weekend: 0.0}
+  laundry_day:       {weekday: 0.0, weekend: 0.0}
+  sick_day:          {weekday: 0.0, weekend: 0.0}
+  unwell_spell:      {weekday: 0.0, weekend: 0.0}
+
+question_owners: null
+questions: activity
+question_moment: during
+question_min_gap_min: 30
+per_day: 24
+oversample: 1024
+classes: [book, water_bottle, tablet, mug, charger, glasses, glass, razor, medication, towel, notebook]
+
+patrol_hours: 0
+patrol_times: "03:00"
+feedback_delay_min: 10
+shift_focus: 0.0
+
+# the new option
+rare_movers:
+  pill_box: true
+  car_keys: true
+  arrivals_per_week: [1, 3]
+  questions_first_hour: 5        # stratified over the first window after each place change
+  first_window_minutes: [0, 60]  # that window, in minutes after the move
+  questions_rest_of_day: 2       # spread over the rest of the 24 h
+  min_questions_within_24h: 30
+  max_questions_rest_of_day: 10
+  background: match_first_hour   # random-time questions when nothing moved in 24 h, as many as the first-hour burst
+  same_object_gap_min: 30

@@ -1,0 +1,90 @@
+[
+ {
+  "when": "29 Sep",
+  "what": "Picture checker, round 1",
+  "shown": "47 screenshots of the viewer. Told nothing about how it was made.",
+  "found": "Camera pressed against a person; things marked seen that cannot be made out; labels on nothing; upright things looking tilted; unclear report wording.",
+  "did": "Alternate camera positions; lens 90 to 75 degrees; seen threshold 60 to 200 pixels; labels avoid each other; report rewritten.",
+  "declined": "Three findings were misreadings (a flat book called upright; things on a dark counter called floating; a rectangle that belongs to the home)."
+ },
+ {
+  "when": "29 Sep",
+  "what": "Picture checker, round 2",
+  "shown": "45 new screenshots.",
+  "found": "12 of 43 states still had a bad finding: a dark mug on a dark desk marked plainly seen; a foot counted as a person seen; close-ups aimed at furniture, not at the thing; one resident sunk into a bed; a towel far larger than its table.",
+  "did": "Rule for dark on dark; 'only part shows' measured against each thing's own best sightings; close-ups aim at the things; residents face the room; towels moved to the bath edge.",
+  "declined": "No third round was run on the viewer."
+ },
+ {
+  "when": "30 Sep",
+  "what": "Blind describer of the object models",
+  "shown": "24 four-view pictures, numbered, with no names.",
+  "found": "Its description matched my tag on the kind of object for all 24. It found 18 models with a fault: the eyeglasses look like sunglasses; a pill bottle 7.4 cm across; mirrored lettering on one book; nothing renders see-through.",
+  "did": "Faults recorded against each model; pill bottle rescaled to 4.8 cm.",
+  "declined": "The eyeglasses model is still in use; a replacement needs sourcing."
+ },
+ {
+  "when": "30 Sep",
+  "what": "Blind matcher of descriptions to pictures",
+  "shown": "The 24 pictures and my 24 short descriptions in shuffled order.",
+  "found": "All 24 matched the right picture: 23 clear, 1 weak, 0 wrong. The weak one called a bottle see-through when it renders solid grey. It listed 11 objects that can only be identified from some sides.",
+  "did": "Seven descriptions reworded; each object now records which sides identify it and what is lost at a distance.",
+  "declined": ""
+ },
+ {
+  "when": "30 Sep",
+  "what": "Fact-checker of the literature",
+  "shown": "22 claims with their sources, and nothing about what we plan to conclude.",
+  "found": "Read all 20 papers in full. By its table, 16 claims confirmed and 6 partly right (its summary line says 15 and 7); none wrong, no invented numbers. The partly-right ones had a number attached to the wrong condition, or left out a condition that changes the reading.",
+  "did": "Every claim on the evidence page now carries the checker's verdict and the context it found. Six claims were reworded and nine conclusions changed.",
+  "declined": ""
+ },
+ {
+  "when": "30 Sep",
+  "what": "Reviewer of the plan",
+  "shown": "The plan, evidence, findings and audit log as published. Told nothing about how they were produced.",
+  "found": "The height study could not choose the camera as it stood (one position per height, no row at the robot's own height, 'seen' too generous, one towel rack 13% of placements, never audited). The order of goals was wrong. 'Simple rules are hard to beat' was overstated. The score left out declaring the wrong object found. Two contradictions: words against reference pictures, and a control using tablets that are not identical. No success criteria, no statement of what is new. Several robot facts and notes were out of date.",
+  "did": "Goals reordered and rewritten with a 'done when' for each; success criteria and what is new added; the score now includes wrong-object finds and 'cannot be found'; the control changed; the height study redone with up to eight positions per place, two levels of seeing, and results without towels; evidence conclusions reworded; terms defined.",
+  "declined": "No timeline with dates is given: that is Oliver's to set. The reviewer's own reading of three papers is shown as its note and has not been re-checked."
+ },
+ {
+  "when": "30 Sep",
+  "what": "Recount of the camera-height study",
+  "shown": "The raw record of every picture at every height, the published summary, and three pictures. Asked to recount before reading the script.",
+  "found": "Reproduced every headline number exactly. The direction holds under every rule tried. The sizes at 0.30 to 0.70 m do not: one rule (at least half of a thing's best showing) moves table height at 0.30 m from 12% to 43%. Table and counter height rest on 12 and 22 distinct thing-and-place pairs. The hand-set rule for 'in view' passes a near-black mug on black that a person cannot see and fails a bottle top that a person can. Two descriptions of the method were wrong, and the 0.30 m run had no whole-room pictures because the floor was counted as blocking the view.",
+  "did": "A table of how the numbers move under five ways of counting is on the Findings page; the headline is reworded to what holds under all of them; both descriptions corrected; the floor fault fixed in the code.",
+  "declined": "The 0.30 m run was not re-rendered: the recount found whole-room pictures add at most 12 placements at any height. The auditor's main request, replacing the hand-set rule with a recogniser's or a person's judgement on each picture, is goal 3 of the plan and is not done."
+ },
+ {
+  "when": "30 Sep",
+  "what": "Audit of the search benchmark, first version",
+  "shown": "The benchmark code, the stored pictures and their records, and the first results. Asked to look for leaks, recount, replay searches by hand, and look at frames.",
+  "found": "Recount matched. Six faults: the day-0 walk used pictures from the first question's moment (a leak); 'moved since last seen' compared the camera's aim, not the thing's place, so robustness to movement was overstated twice over; the headline was mostly two towels that never leave the bathroom (43% of questions); the 'clear rule collapse' was a fallback cycle that never entered the bathroom, and the fallback that survived had been dropped with a caveat whose numbers came from the other rig; running out of looks was credited as a right answer; policies were handed the truth object; 29% of counted sightings were under 400 pixels.",
+  "did": "Day-0 walk re-rendered at 18:00 on day 0; 'really moved' from the truth; results split into towels, other things, moved, not moved, never seen; all four fallbacks published in every table; running out of looks scored wrong; policies handed only the map; a '600 pixels' rule added between the two others; the chance-over-cost rule given measured seeing chances and a look-plus-walk cost.",
+  "declined": "The perception rules still hand identity over for free and still count small sightings; that is goal 3. The corrected results have not been re-audited."
+ },
+ {
+  "when": "30 Sep",
+  "what": "Audit of the corrected benchmark and the perception measurement",
+  "shown": "The second benchmark, the stored pictures, the perception script and its results, and the first audit's six faults as a checklist.",
+  "found": "All six earlier faults fixed. New: the mix policies were not reproducible (ties broke by set order); results depend on the starting position, since the robot starts each search where the last ended; no policy ever gave up; the oracle under the measured rule was not an upper bound; the measured rule used detection recall pooled over kinds (the real detector finds almost no drinking glasses) and a three-way naming error where the household has two things of a kind; the perception sample is about ten times smaller than shown because pictures repeat; 'chance' understated the trivial baseline; below about 1,000 pixels the crops are smears.",
+  "did": "Ties broken by distance; every policy run from five starting positions with the range shown; give-up threshold raised so it is reached; oracle answers 'cannot be found' when nothing truly shows the thing; per-kind recall and household-only naming in the measured rule, with the draw keyed on the picture; distinct sample sizes, the majority-guess baseline, household-only and all-24 matching on the perception page; a 'stood at the right place, missed it' column.",
+  "declined": "False alarms on untracked objects are still not replayed: only the 13 asked-about things exist in the pictures. The corrected numbers have not been re-audited."
+ },
+ {
+  "when": "1 Oct",
+  "what": "Review of the lab-study plan and the brief for the dog agent",
+  "shown": "Only the plan text and the brief, with the situation in four sentences; told to attack the design, do a power estimate, find prior work, and bet on the outcome.",
+  "found": "Fifteen findings. The study is underpowered for its own claim and does not say so (about 20 points detectable at 40 objects, 30 to 45 on the moved subset; days-to-recover has no spread). Unattended patrols are impossible on a Go2 Pro (no dock, no remote power-on, under two hours of battery). The cleanup moves what the LiDAR map was built from, so a navigation drop would pass as a memory drop. Two of four novelty claims are not new (Krajn\u00edk 2015, STRANDS, 3RScan, Khronos, Lost and Found, DynaMem, ReMEmbR; the miss model is standard). 'Routines against positions' had no mechanism and no control. Recording people needs an ethics review. Ground truth was loose enough to be gamed, and criterion 1 was met by construction. Lighting changes with the clocks at the end of October. The arm would change the camera mid-record. The tagged objects are the ones a cleanup keeps. Collection was gated behind validation. Goals 6 and 7 do not fit before January, and the record-size argument counted cells, not sightings. 'Cannot be found more often' is met trivially. The brief's 'no body-height command' is wrong (Unitree lists BodyHeight, -0.18 to +0.03 m; verified on Unitree's document), as is 'returning to a dock'; Wi-Fi on an enterprise network is unsolved.",
+  "did": "All folded into the plan the same day: the detectable difference stated in the success criteria; patrols at fixed times started by a named person; fiducial markers and a map rebuild logged at the shift, with results reported with and without the view check; novelty reworded and the prior work linked (not yet read by us); the routine-memory claim kept only with a written rule and the December holiday as the mirror shift; the people decision moved to week one with two versions; a place vocabulary, a timed log tied to one patrol, and a second logger one day a week; lights on and detector rate by week as a control; the camera frozen before the first patrol; the rearrangement staged by the group with a sealed list; recording starts in week one; goal 7 dropped from the autumn and goal 6 reduced to one conditional question; 'cannot be found' scored as a classification; the brief corrected on BodyHeight, the dock and Wi-Fi.",
+  "declined": "The reviewer's battery and dock figures for the Go2 Pro were not verified on a primary source; the prior-work papers were checked to exist but not read. The reviewer's bet: a workshop paper by January is plausible, a venue paper is not, and the likeliest failure is a record that never becomes a clean time series."
+ },
+ {
+  "when": "1 Oct",
+  "what": "Not yet checked",
+  "shown": "",
+  "found": "The revised plan after this review. The benchmark and perception numbers after the second audit. The Go2-camera figures against the real photographs. The world-model and JEPA claims on the Evidence page.",
+  "did": "",
+  "declined": ""
+ }
+]

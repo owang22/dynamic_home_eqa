@@ -1,0 +1,109 @@
+3c3
+< You direct a home robot that is searching for one thing. It can walk to a place and look at it, or look across a whole room. Each look costs walking plus a fixed charge per look. You see only what the robot itself has seen. Answer with JSON: first "why" (your reasons, under 600 characters), then "next": the id of the place to look at next, exactly as listed, or "cannot be found" to stop and answer that the thing cannot be found now.
+---
+> You direct a home robot that is searching for one thing. It can walk to a place and look at it, or look across a whole room. Each look costs walking plus a fixed charge per look, and a penalty if the room it looks into has a resident in it. You see only what the robot itself has seen. Answer with JSON: first "why" (your reasons, under 600 characters), then "next": the id of the place to look at next, exactly as listed, or "cannot be found" to stop and answer that the thing cannot be found now.
+8,16c8,15
+< Where the robot has seen it before (newest first):
+<   dish_rack_k1: 2 times, last on day 3, 07:00
+<   counter_k1: 2 times, last on day 3, 07:00
+<   sink_k1: once, last on day 2, 22:22
+<   sideboard_d1: 2 times, last on day 2, 21:00
+<   dining_table_d1: 2 times, last on day 2, 21:00
+<   kitchen_table_k1: 2 times, last on day 2, 21:00
+<   entry_table_e1: once, last on day 2, 19:56
+<   room entry: 6 times, last on day 1, 18:53
+---
+> When and where the robot has seen it (newest first):
+>   day 3, 07:00: counter_k1
+>   day 2, 22:22: sink_k1, dish_rack_k1, counter_k1
+>   day 2, 21:00: sideboard_d1, dining_table_d1, kitchen_table_k1
+>   day 2, 20:28: sideboard_d1, dining_table_d1, kitchen_table_k1
+>   day 2, 19:56: entry_table_e1
+>   day 1, 18:53: whole_room:entry
+>   day 0, 18:00: whole_room:entry
+18,52c17,51
+< Places it can look at, with the walk from where it stands now (each look also costs 5 metres' worth):
+<   armchair_l1 (in living): 3.0 m
+<   bathroom_shelf_ba1 (in bathroom): 9.9 m
+<   bed_b1 (in bedroom_1): 10.6 m
+<   bedroom_floor_b1 (in bedroom_1): 11.2 m
+<   bedroom_floor_b2 (in bedroom_2): 12.0 m
+<   bookshelf_l1 (in living): 3.4 m
+<   coffee_table_l1 (in living): 3.5 m
+<   couch_l1 (in living): 3.4 m
+<   counter_k1 (in kitchen): 0.2 m
+<   desk_b1 (in bedroom_1): 13.4 m
+<   desk_o1 (in office): 7.8 m
+<   dining_table_d1 (in dining): 1.4 m
+<   dish_rack_k1 (in kitchen): 0.0 m
+<   entry_floor_e1 (in entry): 7.8 m
+<   entry_hook_e1 (in entry): 7.7 m
+<   entry_table_e1 (in entry): 6.6 m
+<   floor_l_l1 (in living): 3.7 m
+<   kitchen_table_k1 (in kitchen): 0.3 m
+<   nightstand_b1 (in bedroom_1): 10.8 m
+<   nightstand_b2 (in bedroom_2): 14.4 m
+<   pantry_shelf_k1 (in kitchen): 0.3 m
+<   side_table_l1 (in living): 3.5 m
+<   sideboard_d1 (in dining): 1.8 m
+<   sink_ba_ba1 (in bathroom): 10.3 m
+<   sink_k1 (in kitchen): 0.5 m
+<   towel_rack_ba1 (in bathroom): 10.2 m
+<   room bathroom (in bathroom): 10.3 m
+<   room bedroom_1 (in bedroom_1): 10.9 m
+<   room bedroom_2 (in bedroom_2): 11.6 m
+<   room dining (in dining): 1.4 m
+<   room entry (in entry): 6.6 m
+<   room kitchen (in kitchen): 0.4 m
+<   room living (in living): 2.3 m
+<   room office (in office): 8.7 m
+---
+> Places it can look at, nearest first, with the walk from where it stands now:
+>   pantry_shelf_k1 (in kitchen): 0.0 m
+>   counter_k1 (in kitchen): 0.1 m
+>   whole_room:kitchen (in kitchen): 0.2 m
+>   dish_rack_k1 (in kitchen): 0.8 m
+>   kitchen_table_k1 (in kitchen): 0.8 m
+>   whole_room:dining (in dining): 0.9 m
+>   dining_table_d1 (in dining): 0.9 m
+>   sink_k1 (in kitchen): 1.1 m
+>   sideboard_d1 (in dining): 1.3 m
+>   whole_room:living (in living): 2.7 m
+>   couch_l1 (in living): 3.8 m
+>   armchair_l1 (in living): 3.8 m
+>   side_table_l1 (in living): 3.8 m
+>   bookshelf_l1 (in living): 3.8 m
+>   coffee_table_l1 (in living): 3.9 m
+>   floor_l_l1 (in living): 4.4 m
+>   whole_room:entry (in entry): 7.0 m
+>   entry_table_e1 (in entry): 7.0 m
+>   entry_hook_e1 (in entry): 8.1 m
+>   desk_o1 (in office): 8.2 m
+>   entry_floor_e1 (in entry): 8.2 m
+>   whole_room:office (in office): 9.0 m
+>   bathroom_shelf_ba1 (in bathroom): 10.3 m
+>   towel_rack_ba1 (in bathroom): 10.6 m
+>   sink_ba_ba1 (in bathroom): 10.7 m
+>   whole_room:bathroom (in bathroom): 10.7 m
+>   bed_b1 (in bedroom_1): 11.0 m
+>   nightstand_b1 (in bedroom_1): 11.2 m
+>   whole_room:bedroom_1 (in bedroom_1): 11.3 m
+>   bedroom_floor_b1 (in bedroom_1): 11.6 m
+>   whole_room:bedroom_2 (in bedroom_2): 12.0 m
+>   bedroom_floor_b2 (in bedroom_2): 12.4 m
+>   desk_b1 (in bedroom_1): 13.8 m
+>   nightstand_b2 (in bedroom_2): 14.8 m
+54c53,55
+< Budget left for this search: 60.0 (metres walked + 5 per look + any penalty for looking into a room with a resident in it).
+---
+> Each look costs 5 on top of the metres walked, and 10 more if a resident is in the room it looks into; the robot does not know in advance who is where. At most 12 looks per search (12 left).
+> Budget left for this search, counting metres and look charges only: 60.0. Penalties already charged are not shown. Naming a place marked too far ends the search.
+> Over the month, 37.5% of the time the thing asked about cannot be seen from any position (put away, carried, or out of every camera's view), so "cannot be found" is a real option.
+57,58c58,61
+< --- answer ---
+< dish_rack_k1
+---
+> --- enum sent for 'next' ---
+> ["pantry_shelf_k1", "counter_k1", "whole_room:kitchen", "dish_rack_k1", "kitchen_table_k1", "whole_room:dining", "dining_table_d1", "sink_k1", "sideboard_d1", "whole_room:living", "couch_l1", "armchair_l1", "side_table_l1", "bookshelf_l1", "coffee_table_l1", "floor_l_l1", "whole_room:entry", "entry_table_e1", "entry_hook_e1", "desk_o1", "entry_floor_e1", "whole_room:office", "bathroom_shelf_ba1", "towel_rack_ba1", "sink_ba_ba1", "whole_room:bathroom", "bed_b1", "nightstand_b1", "whole_room:bedroom_1", "bedroom_floor_b1", "whole_room:bedroom_2", "bedroom_floor_b2", "desk_b1", "nightstand_b2", "cannot be found"]
+> --- answer (fake nearest) ---
+> counter_k1
