@@ -385,6 +385,11 @@ class Household:
             now[rid] += minutes
             self._flush_events()
         self._flush_events()
+        for rid in self.rids:               # whoever is home ends the day in their own bed
+            bed = self.people[rid]["sleeps_at"]
+            if world.people[rid].at not in (None, bed):
+                world.apply(rid, {"verb": "go", "place": bed}, 24 * 60 - 1)
+        self._flush_events()
         night = {r: {"hands": list(world.people[r].hands), "at": world.people[r].at}
                  for r in self.rids}
         world.end_of_day()
