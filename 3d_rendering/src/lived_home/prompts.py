@@ -129,14 +129,18 @@ PLAN_USER = """It is {weekday}, day {day}.
 Your usual {weekday}:
 {routine}
 
+What you know of the others' usual {weekday}:
+{others_routine}
+
 What is going on today:
 {situations}
 {variation}
 Yesterday: {yesterday}
 
 Plan today from when you wake up until you go to sleep, as a list of your own
-activities with start and end times (HH:MM); the others in the home plan
-theirs, so do not plan what they will do. Follow your usual routine unless
+activities with start and end times (HH:MM). Count on what the others usually
+do (who cooks, who is out when), but do not plan their actions for them; they
+plan their own day. Follow your usual routine unless
 something today gives you a reason to change it. For each activity, list the
 kinds of things you expect to use (from the kinds in the home). Say how you
 feel this morning: stress, tiredness, mood and health from 0 to 3 (mood 0 is

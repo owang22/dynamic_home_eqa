@@ -124,8 +124,15 @@ class Household:
         off = director.off_routine_today(rid, day, self.variation, self.seed)
         variation = ("\nToday is not quite a usual day for you: do some things differently "
                      "than usual, in ways that make sense for you.\n") if off else ""
+        others = []
+        for o in self.rids:
+            if o == rid:
+                continue
+            name = self.people[o]["name"].split()[0]
+            others += [f"{name}: {r['start']}-{r['end']} {r['activity']} ({r['room']})"
+                       for r in self.people[o]["weekly_routine"] if weekday in r["days"]]
         user = prompts.PLAN_USER.format(
-            weekday=weekday, day=day + 1, routine=lines(routine),
+            weekday=weekday, day=day + 1, routine=lines(routine), others_routine=lines(others),
             situations=self._situations_for(rid, day), variation=variation,
             yesterday=self.recap[rid])
 
