@@ -424,7 +424,24 @@ def _load_checkpoint(out: pathlib.Path, day: int, caller) -> "Household":
     import pickle
     home = pickle.loads((out / "checkpoints" / f"day_{day:02d}.pkl").read_bytes())
     home.caller = caller
+    # the saved state carries the prompts and schemas of the code that wrote it; a
+    # resume runs the current code, so rebuild them
+    home.systems = {r: home._system(r) for r in home.rids}
+    for r in home.rids:
+        habit_ids = [h["id"] for h in home.people[r]["response_habits"]]
+        home.act_schemas[r], home.enums = act_schema_fitting(
+            list(home.objects), home.layout.place_ids, home.rids, habit_ids)
+    (out / "resumes.json").open("a").write(json.dumps({"after_day": day, "commit": _commit()}) + "\n")
     return home
+
+
+def _commit() -> str:
+    import subprocess
+    try:
+        return subprocess.run(["git", "rev-parse", "--short", "HEAD"], capture_output=True,
+                              text=True, cwd=pathlib.Path(__file__).parent).stdout.strip()
+    except OSError:
+        return "unknown"
 
 
 def _cut_logs(out: pathlib.Path, day: int) -> None:
@@ -496,6 +513,7 @@ def main() -> None:
         _cut_logs(args.out, args.resume)
         print(f"resumed after day {args.resume}", flush=True)
     (args.out / "schedule.json").write_text(json.dumps(home.schedule, indent=1))
+    (args.out / "code_version.txt").write_text(_commit() + "\n")
     (args.out / "subjects.json").write_text(json.dumps(home.subjects, indent=1))
     print(f"forced situations happen to: {home.subjects}", flush=True)
     print(f"act schema uses enums: {home.enums}", flush=True)
