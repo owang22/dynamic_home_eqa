@@ -150,6 +150,9 @@ def check_room_objects(room_places: set):
     return check
 
 
+NOBODY = "__nobody__"     # owner for a call listing shared things
+
+
 def compose_ids(objects: list, taken: dict, rids, owner: str = None) -> list:
     """id = type + looks, in place; resident names are dropped from the looks.
     References (ref = another thing's n) become ids, and a thing placed
@@ -162,9 +165,11 @@ def compose_ids(objects: list, taken: dict, rids, owner: str = None) -> list:
     Otherwise a clash takes the next attribute that tells it apart (material,
     condition, pattern, color), then a number.
 
-    owner: set for a call that lists one person's own things. Every thing in it
-    is theirs, so a look-alike owned by someone else is a different thing
-    (two brown wallets in one drawer), and only that person's own things count."""
+    owner: set for a call that lists one person's own things (or NOBODY for shared
+    things). Every thing in it has that owner, so a look-alike with another owner
+    is a different thing (two brown wallets in one drawer; the shared painkillers
+    next to his own), and only things with the same owner count."""
+    target = None if owner == NOBODY else owner
     by_num = {o["n"]: o for o in objects}
     for o in objects:      # spot from the thing referred to (both were asked for; they can disagree)
         root, seen = o, set()
@@ -185,8 +190,8 @@ def compose_ids(objects: list, taken: dict, rids, owner: str = None) -> list:
         same = taken.get(oid)
         twin = next((tid for tid, x in taken.items() if x["type"] == o["type"]
                      and x["place"] == o["place"] and set(look) & x["looks"]
-                     and (owner is None or x["owner"] == owner)), None)
-        if owner is not None and same and same["owner"] != owner:
+                     and (owner is None or x["owner"] == target)), None)
+        if owner is not None and same and same["owner"] != target:
             same = None
         if (same and (same["owner"] or mine)) or twin:
             o["id"], o["same_as"] = oid, (oid if same else twin)
@@ -317,7 +322,7 @@ def _supplies(caller, layout, home, residents, rids, so_far, dropped) -> list[di
                       check_room_objects(set(layout.place_ids)), max_tokens=30000)
     for o in ans["objects"]:
         o["owner"] = "none"
-    dropped += compose_ids(ans["objects"], taken, rids)
+    dropped += compose_ids(ans["objects"], taken, rids, owner=NOBODY)
     return [_finish(o, layout) for o in ans["objects"]]
 
 

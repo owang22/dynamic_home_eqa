@@ -92,3 +92,11 @@ def test_personal_call_keeps_a_lookalike_owned_by_someone_else():
     objs = [thing(1, "wallet", "brown leather", owner="daniel", place="drawer")]
     assert compose_ids(objs, taken, ["mara", "daniel"], owner="daniel") == []
     assert objs[0]["id"] != "wallet_brown_leather"
+
+
+def test_shared_supplies_keep_a_lookalike_someone_owns():
+    from lived_home.household import NOBODY
+    taken = {"pain_reliever_white_bottle": {"owner": "daniel", "place": "shelf", "type": "pain reliever",
+                                            "looks": {"white", "bottle"}}}
+    objs = [thing(1, "pain reliever", "white caplet bottle", owner="none", place="shelf")]
+    assert compose_ids(objs, taken, ["daniel"], owner=NOBODY) == []
