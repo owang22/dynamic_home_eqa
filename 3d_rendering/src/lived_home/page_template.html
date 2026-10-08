@@ -56,7 +56,7 @@ h3{font-size:12px;letter-spacing:.07em;text-transform:uppercase;color:var(--mute
 .daytabs button[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
 .daytabs button[aria-selected="true"] small{color:var(--accent-ink);opacity:.85}
 .daytabs button.sick{border-color:var(--bad)}
-.daytabs button:disabled{opacity:.4;cursor:default}
+.daytabs button.future{opacity:.6;border-style:dashed}
 .timebar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin-bottom:8px}
 .clock{font-family:var(--mono);font-size:22px;font-weight:500;min-width:70px;font-variant-numeric:tabular-nums}
 #slider{flex:1;min-width:200px;accent-color:var(--accent)}
@@ -187,6 +187,8 @@ details summary{cursor:pointer;color:var(--muted);font-size:13px}
 <main class="wrap">
   <section id="v-day" hidden>
     <div class="daytabs" id="daytabs"></div>
+    <div class="panel" id="dayEmpty" hidden></div>
+    <div id="dayBody">
     <div class="panel">
       <div class="timebar">
         <span class="clock" id="clock">07:00</span>
@@ -228,6 +230,7 @@ details summary{cursor:pointer;color:var(--muted);font-size:13px}
       <button class="btn" id="tlNow">Scroll to the time</button>
     </div>
     <div class="timeline" id="timeline"></div>
+    </div>
   </section>
 
   <section id="v-objects" hidden>
@@ -420,7 +423,8 @@ function renderDayTabs() {
     const sits = D.schedule[d - 1] || [];
     const sick = sits.includes('sick');
     const label = sits.length ? sits.map(s => s === 'sick' ? `sick (${sickWho.map(w => RESBY[w] ? RESBY[w].name : w).join(', ')})` : s.replace(/_/g, ' ')).join(', ') : 'ordinary day';
-    h += `<button role="tab" aria-selected="${d === S.day}" data-day="${d}" class="${sick ? 'sick' : ''}" ${d > maxDay ? 'disabled' : ''}>${dayLabel(d)}<small>${esc(label)}${d === D.last_day && D.last_day > D.days_done ? ' · in progress' : ''}</small></button>`;
+    const state = d > maxDay ? ' · not lived yet' : (d === D.last_day && D.last_day > D.days_done ? ' · in progress' : '');
+    h += `<button role="tab" aria-selected="${d === S.day}" data-day="${d}" class="${sick ? 'sick' : ''}${d > maxDay ? ' future' : ''}">${dayLabel(d)}<small>${esc(label)}${state}</small></button>`;
   }
   $('daytabs').innerHTML = h;
 }
@@ -546,7 +550,15 @@ function scrollToNow() { const rows = [...$('timeline').querySelectorAll('.row')
 function setTime(t, scroll) { S.t = Math.max(0, Math.min(1439, Math.round(t))); $('slider').value = S.t; $('clock').textContent = fmt(S.t); renderStrips(); renderPlan(); renderPeople(); renderHome(); markNow(); if (scroll) scrollToNow(); save(); }
 function stepEvent(dir) { const ms = TL.filter(r => r.kind === 'ev' && (!S.who || r.r === S.who) && r.x.verb !== 'go').map(r => r.m); const next = dir > 0 ? ms.find(m => m > S.t) : [...ms].reverse().find(m => m < S.t); if (next != null) setTime(next, true); }
 function renderDay() {
-  renderDayTabs(); buildTimeline();
+  renderDayTabs();
+  const future = S.day > maxDay;
+  $('dayBody').hidden = future; $('dayEmpty').hidden = !future;
+  if (future) {
+    const sits = D.schedule[S.day - 1] || [];
+    $('dayEmpty').innerHTML = `<h2>${esc(WD[(S.day - 1) % 7])}, day ${S.day}: not lived yet</h2><p class="small" style="margin:0">The run has reached day ${maxDay}${D.last_day > D.days_done ? ' (in progress)' : ''}. This day fills in when the run gets here; the page is republished as it goes.</p><p style="margin:10px 0 0">Scheduled for this day: ${sits.length ? sits.map(s => `<b>${esc(s.replace(/_/g, ' '))}</b>${s === 'sick' && sickWho.length ? ' (' + esc(sickWho.map(w => RESBY[w] ? RESBY[w].name : w).join(', ')) + ')' : ''}${SIT[s] ? ' <span class="small">— ' + esc(SIT[s].what_it_is_like.slice(0, 160)) + '…</span>' : ''}`).join('; ') : 'nothing unusual'}.</p>`;
+    return;
+  }
+  buildTimeline();
   $('slider').value = S.t; $('clock').textContent = fmt(S.t);
   renderStrips(); renderPlan(); renderPeople(); renderHome(); renderTimeline();
 }
@@ -650,7 +662,7 @@ function show(view) {
   if (view === 'run') renderRun();
 }
 $('tabs').addEventListener('click', e => { const b = e.target.closest('button'); if (b) show(b.dataset.view); });
-$('daytabs').addEventListener('click', e => { const b = e.target.closest('button'); if (!b || b.disabled) return; S.day = +b.dataset.day; const first = D.events.find(x => x.day === S.day); S.t = first ? first.minute : 420; save(); renderDay(); });
+$('daytabs').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; S.day = +b.dataset.day; const first = D.events.find(x => x.day === S.day); S.t = first ? first.minute : 420; save(); renderDay(); });
 $('slider').addEventListener('input', e => setTime(+e.target.value, false));
 $('slider').addEventListener('change', () => scrollToNow());
 $('prevEv').addEventListener('click', () => stepEvent(-1));
