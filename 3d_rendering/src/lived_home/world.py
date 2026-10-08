@@ -61,6 +61,31 @@ def washable(type_: str) -> bool:
         not any(w in type_.lower() for w in ("sleep", "pajama", "pyjama", "robe"))
 
 
+SLEEPWEAR = ("sleep", "pajama", "pyjama", "nightgown", "nightdress", "nightshirt")
+UNDER = ("underwear", "bra", "socks", "tights", "undershirt", "boxers", "briefs")
+BOTTOMS = ("trousers", "pants", "jeans", "shorts", "joggers", "sweatpants", "chinos")
+
+
+OVER = ("hoodie", "cardigan", "sweatshirt", "sweater", "jumper", "fleece", "robe")
+
+
+def is_sleepwear(type_: str) -> bool:
+    t = type_.lower()
+    return any(w in t for w in SLEEPWEAR) and "mask" not in t
+
+
+def is_daywear(type_: str) -> bool:
+    """Day clothes that cannot go over or under sleepwear (underwear and socks can,
+    and a hoodie or cardigan over pajamas is ordinary)."""
+    t = type_.lower()
+    return washable(t) and not any(w in t for w in UNDER + OVER)
+
+
+def is_bottoms(type_: str) -> bool:
+    t = type_.lower()
+    return not is_sleepwear(t) and any(t.endswith(w) or f"{w} " in t for w in BOTTOMS)
+
+
 @dataclass
 class Resident:
     rid: str
@@ -146,6 +171,18 @@ class World:
 
     def things_at(self, place: str) -> list[str]:
         return [o for o, w in self.where.items() if w["at"] == "place" and w["place"] == place]
+
+    def _clothes_clash(self, person, oid: str) -> list:
+        """What must come off before oid goes on: sleepwear and day clothes are not
+        worn together, nor two pairs of trousers."""
+        new = self.objects[oid]["type"]
+        out = []
+        for w in person.worn:
+            old = self.objects[w]["type"]
+            if (is_sleepwear(new) and is_daywear(old)) or (is_daywear(new) and is_sleepwear(old)) \
+                    or (is_bottoms(new) and is_bottoms(old)):
+                out.append(w)
+        return out
 
     def describe(self, pos: dict, rid: Optional[str] = None, depth: int = 0) -> str:
         """A position in words. Inside a carrier, also where the carrier is: as the
@@ -489,6 +526,11 @@ class World:
                 return False, "Wear what?", 0
             if oid in person.worn:
                 return False, f"You are already wearing {oid}.", 0
+            clash = self._clothes_clash(person, oid)
+            if clash:
+                return False, (f"You are still wearing {', '.join(clash)}; take "
+                               f"{'it' if len(clash) == 1 else 'them'} off first (put "
+                               f"{'it' if len(clash) == 1 else 'them'} down somewhere)."), 0
             source = dict(self.where[oid])
             ok, message, walked = self._take(rid, oid, minute, act.get("place") or None)
             if not ok:

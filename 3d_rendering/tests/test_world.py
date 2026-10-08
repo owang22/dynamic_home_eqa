@@ -466,3 +466,20 @@ def test_memory_of_a_thing_in_a_carrier_says_where_the_carrier_is():
     w.where["cup_white"] = at_place("kitchen_island")
     assert "bathroom_sink_counter" in w.describe(w.people["ana"].belief["toothbrush_blue"]["pos"], "ana")
     assert "kitchen_island" in w.describe(w.where["toothbrush_blue"])
+
+
+def test_pajamas_come_off_before_day_clothes_go_on():
+    w = make()
+    for oid, type_ in (("pajama_bottoms_blue", "pajama bottoms"), ("jeans_blue", "jeans"),
+                       ("trousers_grey", "work trousers"), ("socks_red", "socks"), ("robe_white", "bathrobe")):
+        w.objects[oid] = obj(type_, "bed", owner="ben")
+        w.where[oid] = dict(w.objects[oid]["start"])
+    assert w.apply("ben", A("wear", object="pajama_bottoms_blue"), 0)[0]
+    assert w.apply("ben", A("wear", object="socks_red"), 0)[0]          # socks go with anything
+    assert w.apply("ben", A("wear", object="robe_white"), 0)[0]         # a robe over pajamas
+    ok, msg, _ = w.apply("ben", A("wear", object="jeans_blue"), 1)
+    assert not ok and "pajama_bottoms_blue" in msg and "take it off" in msg
+    assert w.apply("ben", A("put_down", object="pajama_bottoms_blue", place="bed"), 2)[0]
+    assert w.apply("ben", A("wear", object="jeans_blue"), 3)[0]
+    ok, msg, _ = w.apply("ben", A("wear", object="trousers_grey"), 4)
+    assert not ok and "jeans_blue" in msg
