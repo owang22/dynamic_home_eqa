@@ -484,6 +484,8 @@ def main() -> None:
                     help="reuse this household.json instead of creating one")
     ap.add_argument("--pilot_layout", action="store_true",
                     help="(fake runs) use the hand-written layout instead of generating one")
+    ap.add_argument("--scene", default=None,
+                    help="build the home from this HSSD scene id (lived_home.hssd_layout)")
     ap.add_argument("--create_only", action="store_true")
     ap.add_argument("--resume", type=int, default=0,
                     help="continue from the saved state at the end of this day (1-based); "
@@ -498,7 +500,7 @@ def main() -> None:
         spec = json.loads(args.household.read_text())
         (args.out / "household.json").write_text(json.dumps(spec, indent=1))
     else:
-        spec = create(caller, args.seed, args.out)
+        spec = create(caller, args.seed, args.out, scene=args.scene)
     print(f"household: {len(spec['layout']['places'])} places, {len(spec['objects'])} objects, "
           f"calls {caller.calls}, ${caller.cost:.2f}", flush=True)
     if args.create_only:

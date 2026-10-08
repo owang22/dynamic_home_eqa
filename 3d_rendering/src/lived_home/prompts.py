@@ -326,3 +326,37 @@ should be, and the room where they belong. Only real gaps; at most {hi} kinds.""
 
 GAPS_FOCUS = """
 Add exactly these, which the home is missing: {items}."""
+
+HSSD_HOME_USER = """Here is a real home, measured from a 3D scan: its rooms, the furniture in
+each room, and every spot on or in each piece where something can be put. Each
+piece shows its catalogue name, the pieces nearest to it, and its spots: kind
+(surface: things go on top; open: a basin or bin you see into; closed: behind a
+door or in a drawer), height above the floor, size, which of several heights it
+is, and sometimes the maker's label for the part (left, bottom...).
+
+{home}
+
+- home: two or three sentences describing this home as someone would to a
+  friend (kind of home, rooms, feel). Only what the list supports.
+- furniture: for every piece F1, F2, ... a short plain name a person living there
+  would use ("tv console", "kitchen counter by the window", "left nightstand",
+  "bookcase by the sofa"). Catalogue names and categories can be wrong or odd
+  ("bathroom cabinet" in a kitchen holding the sink is the sink cabinet);
+  judge from the room, the neighbours and the spot heights. Two pieces in one
+  room need different names. Say left or right only if the list shows it.
+- entry_spot: the spot just inside the front door, where someone coming home
+  first stands or drops their keys (often the hallway floor or a hallway surface)."""
+
+HSSD_ROOM_USER = """The home: {home}
+
+Its rooms, furniture and spots (furniture by the names already chosen):
+{layout}
+
+For every spot in {room}, give:
+- name: what the spot is, in a few words, as part of its furniture ("top",
+  "second shelf from the bottom", "upper drawer", "inside the oven", "seat").
+  Spots on one piece of furniture need different names. Use the heights and the
+  maker's labels; say left or right only when the label says so.
+- descriptions: 2 to 4 ways a person would say where something is when it is
+  there ("on the hallway cabinet", "the top drawer of the dresser", "on the
+  kitchen counter by the fridge"). Name only what the list shows nearby."""

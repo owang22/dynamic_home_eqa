@@ -22,6 +22,16 @@ class FakeClient:
         props = schema["properties"]
         if "rooms" in props:
             return json.dumps(self._layout())
+        if "furniture" in props and "entry_spot" in props:          # HSSD home naming
+            ns = props["furniture"]["items"]["properties"]["n"]["enum"]
+            return json.dumps({"thinking": "fake", "home": "fake scanned flat",
+                               "furniture": [{"n": n, "name": f"piece {n}"} for n in ns],
+                               "entry_spot": props["entry_spot"]["enum"][0]})
+        if "spots" in props:                                        # HSSD room naming
+            ns = props["spots"]["items"]["properties"]["n"]["enum"]
+            return json.dumps({"thinking": "fake", "spots": [
+                {"n": n, "name": f"spot {n}", "descriptions": [f"spot {n}", f"the spot {n}"]}
+                for n in ns]})
         if "gaps" in props:
             return json.dumps({"thinking": "fake", "gaps": [
                 {"type": "plate", "count": 4, "room": "kitchen", "why": "only one"},
@@ -67,7 +77,8 @@ class FakeClient:
     def _residents(self, props):
         item = props["residents"]["items"]["properties"]
         places = item["sleeps_at"]["enum"]
-        bed = next(p for p in places if p.startswith("main_bedroom") and p.endswith("s0"))
+        bed = next((p for p in places if p.startswith("main_bedroom") and p.endswith("s0")), None) \
+            or next((p for p in places if "bed" in p and "floor" not in p), places[0])
         residents = []
         for rid in ("ana", "ben"):
             residents.append({

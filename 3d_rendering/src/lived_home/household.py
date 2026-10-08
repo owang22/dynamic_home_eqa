@@ -352,15 +352,25 @@ def _finish(o: dict, layout: Layout) -> dict:
     return o
 
 
-def create(caller: Caller, seed: int, out: pathlib.Path, effort_note: str = "") -> dict:
-    """Runs the creation calls and writes household.json. Returns the spec."""
+def create(caller: Caller, seed: int, out: pathlib.Path, effort_note: str = "",
+           scene: str = None) -> dict:
+    """Runs the creation calls and writes household.json. Returns the spec.
+    With scene, the rooms, furniture and spots come from that HSSD home and the
+    model only names them (lived_home.hssd_home); otherwise the model invents them."""
     rng = random.Random(seed)
-    home = rng.choice(prompts.HOMES)
-
-    lay = caller.call("create/layout", prompts.CREATE_SYSTEM,
-                      prompts.LAYOUT_USER.format(home=home, lo=PLACES_LO + 20, hi=PLACES_HI - 30),
-                      layout_schema(), check_layout, max_tokens=60000)
-    layout = Layout.from_generated(lay)
+    if scene:
+        from lived_home import hssd_home, hssd_layout
+        home = f"HSSD scene {scene}"
+        layout, lay = hssd_home.create_layout(caller, hssd_layout.extract(scene))
+        problem = hssd_home.check_kitchen(layout)
+        if problem:
+            raise ValueError(f"scene {scene}: {problem}")
+    else:
+        home = rng.choice(prompts.HOMES)
+        lay = caller.call("create/layout", prompts.CREATE_SYSTEM,
+                          prompts.LAYOUT_USER.format(home=home, lo=PLACES_LO + 20, hi=PLACES_HI - 30),
+                          layout_schema(), check_layout, max_tokens=60000)
+        layout = Layout.from_generated(lay)
     rooms = list(layout.rooms)
 
     res = caller.call("create/residents", prompts.CREATE_SYSTEM,
@@ -371,14 +381,16 @@ def create(caller: Caller, seed: int, out: pathlib.Path, effort_note: str = "") 
     rids = [r["id"] for r in residents]
 
     # appliances and fixtures (stovetop, sink, oven) that the layout call treated as
-    # not furniture; added after the residents so the spots they sleep at are unchanged
-    fix = caller.call("create/fixtures", prompts.CREATE_SYSTEM,
-                      prompts.FIXTURES_USER.format(home=lay["home"], layout=layout.describe(),
-                                                   lo=FIXTURES_LO, hi=FIXTURES_HI),
-                      fixtures_schema(rooms, FIXTURES_LO, FIXTURES_HI),
-                      check_fixtures(lay, FIXTURES_LO, FIXTURES_HI), max_tokens=30000)
-    add_fixtures(lay, fix)
-    layout = Layout.from_generated(lay)
+    # not furniture; added after the residents so the spots they sleep at are unchanged.
+    # A 3D home has its own.
+    if not scene:
+        fix = caller.call("create/fixtures", prompts.CREATE_SYSTEM,
+                          prompts.FIXTURES_USER.format(home=lay["home"], layout=layout.describe(),
+                                                       lo=FIXTURES_LO, hi=FIXTURES_HI),
+                          fixtures_schema(rooms, FIXTURES_LO, FIXTURES_HI),
+                          check_fixtures(lay, FIXTURES_LO, FIXTURES_HI), max_tokens=30000)
+        add_fixtures(lay, fix)
+        layout = Layout.from_generated(lay)
 
     objects, dropped = [], []
     for r in residents:
@@ -421,7 +433,7 @@ def create(caller: Caller, seed: int, out: pathlib.Path, effort_note: str = "") 
                       prompts.SITUATIONS_USER.format(residents=residents_text(residents)),
                       situations_schema(rids), check_situations, max_tokens=40000)
 
-    spec = {"seed": seed, "home": home, "layout_thinking": lay["thinking"],
+    spec = {"seed": seed, "home": home, "scene": scene, "layout_thinking": lay["thinking"],
             "layout": layout.to_json(), "residents": residents, "objects": objects,
             "situations": sit["situations"], "small_disturbances": sit["small_disturbances"],
             "dropped_duplicates": [{"id": o["id"], "owner": o["owner"], "place": o["place"]}
