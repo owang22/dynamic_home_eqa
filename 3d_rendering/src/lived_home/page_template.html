@@ -287,7 +287,7 @@ D.events.forEach((e, k) => {
     TRACK[e.object].push({ g, k, pos: e.to_pos }); CUR[e.object] = e.to_pos;
     (MOVES[e.object] = MOVES[e.object] || []).push(k);
   }
-  (e.settled || []).forEach(o => { if (!CUR[o]) return; const p = Object.assign({}, CUR[o], { ref: null, rel: PL[CUR[o].place] && PL[CUR[o].place].kind === 'container' ? 'in' : 'on' }); TRACK[o].push({ g, k, pos: p }); CUR[o] = p; });
+  (e.settled || []).forEach(o => { if (!CUR[o]) return; const p = Object.assign({}, CUR[o], { ref: null, rel: PL[CUR[o].place] && PL[CUR[o].place].kind !== 'surface' ? 'inside' : 'on_top' }); TRACK[o].push({ g, k, pos: p }); CUR[o] = p; });
   if (LOC[e.resident]) {
     if (e.verb === 'go' || e.verb === 'come_home') LOC[e.resident].push({ g, k, place: e.to });
     else if (e.verb === 'leave_home') LOC[e.resident].push({ g, k, place: null });
@@ -297,11 +297,15 @@ function lastAt(list, g) { let lo = 0, hi = list.length - 1, ans = list[0]; whil
 const posAt = (oid, g) => lastAt(TRACK[oid], g).pos;
 function basePos(oid, g) { const p = posAt(oid, g); return p.at === 'inside' ? posAt(p.carrier, g) : p; }
 const placeAt = (rid, g) => lastAt(LOC[rid], g).place;
+// closed spots ('container' and 'hidden' in runs before the four relations)
+const shutPlace = pl => !!pl && (pl.kind === 'closed' || pl.kind === 'container' || !!pl.hidden);
 function hiddenAt(oid, g) {
   const p = posAt(oid, g);
-  if (p.at === 'inside') { const c = OBJ[p.carrier]; return (c && c.carrier === 'closed') || hiddenAt(p.carrier, g); }
+  if (p.at === 'inside') { const c = OBJ[p.carrier]; return (c && (c.carrier === 'closed' || c.carrier === 'pockets')) || hiddenAt(p.carrier, g); }
   if (p.at !== 'place') return false;
-  const pl = PL[p.place]; return !pl || pl.kind === 'container' || pl.hidden || p.rel === 'under' || p.rel === 'behind';
+  const pl = PL[p.place]; if (!pl || p.rel === 'under' || p.rel === 'behind') return true;
+  if (p.ref) return OBJ[p.ref] ? hiddenAt(p.ref, g) : false;
+  return shutPlace(pl) && p.rel !== 'on_top' && p.rel !== 'next_to';
 }
 function lastMoveBefore(oid, g) { const t = TRACK[oid]; const e = lastAt(t, g); return e.g; }
 
@@ -333,7 +337,7 @@ function chip(oid, extra) { const g = G(S.day, S.t); const cls = ['chip']; if (e
   return `<span class="${cls.join(' ')}" tabindex="0" role="button" data-obj="${esc(oid)}" title="${esc(describeObj(oid))}">${esc(oid)}${ownMark(oid)}</span>`; }
 function describeObj(oid) { const o = OBJ[oid]; if (!o) return oid; return `${o.type} · ${[o.color, o.material, o.size, o.condition].filter(Boolean).join(', ')}${o.owner ? ' · ' + (RESBY[o.owner] ? RESBY[o.owner].name + "'s" : o.owner) : ''}`; }
 function placeName(pid) { if (!pid) return 'out of the house'; const p = PL[pid]; return p ? `${p.room.replace(/_/g, ' ')} · ${p.name}` : pid; }
-function posText(p) { if (!p) return '?'; if (p.at === 'place') return `${p.rel && p.rel !== 'on' && p.rel !== 'in' ? p.rel.replace(/_/g, ' ') + ' ' + (p.ref || '') + ' at ' : ''}${p.place}`; if (p.at === 'inside') return `inside ${p.carrier}`; if (p.at === 'worn') return `worn by ${RESBY[p.person] ? RESBY[p.person].name : p.person}`; return `${p.at} of ${RESBY[p.person] ? RESBY[p.person].name : p.person}`; }
+function posText(p) { if (!p) return '?'; if (p.at === 'place') return `${p.rel && (p.ref || p.rel === 'under') ? p.rel.replace(/_/g, ' ') + ' ' + ((p.ref ? p.ref + ' ' : '')) + 'at ' : ''}${p.place}`; if (p.at === 'inside') return `inside ${p.carrier}`; if (p.at === 'worn') return `worn by ${RESBY[p.person] ? RESBY[p.person].name : p.person}`; return `${p.at} of ${RESBY[p.person] ? RESBY[p.person].name : p.person}`; }
 function dots(v, max) { let s = '<span class="dots">'; for (let i = 1; i <= max; i++) s += `<i class="${i <= v ? 'on' : ''}"></i>`; return s + '</span>'; }
 
 // ---------- floor plan (schematic) ----------
@@ -393,7 +397,7 @@ function renderPlan() {
     s += `<rect x="${b.x}" y="${b.y}" width="${b.w}" height="${b.h}" rx="4" style="fill:var(--panel);fill-opacity:.75;stroke:var(--line)"></rect><text class="flabel" x="${b.x + 3}" y="${b.y + 10}"><title>${esc(b.name)}</title>${esc(name)}</text>`; });
   Object.entries(PLAN.cells).forEach(([pid, c]) => {
     const n = count[pid] || 0, p = PL[pid];
-    const cls = ['cell']; if (p.kind === 'container' || p.hidden) cls.push('shut'); if (recent.has(pid)) cls.push('recent'); if (pid === PLAN_SEL) cls.push('sel');
+    const cls = ['cell']; if (shutPlace(p)) cls.push('shut'); if (recent.has(pid)) cls.push('recent'); if (pid === PLAN_SEL) cls.push('sel');
     const fill = n ? `color-mix(in srgb, var(--accent) ${Math.round(18 + 62 * n / maxc)}%, var(--panel))` : 'var(--panel2)';
     s += `<rect class="${cls.join(' ')}" data-spot="${esc(pid)}" x="${c.x}" y="${c.y}" width="${c.s}" height="${c.s}" rx="3" style="fill:${fill}"><title>${esc(p.name)}${n ? ' · ' + n + ' things' : ''}</title></rect>`;
     if (n && c.s >= 13) s += `<text class="cnt" x="${c.x + c.s / 2}" y="${c.y + c.s / 2 + 3}" text-anchor="middle">${n}</text>`;
@@ -411,7 +415,7 @@ function renderPlanDetail() {
   const pid = PLAN_SEL; if (!pid || !PL[pid]) { $('plandetail').innerHTML = '<span class="small">Click a cell to see what is there.</span>'; return; }
   const g = G(S.day, S.t); const p = PL[pid];
   const here = D.objects.filter(o => { const q = posAt(o.id, g); return q.at === 'place' && q.place === pid; }).map(o => o.id);
-  $('plandetail').innerHTML = `<b>${esc(p.room.replace(/_/g, ' '))} · ${esc(p.furniture)} · ${esc(p.name)}</b> <span class="mono small">${esc(pid)}</span>${p.kind === 'container' ? ' <span class="small">(closed)</span>' : ''}${p.hidden ? ' <span class="small">(out of sight)</span>' : ''}<div class="small">People call it: ${esc((p.descriptions || []).join(' / '))}</div><div class="chips" style="margin-top:4px">${here.length ? here.map(o => chip(o)).join(' ') : '<span class="small">nothing here</span>'}</div>`;
+  $('plandetail').innerHTML = `<b>${esc(p.room.replace(/_/g, ' '))} · ${esc(p.furniture)} · ${esc(p.name)}</b> <span class="mono small">${esc(pid)}</span>${shutPlace(p) ? ' <span class="small">(closed)</span>' : p.kind === 'open' ? ' <span class="small">(open)</span>' : ''}<div class="small">People call it: ${esc((p.descriptions || []).join(' / '))}</div><div class="chips" style="margin-top:4px">${here.length ? here.map(o => chip(o)).join(' ') : '<span class="small">nothing here</span>'}</div>`;
 }
 
 // ---------- Day view ----------
@@ -490,7 +494,7 @@ function renderHome() {
       const objs = at[pid] || []; if (!objs.length) return;
       if (S.onlyRecent && !changedToday.has(pid)) return;
       const pl = PL[pid];
-      rows += `<div class="spot"><span class="sn" title="${esc((pl.descriptions || []).join(' / '))}"><b>${esc(pl.name)}</b>${pl.kind === 'container' ? ' · closed' : ''}${pl.hidden ? ' · out of sight' : ''}</span><div class="chips">${objs.map(o => chip(o) + (inside[o] ? ` <span class="small">[${inside[o].map(x => chip(x, 'inner')).join(' ')}]</span>` : '')).join(' ')}</div></div>`;
+      rows += `<div class="spot"><span class="sn" title="${esc((pl.descriptions || []).join(' / '))}"><b>${esc(pl.name)}</b>${shutPlace(pl) ? ' · closed' : pl.kind === 'open' ? ' · open' : ''}</span><div class="chips">${objs.map(o => chip(o) + (inside[o] ? ` <span class="small">[${inside[o].map(x => chip(x, 'inner')).join(' ')}]</span>` : '')).join(' ')}</div></div>`;
     });
     if (S.onlyRecent && !rows && !here.length) return;
     h += `<div class="room" style="--rc:${roomColor(room)}"><div class="rhead"><span class="rname">${esc(room.replace(/_/g, ' '))}</span>${here.map(r => `<span class="badge" style="--pc:${r.color}">${esc(r.name)}</span>`).join('')}</div><div class="rbody">${rows || '<div class="empty">nothing lying out or put away here</div>'}</div></div>`;
