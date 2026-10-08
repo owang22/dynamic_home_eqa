@@ -35,3 +35,10 @@ def test_away_minutes_skip_one_home_activity_before_work():
     Household._away_minutes(a, act("kitchen", 345, 390), [act("entry", 390, 405), act("out_of_house", 405, 990),
                                                            act("entry", 990, 1020)], 370)
     assert a["minutes"] == 990 - 370
+
+
+def test_recap_shows_a_step_the_engine_did_first():
+    from lived_home.run_pilot import _short_event
+    e = {"verb": "put_down", "object": "notebook_red", "to": "on top desk", "implied": True}
+    assert _short_event(e) == "put_down notebook_red (on top desk) [done for you first]"
+    assert _short_event({"verb": "say", "person": "ben", "text": "hi"}) == 'say to ben "hi"'

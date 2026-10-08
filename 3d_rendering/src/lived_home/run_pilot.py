@@ -347,9 +347,12 @@ class Household:
             script[rid].pop(0)
             if action.get("verb") == "leave_home":
                 self._away_minutes(action, current[rid], pending[rid], now[rid])
+            n_log = len(world.log)
             ok, message, minutes = world.apply(rid, action, now[rid])
             if ok:
-                done[rid].append(_short(action))
+                # what the engine did, with the steps it filled in (a walk, setting
+                # down a held thing to put something on it), so the recap matches
+                done[rid] += [_short_event(e) for e in world.log[n_log:] if e.get("resident") == rid]
                 if action.get("verb") == "leave_home" and script[rid]:
                     dropped_after_leaving.append({"resident": rid, "time": clock(now[rid]),
                                                   "actions": [_short(a) for a in script[rid]]})
@@ -404,6 +407,18 @@ class Household:
                 "skipped_activities": skipped, "dropped_after_leaving": dropped_after_leaving,
                 "at_night": night,
                 "end_of_day": world.snapshot(), "active_situations": self.schedule[day]}
+
+
+def _short_event(e: dict) -> str:
+    """One done step from the engine's log, as the resident's recap shows it."""
+    verb = e.get("verb", "")
+    if verb in ("do", "say", "leave_home") and e.get("text"):
+        out = f'{verb}{" to " + e["person"] if verb == "say" and e.get("person") else ""} "{e["text"][:60]}"'
+    elif e.get("object"):
+        out = f"{verb} {e['object']} ({e.get('to') or ''})"
+    else:
+        out = f"{verb} {e.get('to') or ''}".strip()
+    return out + (" [done for you first]" if e.get("implied") else "")
 
 
 def _short(a: dict) -> str:
