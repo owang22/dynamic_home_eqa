@@ -64,7 +64,7 @@ class Household:
         for r in self.rids:
             habit_ids = [h["id"] for h in self.people[r]["response_habits"]]
             self.act_schemas[r], self.enums = act_schema_fitting(
-                list(self.objects), self.layout.place_ids, self.rids, habit_ids)
+                list(self.objects), self.layout.place_ids, [x for x in self.rids if x != r], habit_ids)
         self.recap = {r: "This is the first day of the simulation." for r in self.rids}
         self.inbox = {r: [] for r in self.rids}
         self.states, self.thoughts = [], []
@@ -438,7 +438,7 @@ def _load_checkpoint(out: pathlib.Path, day: int, caller) -> "Household":
     for r in home.rids:
         habit_ids = [h["id"] for h in home.people[r]["response_habits"]]
         home.act_schemas[r], home.enums = act_schema_fitting(
-            list(home.objects), home.layout.place_ids, home.rids, habit_ids)
+            list(home.objects), home.layout.place_ids, [x for x in home.rids if x != r], habit_ids)
     (out / "resumes.json").open("a").write(json.dumps({"after_day": day, "commit": _commit()}) + "\n")
     return home
 
