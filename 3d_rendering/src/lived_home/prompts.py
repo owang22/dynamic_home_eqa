@@ -159,7 +159,7 @@ In your hands: {hands}. In your pockets: {pocket}. Wearing: {worn}.
 Where you remember things being (what matters now):
 {memory}
 Everything else is where you last saw it.
-{problem}{bedtime}
+{problem}{woke}{bedtime}
 Write what you do, step by step, until this activity ends around {end} or you
 finish it. Actions:
   go (place): walk to a spot
@@ -188,6 +188,9 @@ there instead. Say how you feel now (stress 0 calm to 3 very stressed; tiredness
 bad to 3 good; health 0 very unwell to 3 well), which of
 your response habits' triggers are true for you right now, and which habit
 you are following, if any."""
+
+WOKE_UP = """
+You have just woken up and are still in what you slept in."""
 
 BEDTIME = """
 After this activity you go to sleep. Before you sleep, put down whatever you

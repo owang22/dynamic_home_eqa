@@ -162,7 +162,7 @@ class Household:
 
     def act(self, rid: str, day: int, weekday: str, activity: dict, minute: int,
             rest: list[dict], events: list[str], problem: str, last: bool,
-            done: list = (), interrupted: bool = False) -> list[dict]:
+            done: list = (), interrupted: bool = False, first: bool = False) -> list[dict]:
         heard = [f"At {t} {who} {how}: {text}" if who else f"At {t}: {text}"
                  for t, who, how, text in self.inbox[rid]]
         self.inbox[rid] = []
@@ -180,6 +180,7 @@ class Household:
                      f"Then this did not work: {problem}\n"
                      "Carry on from here; do not repeat what you already did.\n") if problem else
                     (prompts.INTERRUPTED.format(done="; ".join(done) or "nothing yet") if interrupted else ""),
+            woke=prompts.WOKE_UP if first and not problem and not interrupted else "",
             bedtime=prompts.BEDTIME if last else "")
         out = self.caller.call(f"act/{rid}/{day + 1}/{clock(minute)}/{len(self.thoughts)}",
                                self.systems[rid], user, self.act_schemas[rid])
@@ -324,7 +325,8 @@ class Household:
                 disturbances[rid] = [d for d in disturbances[rid] if d not in due]
                 events = [f"At {clock(t)}: {text}" for t, text in due]
                 script[rid] = self.act(rid, day, weekday, activity, now[rid],
-                                       pending[rid], events, "", not pending[rid])
+                                       pending[rid], events, "", not pending[rid],
+                                       first=len(ran[rid]) == 1)
                 continue
             # a disturbance whose time has come interrupts; a do that spans one stops there
             action = script[rid][0]
