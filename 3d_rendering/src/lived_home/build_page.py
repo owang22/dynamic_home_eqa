@@ -71,7 +71,20 @@ def build(run: pathlib.Path) -> dict:
         "events": ev, "responses": resp, "failed": failed, "calls_by_day": by_day,
         "create_cost": sum(c.get("cost") or 0 for c in create_calls if not c.get("cached")),
         "days_done": days_done, "last_day": last_day,
+        "floorplan": floorplan(spec.get("scene")),
     }
+
+
+def floorplan(scene) -> dict | None:
+    """Room outlines of a 3D home (metres, [x, z] seen from above), for a true plan."""
+    if not scene:
+        return None
+    try:
+        from lived_home.hssd_layout import _rooms
+        return {"scene": scene, "rooms": [{"id": r["id"], "polygon": r["polygon"]} for r in _rooms(scene)]}
+    except Exception as e:                       # scene files absent: keep the schematic plan
+        print(f"no floor plan for {scene}: {e}", file=sys.stderr)
+        return None
 
 
 def main() -> None:
