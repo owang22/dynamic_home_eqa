@@ -77,7 +77,14 @@ class Household:
                            for o in self.spec["residents"] if o["id"] != rid)
         habits = [f"{h['id']}: when {h['trigger']}, {h['behavior']} ({h['how_often']})"
                   for h in p["response_habits"]]
-        types = ", ".join(f"{t} ({c})" for t, c in sorted(self.types.items()))
+        groups = {"Yours": {}, "Shared": {}}
+        names = {r: self.people[r]["name"].split()[0] for r in self.rids}
+        for o in self.objects.values():
+            g = "Yours" if o["owner"] == rid else ("Shared" if not o["owner"] else f"{names.get(o['owner'], o['owner'])}'s")
+            groups.setdefault(g, {})
+            groups[g][o["type"]] = groups[g].get(o["type"], 0) + 1
+        types = "\n".join(f"  {g}: " + ", ".join(f"{t} ({c})" for t, c in sorted(kinds.items()))
+                          for g, kinds in groups.items() if kinds)
         return prompts.RESIDENT_SYSTEM.format(
             name=p["name"], age=p["age"], job=p["job"], personality=p["personality"],
             others=others, object_habits=lines(p["object_habits"]),

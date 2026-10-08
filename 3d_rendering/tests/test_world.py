@@ -369,3 +369,15 @@ def test_others_in_the_room_see_a_move():
     w.apply("ben", A("go", place="kitchen_island"), 0)
     w.apply("ana", A("pick_up", object="mug_red"), 1)
     assert w.people["ben"].belief["mug_red"]["pos"] == {"at": "hand", "person": "ana"}
+
+
+def test_memory_for_a_needed_kind_prefers_own_and_shared_things():
+    w = make()
+    w.objects["laptop_ana"] = obj("laptop", "office_desk", owner="ana")
+    w.where["laptop_ana"] = dict(w.objects["laptop_ana"]["start"])
+    for person in w.people.values():
+        person.belief["laptop_ana"] = {"pos": dict(w.where["laptop_ana"]), "day": -1, "minute": 0}
+    mem = w.memory_view("ana", {"laptop"})
+    assert "laptop_ana" in mem and "laptop_work" not in mem      # ben's is left out
+    mem = w.memory_view("ana", {"backpack"})
+    assert "backpack_black" in mem                                # she has none: ben's shows

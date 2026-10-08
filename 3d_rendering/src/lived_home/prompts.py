@@ -118,7 +118,7 @@ How you tend to respond to things:
 Things in your week that stress you:
 {stressors}
 
-Kinds of things in the home (how many):
+Kinds of things in the home, by whose they are (how many):
 {types}
 
 The home (room: furniture: spot id (name)):

@@ -233,12 +233,16 @@ class World:
         current activity needs. Skips what they hold and what they see now."""
         person = self.people[rid]
         recent = lambda d: d is not None and d[0] >= self.day - days_back
+        # a kind the activity needs: their own and shared ones; someone else's only
+        # when they have none of that kind themselves
+        usable = {o["type"] for o in self.objects.values() if o.get("owner") in (None, rid)}
         keep = []
         for oid, o in self.objects.items():
             if self.holder_of(oid) == rid or self.can_see(rid, oid):
                 continue
+            needed = o["type"] in needed_types and (o.get("owner") in (None, rid) or o["type"] not in usable)
             if (recent(person.touched.get(oid)) or recent(person.noticed.get(oid))
-                    or o.get("owner") == rid or o["type"] in needed_types):
+                    or o.get("owner") == rid or needed):
                 keep.append(oid)
         return keep
 
