@@ -449,3 +449,20 @@ def test_positions_place_everything():
     for o in pos["objects"].values():
         assert o["relation"] in ("inside", "on_top", "under", "next_to", "held_by", "worn_by", "in_pocket_of")
         assert o["place"] is None or o["place"] in pos["places"]
+
+
+def test_memory_of_a_thing_in_a_carrier_says_where_the_carrier_is():
+    w = make()
+    w.objects["cup_white"] = obj("cup", "bathroom_sink_counter", carrier="open")
+    w.where["cup_white"] = dict(w.objects["cup_white"]["start"])
+    w.objects["toothbrush_blue"] = obj("toothbrush", "bathroom_sink_counter", owner="ana")
+    w.where["toothbrush_blue"] = {"at": "inside", "carrier": "cup_white"}
+    for r in w.people.values():
+        r.belief["cup_white"] = {"pos": dict(w.where["cup_white"]), "day": -1, "minute": 0}
+        r.belief["toothbrush_blue"] = {"pos": dict(w.where["toothbrush_blue"]), "day": -1, "minute": 0}
+    text = w.describe(w.people["ana"].belief["toothbrush_blue"]["pos"], "ana")
+    assert text == "inside cup_white, on top bathroom_sink_counter"
+    # the cup moved while Ana was elsewhere: she still remembers the old spot
+    w.where["cup_white"] = at_place("kitchen_island")
+    assert "bathroom_sink_counter" in w.describe(w.people["ana"].belief["toothbrush_blue"]["pos"], "ana")
+    assert "kitchen_island" in w.describe(w.where["toothbrush_blue"])

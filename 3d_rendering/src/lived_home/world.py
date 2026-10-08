@@ -147,14 +147,26 @@ class World:
     def things_at(self, place: str) -> list[str]:
         return [o for o, w in self.where.items() if w["at"] == "place" and w["place"] == place]
 
-    def describe(self, pos: dict, rid: Optional[str] = None) -> str:
+    def describe(self, pos: dict, rid: Optional[str] = None, depth: int = 0) -> str:
+        """A position in words. Inside a carrier, also where the carrier is: as the
+        resident remembers it (with rid), or as it is (without)."""
+        if pos["at"] == "inside":
+            c = pos["carrier"]
+            if depth >= 4:
+                return f"inside {c}"
+            if rid is None:
+                where = self.where.get(c)
+            else:
+                b = self.people[rid].belief.get(c)
+                where = b["pos"] if b else None
+            if not where:
+                return f"inside {c}"
+            return f"inside {c}, " + self.describe(where, rid, depth + 1)
         if pos["at"] == "place":
             rel = pos["rel"].replace("_", " ")
             if pos.get("ref"):
                 return f"{rel} {pos['ref']} at {pos['place']}"
             return f"{rel} {pos['place']}"
-        if pos["at"] == "inside":
-            return f"inside {pos['carrier']}"
         if pos["at"] == "unknown":
             return f"not at {pos['not_at']} when you looked; you do not know where"
         if pos["at"] == "worn":
