@@ -43,7 +43,11 @@ RESIDENTS_USER = """The home: {home}
 Its rooms and spots:
 {layout}
 
-Write the two adults who live here. For each:
+Write the two adults who live here.
+- household: one or two sentences: how they are related (a couple, siblings,
+  friends sharing a flat...) and which bed each sleeps in, as this home's
+  bedrooms suggest. Everything later follows this.
+For each:
 - id: their first name in lowercase; name, age, job, personality.
 - sleeps_at: the spot id of the bed where they sleep.
 - weekly_routine: what they usually do on which weekdays, with times (HH:MM)
@@ -100,7 +104,7 @@ Write:
    "anyone"."""
 
 RESIDENT_SYSTEM = """You are {name}, {age}, {job}. {personality}
-You live with {others}. You are taking part in a simulation of everyday life at
+You live with {others}.{household} You are taking part in a simulation of everyday life at
 home: act as yourself, in ordinary detail. You move things with your hands, so
 you carry them from place to place, put them down when you need your hands
 free or when you are done, and sometimes leave them where you were rather than
@@ -228,6 +232,9 @@ FIELDS = """- n: number the things 1, 2, 3, ... in the order you list them.
   that thing: on_top of the stack of books, next_to the kettle, under the
   newspaper, or inside another thing (a pen case in a backpack, a bookmark in
   a book, a wallet in the pocket of jeans).
+- Sink basins and the bathtub are for washing: at the start only a sponge,
+  soap or dishes waiting to be washed are in them. Toothbrushes stand in a cup
+  or holder (list it) on the counter beside the sink.
 """
 
 PERSONAL_USER = """The home: {home}
@@ -359,7 +366,8 @@ For every spot in {room}, give:
 - name: what the spot is, in a few words, as part of its furniture ("top",
   "second shelf from the bottom", "upper drawer", "inside the oven", "seat").
   Spots on one piece of furniture need different names. Use the heights and the
-  parts; say left or right only when the part says so. An open spot whose part
+  parts; say left or right only when the part says so. The largest surface of a
+  bed is the mattress; of a sofa or chair, the seat. An open spot whose part
   is a basin or sink is the sink basin; a tub is the bathtub; a drum is the
   washing machine drum.
 - Parts and catalogue names are clues from the 3D files, not words people use:

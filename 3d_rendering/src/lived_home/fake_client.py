@@ -91,7 +91,7 @@ class FakeClient:
                                      "behavior": "walk", "how_often": "most times"}
                                     for i in range(4)],
                 "scheduled_stressors": ["monday meeting"]})
-        return {"thinking": "fake", "residents": residents}
+        return {"thinking": "fake", "household": "Ana and Ben are a couple and share the main bed.", "residents": residents}
 
     def _objects(self, props, rng):
         arr = props["objects"]

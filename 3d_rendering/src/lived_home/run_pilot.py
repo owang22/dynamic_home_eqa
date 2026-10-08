@@ -87,7 +87,8 @@ class Household:
                           for g, kinds in groups.items() if kinds)
         return prompts.RESIDENT_SYSTEM.format(
             name=p["name"], age=p["age"], job=p["job"], personality=p["personality"],
-            others=others, object_habits=lines(p["object_habits"]),
+            others=others, household=(" " + p["household"]) if p.get("household") else "",
+            object_habits=lines(p["object_habits"]),
             response_habits=lines(habits), stressors=lines(p["scheduled_stressors"]),
             types=types, layout=self.layout.describe())
 

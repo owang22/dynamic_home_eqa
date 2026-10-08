@@ -240,8 +240,20 @@ def start_position(o: dict, layout: Layout) -> dict:
     return at_place(o["place"], rel, ref)
 
 
+def mattress(layout: Layout, place: str) -> str:
+    """The largest surface of the bed a resident chose: a bed in a 3D home has a
+    headboard ledge and a frame as well as the mattress."""
+    p = layout.places[place]
+    same = [q for q in layout.places.values()
+            if q.room == p.room and q.furniture == p.furniture and q.kind == SURFACE
+            and q.geometry.get("area") is not None]
+    if p.geometry.get("area") is None or not same:
+        return place
+    return max(same, key=lambda q: q.geometry["area"]).id
+
+
 def residents_text(residents: list[dict]) -> str:
-    out = []
+    out = [residents[0]["household"]] if residents and residents[0].get("household") else []
     for r in residents:
         out.append(f"{r['id']} ({r['name']}, {r['age']}, {r['job']}). {r['personality']}\n"
                    + "  Habits with things:\n" + "\n".join(f"  - {h}" for h in r["object_habits"]))
@@ -378,6 +390,9 @@ def create(caller: Caller, seed: int, out: pathlib.Path, effort_note: str = "",
                       residents_schema(layout.place_ids, rooms), check_residents(layout),
                       max_tokens=40000)
     residents = res["residents"]
+    for r in residents:
+        r["household"] = res["household"]
+        r["sleeps_at"] = mattress(layout, r["sleeps_at"])
     rids = [r["id"] for r in residents]
 
     # appliances and fixtures (stovetop, sink, oven) that the layout call treated as

@@ -113,7 +113,7 @@ def residents_schema(place_ids: list[str], rooms: list[str]) -> dict:
         }), 4, 10),
         "scheduled_stressors": _arr(STR, 1, 5),
     })
-    return _obj({"thinking": STR, "residents": _arr(resident, 2, 2)})
+    return _obj({"thinking": STR, "household": STR, "residents": _arr(resident, 2, 2)})
 
 
 def room_objects_schema(place_ids: list[str], owners: list[str], lo: int, hi: int,

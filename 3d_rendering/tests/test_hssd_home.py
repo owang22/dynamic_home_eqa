@@ -142,3 +142,24 @@ def test_create_layout_one_home_call_and_one_per_room():
     assert caller.stages == ["create/hssd_home", "create/hssd_room/kitchen", "create/hssd_room/hallway"]
     assert len(lay.places) == 7 and rec["scene"] == "s1"
     assert all(len(p.descriptions) >= 2 for p in lay.places.values())
+
+
+def test_a_resident_sleeps_on_the_mattress_not_the_headboard():
+    from lived_home.household import mattress
+    h = home()
+    h["furniture"].append({"id": "bed_1", "room": "hallway", "category": "bed", "name": "Bed",
+                           "template": "t_bed", "instance_list": "object_instances",
+                           "instance_index": 9, "articulated": False, "position": [0, 0, 6],
+                           "rotation": [1, 0, 0, 0], "scale": 1.0})
+    h["spots"] += [
+        {"id": "bed_1_top", "furniture": "bed_1", "room": "hallway", "kind": "surface",
+         "source": "x", "height": 0.54, "area": 0.99, "center": [0, 0.5, 6], "index": 1, "of": 2},
+        {"id": "bed_1_ledge", "furniture": "bed_1", "room": "hallway", "kind": "surface",
+         "source": "x", "height": 0.70, "area": 0.06, "center": [0, 0.7, 6], "index": 2, "of": 2}]
+    furniture, spots = HH.number(h)
+    fn, sn = _names(furniture, spots)
+    sn = {s["n"]: {"name": s["id"], "descriptions": ["a", "b"]} for s in spots}
+    lay = HH.build(h, furniture, spots, HH._distinct(fn, furniture), sn, 1)
+    ledge = next(p.id for p in lay.places.values() if p.geometry["hssd_spot"] == "bed_1_ledge")
+    top = next(p.id for p in lay.places.values() if p.geometry["hssd_spot"] == "bed_1_top")
+    assert mattress(lay, ledge) == top and mattress(lay, top) == top
