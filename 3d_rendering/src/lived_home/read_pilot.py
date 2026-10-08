@@ -40,7 +40,8 @@ def load(run: pathlib.Path) -> dict:
             "events": jl(run / "events.jsonl"), "responses": jl(run / "responses.jsonl"),
             "failed": jl(run / "failed.jsonl"), "calls": jl(run / "calls.jsonl"),
             "usage": json.loads((run / "usage.json").read_text()) if (run / "usage.json").exists() else {},
-            "subjects": json.loads((run / "subjects.json").read_text()) if (run / "subjects.json").exists() else {}}
+            "subjects": json.loads((run / "subjects.json").read_text()) if (run / "subjects.json").exists() else {},
+            "run": run}
 
 
 def where(snap: dict) -> str:
@@ -166,6 +167,30 @@ def report(r: dict) -> str:
     out.append(f"- times someone left home: {len(outings)}; carrying: "
                + "; ".join(f"{e['resident']} d{e['day']} {e['time']}: {', '.join(e.get('carried') or []) or 'nothing'}"
                            for e in outings[:12]))
+    run = r.get("run")
+    ints = json.loads((run / "interrupts.json").read_text()) if run and (run / "interrupts.json").exists() else []
+    if ints:
+        kinds = collections.Counter("speech" if any(" said to you" in n or "called out" in n or "texted" in n for n in x["news"])
+                                    else "handed something" if any("handed you" in n for n in x["news"])
+                                    else "disturbance" for x in ints)
+        out.append(f"- interruptions (a resident's actions stopped and they were asked again): {len(ints)} "
+                   f"({dict(kinds)}); long activities cut short: {sum(1 for e in events if e['verb'] == 'interrupted')}")
+    ess = []
+    for e in outings:
+        c = e.get("carried") or []
+        miss = [k for k, ws in (("phone", ("phone_",)), ("keys", ("key",)), ("wallet", ("wallet",)))
+                if not any(any(w in x for w in ws) and "charger" not in x for x in c)]
+        ess.append((e["resident"], e["day"], e["time"], miss))
+    if ess:
+        out.append("- essentials missing when leaving the house: "
+                   + "; ".join(f"{who} d{d} {t}: {', '.join(m) or 'none missing'}" for who, d, t, m in ess))
+    for d, day in enumerate(days, start=1):
+        worn = {}
+        for oid, snap in day.get("end_of_day", {}).items():
+            if snap.get("pos", {}).get("at") == "worn":
+                worn.setdefault(snap["pos"]["person"], []).append(oid)
+        out.append(f"- day {d} at night, wearing: " + "; ".join(f"{k}: {', '.join(v)}" for k, v in sorted(worn.items()))
+                   if worn else f"- day {d} at night, wearing: nobody wears anything")
     for d, day in enumerate(days, start=1):
         held = {rid: v["hands"] for rid, v in day.get("at_night", {}).items() if v["hands"]}
         if held:
@@ -237,6 +262,16 @@ def report(r: dict) -> str:
     sick_who = subjects.get("sick") or (sick["happens_to"] if sick else [])
     out.append(f"Sick days: {sick_days}; sick: {sick_who}\n")
     done_days = sorted({e["day"] for e in events})
+    # the room each action happened in: where the resident was, from their walks
+    room_of = {p["id"]: p["room"] for p in spec["layout"]["places"]}
+    here = {r["id"]: room_of.get(r["sleeps_at"], "?") for r in spec["residents"]}
+    where_now = {}
+    for e in events:
+        if e["verb"] in ("go", "come_home"):
+            here[e["resident"]] = room_of.get(e["to"], "?")
+        elif e["verb"] == "leave_home":
+            here[e["resident"]] = "out of the house"
+        where_now[id(e)] = here.get(e["resident"], "?")
     for res in spec["residents"]:
         rid = res["id"]
         role = "sick" if rid in sick_who else "the other resident"
@@ -253,7 +288,8 @@ def report(r: dict) -> str:
             out_min = sum(e["minutes"] for e in ev if e["verb"] == "leave_home")
             objs = {e["object"] for e in ev if e["verb"] in MOVES and e["object"]}
             per_day_objs[d] = objs
-            rooms = collections.Counter(_room(spec, e) for e in ev if e["verb"] in ("do", "put_down", "pick_up"))
+            rooms = collections.Counter(where_now[id(e)] for e in ev
+                                        if e["verb"] in ("do", "put_down", "pick_up", "wear", "pocket", "say"))
             st = [x["inner_state"] for x in r["responses"] if x["day"] == d and x["resident"] == rid]
             mean = lambda k: f"{statistics.mean(s[k] for s in st):.1f}" if st else "-"
             out.append(f"| {d} | {'yes' if d in sick_days else ''} | {wake} | {sleep} | {out_min} | {len(objs)} | "
