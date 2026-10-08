@@ -26,13 +26,12 @@ NEIGHBOURS = 2          # nearby furniture named for each piece
 
 
 def _part(spot: dict) -> str:
-    """The asset maker's label for the part a spot comes from ("cabinet_left_bottom")."""
-    src = spot.get("source") or ""
-    word = src.split(" ")[0]
-    if "_receptacle_mesh" in word:
-        word = word.split("_receptacle_mesh")[0]
-        word = word.split("_", 1)[1] if "_" in word else word
-        return word
+    """What part of the furniture a spot is, as the extractor named it: the asset
+    maker's label ("cabinet left bottom") or what the 3D shape showed ("sink basin",
+    "tub", "drum", "seat")."""
+    f = spot.get("furniture")
+    if f and spot["id"].startswith(f + "_"):
+        return spot["id"][len(f) + 1:].replace("_", " ")
     return ""
 
 
@@ -65,7 +64,7 @@ def _spot_line(s: dict) -> str:
     if s.get("behind_door"):
         tags.append("behind a door")
     if _part(s):
-        tags.append(f"maker's label {_part(s)}")
+        tags.append(f"part: {_part(s)}")
     return f"S{s['n']} (" + ", ".join(tags) + ")"
 
 

@@ -332,7 +332,8 @@ each room, and every spot on or in each piece where something can be put. Each
 piece shows its catalogue name, the pieces nearest to it, and its spots: kind
 (surface: things go on top; open: a basin or bin you see into; closed: behind a
 door or in a drawer), height above the floor, size, which of several heights it
-is, and sometimes the maker's label for the part (left, bottom...).
+is, and the part it is (from the 3D files: "sink basin", "tub", "drawer01",
+"cabinet left bottom").
 
 {home}
 
@@ -342,8 +343,10 @@ is, and sometimes the maker's label for the part (left, bottom...).
   would use ("tv console", "kitchen counter by the window", "left nightstand",
   "bookcase by the sofa"). Catalogue names and categories can be wrong or odd
   ("bathroom cabinet" in a kitchen holding the sink is the sink cabinet);
-  judge from the room, the neighbours and the spot heights. Two pieces in one
-  room need different names. Say left or right only if the list shows it.
+  judge from the room, the neighbours, the parts and the spot heights. Two
+  pieces in one room need different names: tell them apart by what they are
+  near ("bookcase by the sofa"), never by left or right, which the list does
+  not show. No brand or product names (KALLAX, Highland).
 - entry_spot: the spot just inside the front door, where someone coming home
   first stands or drops their keys (often the hallway floor or a hallway surface)."""
 
@@ -356,7 +359,12 @@ For every spot in {room}, give:
 - name: what the spot is, in a few words, as part of its furniture ("top",
   "second shelf from the bottom", "upper drawer", "inside the oven", "seat").
   Spots on one piece of furniture need different names. Use the heights and the
-  maker's labels; say left or right only when the label says so.
+  parts; say left or right only when the part says so. An open spot whose part
+  is a basin or sink is the sink basin; a tub is the bathtub; a drum is the
+  washing machine drum.
+- Parts and catalogue names are clues from the 3D files, not words people use:
+  never copy a label with a number (drawer02) or a brand or product name into a
+  name or a description.
 - descriptions: 2 to 4 ways a person would say where something is when it is
   there ("on the hallway cabinet", "the top drawer of the dresser", "on the
   kitchen counter by the fridge"). Name only what the list shows nearby."""

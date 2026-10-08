@@ -68,7 +68,7 @@ def test_listing_shows_every_spot_and_maker_label():
     text = HH.home_text(h, furniture, spots)
     for s in spots:
         assert f"S{s['n']}" in text
-    assert "maker's label stove1" in text and "maker's label drawer01" in text
+    assert "part: stove1" in text and "part: sink" in text and "part: drawer" in text
     assert "doors and drawers can be opened" in text
 
 
