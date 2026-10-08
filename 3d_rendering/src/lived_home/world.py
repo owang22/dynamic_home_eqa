@@ -742,7 +742,8 @@ class World:
             o = self.objects[oid]
             rec = {"type": o["type"], "looks": o.get("looks"), "color": o.get("color"),
                    "material": o.get("material"), "size": o.get("size"),
-                   "owner": o.get("owner"), "hidden": self.hidden(oid),
+                   "owner": o.get("owner"), "holds": self.carrier_kind(oid),
+                   "hidden": self.hidden(oid),
                    "dirty": oid in self.dirty}
             if pos["at"] == "place":
                 rec.update(room=self.layout.room_of(pos["place"]), place=pos["place"],

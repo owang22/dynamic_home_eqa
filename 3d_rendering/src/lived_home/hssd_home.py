@@ -196,7 +196,8 @@ def _unique(base: str, taken: set) -> str:
 def geometry(scene: str, s: dict, f: dict | None) -> dict:
     """Enough to find the spot in the 3D scene again."""
     g = {"scene": scene, "hssd_spot": s["id"], "source": s.get("source"),
-         "center": s.get("center"), "height": s.get("height"), "area": s.get("area")}
+         "center": s.get("center"), "height": s.get("height"), "area": s.get("area"),
+         "behind_door": s.get("behind_door"), "hssd_filter": s.get("hssd_filter")}
     if f:
         g.update({"hssd_furniture": f["id"], "category": f.get("category"),
                   "template": f.get("template"), "instance_list": f.get("instance_list"),
