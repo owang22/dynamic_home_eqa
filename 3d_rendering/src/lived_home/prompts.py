@@ -199,8 +199,10 @@ FIELDS = """- n: number the things 1, 2, 3, ... in the order you list them.
 - looks: 1 to 4 words that tell this one apart from the others of its type by
   how it looks ("red ceramic", "white chipped", "usb c braided"). Not who owns
   it. Its name in the simulation is made from type and looks (mug_red_ceramic).
-- Many types have several instances across the home: a home has 4 to 8 mugs,
-  several chargers, 2 pairs of reading glasses. Put each where it belongs.
+- Many types have several instances across the home, as in a real home:
+  plates, bowls, glasses and cutlery for everyday meals, mugs, towels,
+  chargers, pens, food and drink in the fridge and pantry, two pairs of
+  reading glasses. Put each where it belongs.
 - color, material, size, pattern ("plain" if none), condition ("new", "worn",
   "chipped", ...).
 - owner: a resident id only where people in the home would say whose it is
@@ -300,3 +302,19 @@ whatever this household would keep. {lo} to {hi} things, owner none, each where
 this household keeps it. Any spot in the home.
 
 {fields}"""
+
+GAPS_USER = """The home: {home}
+
+The residents:
+{residents}
+
+What is in the home now, room by room (kind x how many):
+{inventory}
+
+List the everyday things this household would obviously have that are missing
+or far too few for two people living here (for example only one plate, no
+forks, no towels, no food in the fridge). Name each kind, how many more there
+should be, and the room where they belong. Only real gaps; at most {hi} kinds."""
+
+GAPS_FOCUS = """
+Add exactly these, which the home is missing: {items}."""

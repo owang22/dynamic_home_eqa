@@ -22,6 +22,10 @@ class FakeClient:
         props = schema["properties"]
         if "rooms" in props:
             return json.dumps(self._layout())
+        if "gaps" in props:
+            return json.dumps({"thinking": "fake", "gaps": [
+                {"type": "plate", "count": 4, "room": "kitchen", "why": "only one"},
+                {"type": "fork", "count": 4, "room": "kitchen", "why": "none"}]})
         if "additions" in props:
             spots = [{"id": f"kitchen_{w}", "name": w.replace("_", " "), "kind": k, "hidden": False,
                       "descriptions": [w, f"the {w}"]}

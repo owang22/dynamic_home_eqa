@@ -12,7 +12,7 @@ import re
 from lived_home import prompts
 from lived_home.calls import Caller, to_minute
 from lived_home.layout import CONTAINER, Layout
-from lived_home.schemas import (fixtures_schema, layout_schema, residents_schema, room_objects_schema,
+from lived_home.schemas import (fixtures_schema, gaps_schema, layout_schema, residents_schema, room_objects_schema,
                                 situations_schema)
 from lived_home.world import at_place
 
@@ -22,6 +22,7 @@ OBJECTS_LO, OBJECTS_HI, OBJECTS_TARGET = 150, 300, 220
 PERSONAL_LO, PERSONAL_HI = 18, 32
 FIXTURES_LO, FIXTURES_HI = 4, 24
 SUPPLIES_LO, SUPPLIES_HI = 15, 30
+GAPS_HI = 12
 
 
 def slug(text: str) -> str:
@@ -396,6 +397,26 @@ def create(caller: Caller, seed: int, out: pathlib.Path, effort_note: str = "") 
         objects += _room_objects(caller, layout, residents, rids, room, need, objects,
                                  f"/more{passes}", dropped)
 
+    # what an everyday home obviously has that is missing (one plate, no forks), added
+    # room by room
+    inventory = collections.defaultdict(collections.Counter)
+    for o in objects:
+        inventory[layout.room_of(_base_place(o, objects))][o["type"]] += 1
+    inv_text = "\n".join(f"{room}: " + ", ".join(f"{k} x{n}" for k, n in sorted(c.items()))
+                         for room, c in inventory.items())
+    gaps = caller.call("create/gaps", prompts.CREATE_SYSTEM,
+                       prompts.GAPS_USER.format(home=lay["home"], residents=residents_text(residents),
+                                                inventory=inv_text, hi=GAPS_HI),
+                       gaps_schema(rooms, GAPS_HI), max_tokens=20000)
+    by_room = collections.defaultdict(list)
+    for g in gaps["gaps"]:
+        by_room[g["room"]].append(g)
+    for room, gs in by_room.items():
+        need = min(sum(g["count"] for g in gs), 40)
+        items = "; ".join(f"{g['count']} x {g['type']}" for g in gs)
+        objects += _room_objects(caller, layout, residents, rids, room, need, objects, "/gaps",
+                                 dropped, focus=prompts.GAPS_FOCUS.format(items=items))
+
     sit = caller.call("create/situations", prompts.CREATE_SYSTEM,
                       prompts.SITUATIONS_USER.format(residents=residents_text(residents)),
                       situations_schema(rids), check_situations, max_tokens=40000)
@@ -412,7 +433,7 @@ def create(caller: Caller, seed: int, out: pathlib.Path, effort_note: str = "") 
 
 
 def _room_objects(caller, layout, residents, rids, room, target, so_far, suffix,
-                  dropped: list) -> list[dict]:
+                  dropped: list, focus: str = "") -> list[dict]:
     room_places = layout.places_in(room)
     taken = {o["id"]: {"owner": o["owner"], "place": o["place"], "type": o["type"],
                        "looks": set(o.get("look_words") or [])} for o in so_far}
@@ -438,6 +459,9 @@ def _room_objects(caller, layout, residents, rids, room, target, so_far, suffix,
     else:
         taken_text = ""
     lo, hi = max(3, round(target * 0.75)), round(target * 1.3) + 2
+    if focus:
+        lo, hi = max(1, target), target + 3
+        taken_text += focus
     ans = caller.call(f"create/objects/{room}{suffix}", prompts.CREATE_SYSTEM,
                       prompts.OBJECTS_USER.format(layout=layout.describe(),
                                                   residents=residents_text(residents),
