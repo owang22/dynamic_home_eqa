@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import collections
 import math
+import re
 
 from lived_home import prompts
 from lived_home.household import slug
@@ -102,9 +103,56 @@ def home_schema(furniture: list[dict], spots: list[dict]) -> dict:
 
 
 def room_schema(room_spots: list[dict]) -> dict:
-    item = _obj({"n": {"type": "integer", "enum": [s["n"] for s in room_spots]},
-                 "name": STR, "descriptions": _arr(STR, 2, 4)})
-    return _obj({"thinking": STR, "spots": _arr(item, len(room_spots), len(room_spots))})
+    """One key per spot (S111, S112, ...), so a name cannot slide onto the next spot
+    the way it can in a list."""
+    item = _obj({"name": STR, "descriptions": _arr(STR, 2, 4)})
+    return _obj({"thinking": STR, "spots": _obj({f"S{s['n']}": item for s in room_spots})})
+
+
+RESTING = {"bed": "the mattress", "couch": "the seat", "sofa": "the seat",
+           "sofa chair": "the seat", "chair": "the seat", "armchair": "the seat"}
+
+
+def room_spots_text(room_spots: list[dict], furniture: list[dict], names: dict) -> str:
+    """The spots to name in one room, one line each, with the furniture's name."""
+    fby = {f["id"]: f for f in furniture}
+    largest = {}
+    for s in room_spots:
+        if s["furniture"] and s["kind"] == "surface":
+            if s["furniture"] not in largest or s["area"] > largest[s["furniture"]]["area"]:
+                largest[s["furniture"]] = s
+    lines = []
+    for s in room_spots:
+        f = fby.get(s["furniture"])
+        what = names[f["n"]] if f else "the floor"
+        hint = ""
+        if f and largest.get(f["id"]) is s and f["category"] in RESTING:
+            hint = f" - the largest surface of this {f['category']}: {RESTING[f['category']]}"
+        lines.append(f"  S{s['n']} on {what}: {_spot_line(s).split(' (', 1)[1].rstrip(')')}{hint}")
+    return "\n".join(lines)
+
+
+_CLOSED_OK = r"drawer|inside|cupboard|compartment|cabinet|oven|fridge|freezer|wardrobe|drum|hamper|behind|interior|shelf"
+_SURFACE_BAD = r"\b(drawer|cupboard|compartment|inside|drum|oven)\b"
+_SURFACE_OK = r"\b(top|on|surface|countertop|shelf|seat|mattress|ledge|lid|rim|floor|grill|burner|hob)\b"
+
+
+def check_names(room_spots: list[dict]):
+    """A name that contradicts what the spot is (a drawer called "top", a surface
+    called "drawer") means the name was meant for another spot."""
+    by_key = {f"S{s['n']}": s for s in room_spots}
+    def check(ans: dict) -> str:
+        bad = []
+        for key, x in ans["spots"].items():
+            s, name = by_key[key], x["name"].lower()
+            if s["kind"] == "closed" and re.search(r"\b(top|surface|countertop|tabletop|seat|mattress)\b", name) \
+                    and not re.search(_CLOSED_OK, name):
+                bad.append(f"{key} is closed (a drawer or cupboard) but is named '{x['name']}'")
+            if s["kind"] == "surface" and re.search(_SURFACE_BAD, name) and not re.search(_SURFACE_OK, name):
+                bad.append(f"{key} is a surface but is named '{x['name']}'")
+        return ("Some names do not fit their spot; check each against its own line: "
+                + "; ".join(bad) + ".") if bad else ""
+    return check
 
 
 def check_cover(key: str, wanted: list[int]):
@@ -197,13 +245,12 @@ def create_layout(caller, home: dict) -> tuple[Layout, dict]:
         if not rs:
             continue
         ra = caller.call(f"create/hssd_room/{r['id']}", prompts.CREATE_SYSTEM,
-                         prompts.HSSD_ROOM_USER.format(home=ans["home"], layout=named,
-                                                       room=r["id"]),
-                         room_schema(rs), check_cover("spots", [s["n"] for s in rs]),
-                         max_tokens=20000)
+                         prompts.HSSD_ROOM_USER.format(home=ans["home"], layout=named, room=r["id"],
+                                                       spots=room_spots_text(rs, furniture, fnames)),
+                         room_schema(rs), check_names(rs), max_tokens=20000)
         rooms[r["id"]] = ra["thinking"]
-        for x in ra["spots"]:
-            snames[x["n"]] = {"name": x["name"].strip(), "descriptions": x["descriptions"]}
+        for key, x in ra["spots"].items():
+            snames[int(key[1:])] = {"name": x["name"].strip(), "descriptions": x["descriptions"]}
     layout = build(home, furniture, spots, fnames, snames, ans["entry_spot"])
     record = {"scene": home["scene"], "home": ans["home"], "thinking": ans["thinking"],
               "room_thinking": rooms}

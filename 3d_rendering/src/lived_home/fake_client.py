@@ -28,10 +28,10 @@ class FakeClient:
                                "furniture": [{"n": n, "name": f"piece {n}"} for n in ns],
                                "entry_spot": props["entry_spot"]["enum"][0]})
         if "spots" in props:                                        # HSSD room naming
-            ns = props["spots"]["items"]["properties"]["n"]["enum"]
-            return json.dumps({"thinking": "fake", "spots": [
-                {"n": n, "name": f"spot {n}", "descriptions": [f"spot {n}", f"the spot {n}"]}
-                for n in ns]})
+            keys = props["spots"]["properties"]
+            return json.dumps({"thinking": "fake", "spots": {
+                k: {"name": f"spot {k}", "descriptions": [f"spot {k}", f"the spot {k}"]}
+                for k in keys}})
         if "gaps" in props:
             return json.dumps({"thinking": "fake", "gaps": [
                 {"type": "plate", "count": 4, "room": "kitchen", "why": "only one"},

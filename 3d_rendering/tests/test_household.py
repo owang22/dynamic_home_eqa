@@ -100,3 +100,12 @@ def test_shared_supplies_keep_a_lookalike_someone_owns():
                                             "looks": {"white", "bottle"}}}
     objs = [thing(1, "pain reliever", "white caplet bottle", owner="none", place="shelf")]
     assert compose_ids(objs, taken, ["daniel"], owner=NOBODY) == []
+
+
+def test_more_forks_asked_for_are_kept_beside_a_look_alike():
+    taken = {"fork_four_tine_steel": {"owner": None, "place": "a", "type": "fork", "looks": {"four", "tine", "steel"}}}
+    objs = [thing(1, "fork", "four tine brushed"), thing(2, "fork", "three tine steel")]
+    assert len(compose_ids([dict(o) for o in objs], dict(taken), [])) == 2     # repeats, without the request
+    kept = [dict(o) for o in objs]
+    assert compose_ids(kept, dict(taken), [], more_of={"fork"}) == []
+    assert [o["id"] for o in kept] == ["fork_four_tine_brushed", "fork_three_tine_steel"]

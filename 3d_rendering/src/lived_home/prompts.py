@@ -362,7 +362,10 @@ HSSD_ROOM_USER = """The home: {home}
 Its rooms, furniture and spots (furniture by the names already chosen):
 {layout}
 
-For every spot in {room}, give:
+The spots of {room} to name, each with its own key:
+{spots}
+
+For each of these spots, under its key, give:
 - name: what the spot is, in a few words, as part of its furniture ("top",
   "second shelf from the bottom", "upper drawer", "inside the oven", "seat").
   Spots on one piece of furniture need different names. Use the heights and the

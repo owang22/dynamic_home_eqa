@@ -154,7 +154,7 @@ def check_room_objects(room_places: set):
 NOBODY = "__nobody__"     # owner for a call listing shared things
 
 
-def compose_ids(objects: list, taken: dict, rids, owner: str = None) -> list:
+def compose_ids(objects: list, taken: dict, rids, owner: str = None, more_of=()) -> list:
     """id = type + looks, in place; resident names are dropped from the looks.
     References (ref = another thing's n) become ids, and a thing placed
     relative to another takes that thing's spot.
@@ -169,7 +169,11 @@ def compose_ids(objects: list, taken: dict, rids, owner: str = None) -> list:
     owner: set for a call that lists one person's own things (or NOBODY for shared
     things). Every thing in it has that owner, so a look-alike with another owner
     is a different thing (two brown wallets in one drawer; the shared painkillers
-    next to his own), and only things with the same owner count."""
+    next to his own), and only things with the same owner count.
+
+    more_of: types the call was asked to add more of (the gaps step); a look-alike
+    at the same spot is then another instance (forks in the cutlery drawer), not
+    the same thing again."""
     target = None if owner == NOBODY else owner
     by_num = {o["n"]: o for o in objects}
     for o in objects:      # spot from the thing referred to (both were asked for; they can disagree)
@@ -189,7 +193,7 @@ def compose_ids(objects: list, taken: dict, rids, owner: str = None) -> list:
         oid = "_".join([kind] + look) if look else f"{kind}_{slug(o['color'])}"
         mine = None if o.get("owner") in (None, "none") else o["owner"]
         same = taken.get(oid)
-        twin = next((tid for tid, x in taken.items() if x["type"] == o["type"]
+        twin = None if o["type"] in more_of else next((tid for tid, x in taken.items() if x["type"] == o["type"]
                      and x["place"] == o["place"] and set(look) & x["looks"]
                      and (owner is None or x["owner"] == target)), None)
         if owner is not None and same and same["owner"] != target:
@@ -442,7 +446,8 @@ def create(caller: Caller, seed: int, out: pathlib.Path, effort_note: str = "",
         need = min(sum(g["count"] for g in gs), 40)
         items = "; ".join(f"{g['count']} x {g['type']}" for g in gs)
         objects += _room_objects(caller, layout, residents, rids, room, need, objects, "/gaps",
-                                 dropped, focus=prompts.GAPS_FOCUS.format(items=items))
+                                 dropped, focus=prompts.GAPS_FOCUS.format(items=items),
+                                 more_of={g["type"].strip().lower() for g in gs})
 
     sit = caller.call("create/situations", prompts.CREATE_SYSTEM,
                       prompts.SITUATIONS_USER.format(residents=residents_text(residents)),
@@ -460,7 +465,7 @@ def create(caller: Caller, seed: int, out: pathlib.Path, effort_note: str = "",
 
 
 def _room_objects(caller, layout, residents, rids, room, target, so_far, suffix,
-                  dropped: list, focus: str = "") -> list[dict]:
+                  dropped: list, focus: str = "", more_of=()) -> list[dict]:
     room_places = layout.places_in(room)
     taken = {o["id"]: {"owner": o["owner"], "place": o["place"], "type": o["type"],
                        "looks": set(o.get("look_words") or [])} for o in so_far}
@@ -496,7 +501,7 @@ def _room_objects(caller, layout, residents, rids, room, target, so_far, suffix,
                                                   fields=prompts.FIELDS, taken=taken_text),
                       room_objects_schema(room_places, rids, lo, hi),
                       check_room_objects(set(room_places)), max_tokens=40000)
-    dropped += compose_ids(ans["objects"], taken, rids)
+    dropped += compose_ids(ans["objects"], taken, rids, more_of=more_of)
     return [_finish(o, layout) for o in ans["objects"]]
 
 
