@@ -386,6 +386,7 @@ class Household:
         self._flush_events()
         night = {r: {"hands": list(world.people[r].hands), "at": world.people[r].at}
                  for r in self.rids}
+        world.end_of_day()
         for rid in self.rids:
             last = [s for s in self.states if s["resident"] == rid][-1]
             done = ", ".join(ran[rid]) or "nothing you had planned"
@@ -393,6 +394,7 @@ class Household:
                                f"{last['stress']}, tiredness {last['tiredness']}, mood "
                                f"{last['mood']}, health {last['health']} ({last['reason']}).")
         return {"plans": plans, "events": world.log[log_start:], "failed": failed,
+                "positions": world.positions(self.spec.get("scene")),
                 "skipped_activities": skipped, "dropped_after_leaving": dropped_after_leaving,
                 "at_night": night,
                 "end_of_day": world.snapshot(), "active_situations": self.schedule[day]}

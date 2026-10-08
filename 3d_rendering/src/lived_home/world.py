@@ -1,7 +1,9 @@
 """The truth of the home: where every object is and what each resident holds.
 
 Every object is in exactly one spot:
-  {"at": "place",  "place": p, "rel": r, "ref": o or None}   on/in/under/... a place
+  {"at": "place",  "place": p, "rel": r, "ref": o or None}   r is inside, on_top, under or
+                                                              next_to; the reference is the
+                                                              object o, or the place itself
   {"at": "hand",   "person": rid}                              in a hand (two each)
   {"at": "pocket", "person": rid}
   {"at": "worn",   "person": rid}                              clothes, shoes, a watch, a backpack on
@@ -14,10 +16,15 @@ pockets of what the resident wears; taking those clothes off leaves it there. Mo
 moves what is inside it. A resident who leaves the house takes what they hold,
 their pockets, and what is inside the carriers they hold.
 
-A position is hidden from someone standing in the room when it is in a closed
-container place, on a hidden place (under the bed), under or behind something,
-or inside a closed carrier. Residents see hidden positions only at the place
-they stand at, and see inside a closed carrier only when they hold it.
+A position is hidden from someone standing in the room when it is inside a
+closed container (a closed place, or a bag, box or pocket), or under something
+(including under the place itself, such as under the bed), or resting on or next
+to something hidden. Everything else is visible. Residents see hidden positions
+only at the place they stand at, and see inside a closed carrier only when they
+hold it.
+
+Clothes get dirty when worn for a day and clean again when washed: anything
+inside a washing machine when someone spends time at it.
 
 Each resident keeps their own memory of where they last saw each object, which
 is out of date when someone else moved it.
@@ -27,12 +34,15 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Optional
 
-from lived_home.layout import CONTAINER, Layout
+from lived_home.layout import CLOSED, SURFACE, Layout
 
 HANDS = 2
 POCKET_SLOTS = 5
-RELATIONS = ["on", "in", "under", "behind", "next_to", "on_top_of"]
-HIDING_RELATIONS = {"under", "behind"}
+RELATIONS = ["inside", "on_top", "under", "next_to"]
+HIDING_RELATIONS = {"under"}
+WASHABLE = ("shirt", "t-shirt", "blouse", "trousers", "pants", "jeans", "shorts", "socks",
+            "underwear", "bra", "leggings", "sweater", "hoodie", "sweatshirt", "cardigan",
+            "dress", "skirt", "polo", "joggers")
 CARRIER_KINDS = ["none", "open", "closed", "pockets"]   # pockets: clothes with pockets
 SHUT = ("closed", "pockets")                               # contents not seen from outside
 
@@ -41,8 +51,14 @@ def clock(minute: int) -> str:
     return f"{(minute // 60) % 24:02d}:{minute % 60:02d}"
 
 
-def at_place(place: str, rel: str = "on", ref: Optional[str] = None) -> dict:
+def at_place(place: str, rel: str = "on_top", ref: Optional[str] = None) -> dict:
     return {"at": "place", "place": place, "rel": rel, "ref": ref}
+
+
+def washable(type_: str) -> bool:
+    words = type_.lower().replace("-", " ").split()
+    return any(w in words or type_.lower().endswith(w) for w in WASHABLE) and \
+        not any(w in type_.lower() for w in ("sleep", "pajama", "pyjama", "robe"))
 
 
 @dataclass
@@ -74,6 +90,8 @@ class World:
             person.belief = {oid: {"pos": dict(o["start"]), "day": -1, "minute": 0}
                              for oid, o in objects.items()}
         self.day, self.log = 0, []
+        self.dirty: set = set()               # clothes worn and not yet washed
+        self.worn_today: set = set()
 
     # ---------------------------------------------------------------- facts
     def carrier_kind(self, oid: str) -> str:
@@ -108,7 +126,11 @@ class World:
         if pos["at"] != "place":
             return False
         place = self.layout.places[pos["place"]]
-        return (not place.seen_from_room) or pos["rel"] in HIDING_RELATIONS
+        if pos["rel"] in HIDING_RELATIONS:
+            return True
+        if pos["rel"] == "inside" and not pos.get("ref") and place.kind == CLOSED:
+            return True
+        return bool(pos.get("ref")) and pos["ref"] in self.where and self.hidden(pos["ref"])
 
     def room_of_person(self, rid: str) -> Optional[str]:
         at = self.people[rid].at
@@ -118,6 +140,9 @@ class World:
         room = self.room_of_person(rid)
         return [p for p in self.people.values()
                 if p.rid != rid and p.at and room and self.layout.room_of(p.at) == room]
+
+    def default_rel(self, place: str) -> str:
+        return "on_top" if self.layout.places[place].kind == SURFACE else "inside"
 
     def things_at(self, place: str) -> list[str]:
         return [o for o, w in self.where.items() if w["at"] == "place" and w["place"] == place]
@@ -160,7 +185,7 @@ class World:
             return False
         if not self.hidden(oid):
             return True
-        # at the place itself: open the drawer, look behind the toaster,
+        # at the place itself: open the drawer, look under the bed,
         # but not inside a closed bag
         closed_bag = pos["at"] == "inside" and self.carrier_kind(pos["carrier"]) in SHUT
         return place == person.at and not closed_bag
@@ -177,7 +202,7 @@ class World:
         pos = dict(self.where[oid])
         if pos["at"] == "place" and pos.get("ref") and not self.can_see(person.rid, pos["ref"]):
             pos["ref"] = None                       # they see the thing, not what it leans on
-            pos["rel"] = "in" if self.layout.places[pos["place"]].kind == CONTAINER else "on"
+            pos["rel"] = self.default_rel(pos["place"])
         old = person.belief.get(oid)
         if old is None or old["pos"] != pos:
             person.noticed[oid] = (self.day, minute)
@@ -198,9 +223,11 @@ class World:
 
     def _label(self, oid: str, rid: str) -> str:
         pos, out = self.where[oid], oid + self.owner_tag(oid, rid)
+        if oid in self.dirty:
+            out += " (worn, needs washing)"
         ref = pos.get("ref") if pos["at"] == "place" and pos.get("ref") and self.can_see(rid, pos["ref"]) else None
-        if pos["at"] == "place" and (ref or pos["rel"] in ("under", "behind", "next_to")):
-            out += f" ({pos['rel'].replace('_', ' ')}{' ' + ref if ref else ''})"
+        if pos["at"] == "place" and (ref or pos["rel"] in ("under", "next_to")):
+            out += f" ({pos['rel'].replace('_', ' ')} {ref if ref else 'it'})"
         if self.contents(oid):
             inside = [i for i in self.contents(oid) if self.can_see(rid, i)]
             if inside:
@@ -253,7 +280,8 @@ class World:
             b = person.belief[oid]
             when = "where it was at the start" if b["day"] < 0 else f"day {b['day']} {clock(b['minute'])}"
             by_type.setdefault(self.objects[oid]["type"], []).append(
-                f"{oid}{self.owner_tag(oid, rid)} {self.describe(b['pos'], rid)} (last seen {when})")
+                f"{oid}{self.owner_tag(oid, rid)}{' (needs washing)' if oid in self.dirty else ''} "
+                f"{self.describe(b['pos'], rid)} (last seen {when})")
         if not by_type:
             return "  (nothing you need to keep in mind)"
         return "\n".join(f"  {t}: " + "; ".join(items) for t, items in sorted(by_type.items()))
@@ -357,13 +385,12 @@ class World:
 
     def _settle(self, oid: str) -> list[str]:
         """oid was taken away: things recorded relative to it (on top of it,
-        behind it) now just sit at the place."""
+        next to it) now just sit at the place."""
         moved = []
         for other, w in self.where.items():
             if w["at"] == "place" and w.get("ref") == oid:
-                place = self.layout.places[w["place"]]
                 w["ref"] = None
-                w["rel"] = "in" if place.kind == CONTAINER else "on"
+                w["rel"] = self.default_rel(w["place"])
                 moved.append(other)
         return moved
 
@@ -457,6 +484,7 @@ class World:
             settled = self._settle(oid)
             self.where[oid] = {"at": "worn", "person": rid}
             person.worn.append(oid)
+            self.worn_today.add(oid)
             self._touch(person, oid, minute)
             return self._done(rid, act, minute, source, self.where[oid], walked, settled=settled)
 
@@ -467,7 +495,7 @@ class World:
             if other is None or other.rid == rid:
                 return False, "Give it to whom?", 0
             if self.holder_of(oid) != rid:          # hands, pockets, worn, or in a bag they carry
-                return False, f"You are not holding {oid}.", 0
+                return False, self._not_holding(rid, oid), 0
             if other.at is None or self.layout.room_of(other.at) != self.room_of_person(rid):
                 return False, f"{other.rid} is not in this room.", 0
             if len(other.hands) >= HANDS:
@@ -485,8 +513,10 @@ class World:
             named = act.get("place") or ""
             if named in self.layout.places and named != person.at:
                 walked = self._step(rid, named, minute)
+            washed = self._wash_at(person.at)
             return self._done(rid, act, minute, person.at, person.at,
-                              walked + max(1, act.get("minutes") or 1))
+                              walked + max(1, act.get("minutes") or 1),
+                              **({"washed": washed} if washed else {}))
         if verb == "say":
             to = act.get("person") or ""
             if to and (to == rid or to not in self.people):
@@ -506,7 +536,7 @@ class World:
         if oid is None:
             return False, "Put down what?", 0
         if self.holder_of(oid) != rid:          # hands, pockets, worn, or in a bag they carry
-            return False, f"You are not holding {oid}.", 0
+            return False, self._not_holding(rid, oid), 0
         place = act.get("place") or person.at
         if place not in self.layout.places:
             return False, f"There is no place called {place}.", 0
@@ -521,8 +551,8 @@ class World:
         kind = self.layout.places[place].kind
         source = dict(self.where[oid])
 
-        if ref is not None and rel == "in":
-            # into a bag, box or basket
+        if ref is not None and rel == "inside":
+            # inside another thing: a bag, a basket, a mug, a book
             steps = []
             if self.holder_of(ref) != rid:
                 ok, message, steps = self._reach(rid, ref, minute, place if act.get("place") else None)
@@ -542,11 +572,11 @@ class World:
             return self._done(rid, act, minute, source, self.where[oid], walked)
 
         walked = 0
-        if ref is not None and self.where[ref] == {"at": "hand", "person": rid} and rel != "in":
+        if ref is not None and self.where[ref] == {"at": "hand", "person": rid}:
             # bread on top of the plate still in their other hand: the plate goes down first
             if place != person.at:
                 walked = self._step(rid, place, minute)
-            self.where[ref] = at_place(place, "in" if kind == CONTAINER else "on", None)
+            self.where[ref] = at_place(place, self.default_rel(place), None)
             person.hands.remove(ref)
             self._touch(person, ref, minute)
             self.log.append(self._event(rid, {"verb": "put_down", "object": ref,
@@ -556,19 +586,40 @@ class World:
         if ref is not None:
             if self.where[ref]["at"] != "place" or self.where[ref]["place"] != place:
                 return False, (f"{ref} is not at {place}; you can only put {oid} "
-                               f"{rel or 'next to'} something that is there."), 0
-            if rel in ("", "on", "in"):
-                rel = "on_top_of" if rel in ("", "on") else rel
-        if rel == "":
-            rel = "in" if kind == CONTAINER else "on"
-        if ref is None and rel in ("in", "on", "on_top_of"):
-            rel = "in" if kind == CONTAINER else "on"
+                               f"{(rel or 'next_to').replace('_', ' ')} something that is there."), 0
+            if rel == "":
+                rel = "next_to"
+        else:
+            if rel == "" or (rel == "inside" and kind == SURFACE) or (rel == "on_top" and kind != SURFACE):
+                rel = self.default_rel(place)
         if place != person.at:
             walked += self._step(rid, place, minute)
         self._release(person, oid)
         self.where[oid] = at_place(place, rel, ref)
         self._touch(person, oid, minute)
         return self._done(rid, act, minute, source, self.where[oid], walked)
+
+    def _not_holding(self, rid: str, oid: str) -> str:
+        """Not holding it; if they can see it, say where (what they would see)."""
+        if self.can_see(rid, oid):
+            return f"You are not holding {self.tag(oid, rid)}; it is {self.describe(self.where[oid], rid)}."
+        return f"You are not holding {self.tag(oid, rid)}."
+
+    def _wash_at(self, place: Optional[str]) -> list:
+        """Time spent at a washing machine washes what is inside it."""
+        if not place:
+            return []
+        p = self.layout.places[place]
+        if "wash" not in (place + " " + p.name + " " + p.furniture).lower() or "dish" in place:
+            return []
+        inside = [o for o in self.objects if self.place_of(o) == place and o in self.dirty]
+        self.dirty -= set(inside)
+        return inside
+
+    def end_of_day(self) -> None:
+        """Clothes worn today are dirty tonight (sleepwear excepted)."""
+        self.dirty |= {o for o in self.worn_today if washable(self.objects[o]["type"])}
+        self.worn_today = {o for p in self.people.values() for o in p.worn}
 
     def _carried(self, person: Resident) -> list:
         carried = person.hands + person.pocket + person.worn
@@ -627,6 +678,44 @@ class World:
             for o in oids:
                 if self.can_see(other.rid, o):
                     self._remember(other, o, minute)
+
+    def positions(self, scene: Optional[str] = None) -> dict:
+        """Everything needed to place every object in a 3D scene: for each object its
+        room, place, relation and reference (an object, a place or a person), and
+        whether it is hidden; for each place its room, furniture and geometry."""
+        objs = {}
+        for oid, pos in self.where.items():
+            o = self.objects[oid]
+            rec = {"type": o["type"], "looks": o.get("looks"), "color": o.get("color"),
+                   "material": o.get("material"), "size": o.get("size"),
+                   "owner": o.get("owner"), "hidden": self.hidden(oid),
+                   "dirty": oid in self.dirty}
+            if pos["at"] == "place":
+                rec.update(room=self.layout.room_of(pos["place"]), place=pos["place"],
+                           relation=pos["rel"],
+                           reference=pos["ref"] or pos["place"],
+                           reference_kind="object" if pos["ref"] else "place")
+            elif pos["at"] == "inside":
+                base = self.place_of(oid)
+                holder = self.holder_of(oid)
+                at = base or (self.people[holder].at if holder else None)
+                rec.update(room=self.layout.room_of(at) if at else "out_of_house", place=base or at,
+                           relation="inside", reference=pos["carrier"], reference_kind="object")
+            else:                                  # on a person: hand, pocket or worn
+                who = self.people[pos["person"]]
+                rec.update(room=self.layout.room_of(who.at) if who.at else "out_of_house",
+                           place=who.at, relation={"worn": "worn_by", "hand": "held_by",
+                                                   "pocket": "in_pocket_of"}[pos["at"]],
+                           reference=pos["person"], reference_kind="person")
+            objs[oid] = rec
+        places = {pid: {"room": p.room, "furniture": p.furniture, "name": p.name, "kind": p.kind,
+                        **({"geometry": p.geometry} if p.geometry else {})}
+                  for pid, p in self.layout.places.items()}
+        people = {r: {"room": self.layout.room_of(p.at) if p.at else "out_of_house", "place": p.at}
+                  for r, p in self.people.items()}
+        return {"scene": scene, "day": self.day, "relations": RELATIONS,
+                "hidden_rule": "inside a closed container (place or object), or under something",
+                "people": people, "places": places, "objects": objs}
 
     def snapshot(self) -> dict:
         """Where every object is right now, with the place it sits at (through

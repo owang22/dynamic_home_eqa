@@ -1,10 +1,11 @@
 """Rooms, furniture and the places on and in each piece.
 
-A place is a surface (things on it are seen from anywhere in the room) or a
-closed container (a drawer, a cabinet, the fridge: its contents are seen only
-by someone standing at it). A surface can also be hidden from the room, like
-the floor under the bed. Each place has 2 to 4 plain descriptions a person
-might use for it.
+A place is a surface (things on top of it are seen from anywhere in the room),
+an open container (a sink, a basket shelf: what is inside is seen) or a closed
+container (a drawer, a cabinet, the fridge: what is inside is seen only by
+someone standing at it). "Under the bed" is not a place: it is the relation
+under, with the bed's spot as reference. Each place has 2 to 4 plain
+descriptions a person might use for it.
 
 Layouts are generated per household (lived_home.household). PILOT_HOME, the
 draft's hand-written home, stays as the fallback for tests.
@@ -13,7 +14,9 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
-SURFACE, CONTAINER = "surface", "container"
+SURFACE, OPEN, CLOSED = "surface", "open", "closed"
+CONTAINER = CLOSED                     # older layouts said "container" for closed ones
+KINDS = [SURFACE, OPEN, CLOSED]
 
 
 @dataclass
@@ -22,13 +25,18 @@ class Place:
     room: str
     furniture: str
     name: str
-    kind: str                       # SURFACE or CONTAINER
-    hidden: bool = False            # True: not seen from the room (under the bed)
+    kind: str                       # SURFACE, OPEN or CLOSED
+    hidden: bool = False            # older layouts only; no longer used
     descriptions: list = field(default_factory=list)
+    geometry: dict = field(default_factory=dict)   # from a 3D home: furniture, centre, height
+
+    def __post_init__(self):
+        if self.kind == "container":
+            self.kind = CLOSED
 
     @property
-    def seen_from_room(self) -> bool:
-        return self.kind == SURFACE and not self.hidden
+    def is_container(self) -> bool:
+        return self.kind in (OPEN, CLOSED)
 
 
 class Layout:
@@ -63,8 +71,8 @@ class Layout:
             for furniture, places in by_furniture.items():
                 parts = []
                 for p in places:
-                    tags = [t for t, on in (("closed", p.kind == CONTAINER),
-                                            ("out of sight", p.hidden)) if on]
+                    tags = [t for t, on in (("closed", p.kind == CLOSED),
+                                            ("open container", p.kind == OPEN)) if on]
                     parts.append(f"{p.id} ({p.name}{', ' + ', '.join(tags) if tags else ''})")
                 lines.append(f"  {furniture}: " + "; ".join(parts))
         return "\n".join(lines)
@@ -84,7 +92,8 @@ class Layout:
             for piece in room["furniture"]:
                 for s in piece["spots"]:
                     places.append(Place(s["id"], room["id"], piece["name"], s["name"],
-                                        s["kind"], s["hidden"], list(s["descriptions"])))
+                                        s["kind"], s.get("hidden", False), list(s["descriptions"]),
+                                        dict(s.get("geometry") or {})))
         return cls(places, spec["entry_spot"])
 
 
@@ -99,7 +108,6 @@ _PILOT = {
     ],
     "living_room": [
         ("living_couch", "couch", SURFACE),
-        ("living_couch_under_cushions", "under the couch cushions", SURFACE, True),
         ("living_armchair", "armchair", SURFACE),
         ("living_coffee_table", "coffee table", SURFACE),
         ("living_tv_stand", "TV stand", SURFACE),
@@ -115,7 +123,7 @@ _PILOT = {
         ("kitchen_island", "kitchen island", SURFACE),
         ("kitchen_windowsill", "kitchen windowsill", SURFACE),
         ("kitchen_dish_rack", "dish rack", SURFACE),
-        ("kitchen_sink", "sink", SURFACE),
+        ("kitchen_sink", "sink", OPEN),
         ("kitchen_upper_cabinet", "upper cabinet", CONTAINER),
         ("kitchen_lower_cabinet", "lower cabinet", CONTAINER),
         ("kitchen_pantry", "pantry", CONTAINER),
@@ -131,7 +139,6 @@ _PILOT = {
     ],
     "main_bedroom": [
         ("bed", "bed", SURFACE),
-        ("under_bed", "under the bed", SURFACE, True),
         ("nightstand_left", "left nightstand", SURFACE),
         ("nightstand_right", "right nightstand", SURFACE),
         ("dresser_top", "top of the dresser", SURFACE),
@@ -151,7 +158,8 @@ _PILOT = {
         ("bathroom_towel_rack", "towel rack", SURFACE),
         ("bathroom_bathtub_edge", "edge of the bathtub", SURFACE),
         ("bathroom_cabinet", "cabinet behind the mirror", CONTAINER),
-        ("laundry_hamper", "laundry hamper", CONTAINER),
+        ("laundry_hamper", "laundry hamper", CLOSED),
+        ("laundry_washer", "washing machine drum", CLOSED),
     ],
     "balcony": [
         ("balcony_table", "balcony table", SURFACE),

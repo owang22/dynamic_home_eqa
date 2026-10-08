@@ -70,8 +70,7 @@ def enum_count(schema: dict) -> int:
 def layout_schema() -> dict:
     spot = _obj({
         "id": STR, "name": STR,
-        "kind": _enum(["surface", "container"]),
-        "hidden": BOOL,
+        "kind": _enum(["surface", "open", "closed"]),
         "descriptions": _arr(STR, 2, 4),
     })
     furniture = _obj({"name": STR, "spots": _arr(spot, 1, 14)})
@@ -83,8 +82,7 @@ def layout_schema() -> dict:
 def fixtures_schema(rooms: list[str], lo: int, hi: int) -> dict:
     spot = _obj({
         "id": STR, "name": STR,
-        "kind": _enum(["surface", "container"]),
-        "hidden": BOOL,
+        "kind": _enum(["surface", "open", "closed"]),
         "descriptions": _arr(STR, 2, 4),
     })
     item = _obj({"room": _enum(rooms), "fixture": STR, "spots": _arr(spot, 1, 8)})

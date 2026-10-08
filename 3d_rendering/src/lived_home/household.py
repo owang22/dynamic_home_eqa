@@ -11,7 +11,7 @@ import re
 
 from lived_home import prompts
 from lived_home.calls import Caller, to_minute
-from lived_home.layout import CONTAINER, Layout
+from lived_home.layout import CLOSED, SURFACE, Layout
 from lived_home.schemas import (fixtures_schema, gaps_schema, layout_schema, residents_schema, room_objects_schema,
                                 situations_schema)
 from lived_home.world import at_place
@@ -109,7 +109,7 @@ def check_residents(layout: Layout):
             habit_ids = [h["id"] for h in r["response_habits"]]
             if len(set(habit_ids)) != len(habit_ids):
                 return f"{r['id']}'s response habit ids must be unique."
-            if layout.places[r["sleeps_at"]].kind == CONTAINER:
+            if layout.places[r["sleeps_at"]].kind == CLOSED:
                 return f"{r['id']} sleeps_at {r['sleeps_at']}, which is a closed container."
             for item in r["weekly_routine"]:
                 if to_minute(item["start"]) is None or to_minute(item["end"]) is None:
@@ -229,14 +229,14 @@ def check_situations(spec: dict) -> str:
 
 # ---------------------------------------------------------------- building
 def start_position(o: dict, layout: Layout) -> dict:
+    """inside another thing is held by that thing; relative to the spot itself,
+    inside and on_top follow the spot's kind; under and next_to stay."""
     kind = layout.places[o["place"]].kind
     rel, ref = o["relation"], o["ref"] or None
-    if ref and rel == "in":
+    if ref and rel == "inside":
         return {"at": "inside", "carrier": ref}
-    if ref and rel == "on":
-        rel = "on_top_of"
-    if not ref and rel in ("on", "in", "on_top_of", "next_to"):
-        rel = "in" if kind == CONTAINER else "on"
+    if not ref and rel in ("inside", "on_top"):
+        rel = "on_top" if kind == SURFACE else "inside"
     return at_place(o["place"], rel, ref)
 
 
@@ -438,8 +438,8 @@ def _room_objects(caller, layout, residents, rids, room, target, so_far, suffix,
     taken = {o["id"]: {"owner": o["owner"], "place": o["place"], "type": o["type"],
                        "looks": set(o.get("look_words") or [])} for o in so_far}
     spots = "\n".join(f"  {p} ({layout.places[p].name}"
-                      f"{', closed' if layout.places[p].kind == CONTAINER else ''}"
-                      f"{', out of sight' if layout.places[p].hidden else ''})" for p in room_places)
+                      f"{', closed' if layout.places[p].kind == CLOSED else ''}"
+                      f"{', open container' if layout.places[p].kind == 'open' else ''})" for p in room_places)
     if so_far:
         by_type = collections.defaultdict(list)
         for o in so_far:
@@ -485,11 +485,11 @@ def _base_place(o: dict, objects: list) -> str:
 def summarize(spec: dict) -> str:
     layout = Layout.from_json(spec["layout"])
     types = collections.Counter(o["type"] for o in spec["objects"])
-    hidden = sum(1 for p in layout.places.values() if not p.seen_from_room)
+    hidden = sum(1 for p in layout.places.values() if p.kind == CLOSED)
     rooms = collections.Counter(layout.room_of(o["start"].get("place") or "") for o in spec["objects"]
                                 if o["start"]["at"] == "place")
     lines = [f"# Household (seed {spec['seed']}): {spec['home']}", "",
-             f"- places: {len(layout.places)} ({hidden} closed or out of sight) in {len(layout.rooms)} rooms",
+             f"- places: {len(layout.places)} ({hidden} closed) in {len(layout.rooms)} rooms",
              f"- objects: {len(spec['objects'])} of {len(types)} types; "
              f"{sum(1 for c in types.values() if c >= 2)} types have 2+ instances",
              f"- owned: {sum(1 for o in spec['objects'] if o['owner'])}; "

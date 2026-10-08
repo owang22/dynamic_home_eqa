@@ -29,10 +29,10 @@ the floor next to the shoe rack. Aim for {lo} to {hi} spots in total.
 - Do not name the residents yet; describe furniture by where it is (the left
   nightstand, the window side of the bed), not by who uses it.
 - name: what the spot is, in a few words.
-- kind: surface if things on it are out in the open; container if it closes
-  (a drawer, cabinet, fridge, closet, hamper, lidded bin).
-- hidden: true for a surface that someone standing in the room cannot see,
-  like under the bed, behind the couch, or under the couch cushions.
+- kind: surface if things go on top of it; open for a container you can see
+  into (a sink, an open bin, a basket shelf); closed if it shuts (a drawer,
+  a cabinet, the fridge, a closet, a lidded hamper). "Under the bed" is not a
+  spot: people put things under a spot.
 - descriptions: 2 to 4 ways a person would say where something is when it is
   there ("the counter by the stove", "next to the kettle", "left of the sink").
 - entry_spot: the spot id just inside the front door, where someone coming
@@ -167,10 +167,12 @@ finish it. Actions:
     spot you name, and you walk there), from a bag you hold, or from your
     pocket; you need a free hand
   put_down (object, optional place, relation, ref): put it at the spot you are
-    at (or the spot you name, and you walk there). relation: on, in, under, behind,
-    next_to, on_top_of; ref: an object at that spot ("behind" the toaster, "on
-    top of" the books). To put something in a bag, a basket, or the pocket of
-    a jacket or pants lying here: relation in, ref that thing.
+    at (or the spot you name, and you walk there). relation is one of inside,
+    on_top, under, next_to; ref is an object at that spot, or empty to mean the
+    spot itself. Examples: on_top of the spot (a counter, a shelf); inside the
+    spot (a drawer, a sink); under the spot (under the bed); next_to
+    toaster_silver; on_top of book_stack_blue; inside a bag, a basket, a mug
+    or the pocket of a jacket lying here (relation inside, ref that thing).
   pocket (object): put something small in a pocket of what you are wearing
   wear (object): put on clothes, shoes, a watch, glasses or a backpack, or
     clip something on (keys on a belt, a badge on a lanyard); to take it off,
@@ -181,7 +183,8 @@ finish it. Actions:
   leave_home (minutes, text): go out until you are back home; minutes is the
     whole time away, covering every out-of-house activity in a row (commute
     and work together). What is in your hands, pockets and the bags you hold
-    comes along.
+    comes along; whatever you leave behind stays home (most people check for
+    their phone, keys and wallet on the way out).
 Use empty strings and 0 for fields an action does not need. If you look for
 something and it is not where you expected, you will be told what you see
 there instead. Say how you feel now (stress 0 calm to 3 very stressed; tiredness 0 rested to 3 exhausted; mood 0
@@ -194,7 +197,8 @@ You have just woken up and are still in what you slept in."""
 
 BEDTIME = """
 After this activity you go to sleep. Before you sleep, put down whatever you
-are still holding and take off what you have been wearing today."""
+are holding and empty your pockets, wherever makes sense to you, and change
+into what you sleep in."""
 
 FIELDS = """- n: number the things 1, 2, 3, ... in the order you list them.
 - type: a plain lowercase noun shared by every instance of that kind of thing
@@ -217,12 +221,13 @@ FIELDS = """- n: number the things 1, 2, 3, ... in the order you list them.
   hold other things in the open (a basket, a tray, a bowl, a mug); closed for
   bags, backpacks, boxes with lids and cases; pockets for clothes with pockets
   (jeans, work pants, jackets, hoodies); none for everything else.
-- place: the spot it is at. relation and ref: where it is at that spot. With
-  ref 0, relation is on (a surface) or in (a container). With ref set to the n
-  of another thing in your list at the same spot, it is relative to that
-  thing: behind the toaster, on top of the stack of books, next to the
-  kettle, or inside another thing (a pen case in a backpack, a bookmark in a
-  book, a wallet in the pocket of jeans): relation in, ref its n.
+- place: the spot it is at. relation (inside, on_top, under, next_to) and ref:
+  where it is at that spot. With ref 0 the relation is to the spot itself:
+  on_top of a surface, inside a drawer or a sink, under the bed. With ref set
+  to the n of another thing in your list at the same spot, it is relative to
+  that thing: on_top of the stack of books, next_to the kettle, under the
+  newspaper, or inside another thing (a pen case in a backpack, a bookmark in
+  a book, a wallet in the pocket of jeans).
 """
 
 PERSONAL_USER = """The home: {home}
@@ -277,7 +282,7 @@ the sink, the bathtub edge, a shower shelf; in a laundry room the washer and
 dryer drums; anything similar elsewhere. List the ones this home has that are
 not yet spots, grouped under the room and the fixture they belong to, as spots
 with the same fields as before (id starting with the room id, name, kind,
-hidden, 2 to 4 descriptions). Add only what is missing; {lo} to {hi} spots."""
+2 to 4 descriptions). Add only what is missing; {lo} to {hi} spots."""
 
 INTERRUPTED = """
 You are in the middle of this activity. So far you have: {done}.

@@ -27,10 +27,10 @@ class FakeClient:
                 {"type": "plate", "count": 4, "room": "kitchen", "why": "only one"},
                 {"type": "fork", "count": 4, "room": "kitchen", "why": "none"}]})
         if "additions" in props:
-            spots = [{"id": f"kitchen_{w}", "name": w.replace("_", " "), "kind": k, "hidden": False,
+            spots = [{"id": f"kitchen_{w}", "name": w.replace("_", " "), "kind": k,
                       "descriptions": [w, f"the {w}"]}
-                     for w, k in (("stovetop", "surface"), ("sink_basin", "surface"),
-                                  ("oven", "container"), ("dish_rack", "surface"))]
+                     for w, k in (("stovetop", "surface"), ("sink_basin", "open"),
+                                  ("oven", "closed"), ("dish_rack", "surface"))]
             return json.dumps({"thinking": "fake", "additions": [
                 {"room": "kitchen", "fixture": "range and sink", "spots": spots}]})
         if "residents" in props:
@@ -56,8 +56,7 @@ class FakeClient:
             furniture = []
             for f in range(3):
                 spots = [{"id": f"{room}_f{f}_s{s}", "name": f"spot {s} of piece {f}",
-                          "kind": "container" if s == 3 else "surface",
-                          "hidden": s == 2 and f == 0,
+                          "kind": "closed" if s == 3 else ("open" if s == 2 and f == 0 else "surface"),
                           "descriptions": [f"spot {s}", f"piece {f} spot {s}"]}
                          for s in range(4)]
                 furniture.append({"name": f"{room} piece {f}", "spots": spots})
@@ -94,10 +93,10 @@ class FakeClient:
             kind, carrier = TYPES[(i + len(room)) % len(TYPES)]
             n = i + 1
             place = rng.choice([p for p in places if not p.endswith("s3")] or places)
-            relation, ref = "on", 0
+            relation, ref = "on_top", 0
             here = [c for c in carriers if c[1] == place]
             if carrier == "none" and here and rng.random() < 0.5:
-                relation, ref = "in", here[0][0]
+                relation, ref = "inside", here[0][0]
             out.append({"n": n, "type": kind, "looks": f"{room} {i}", "color": "red", "material": "plastic",
                         "size": "small", "pattern": "plain", "condition": "worn",
                         "owner": rng.choice(owners), "pocketable": kind in POCKETABLE,
@@ -154,8 +153,8 @@ class FakeClient:
                 act(verb, object=rng.choice(seen or objects))
             elif verb == "put_down" and held:
                 o = held.pop()
-                rel = rng.choice(["", "on", "in", "behind", "under", "next_to"])
-                ref = rng.choice(seen) if seen and rel in ("behind", "next_to", "in") else ""
+                rel = rng.choice(["", "on_top", "inside", "under", "next_to"])
+                ref = rng.choice(seen) if seen and rel in ("next_to", "inside") and rng.random() < 0.5 else ""
                 act("put_down", object=o, relation=rel, ref=ref)
             elif verb == "give" and held:
                 act("give", object=held.pop(), person=rng.choice(people))

@@ -7,7 +7,7 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "src"))
 from lived_home.household import check_room_objects, compose_ids   # noqa: E402
 
 
-def thing(n, type_, looks, ref=0, rel="on", carrier="none", place="a", **kw):
+def thing(n, type_, looks, ref=0, rel="on_top", carrier="none", place="a", **kw):
     o = {"n": n, "type": type_, "looks": looks, "color": "red", "material": "ceramic",
          "condition": "worn", "pattern": "plain", "place": place, "relation": rel,
          "ref": ref, "carrier": carrier}
@@ -29,16 +29,16 @@ def test_clash_takes_next_attribute_then_number():
 
 
 def test_refs_become_ids():
-    objs = [thing(1, "tote bag", "canvas", carrier="closed"), thing(2, "wallet", "brown", ref=1, rel="in")]
+    objs = [thing(1, "tote bag", "canvas", carrier="closed"), thing(2, "wallet", "brown", ref=1, rel="inside")]
     assert check_room_objects({"a"})({"objects": objs}) == ""
     compose_ids(objs, {}, [])
     assert objs[1]["ref"] == "tote_bag_canvas"
 
 
 def test_semantic_problems_listed_together():
-    objs = [thing(1, "book", "green", ref=2, rel="on_top_of"), thing(2, "book", "blue", ref=1, rel="on_top_of"),
-            thing(3, "wallet", "brown", ref=4, rel="in"), thing(4, "mug", "red"),
-            thing(5, "bag", "x", ref=6, rel="in", carrier="closed"), thing(6, "basket", "y", carrier="open"),
+    objs = [thing(1, "book", "green", ref=2, rel="on_top"), thing(2, "book", "blue", ref=1, rel="on_top"),
+            thing(3, "wallet", "brown", ref=4, rel="inside"), thing(4, "mug", "red"),
+            thing(5, "bag", "x", ref=6, rel="inside", carrier="closed"), thing(6, "basket", "y", carrier="open"),
             thing(7, "pen", "z", ref=9)]
     msg = check_room_objects({"a"})({"objects": objs})
     assert "loop" in msg and "not another thing" in msg
@@ -57,7 +57,7 @@ def test_owned_thing_described_again_is_dropped_but_shared_kept():
 
 def test_thing_in_a_bag_takes_the_bags_spot():
     objs = [thing(1, "tote bag", "canvas", carrier="open", place="hook"),
-            thing(2, "gloves", "gray", ref=1, rel="in", place="floor")]
+            thing(2, "gloves", "gray", ref=1, rel="inside", place="floor")]
     assert check_room_objects({"hook", "floor"})({"objects": objs}) == ""
     compose_ids(objs, {}, [])
     assert objs[1]["place"] == "hook" and objs[1]["place_as_written"] == "floor"
@@ -65,7 +65,7 @@ def test_thing_in_a_bag_takes_the_bags_spot():
 
 def test_same_type_same_spot_shared_look_is_dropped():
     taken = {"fruit_bowl_blue_stoneware": {"owner": None, "place": "a", "type": "fruit bowl", "looks": {"blue", "stoneware"}}}
-    objs = [thing(1, "fruit bowl", "blue glazed", carrier="open"), thing(2, "apple", "red", ref=1, rel="in")]
+    objs = [thing(1, "fruit bowl", "blue glazed", carrier="open"), thing(2, "apple", "red", ref=1, rel="inside")]
     dropped = compose_ids(objs, taken, [])
     assert [o["n"] for o in dropped] == [1] and objs[0]["ref"] == ""
 
