@@ -408,6 +408,39 @@ def _short(a: dict) -> str:
     return " ".join(bits)
 
 
+def _save_checkpoint(home: "Household", out: pathlib.Path, day: int) -> None:
+    """Everything the next day needs (world, memories, inbox, recaps), without the
+    model client."""
+    import pickle
+    caller, home.caller = home.caller, None
+    try:
+        (out / "checkpoints").mkdir(exist_ok=True)
+        (out / "checkpoints" / f"day_{day:02d}.pkl").write_bytes(pickle.dumps(home))
+    finally:
+        home.caller = caller
+
+
+def _load_checkpoint(out: pathlib.Path, day: int, caller) -> "Household":
+    import pickle
+    home = pickle.loads((out / "checkpoints" / f"day_{day:02d}.pkl").read_bytes())
+    home.caller = caller
+    return home
+
+
+def _cut_logs(out: pathlib.Path, day: int) -> None:
+    """Drop log rows from days after the resume point (a resumed run rewrites them)."""
+    for name in ("events.jsonl", "responses.jsonl", "failed.jsonl"):
+        p = out / name
+        if p.exists():
+            keep = [l for l in p.read_text().splitlines() if l.strip() and json.loads(l).get("day", 0) <= day]
+            p.write_text("".join(k + "\n" for k in keep))
+    for d in out.glob("day_*"):
+        if d.is_dir() and int(d.name.split("_")[1]) > day:
+            for f in d.iterdir():
+                f.unlink()
+            d.rmdir()
+
+
 def make_client(model: str, fake: bool, effort: str):
     if fake:
         from lived_home.fake_client import FakeClient
@@ -433,6 +466,9 @@ def main() -> None:
     ap.add_argument("--pilot_layout", action="store_true",
                     help="(fake runs) use the hand-written layout instead of generating one")
     ap.add_argument("--create_only", action="store_true")
+    ap.add_argument("--resume", type=int, default=0,
+                    help="continue from the saved state at the end of this day (1-based); "
+                         "logs after that day are cut back first")
     ap.add_argument("--fake", action="store_true", help="offline scripted residents, for testing")
     args = ap.parse_args()
 
@@ -453,16 +489,23 @@ def main() -> None:
         parts = args.sick.split(":")
         forced = [("sick", int(parts[0]), int(parts[1]), *parts[2:3])]
     home = Household(caller, spec, args.days, args.variation, args.seed, forced, args.out)
+    first_day = 0
+    if args.resume:
+        first_day = args.resume
+        home = _load_checkpoint(args.out, args.resume, caller)
+        _cut_logs(args.out, args.resume)
+        print(f"resumed after day {args.resume}", flush=True)
     (args.out / "schedule.json").write_text(json.dumps(home.schedule, indent=1))
     (args.out / "subjects.json").write_text(json.dumps(home.subjects, indent=1))
     print(f"forced situations happen to: {home.subjects}", flush=True)
     print(f"act schema uses enums: {home.enums}", flush=True)
-    for day in range(args.days):
+    for day in range(first_day, args.days):
         result = home.run_day(day)
         folder = args.out / f"day_{day + 1:02d}"
         folder.mkdir(exist_ok=True)
         for name, value in result.items():
             (folder / f"{name}.json").write_text(json.dumps(value, indent=1))
+        _save_checkpoint(home, args.out, day + 1)
         (args.out / "inner_states.json").write_text(json.dumps(home.states, indent=1))
         (args.out / "interrupts.json").write_text(json.dumps(home.interrupts, indent=1))
         (args.out / "thoughts.json").write_text(json.dumps(home.thoughts, indent=1))
