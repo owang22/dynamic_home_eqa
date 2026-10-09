@@ -80,7 +80,7 @@ def asked_name(oid: str, objects: dict, names: dict, first_names: dict) -> str:
 
 def is_plural(type_: str) -> bool:
     last = type_.lower().split()[-1]
-    return last.endswith("s") and not last.endswith(("ss", "us"))
+    return last.endswith("s") and not last.endswith(("ss", "us", "os", "is", "as"))
 
 
 def where_is(name: str, type_: str) -> str:
