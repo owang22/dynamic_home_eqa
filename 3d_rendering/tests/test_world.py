@@ -534,3 +534,12 @@ def test_stack_only_on_something_as_big_and_full_spots_marked():
     ok, msg, _ = w.apply("ana", A("put_down", object="towel_big", place="kitchen_counter_by_sink",
                                   relation="on_top", ref="coaster_cork"), 2)
     assert not ok and "too big" in msg
+
+
+def test_nothing_goes_under_a_floor():
+    w = make()
+    w.layout.places["kitchen_island"].geometry = {"height": 0.0, "area": 9.0}
+    w.apply("ana", A("go", place="kitchen_counter_by_sink"), 0)
+    w.apply("ana", A("pick_up", object="mug_red"), 0)
+    ok, msg, _ = w.apply("ana", A("put_down", object="mug_red", place="kitchen_island", relation="under"), 1)
+    assert ok and w.where["mug_red"]["rel"] == "on_top" and not w.hidden("mug_red")

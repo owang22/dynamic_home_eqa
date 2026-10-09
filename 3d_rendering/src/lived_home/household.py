@@ -252,6 +252,8 @@ def start_position(o: dict, layout: Layout) -> dict:
         return {"at": "inside", "carrier": ref}
     if not ref and rel in ("inside", "on_top"):
         rel = "on_top" if kind == SURFACE else "inside"
+    if not ref and rel == "under" and (layout.places[o["place"]].geometry.get("height") or 1.0) < 0.15:
+        rel = "on_top"                         # nothing goes under a floor
     return at_place(o["place"], rel, ref)
 
 
