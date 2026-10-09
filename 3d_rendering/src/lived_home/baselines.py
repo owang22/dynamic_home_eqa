@@ -130,7 +130,7 @@ def main() -> None:
             f"{100 * c[n] / c['n']:.0f}% ({100 * c[n + ' (room)'] / c['n']:.0f}%)" for n in names) + " |")
         if d >= 2:
             tot.update(c)
-    lines.append(f"| 2-7 | {tot['n']} | " + " | ".join(
+    lines.append(f"| 2-{max(s['by_day'])} | {tot['n']} | " + " | ".join(
         f"{100 * tot[n] / tot['n']:.0f}% ({100 * tot[n + ' (room)'] / tot['n']:.0f}%)" for n in names) + " |")
     lines += ["", "Only the questions where the object moved since the previous question time "
               "(the cases where looking 2 hours ago does not help):", "",
@@ -143,7 +143,7 @@ def main() -> None:
         if d >= 2:
             tot.update(c)
     if tot["n"]:
-        lines.append(f"| 2-7 | {tot['n']} | " + " | ".join(f"{100 * tot[n] / tot['n']:.0f}%" for n in names) + " |")
+        lines.append(f"| 2-{max(s['by_day'])} | {tot['n']} | " + " | ".join(f"{100 * tot[n] / tot['n']:.0f}%" for n in names) + " |")
     text = "\n".join(lines) + "\n"
     (run / "baselines.md").write_text(text)
     print(text)
