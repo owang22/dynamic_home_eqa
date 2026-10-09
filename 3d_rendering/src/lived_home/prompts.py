@@ -51,7 +51,9 @@ For each:
 - id: their first name in lowercase; name, age, job, personality.
 - sleeps_at: the spot id of the bed where they sleep.
 - weekly_routine: what they usually do on which weekdays, with times (HH:MM)
-  and rooms; use out_of_house for time away.
+  and rooms; use out_of_house for time away. Include the household chores and
+  who does them on which days: laundry (washing, drying, putting away), dishes,
+  cleaning and tidying, shopping, taking out the rubbish.
 - object_habits: specific, personal habits about where they keep, leave or
   carry things ("my reading glasses live on my nightstand", "I drop my keys
   wherever I am when my phone rings", "my work laptop goes to the office with
