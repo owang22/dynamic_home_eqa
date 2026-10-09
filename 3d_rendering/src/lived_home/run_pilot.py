@@ -27,7 +27,11 @@ from lived_home.schemas import WEEKDAYS, act_schema_fitting, plan_schema
 from lived_home.world import World, clock
 
 MAX_REPLANS = 3     # per activity, after an action fails
+SNAPSHOT_TIMES = [h * 60 for h in range(8, 23, 2)]   # 08:00 to 22:00: positions.json at each
 MAX_INTERRUPTS = 3  # per activity; further news waits for the next call
+REPLY_WINDOW = 10   # minutes: a remark answering one made this recently continues a conversation
+MAX_CONVERSATION = 12   # remarks in one conversation before the cap applies again
+FREE_MIN = 15       # finishing this many minutes early gives a call to use the free time
 
 
 def lines(items) -> str:
@@ -252,21 +256,28 @@ class Household:
         news = {r: [] for r in self.rids}          # (minute, text) waiting to interrupt
         n_int = {r: 0 for r in self.rids}
         last_do = {r: None for r in self.rids}    # (log index, start, end) of a do in progress
+        said = collections.defaultdict(lambda: None)   # (speaker, listener) -> minute of last remark
+        talk = collections.defaultdict(int)            # remarks in the pair's ongoing conversation
 
         def asleep(o, t):
             return (t < plans[o][0]["start_min"]
                     or (not pending[o] and o in current and "sleep" in current[o]["activity"].lower()
                         and t >= current[o]["start_min"]))
 
-        def tell(o, t, text, capped=True):
+        def tell(o, t, text, capped=True, reply=False):
             """Something reaches o at minute t: it interrupts what they are doing if
-            they are awake, at home and in an activity; otherwise it waits."""
-            if asleep(o, t):
+            they are awake, at home and in an activity; otherwise it waits for their
+            next call (a remark to someone asleep waits until they wake). A
+            disturbance (capped=False) always gets through and wakes a sleeper. A
+            reply in an ongoing conversation does not count towards the cap."""
+            if asleep(o, t) and capped:
+                self.inbox[o].append((clock(t), None, None, text + " (while you were asleep)"))
                 return
-            if world.people[o].at is None or o not in current or (capped and n_int[o] >= MAX_INTERRUPTS):
+            if world.people[o].at is None or o not in current or \
+                    (capped and not reply and n_int[o] >= MAX_INTERRUPTS):
                 self.inbox[o].append((clock(t), None, None, text))
                 return
-            news[o].append((t, text))
+            news[o].append((t, text, not reply))
             ld = last_do[o]
             if ld and ld[1] < t < ld[2] and now[o] == ld[2]:   # cut a long do short
                 now[o] = t
@@ -276,20 +287,26 @@ class Household:
                 last_do[o] = None
             now[o] = max(now[o], t) if now[o] < t else now[o]
 
+        snaps, snapshots = list(SNAPSHOT_TIMES), {}
         while True:
-            live = [r for r in self.rids if script[r] or pending[r]]
+            live = [r for r in self.rids if script[r] or pending[r] or (news[r] and r in current)]
             if not live:
                 break
             rid = min(live, key=lambda r: now[r])
+            # everything before a snapshot time has happened once the earliest
+            # resident has reached it
+            while snaps and snaps[0] <= now[rid]:
+                world.minute_now = snaps[0]
+                snapshots[clock(snaps.pop(0)).replace(":", "")] = world.positions(self.spec.get("scene"))
             world.come_home_if_due(rid, now[rid])
             if world.people[rid].at is None:
                 now[rid] = world.people[rid].back_at
                 continue
             free_until = pending[rid][0]["start_min"] if pending[rid] else 10 ** 6
             if news[rid] and rid in current and (script[rid] or now[rid] < free_until):
-                texts = [f"At {clock(t)}: {x}" for t, x in news[rid]]
+                texts = [f"At {clock(t)}: {x}" for t, x, _ in news[rid]]
+                n_int[rid] += any(c for _, _, c in news[rid])
                 news[rid] = []
-                n_int[rid] += 1
                 heard = [f"At {t} {who} {how}: {text}" if who else f"At {t}: {text}"
                          for t, who, how, text in self.inbox[rid]]
                 self.inbox[rid] = []
@@ -308,8 +325,26 @@ class Household:
                     continue
             if not script[rid]:
                 # news that came between activities is told at the next call
-                self.inbox[rid] += [(clock(t), None, None, x) for t, x in news[rid]]
+                self.inbox[rid] += [(clock(t), None, None, x) for t, x, _ in news[rid]]
                 news[rid] = []
+                if not pending[rid]:
+                    continue                     # woken at night and done: back to sleep
+                nxt_start = pending[rid][0]["start_min"]
+                if rid in current and not current[rid].get("free") and now[rid] + FREE_MIN <= nxt_start \
+                        and world.people[rid].at is not None and not asleep(rid, now[rid]):
+                    # done early: what to do with the time until the next activity
+                    room = world.room_of_person(rid)
+                    free = {"activity": f"Free time before: {pending[rid][0]['activity']}",
+                            "start": clock(now[rid]), "end": pending[rid][0]["start"],
+                            "start_min": now[rid], "end_min": nxt_start, "room": room,
+                            "intention": "You finished early. Use the time as you like: rest, a "
+                                         "small chore, start on what comes next, or something else.",
+                            "uses": [], "free": True}
+                    current[rid], replans[rid], done[rid], n_int[rid] = free, 0, [], 0
+                    ran[rid].append(free["activity"])
+                    script[rid] = self.act(rid, day, weekday, free, now[rid], pending[rid], [], "",
+                                           False)
+                    continue
                 activity = pending[rid].pop(0)
                 if activity["end_min"] <= now[rid] and pending[rid]:
                     skipped.append({"resident": rid, "activity": activity["activity"],
@@ -372,7 +407,14 @@ class Household:
                     text = f"{name} said to you: {action.get('text')}"
                 else:
                     text = f"{name} called out to you from another room: {action.get('text')}"
-                tell(o, now[rid], text)
+                pair = tuple(sorted((rid, o)))
+                last = said[(o, rid)]
+                if last is not None and now[rid] - last <= REPLY_WINDOW:
+                    talk[pair] += 1
+                else:
+                    talk[pair] = 1
+                said[(rid, o)] = now[rid]
+                tell(o, now[rid], text, reply=1 < talk[pair] <= MAX_CONVERSATION)
             if not ok:
                 failed.append({"day": day + 1, "time": clock(now[rid]), "resident": rid,
                                "activity": current[rid]["activity"], "action": action,
@@ -393,6 +435,10 @@ class Household:
             if world.people[rid].at not in (None, bed):
                 world.apply(rid, {"verb": "go", "place": bed}, 24 * 60 - 1)
         self._flush_events()
+        for t in snaps:                        # times after everyone's last action
+            world.minute_now = t
+            snapshots[clock(t).replace(":", "")] = world.positions(self.spec.get("scene"))
+        world.minute_now = None
         night = {r: {"hands": list(world.people[r].hands), "at": world.people[r].at}
                  for r in self.rids}
         world.end_of_day()
@@ -404,6 +450,7 @@ class Household:
                                f"{last['mood']}, health {last['health']} ({last['reason']}).")
         return {"plans": plans, "events": world.log[log_start:], "failed": failed,
                 "positions": world.positions(self.spec.get("scene")),
+                **{f"positions_{k}": v for k, v in snapshots.items()},
                 "skipped_activities": skipped, "dropped_after_leaving": dropped_after_leaving,
                 "at_night": night,
                 "end_of_day": world.snapshot(), "active_situations": self.schedule[day]}
@@ -519,6 +566,11 @@ def main() -> None:
                     args.model, args.effort, log_path=args.out / "calls.jsonl")
     if args.household:
         spec = json.loads(args.household.read_text())
+        from lived_home.household import fix_inside_non_holders
+        fixed = fix_inside_non_holders(spec["objects"])
+        if fixed:
+            spec["inside_read_as_next_to"] = spec.get("inside_read_as_next_to", []) + fixed
+            print(f"read 'inside' as next to for {len(fixed)} things that hold nothing: {', '.join(fixed)}")
         (args.out / "household.json").write_text(json.dumps(spec, indent=1))
     else:
         spec = create(caller, args.seed, args.out, scene=args.scene)

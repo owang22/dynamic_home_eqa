@@ -256,6 +256,26 @@ def mattress(layout: Layout, place: str) -> str:
     return max(same, key=lambda q: q.geometry["area"]).id
 
 
+def fix_inside_non_holders(objects: list) -> list:
+    """A thing started "inside" something that holds nothing (a knife inside a
+    fork): the model meant kept together. It goes next to it on the same spot, or,
+    when that thing is itself in a bag, into the bag. Returns the ids changed."""
+    by_id = {o["id"]: o for o in objects}
+    changed = []
+    for o in objects:
+        seen = set()
+        while o["start"].get("at") == "inside" and o["start"]["carrier"] in by_id \
+                and by_id[o["start"]["carrier"]]["carrier"] == "none" and o["id"] not in seen:
+            seen.add(o["id"])
+            holder = by_id[o["start"]["carrier"]]
+            hs = holder["start"]
+            o["start"] = (at_place(hs["place"], "next_to", holder["id"]) if hs.get("at") == "place"
+                          else dict(hs))
+            o["relation_as_said"] = "inside"
+            changed.append(o["id"])
+    return changed
+
+
 def residents_text(residents: list[dict]) -> str:
     out = [residents[0]["household"]] if residents and residents[0].get("household") else []
     for r in residents:
@@ -453,7 +473,9 @@ def create(caller: Caller, seed: int, out: pathlib.Path, effort_note: str = "",
                       prompts.SITUATIONS_USER.format(residents=residents_text(residents)),
                       situations_schema(rids), check_situations, max_tokens=40000)
 
+    fixed_inside = fix_inside_non_holders(objects)
     spec = {"seed": seed, "home": home, "scene": scene, "layout_thinking": lay["thinking"],
+            "inside_read_as_next_to": fixed_inside,
             "layout": layout.to_json(), "residents": residents, "objects": objects,
             "situations": sit["situations"], "small_disturbances": sit["small_disturbances"],
             "dropped_duplicates": [{"id": o["id"], "owner": o["owner"], "place": o["place"]}

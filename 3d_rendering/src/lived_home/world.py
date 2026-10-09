@@ -39,6 +39,8 @@ from lived_home.layout import CLOSED, SURFACE, Layout
 HANDS = 2
 POCKET_SLOTS = 5
 RELATIONS = ["inside", "on_top", "under", "next_to"]
+FOOTPRINT = {"small": 0.01, "medium": 0.04, "large": 0.12}   # m^2 an object takes on a spot
+DEPTH = 4.0        # a drawer, cupboard or basin holds this many times its floor area
 HIDING_RELATIONS = {"under"}
 WASHABLE = ("shirt", "t-shirt", "blouse", "trousers", "pants", "jeans", "shorts", "socks",
             "underwear", "bra", "leggings", "sweater", "hoodie", "sweatshirt", "cardigan",
@@ -605,8 +607,19 @@ class World:
         kind = self.layout.places[place].kind
         source = dict(self.where[oid])
 
+        if ref is not None and rel == "inside" and self.carrier_kind(ref) == "none":
+            # "inside" a fork or a tomato: what was meant is kept together with it -
+            # next to it, or in the bag it is in
+            if self.where[ref]["at"] == "inside":
+                act = dict(act, ref=self.where[ref]["carrier"], ref_as_said=ref)
+                ref = act["ref"]
+                if ref == oid:
+                    return False, f"{act['ref_as_said']} is inside {oid}; {oid} cannot go inside it.", 0
+            else:
+                act = dict(act, relation="next_to", relation_as_said="inside")
+                rel = "next_to"
         if ref is not None and rel == "inside":
-            # inside another thing: a bag, a basket, a mug, a book
+            # inside another thing: a bag, a basket, a mug
             steps = []
             if self.holder_of(ref) != rid:
                 ok, message, steps = self._reach(rid, ref, minute, place if act.get("place") else None)
@@ -646,12 +659,38 @@ class World:
         else:
             if rel == "" or (rel == "inside" and kind == SURFACE) or (rel == "on_top" and kind != SURFACE):
                 rel = self.default_rel(place)
+        full = self._full(place, oid, rel, ref)
+        if full:
+            return False, full, 0
         if place != person.at:
             walked += self._step(rid, place, minute)
         self._release(person, oid)
         self.where[oid] = at_place(place, rel, ref)
         self._touch(person, oid, minute)
         return self._done(rid, act, minute, source, self.where[oid], walked)
+
+    def resting_on(self, place: str) -> list:
+        """Things that take room on a spot: directly on it or in it, not stacked on
+        another thing and not under it."""
+        return [o for o, w in self.where.items()
+                if w["at"] == "place" and w["place"] == place and w["rel"] != "under"
+                and (w.get("ref") is None or w["rel"] == "next_to")]
+
+    def footprint(self, oid: str) -> float:
+        return FOOTPRINT.get(self.objects[oid].get("size"), FOOTPRINT["medium"])
+
+    def _full(self, place: str, oid: str, rel: str, ref) -> str:
+        """Why oid does not fit on the spot, or "" if it does. Only spots with a
+        measured area (from a 3D home) have a limit."""
+        area = (self.layout.places[place].geometry or {}).get("area")
+        if not area or rel == "under" or (ref is not None and rel == "on_top"):
+            return ""
+        room = area * (DEPTH if self.layout.places[place].kind != SURFACE else 1.0)
+        there = self.resting_on(place)
+        if sum(map(self.footprint, there)) + self.footprint(oid) <= room:
+            return ""
+        return (f"There is no room for {oid} at {place}: it already holds "
+                f"{', '.join(there)}. Put it somewhere else, or on top of something there.")
 
     def _not_holding(self, rid: str, oid: str) -> str:
         """Not holding it; if they can see it, say where (what they would see)."""
@@ -708,7 +747,7 @@ class World:
                "person": act.get("person") or None, "why": act.get("why")}
         if act.get("verb") == "put_down":
             out["relation"], out["ref"] = act.get("relation") or None, act.get("ref") or None
-        for k in ("minutes_filled", "minutes_as_written"):
+        for k in ("minutes_filled", "minutes_as_written", "relation_as_said", "ref_as_said"):
             if k in act:
                 out[k] = act[k]
         out.update(extra)
@@ -768,7 +807,9 @@ class World:
                   for pid, p in self.layout.places.items()}
         people = {r: {"room": self.layout.room_of(p.at) if p.at else "out_of_house", "place": p.at}
                   for r, p in self.people.items()}
-        return {"scene": scene, "day": self.day, "relations": RELATIONS,
+        at = getattr(self, "minute_now", None)
+        return {"scene": scene, "day": self.day, "time": clock(at) if at is not None else "end of day",
+                "relations": RELATIONS,
                 "hidden_rule": "inside a closed container (place or object), or under something",
                 "people": people, "places": places, "objects": objs}
 

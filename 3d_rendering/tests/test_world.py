@@ -128,16 +128,18 @@ def test_put_into_bag_and_take_out():
     assert ok, msg
     assert w.where["phone_ana"] == {"at": "inside", "carrier": "backpack_black"}
     assert set(w.contents("backpack_black")) == {"laptop_work", "phone_ana"}
-    # anything can hold things, but not something already inside the thing itself
+    # "inside" a phone, which holds nothing, means with it: here, in the bag it is in
     w.apply("ana", A("pick_up", object="keys_ben"), 3)
     ok, msg, _ = w.apply("ana", A("put_down", object="keys_ben", relation="inside", ref="phone_ana"), 3)
     assert ok, msg
+    assert w.where["keys_ben"] == {"at": "inside", "carrier": "backpack_black"}
+    assert w.log[-1]["ref_as_said"] == "phone_ana"
     w.apply("ana", A("pick_up", object="backpack_black"), 3)
     ok, msg, _ = w.apply("ana", A("put_down", object="backpack_black", relation="inside", ref="phone_ana"), 3)
     assert not ok and "cannot go inside" in msg
     ok, msg, _ = w.apply("ana", A("pick_up", object="laptop_work"), 4)
     assert ok, msg
-    assert w.contents("backpack_black") == ["phone_ana"]
+    assert set(w.contents("backpack_black")) == {"phone_ana", "keys_ben"}
 
 
 def test_a_bag_with_things_in_it_can_go_in_another_bag_and_both_move():
@@ -483,3 +485,35 @@ def test_pajamas_come_off_before_day_clothes_go_on():
     assert w.apply("ben", A("wear", object="jeans_blue"), 3)[0]
     ok, msg, _ = w.apply("ben", A("wear", object="trousers_grey"), 4)
     assert not ok and "jeans_blue" in msg
+
+
+
+def test_inside_a_thing_that_holds_nothing_is_next_to_it():
+    w = make()
+    w.objects["fork_steel"] = obj("fork", "kitchen_counter_by_sink")
+    w.where["fork_steel"] = dict(w.objects["fork_steel"]["start"])
+    w.apply("ana", A("go", place="kitchen_counter_by_sink"), 0)
+    w.apply("ana", A("pick_up", object="mug_red"), 0)
+    ok, msg, _ = w.apply("ana", A("put_down", object="mug_red", relation="inside", ref="fork_steel"), 1)
+    assert ok, msg
+    assert w.where["mug_red"] == at_place("kitchen_counter_by_sink", "next_to", "fork_steel")
+    assert w.log[-1]["relation_as_said"] == "inside"
+
+
+def test_a_full_spot_refuses_more_unless_stacked():
+    w = make()
+    w.layout.places["kitchen_counter_by_sink"].geometry = {"area": 0.06}   # room for 0.06 m2
+    for i in range(2):
+        w.objects[f"plate_{i}"] = dict(obj("plate", "kitchen_counter_by_sink"), size="medium")
+        w.where[f"plate_{i}"] = dict(w.objects[f"plate_{i}"]["start"])
+    w.objects["mug_red"]["size"] = "medium"
+    w.apply("ana", A("go", place="kitchen_counter_by_sink"), 0)
+    w.apply("ana", A("pick_up", object="mug_red"), 0)          # 2 plates left: 0.08 > 0.06 already
+    ok, msg, _ = w.apply("ana", A("put_down", object="mug_red"), 1)
+    assert not ok and "no room" in msg and "plate_0" in msg
+    ok, msg, _ = w.apply("ana", A("put_down", object="mug_red", relation="on_top", ref="plate_0"), 2)
+    assert ok, msg                                            # stacking takes no more room
+    w.layout.places["kitchen_island"].geometry = {}             # no measured area: no limit
+    w.apply("ana", A("pick_up", object="mug_red"), 3)
+    ok, msg, _ = w.apply("ana", A("put_down", object="mug_red", place="kitchen_island"), 4)
+    assert ok, msg
