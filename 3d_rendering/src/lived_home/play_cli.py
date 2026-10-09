@@ -159,7 +159,9 @@ class Game:
             self.finish({"type": "found", "thing": t["thing"], "spot": t["spot"]})
         else:
             self.save()
-            print(f"Not that one: the {t['thing']} is not what was asked for.")
+            twin = any(self.D["names"].get(a) == t["thing"] for a in q["accept"])
+            print("That one looks the same, but it is not the one asked for." if twin
+                  else f"Not that one: the {t['thing']} is not what was asked for.")
 
     def answer(self, kind, arg=None):
         if kind == "putaway":

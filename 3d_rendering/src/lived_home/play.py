@@ -63,6 +63,20 @@ def phrase(o: dict) -> str:
     return " ".join(words + [t]).strip()
 
 
+def asked_name(oid: str, objects: dict, names: dict, first_names: dict) -> str:
+    """How a question names a thing. When another thing looks the same, say whose
+    it is, or failing that use its full description (from its id)."""
+    twins = [x for x in objects if x != oid and names[x] == names[oid]]
+    if not twins:
+        return f"the {names[oid]}"
+    owner = objects[oid].get("owner")
+    if owner in first_names and all(objects[x].get("owner") != owner for x in twins):
+        return f"{first_names[owner]}'s {names[oid]}"
+    type_words = objects[oid]["type"].lower().split()
+    extra = [w for w in oid.split("_") if w not in type_words]
+    return "the " + " ".join(extra + type_words)
+
+
 def is_plural(type_: str) -> bool:
     last = type_.lower().split()[-1]
     return last.endswith("s") and not last.endswith(("ss", "us"))
@@ -234,8 +248,11 @@ def questions(spec, states, patrol_log, layout, names, n, rng, settle=SETTLE_DAY
             return "seen where it is" if last == key["furniture"] else "moved since last seen"
         pool = collections.defaultdict(list)
         for oid in movers:
-            if oid in recent:
+            if oid in recent or not asked_name(oid, objects, names, first_names).startswith(("the ", *[f"{v}'s" for v in first_names.values()])):
                 continue
+            if asked_name(oid, objects, names, first_names) != f"the {names[oid]}" and \
+                    not any(asked_name(oid, objects, names, first_names).startswith(f"{v}'s") for v in first_names.values()):
+                continue                          # look-alike nobody owns: no way to tell which
             c = cat(oid)
             if c:
                 pool[c].append(oid)
@@ -257,7 +274,7 @@ def questions(spec, states, patrol_log, layout, names, n, rng, settle=SETTLE_DAY
         if text is None:
             k2 = kind if pool.get(kind) else max(pool, key=lambda c: len(pool[c]))
             oid = rng.choice(pool[k2])
-            text = where_is(f"the {names[oid]}", objects[oid]["type"])
+            text = where_is(asked_name(oid, objects, names, first_names), objects[oid]["type"])
             accept, probe, kind = [oid], False, k2
         recent.extend(accept)
         keys_ = {oid: answer_key(state, oid) for oid in accept}
