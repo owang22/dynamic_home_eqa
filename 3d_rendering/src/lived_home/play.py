@@ -234,7 +234,7 @@ def questions(spec, states, patrol_log, layout, names, n, rng, settle=SETTLE_DAY
     chosen = sorted(rng.sample(slots, min(n, len(slots))))
     plan = [k for k, w in want.items() for _ in range(max(1, round(w * len(chosen))))]
     rng.shuffle(plan)
-    out, recent = [], collections.deque(maxlen=6)
+    out, recent, used_owner = [], collections.deque(maxlen=6), set()
     for i, slot in enumerate(chosen):
         state = states[slot]
         before = (slot[0], hhmm(slot[1]))
@@ -269,10 +269,11 @@ def questions(spec, states, patrol_log, layout, names, n, rng, settle=SETTLE_DAY
                     ids_m = [x for x in ids if x in movers and cat(x)]
                     if not ids_m:
                         continue
-                    if (kind == "ambiguous by owner") == (len(ids) > 1):
+                    if (kind == "ambiguous by owner") == (len(ids) > 1) and (who, t) not in used_owner:
                         opts.append((who, t, ids))
             if opts:
                 who, t, ids = rng.choice(opts)
+                used_owner.add((who, t))
                 text = where_is(f"{first_names[who]}'s {t}", t)
                 accept, probe = ids, (kind == "ambiguous by owner")
         if text is None:
