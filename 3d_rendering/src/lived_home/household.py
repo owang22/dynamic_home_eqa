@@ -118,6 +118,15 @@ def check_residents(layout: Layout):
     return check
 
 
+GENERIC_TYPES = {"object", "objects", "item", "items", "thing", "things", "stuff", "misc", "other"}
+
+
+def check_gaps(ans: dict) -> str:
+    bad = [g["type"] for g in ans["gaps"] if g["type"].strip().lower() in GENERIC_TYPES]
+    return (f"{len(bad)} gaps have a type like '{bad[0]}'; give each the plain noun for the thing "
+            "(fork, dinner plate, hand towel).") if bad else ""
+
+
 def check_room_objects(room_places: set):
     """The rules the model must decide: numbering, references, carriers.
     Ids are not the model's job (see compose_ids)."""
@@ -130,6 +139,8 @@ def check_room_objects(room_places: set):
         for o in objs:
             if not o["type"].strip():
                 problems.append(f"thing {o['n']} has no type")
+            elif o["type"].strip().lower() in GENERIC_TYPES:
+                problems.append(f"thing {o['n']} has the type '{o['type']}'; say what it is (fork, enamel pin)")
             if o["place"] not in room_places:
                 problems.append(f"thing {o['n']} is at {o['place']}, which is not a spot in this room")
             ref = o["ref"]
@@ -458,7 +469,7 @@ def create(caller: Caller, seed: int, out: pathlib.Path, effort_note: str = "",
     gaps = caller.call("create/gaps", prompts.CREATE_SYSTEM,
                        prompts.GAPS_USER.format(home=lay["home"], residents=residents_text(residents),
                                                 inventory=inv_text, hi=GAPS_HI),
-                       gaps_schema(rooms, GAPS_HI), max_tokens=20000)
+                       gaps_schema(rooms, GAPS_HI), check_gaps, max_tokens=20000)
     by_room = collections.defaultdict(list)
     for g in gaps["gaps"]:
         by_room[g["room"]].append(g)

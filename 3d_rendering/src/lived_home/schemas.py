@@ -90,8 +90,8 @@ def fixtures_schema(rooms: list[str], lo: int, hi: int) -> dict:
 
 
 def gaps_schema(rooms: list[str], hi: int) -> dict:
-    gap = _obj({"type": STR, "count": {"type": "integer", "enum": list(range(1, 9))},
-                "room": _enum(rooms), "why": STR})
+    gap = _obj({"why": STR, "type": STR, "count": {"type": "integer", "enum": list(range(1, 9))},
+                "room": _enum(rooms)})
     return _obj({"thinking": STR, "gaps": _arr(gap, 0, hi)})
 
 
