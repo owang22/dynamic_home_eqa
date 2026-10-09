@@ -68,7 +68,7 @@ UNDER = ("underwear", "bra", "socks", "tights", "undershirt", "boxers", "briefs"
 BOTTOMS = ("trousers", "pants", "jeans", "shorts", "joggers", "sweatpants", "chinos")
 
 
-OVER = ("hoodie", "cardigan", "sweatshirt", "sweater", "jumper", "fleece", "robe")
+OVER = ("hoodie", "cardigan", "sweatshirt", "sweater", "jumper", "fleece", "robe", "lounge")
 
 
 def is_sleepwear(type_: str) -> bool:
