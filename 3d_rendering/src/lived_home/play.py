@@ -244,7 +244,8 @@ def questions(spec, states, patrol_log, layout, names, n, rng, settle=SETTLE_DAY
                 worn_clothes = key["how"] == "worn_by" and objects[oid]["carrier"] in ("none", "pockets")
                 return None if worn_clothes else "someone has it"
             if key["kind"] == "put away":
-                return "put away"
+                # only fair if the patrols have seen it somewhere at least once
+                return "put away" if last_patrol_sighting(patrol_log, oid, before) else None
             last = last_patrol_sighting(patrol_log, oid, before)
             if last is None:
                 return "never seen"

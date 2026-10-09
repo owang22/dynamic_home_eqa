@@ -9,7 +9,9 @@ tester without a browser). Same rules as the page.
   python -m lived_home.play_cli <state.json> guess <key> [<key> <key>] [--note "..."]
   python -m lived_home.play_cli <state.json> look <key>
   python -m lived_home.play_cli <state.json> pick <look#> <thing#>   "that's it"
-  python -m lived_home.play_cli <state.json> answer putaway <spot id> | someone <who> | out <who> | cant
+  python -m lived_home.play_cli <state.json> answer putaway <furniture key or spot id> | someone <resident id> | out <resident id> | cant
+      put away: in a drawer or cupboard of that furniture, or inside a bag or box lying on it
+      someone: a resident is holding or carrying it at home; out: it went out of the house with them
   python -m lived_home.play_cli <state.json> rate <clear 1-5> <answerable 1-5> "<comment>"   (saves, next)
   python -m lived_home.play_cli <state.json> results
 """
@@ -83,22 +85,24 @@ class Game:
         for r, fs in rooms.items():
             print(f"{r}:")
             for f in fs:
-                sp = ", ".join(s["name"] + (" (closed)" if s["kind"] == "closed" else "") for s in f["spots"])
+                sp = ", ".join(f"{s['name']}" + (" (closed)" if s["kind"] == "closed" else "") + f" [{s['id']}]" for s in f["spots"])
                 xz = f" at x={f['x']:.1f} z={f['z']:.1f}" if f["x"] is not None else ""
                 print(f"  {f['key']}{xz}: {sp}")
 
     def owners(self):
         for r in self.D["residents"]:
-            print(f"{r['name']} ({r['job']}) owns: {', '.join(r['owns'])}")
+            print(f"{r['name']} [id: {r['id']}] ({r['job']}) owns: {', '.join(r['owns'])}")
         if self.D["residents"][0].get("household"):
             print(self.D["residents"][0]["household"])
 
     def notes(self, word=""):
         q = self.q
         w = word.lower()
-        for p in self.D["patrols"]:
-            if q and (p["day"], p["time"]) >= (q["day"], q["time"]):
-                break
+        before = [p for p in self.D["patrols"] if not q or (p["day"], p["time"]) < (q["day"], q["time"])]
+        if not w and len(before) > 4:
+            print(f"(the last 4 of {len(before)} patrols; add a word to search all of them)")
+            before = before[-4:]
+        for p in before:
             lines = []
             for s in p["seen"]:
                 txt = ", ".join(t["thing"] + (f" ({t['where']})" if t["where"] else "") for t in s["things"])
@@ -165,8 +169,16 @@ class Game:
 
     def answer(self, kind, arg=None):
         if kind == "putaway":
-            self.finish({"type": "putaway", "spot": arg, "fkey": self.SPOT.get(arg, {}).get("fkey")})
+            if arg in self.F:                       # a whole piece of furniture
+                self.finish({"type": "putaway", "spot": None, "fkey": arg})
+            elif arg in self.SPOT:
+                self.finish({"type": "putaway", "spot": arg, "fkey": self.SPOT[arg]["fkey"]})
+            else:
+                print(f"No spot or furniture '{arg}'; see `plan` (spot ids in [brackets], furniture keys at the start of a line).")
         elif kind in ("someone", "out"):
+            if arg not in self.first:
+                print(f"No resident '{arg}'; ids: {', '.join(self.first)}")
+                return
             self.finish({"type": kind, "who": arg})
         else:
             self.finish({"type": "cant"})
@@ -181,13 +193,14 @@ class Game:
     def judge(self, ans):
         c = self.cur()
         if ans["type"] == "found":
-            return {"level": "good", "text": f"Found it in {len(c['looks'])} looks."}
+            n = len(c["looks"])
+            return {"level": "good", "text": f"Found it in {n} look{'s' if n != 1 else ''}."}
+        for a in self.q["answer"].values():
+            if ans["type"] == "putaway" and a["kind"] == "put away" and ans.get("fkey") == a.get("furniture"):
+                return {"level": "good", "text": "Right: it was put away there." if ans.get("spot") == a["spot"]
+                        else "Right piece of furniture (the robot cannot tell its drawers apart, so this counts)."}
         for a in self.q["answer"].values():
             if ans["type"] == "putaway" and a["kind"] == "put away":
-                if ans.get("spot") == a["spot"]:
-                    return {"level": "good", "text": "Right: it was put away there."}
-                if ans.get("fkey") and ans["fkey"] == a.get("furniture"):
-                    return {"level": "part", "text": "Right piece of furniture, different spot."}
                 if ans.get("fkey") and self.F.get(ans["fkey"], {}).get("room") == a.get("room"):
                     return {"level": "part", "text": "Right room, different furniture."}
             if ans["type"] == "someone" and a["kind"] == "someone has it":

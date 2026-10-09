@@ -113,7 +113,8 @@ th { color: var(--muted); font-weight: 600; }
           <summary>How this works</summary>
           <ul>
             <li>You are the robot. You know the floor plan and who owns what. You do not know where things are, except from the <b>patrol notes</b>: at 08:00, 12:00, 16:00 and 20:00 each day the robot walked through a few rooms (not all) and noted what it could see.</li>
-            <li>The robot cannot open drawers, cupboards, wardrobes or the fridge, and does not see under things.</li>
+            <li>The robot cannot open drawers, cupboards, wardrobes or the fridge, does not see under things, and cannot see inside closed bags or boxes.</li>
+            <li>If you think a thing is out of sight, answer <b>Put away in...</b> and pick the piece of furniture (a drawer of it, or a bag or box lying on it: both count as put away there). <b>Has it (at home)</b> means a resident is holding or carrying it at home; <b>Out of the house</b> means it went out with them.</li>
             <li>Each question is at a time between patrols. First, if you like, set up to three ranked guesses and a note on each (click <b>Place guess</b>, then a box on the plan).</li>
             <li>Then <b>look</b>: click a box to walk there and see what is on it right now. You have up to <span id="maxlooks"></span> looks. When you see the thing, click it in the list to say "that's it". If you think it is out of sight, answer without seeing it.</li>
             <li>Everything you see in your looks is kept and shows up under <b>Your earlier looks</b> for later questions, so a look can be worth it even when it does not find the thing.</li>
@@ -262,10 +263,11 @@ function finish(ans) {
 function judge(ans) {
   const keys = Object.values(cur.q.answer);
   if (ans.type === 'found') return { level: 'good', text: `Found it in ${cur.looks.length} look${cur.looks.length === 1 ? '' : 's'}.` };
+  if (ans.type === 'putaway') { const hit = keys.find(a => a.kind === 'put away' && a.furniture === ans.fkey); if (hit) return { level: 'good', text: ans.spot === hit.spot ? 'Right: it was put away there.' : 'Right piece of furniture (a different spot in it, which counts: the robot cannot tell drawers apart).' }; }
   for (const a of keys) {
     if (ans.type === 'putaway' && a.kind === 'put away') {
       if (ans.spot && ans.spot === a.spot) return { level: 'good', text: 'Right: it was put away there.' };
-      if (ans.fkey && a.furniture === ans.fkey) return { level: 'part', text: 'Right piece of furniture, different spot.' };
+      if (ans.fkey && a.furniture === ans.fkey) return { level: 'good', text: 'Right piece of furniture (a different spot in it, which counts: the robot cannot tell drawers apart).' };
       if (ans.fkey && F[ans.fkey] && F[ans.fkey].room === a.room) return { level: 'part', text: 'Right room, different furniture.' };
     }
     if (ans.type === 'someone' && a.kind === 'someone has it' && ans.who === a.who) return { level: 'good', text: `Right: ${RES[a.who].first} had it.` };
@@ -284,7 +286,8 @@ function truthText() {
     if (a.kind === 'out of the house') return `the ${name}: out of the house with ${RES[a.who].first}`;
     const s = SPOT[a.spot];
     const rel = a.reference_kind === 'object' ? `${pretty(a.relation)} the ${(D.names || {})[a.reference] || pretty(a.reference)}, ` : '';
-    return `the ${name}: ${rel}${s ? s.name + ' of the ' + fname(s.fkey) : pretty(a.spot)}${a.kind === 'put away' ? ' (out of sight)' : ''}`;
+    const spotTxt = s ? (s.name.toLowerCase().includes(F[s.fkey].name.toLowerCase()) ? s.name + ` (${pretty(F[s.fkey].room)})` : s.name + ', ' + fname(s.fkey)) : pretty(a.spot);
+    return `the ${name}: ${rel}${spotTxt}${a.kind === 'put away' ? ' (out of sight)' : ''}`;
   }).join('; ');
 }
 
@@ -330,7 +333,7 @@ function renderQ() {
       <button data-act="cant">Can't tell</button></div>`;
     if (cur.answerMode === 'putaway') {
       const f = cur.putawayF && F[cur.putawayF];
-      h += `<div style="margin-top:8px">${f ? `<b>${esc(fname(cur.putawayF))}</b>: <select id="pspot" aria-label="Which spot">${f.spots.map(s => `<option value="${esc(s.id)}">${esc(s.name)}${s.kind === 'closed' ? ' (closed)' : ''}</option>`).join('')}</select> <button class="primary" data-act="putaway">Answer</button>` : '<span class="small">Click the piece of furniture on the plan.</span>'}</div>`;
+      h += `<div style="margin-top:8px">${f ? `<b>${esc(fname(cur.putawayF))}</b>: <select id="pspot" aria-label="Which spot"><option value="">anywhere in it, or in a bag or box on it</option>${f.spots.map(s => `<option value="${esc(s.id)}">${esc(s.name)}${s.kind === 'closed' ? ' (closed)' : ''}</option>`).join('')}</select> <button class="primary" data-act="putaway">Answer</button>` : '<span class="small">Click the piece of furniture on the plan.</span>'}</div>`;
     }
   } else {
     const v = cur.verdict;
@@ -351,7 +354,7 @@ $('qpanel').addEventListener('click', e => {
   if (a === 'guess') { cur.guessMode = cur.guessMode === +b.dataset.i ? -1 : +b.dataset.i; cur.answerMode = null; renderQ(); }
   else if (a === 'pick') pick(+b.dataset.i, +b.dataset.j);
   else if (a === 'mode') { cur.answerMode = cur.answerMode === 'putaway' ? null : 'putaway'; cur.guessMode = -1; renderQ(); }
-  else if (a === 'putaway') { const s = $('pspot').value; finish({ type: 'putaway', spot: s, fkey: cur.putawayF }); }
+  else if (a === 'putaway') { const s = $('pspot').value; finish({ type: 'putaway', spot: s || null, fkey: cur.putawayF }); }
   else if (a === 'someone') finish({ type: 'someone', who: b.dataset.who });
   else if (a === 'out') finish({ type: 'out', who: b.dataset.who });
   else if (a === 'cant') finish({ type: 'cant' });
