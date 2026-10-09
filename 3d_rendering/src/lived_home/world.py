@@ -296,7 +296,8 @@ class World:
         for place in self.layout.places_in(room):
             seen = [o for o in self.things_at(place) if self.can_see(rid, o)]
             if seen:
-                lines.append(f"  {place}: " + ", ".join(self._label(o, rid) for o in seen))
+                full = " (full)" if self._full(place, None, "on_top", None) else ""
+                lines.append(f"  {place}{full}: " + ", ".join(self._label(o, rid) for o in seen))
         if len(lines) == 1:
             lines.append("  Nothing is lying out in this room.")
         for other in self.others_in_room(rid):
@@ -682,12 +683,18 @@ class World:
     def _full(self, place: str, oid: str, rel: str, ref) -> str:
         """Why oid does not fit on the spot, or "" if it does. Only spots with a
         measured area (from a 3D home) have a limit."""
+        if ref is not None and rel == "on_top" and oid is not None:
+            # a stack: room on top of the thing below, not on the spot
+            if self.footprint(ref) < self.footprint(oid):
+                return f"{oid} is too big to go on top of {ref}. Put it somewhere else."
+            return ""
         area = (self.layout.places[place].geometry or {}).get("area")
         if not area or rel == "under" or (ref is not None and rel == "on_top"):
             return ""
         room = area * (DEPTH if self.layout.places[place].kind != SURFACE else 1.0)
         there = self.resting_on(place)
-        if sum(map(self.footprint, there)) + self.footprint(oid) <= room:
+        size = self.footprint(oid) if oid is not None else FOOTPRINT["small"]   # None: room for a small thing?
+        if sum(map(self.footprint, there)) + size <= room:
             return ""
         return (f"There is no room for {oid} at {place}: it already holds "
                 f"{', '.join(there)}. Put it somewhere else, or on top of something there.")

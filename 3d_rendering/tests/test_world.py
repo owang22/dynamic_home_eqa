@@ -517,3 +517,20 @@ def test_a_full_spot_refuses_more_unless_stacked():
     w.apply("ana", A("pick_up", object="mug_red"), 3)
     ok, msg, _ = w.apply("ana", A("put_down", object="mug_red", place="kitchen_island"), 4)
     assert ok, msg
+
+
+def test_stack_only_on_something_as_big_and_full_spots_marked():
+    w = make()
+    w.layout.places["kitchen_counter_by_sink"].geometry = {"area": 0.05}
+    w.objects["coaster_cork"] = dict(obj("coaster", "kitchen_counter_by_sink"), size="small")
+    w.where["coaster_cork"] = dict(w.objects["coaster_cork"]["start"])
+    w.objects["towel_big"] = dict(obj("bath towel", "kitchen_island"), size="large")
+    w.where["towel_big"] = dict(w.objects["towel_big"]["start"])
+    w.objects["mug_red"]["size"] = "medium"                     # 0.01 coaster + 0.04 mug = 0.05: full
+    w.apply("ana", A("go", place="kitchen_counter_by_sink"), 0)
+    assert "kitchen_counter_by_sink (full)" in w.room_view("ana")
+    w.apply("ana", A("go", place="kitchen_island"), 1)
+    w.apply("ana", A("pick_up", object="towel_big"), 1)
+    ok, msg, _ = w.apply("ana", A("put_down", object="towel_big", place="kitchen_counter_by_sink",
+                                  relation="on_top", ref="coaster_cork"), 2)
+    assert not ok and "too big" in msg

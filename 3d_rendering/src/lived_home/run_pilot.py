@@ -165,6 +165,15 @@ class Household:
         self._log("responses.jsonl", {"day": day + 1, "resident": rid, "stage": "plan",
                                       "off_routine": off, **plan})
 
+    def _conversation(self, rid: str, minute: int) -> str:
+        """What was said between the residents in the last half hour, so a reply
+        follows on instead of starting over."""
+        names = {r: self.people[r]["name"].split()[0] for r in self.rids}
+        lines = [f"  {clock(m)} {'You' if s == rid else names[s]}"
+                 f"{' to ' + ('you' if l == rid else names[l]) if l != rid and s != rid else ''}: {text}"
+                 for m, s, l, text in self.talk_log if rid in (s, l) and minute - 30 <= m <= minute]
+        return ("Said in the last half hour:\n" + "\n".join(lines) + "\n") if lines else ""
+
     def act(self, rid: str, day: int, weekday: str, activity: dict, minute: int,
             rest: list[dict], events: list[str], problem: str, last: bool,
             done: list = (), interrupted: bool = False, first: bool = False) -> list[dict]:
@@ -179,6 +188,7 @@ class Household:
             rest="; ".join(f"{a['start']} {a['activity']}" for a in rest[:6]) or "nothing",
             situations=self._situations_for(rid, day),
             events="\n".join(events + heard) + ("\n" if events or heard else ""),
+            conversation=self._conversation(rid, minute),
             view=self.world.room_view(rid), hands=hands, pocket=pocket, worn=worn,
             memory=self.world.memory_view(rid, set(activity.get("uses") or [])),
             problem=(f"\nSo far in this activity you have: {'; '.join(done) or 'done nothing yet'}.\n"
@@ -257,6 +267,7 @@ class Household:
         n_int = {r: 0 for r in self.rids}
         last_do = {r: None for r in self.rids}    # (log index, start, end) of a do in progress
         said = collections.defaultdict(lambda: None)   # (speaker, listener) -> minute of last remark
+        self.talk_log = []                             # (minute, speaker, listener, text) today
         talk = collections.defaultdict(int)            # remarks in the pair's ongoing conversation
 
         def asleep(o, t):
@@ -414,6 +425,7 @@ class Household:
                 else:
                     talk[pair] = 1
                 said[(rid, o)] = now[rid]
+                self.talk_log.append((now[rid], rid, o, action.get("text") or ""))
                 tell(o, now[rid], text, reply=1 < talk[pair] <= MAX_CONVERSATION)
             if not ok:
                 failed.append({"day": day + 1, "time": clock(now[rid]), "resident": rid,

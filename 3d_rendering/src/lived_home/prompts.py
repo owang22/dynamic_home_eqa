@@ -156,7 +156,7 @@ Rest of your day: {rest}
 
 What is going on today:
 {situations}
-{events}
+{events}{conversation}
 {view}
 In your hands: {hands}. In your pockets: {pocket}. Wearing: {worn}.
 
