@@ -312,7 +312,7 @@ class HostedOpenAIClient(OpenAIHTTPClient):
                 return fh.read().strip()
         except OSError:
             return ""
-    _RETRYABLE_STATUS = frozenset({429, 500, 502, 503})
+    _RETRYABLE_STATUS = frozenset({429, 500, 502, 503, 504, 520, 521, 522, 523, 524, 529})  # 52x: Cloudflare in front of the API
     _HTTP_RETRIES = 6
     _BACKOFF_BASE_S = 2.0
     _BACKOFF_MAX_S = 120.0
