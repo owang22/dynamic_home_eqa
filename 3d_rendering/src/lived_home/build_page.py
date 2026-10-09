@@ -92,7 +92,8 @@ def main() -> None:
     data = build(run)
     names = " and ".join(r["name"].split()[0] for r in data["residents"])
     html = (HERE / "page_template.html").read_text()
-    html = html.replace("__TITLE__", f"{names}'s Week")
+    span = "Week" if data["days_done"] <= 7 else f"{data['days_done']} Days"
+    html = html.replace("__TITLE__", f"{names}'s {span}")
     blob = json.dumps(data, separators=(",", ":")).replace("</", "<\\/")
     html = html.replace("/*__DATA__*/", blob)
     out = run / "page"
