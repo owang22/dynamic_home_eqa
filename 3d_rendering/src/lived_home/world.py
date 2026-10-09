@@ -662,7 +662,8 @@ class World:
         else:
             if rel == "" or (rel == "inside" and kind == SURFACE) or (rel == "on_top" and kind != SURFACE):
                 rel = self.default_rel(place)
-            if rel == "under" and ((self.layout.places[place].geometry or {}).get("height") or 1.0) < 0.15:
+            height = (self.layout.places[place].geometry or {}).get("height")
+            if rel == "under" and height is not None and height < 0.15:
                 rel = self.default_rel(place)      # nothing goes under a floor
         full = self._full(place, oid, rel, ref)
         if full:
