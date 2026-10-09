@@ -32,7 +32,7 @@ import random
 
 PATROL_TIMES = ["0800", "1200", "1600", "2000"]
 QUESTION_TIMES = ["1000", "1400", "1800", "2200"]
-ROOMS_PER_PATROL = 3
+ROOMS_SHARE = 1 / 3        # each patrol visits about a third of the rooms (at least 3)
 SETTLE_DAYS = 3
 MAX_LOOKS = 8
 CARRIED = ("held_by", "worn_by", "in_pocket_of")
@@ -154,17 +154,19 @@ def visible_at(state: dict, names: dict) -> tuple[dict, dict]:
 
 def patrols(states: dict, layout: dict, names: dict, rng: random.Random) -> list:
     rooms = [r["id"] for r in layout["rooms"]]
+    per = max(3, math.ceil(len(rooms) * ROOMS_SHARE))
     days = sorted({d for d, _ in states})
     out, cycle = [], []
     for day in days:
         for t in PATROL_TIMES:
             if (day, t) not in states:
                 continue
-            if len(cycle) < ROOMS_PER_PATROL:
+            if len(cycle) < per:
                 more = list(rooms)
                 rng.shuffle(more)
                 cycle += more
-            visit, cycle = cycle[:ROOMS_PER_PATROL], cycle[ROOMS_PER_PATROL:]
+            visit, cycle = cycle[:per], cycle[per:]
+            visit = list(dict.fromkeys(visit))
             shown, people = visible_at(states[(day, t)], names)
             seen = []
             for f in layout["furniture"]:
@@ -307,7 +309,8 @@ def build(run: pathlib.Path, n: int, seed: int, settle: int = SETTLE_DAYS) -> di
                           for r in spec["residents"]],
             "layout": layout, "patrols": patrol_log, "questions": qs,
             "rules": {"patrol_times": [hhmm(t) for t in PATROL_TIMES],
-                      "rooms_per_patrol": ROOMS_PER_PATROL, "max_looks": MAX_LOOKS,
+                      "rooms_per_patrol": max(3, math.ceil(len(layout["rooms"]) * ROOMS_SHARE)),
+                      "max_looks": MAX_LOOKS,
                       "settle_days": settle}}
 
 
