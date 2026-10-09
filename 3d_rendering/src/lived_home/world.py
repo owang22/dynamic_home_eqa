@@ -710,7 +710,10 @@ class World:
         if not place:
             return []
         p = self.layout.places[place]
-        if "wash" not in (place + " " + p.name + " " + p.furniture).lower() or "dish" in place:
+        g = p.geometry or {}
+        scene_says = "wash" in str(g.get("category") or "").lower() or "drum" in str(g.get("hssd_spot") or "")
+        named = "wash" in (place + " " + p.name + " " + p.furniture).lower() and "dish" not in place
+        if not (scene_says or named):
             return []
         inside = [o for o in self.objects if self.place_of(o) == place and o in self.dirty]
         self.dirty -= set(inside)
