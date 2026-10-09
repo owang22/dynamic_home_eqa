@@ -216,7 +216,8 @@ class OpenAIHTTPClient(HTTPThinkingClient):
                                      json=body, timeout=self.timeout)
                 resp.raise_for_status()
                 return resp.json()
-            except (requests.ConnectionError, requests.Timeout, requests.HTTPError) as e:
+            except (requests.ConnectionError, requests.Timeout, requests.HTTPError,
+                    requests.exceptions.ChunkedEncodingError) as e:
                 status = getattr(getattr(e, "response", None), "status_code", None)
                 if status is not None and status < 500:
                     raise  # 4xx is a real request bug, never transient
@@ -390,7 +391,8 @@ class HostedOpenAIClient(OpenAIHTTPClient):
                 resp = requests.post(f"{self.base}{self.chat_path}",
                                      json=body, headers=headers,
                                      timeout=self.timeout)
-            except (requests.ConnectionError, requests.Timeout) as e:
+            except (requests.ConnectionError, requests.Timeout,
+                    requests.exceptions.ChunkedEncodingError) as e:
                 last_err = e
                 _logger.warning("hosted call failed (attempt %d/%d): %s",
                                 attempt + 1, self._HTTP_RETRIES,
