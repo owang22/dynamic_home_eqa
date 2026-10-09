@@ -578,6 +578,8 @@ class World:
             to = act.get("person") or ""
             if to and (to == rid or to not in self.people):
                 return False, f"Say it to whom? {to} is not someone else in the household.", 0
+            if not (act.get("text") or "").strip():
+                return False, "Say what? The text is empty.", 0
             return self._done(rid, act, minute, person.at, person.at, 1)
         if verb == "leave_home":
             minutes = max(5, act.get("minutes") or 30)

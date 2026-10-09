@@ -108,8 +108,11 @@ class Household:
             text = s["what_it_is_like"] if rid in who else s["what_others_notice"]
             if sid in self.subjects:
                 names = " and ".join(self.people[w]["name"] for w in who if w != rid)
-                text = (f"This is happening to you{' and ' + names if names else ''}. " if rid in who
-                        else f"This is happening to {names}, not to you. ") + text
+                # the situation text may speak of "one of them": say who that is
+                text = (f"This is happening to you{' and ' + names if names else ''}: where this speaks "
+                        f"of one of you (the one it happens to), that is you. " if rid in who
+                        else f"This is happening to {names}, not to you: where this speaks of one of "
+                             f"you (the one it happens to), that is {names}. ") + text
             out.append(f"{text} ({when})")
         return lines(out) if out else "- Nothing unusual."
 
