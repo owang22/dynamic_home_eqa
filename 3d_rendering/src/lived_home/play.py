@@ -229,8 +229,8 @@ def questions(spec, states, patrol_log, layout, names, n, rng, settle=SETTLE_DAY
             owners[o["owner"]][o["type"]].append(oid)
     first_names = {r["id"]: r["name"].split()[0] for r in spec["residents"]}
     slots = [(d, t) for d in days if d > settle for t in QUESTION_TIMES if (d, t) in states]
-    want = {"moved since last seen": 0.35, "seen where it is": 0.15, "put away": 0.15,
-            "someone has it": 0.1, "never seen": 0.1, "by owner": 0.1, "ambiguous by owner": 0.05}
+    want = {"moved since last seen": 0.4, "seen where it is": 0.08, "put away": 0.15,
+            "someone has it": 0.12, "never seen": 0.1, "by owner": 0.1, "ambiguous by owner": 0.05}
     chosen = sorted(rng.sample(slots, min(n, len(slots))))
     plan = [k for k, w in want.items() for _ in range(max(1, round(w * len(chosen))))]
     rng.shuffle(plan)

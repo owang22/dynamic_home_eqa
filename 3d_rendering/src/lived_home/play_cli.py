@@ -111,7 +111,7 @@ class Game:
                     lines.append("   " + full)
             for room, ps in p["people"].items():
                 for pp in ps:
-                    t = f"{self.first[pp['who']]} was in the {room}" + (f", holding {', '.join(pp['holding'])}" if pp["holding"] else "")
+                    t = f"{self.first[pp['who']]} was in the {room.replace('_', ' ')}" + (f", holding {', '.join(pp['holding'])}" if pp["holding"] else "")
                     if not w or w in t.lower():
                         lines.append("   " + t)
             if lines or not w:
@@ -125,7 +125,11 @@ class Game:
                 print("\n".join(lines))
 
     def guess(self, keys, note):
-        self.cur()["guesses"] = [{"furniture": k, "note": note} for k in keys if k in self.F]
+        bad = [k for k in keys if k not in self.F]
+        if bad:
+            print(f"Not furniture keys: {bad}. Use the 'room|furniture' key at the start of a `plan` line.")
+            return
+        self.cur()["guesses"] = [{"furniture": k, "note": note} for k in keys]
         self.save()
         print("Guesses:", [self.fname(g["furniture"]) for g in self.cur()["guesses"]])
 
@@ -141,6 +145,8 @@ class Game:
             print("No looks left: answer without seeing it.")
             return
         f = self.F[k]
+        if any(L["fkey"] == k for L in c["looks"]):
+            print("(you already looked here in this question; looking again uses a look and shows the same)")
         if f["x"] is not None:
             at = self.s.get("at") or self.entry()
             c["metres"] += math.dist(at, (f["x"], f["z"]))
@@ -223,7 +229,10 @@ class Game:
                 s = self.SPOT.get(a["spot"], {})
                 ref = f"{a['relation'].replace('_', ' ')} the {self.D['names'].get(a['reference'], a['reference'])}, " \
                     if a.get("reference_kind") == "object" else ""
-                out.append(f"the {name}: {ref}{s.get('name', a['spot'])} of the {self.fname(s.get('fkey'))}"
+                sname, fn = s.get("name", a["spot"]), self.F.get(s.get("fkey"), {}).get("name", "")
+                where = f"{sname} ({self.fname(s.get('fkey')).split('(')[-1].rstrip(')')})" if fn.lower() in sname.lower() \
+                    else f"{sname}, {self.fname(s.get('fkey'))}"
+                out.append(f"the {name}: {ref}{where}"
                            + (" (out of sight)" if a["kind"] == "put away" else ""))
         return "; ".join(out)
 
@@ -250,10 +259,13 @@ class Game:
         good = sum(r["verdict"] == "good" for r in d)
         print(f"{good} right of {len(d)}")
         for r in d:
-            print(f"{r['n']:2d} {r['verdict']:4s} looks {r['n_looks']} clear {r['clear']} fair {r['fair']} | {r['text']} | {r['comment']}")
+            print(f"{r['n']:2d} {r['verdict']:4s} looks {r['n_looks']} clear {r['clear']} answerable {r['fair']} | {r['text']} | {r['comment']}")
 
 
 def main():
+    if len(sys.argv) < 3:
+        print(__doc__)
+        return
     path = pathlib.Path(sys.argv[1])
     cmd, args = sys.argv[2], sys.argv[3:]
     if cmd == "start":

@@ -1,0 +1,2138 @@
+{
+ "data": "/tmp/claude-1027/-home-oliver-robot-dynamic-home-eqa/9f45e3b7-1313-4d62-8485-f7c712baefc4/scratchpad/playtest2/hidden/session.json",
+ "done": [
+  {
+   "n": 1,
+   "day": 4,
+   "time": "10:00",
+   "text": "Where are the navy drawstring lounge pants?",
+   "kind": "moved since last seen",
+   "probe": false,
+   "guesses": [
+    {
+     "furniture": "bedroom_1|floor",
+     "note": "last seen on main bedroom floor day 3 noon"
+    },
+    {
+     "furniture": "bedroom_1|armchair by the small table",
+     "note": "last seen on main bedroom floor day 3 noon"
+    },
+    {
+     "furniture": "bedroom_2|chair by the coat rack",
+     "note": "last seen on main bedroom floor day 3 noon"
+    }
+   ],
+   "looks": [
+    {
+     "furniture": "bedroom_1|floor",
+     "saw": [
+      "soft blue cotton sleep shirt",
+      "soft blue cotton sleep pants",
+      "white green mesh running shoes",
+      "black jersey lounge pants",
+      "heather gray cotton evening shirt",
+      "gray felt house slippers"
+     ]
+    },
+    {
+     "furniture": "bedroom_1|armchair by the small table",
+     "saw": [
+      "gray waffle cotton robe"
+     ]
+    },
+    {
+     "furniture": "closet|floor",
+     "saw": [
+      "navy drawstring lounge pants",
+      "navy folding spare umbrella",
+      "black canvas zippered garment bag"
+     ]
+    }
+   ],
+   "wrong_picks": [],
+   "answer": {
+    "type": "found",
+    "thing": "navy drawstring lounge pants",
+    "spot": "closet_floor"
+   },
+   "verdict": "good",
+   "verdict_text": "Found it in 3 looks.",
+   "n_looks": 3,
+   "metres": 29.08,
+   "clear": 5,
+   "fair": 4,
+   "comment": "Clear, unique description (Julian's only navy lounge pants). Last seen bedroom_1 floor day 3 noon; it had moved to the closet floor, a natural next guess. Fair. Tool: guess/look keys are 'room|furniture name' (with spaces) not the bracketed spot ids; guess with bad keys silently printed 'Guesses: []' instead of an error. Reveal text 'closet floor of the floor (closet)' reads oddly."
+  },
+  {
+   "n": 2,
+   "day": 4,
+   "time": "14:00",
+   "text": "Where is the walnut wooden metronome?",
+   "kind": "seen where it is",
+   "probe": false,
+   "guesses": [
+    {
+     "furniture": "hallway_2|piano",
+     "note": "always on the piano"
+    },
+    {
+     "furniture": "bedroom_2|nightstand by the dresser",
+     "note": "always on the piano"
+    },
+    {
+     "furniture": "hallway_2|piano stool",
+     "note": "always on the piano"
+    }
+   ],
+   "looks": [
+    {
+     "furniture": "hallway_2|piano",
+     "saw": [
+      "cream spiral score piano music book",
+      "walnut wooden metronome"
+     ]
+    }
+   ],
+   "wrong_picks": [],
+   "answer": {
+    "type": "found",
+    "thing": "walnut wooden metronome",
+    "spot": "hallway_2_piano_top_piano_shelf"
+   },
+   "verdict": "good",
+   "verdict_text": "Found it in 1 look.",
+   "n_looks": 1,
+   "metres": 4.17,
+   "clear": 5,
+   "fair": 5,
+   "comment": "Clear and easy: the metronome sat on the piano in every patrol. Fair but trivial (no movement). Note the look output only lists closed parts when relevant, which is useful."
+  },
+  {
+   "n": 3,
+   "day": 4,
+   "time": "18:00",
+   "text": "Where is the black matte mug?",
+   "kind": "put away",
+   "probe": false,
+   "guesses": [
+    {
+     "furniture": "kitchen|kitchen island",
+     "note": "last seen on island day 2; not visible anywhere since, probably in a cupboard"
+    },
+    {
+     "furniture": "kitchen|kitchen sink cabinet",
+     "note": "last seen on island day 2; not visible anywhere since, probably in a cupboard"
+    },
+    {
+     "furniture": "living_room|living room coffee table",
+     "note": "last seen on island day 2; not visible anywhere since, probably in a cupboard"
+    }
+   ],
+   "looks": [
+    {
+     "furniture": "kitchen|kitchen island",
+     "saw": [
+      "clear steel water bottle",
+      "black elastic menu folder",
+      "blue ballpoint pen",
+      "creased white slips receipts",
+      "red felt tip pen",
+      "long thermal slip restaurant receipt",
+      "yellow handled paring knife",
+      "green glass bottle olive oil",
+      "bunched orange carrots",
+      "brown carton eggs",
+      "plain glass jar yogurt",
+      "ochre checked dish towel",
+      "rectangular walnut wooden tray",
+      "yellow banana"
+     ]
+    },
+    {
+     "furniture": "kitchen|kitchen sink cabinet",
+     "saw": [
+      "brushed steel thermos",
+      "yellow cellulose sponge",
+      "green pump dish soap",
+      "cream stoneware plate",
+      "cream blue-rimmed mug",
+      "terracotta banded mug",
+      "basil and mint glass market herbs",
+      "white rimmed plate",
+      "cream floral plate",
+      "white cereal bowl",
+      "dark roast pouch coffee beans",
+      "red square tea tin",
+      "amber bear honey jar",
+      "brushed steel forks"
+     ]
+    },
+    {
+     "furniture": "living_room|living room coffee table",
+     "saw": [
+      "cream spiral sketchbook",
+      "amber silicone earplugs",
+      "tall clear fluted water glass",
+      "sage ceramic mug",
+      "teal bird cover paperback book",
+      "stoneware blue snack bowl"
+     ]
+    },
+    {
+     "furniture": "kitchen|kitchen cabinet by the sink",
+     "saw": [
+      "natural roll paper towels",
+      "red insulated thermos",
+      "maple oval cutting board"
+     ]
+    }
+   ],
+   "wrong_picks": [],
+   "answer": {
+    "type": "putaway",
+    "spot": null,
+    "fkey": "kitchen|upper kitchen cabinet by the sink"
+   },
+   "verdict": "good",
+   "verdict_text": "Right piece of furniture (the robot cannot tell its drawers apart, so this counts).",
+   "n_looks": 4,
+   "metres": 17.81,
+   "clear": 4,
+   "fair": 2,
+   "comment": "Description clear (only black matte mug). Last seen on the island day 2 08:00, then absent from every visible surface in all rooms over 3 days, so 'put away in kitchen' was inferable. But choosing which of ~12 upper kitchen cabinets was a lucky guess: no evidence distinguishes them (no one was ever seen putting a mug away). Accepting any cabinet in the kitchen, or 'kitchen cupboards', would be fairer. Reveal text doubled: 'bottom shelf of the upper cabinet by the sink of the upper kitchen cabinet by the sink'."
+  },
+  {
+   "n": 4,
+   "day": 5,
+   "time": "10:00",
+   "text": "Where is Mara's wallet?",
+   "kind": "by owner",
+   "probe": false,
+   "guesses": [
+    {
+     "furniture": "bedroom_1|nightstand by the main bed",
+     "note": "on Mara's nightstand last night"
+    },
+    {
+     "furniture": "kitchen|kitchen island",
+     "note": "on Mara's nightstand last night"
+    },
+    {
+     "furniture": "entryway|floor",
+     "note": "on Mara's nightstand last night"
+    }
+   ],
+   "looks": [
+    {
+     "furniture": "bedroom_1|nightstand by the main bed",
+     "saw": [
+      "white braided phone charger",
+      "tortoiseshell oval reading glasses",
+      "black braided usb c phone charger",
+      "white botanical tube hand cream",
+      "green glass phone"
+     ]
+    },
+    {
+     "furniture": "kitchen|kitchen island",
+     "saw": [
+      "clear steel water bottle",
+      "black elastic menu folder",
+      "blue ballpoint pen",
+      "creased white slips receipts",
+      "cream stoneware plate",
+      "red felt tip pen",
+      "long thermal slip restaurant receipt",
+      "yellow handled paring knife",
+      "white cereal bowl",
+      "cream painted stripe mug",
+      "maple oval cutting board",
+      "green glass bottle olive oil",
+      "dark roast pouch coffee beans",
+      "red square tea tin",
+      "amber bear honey jar",
+      "wrapped salted block butter",
+      "brown carton eggs",
+      "plain glass jar yogurt",
+      "ochre checked dish towel",
+      "rectangular walnut wooden tray",
+      "yellow banana"
+     ]
+    }
+   ],
+   "wrong_picks": [],
+   "answer": {
+    "type": "out",
+    "who": "mara"
+   },
+   "verdict": "good",
+   "verdict_text": "Right.",
+   "n_looks": 2,
+   "metres": 16.59,
+   "clear": 4,
+   "fair": 4,
+   "comment": "\"Mara's wallet\" is clear: owners list has only one wallet for her (tan zippered). Evidence: on her nightstand last night, gone this morning, and the brass house keys on the island at 08:00 were gone by 10:00 -> out with Mara. Fair. Slightly misleading: her green glass phone stayed on the nightstand, odd for someone going out. Owners list confuses: Mara owns both a black glass phone and a green glass phone, and both residents own 'black glass phone' and 'brass house keys' with identical names, so a sighting of those can't be attributed."
+  },
+  {
+   "n": 5,
+   "day": 5,
+   "time": "18:00",
+   "text": "Where are the red handled pruning shears?",
+   "kind": "seen where it is",
+   "probe": false,
+   "guesses": [
+    {
+     "furniture": "bedroom_1|dresser by the armchair",
+     "note": "always on the dresser"
+    },
+    {
+     "furniture": "entryway|floor",
+     "note": "always on the dresser"
+    },
+    {
+     "furniture": "laundryroom|floor",
+     "note": "always on the dresser"
+    }
+   ],
+   "looks": [
+    {
+     "furniture": "bedroom_1|dresser by the armchair",
+     "saw": [
+      "green nitrile gardening gloves",
+      "red handled pruning shears",
+      "wooden oval hairbrush",
+      "amber square bottle perfume"
+     ]
+    }
+   ],
+   "wrong_picks": [],
+   "answer": {
+    "type": "found",
+    "thing": "red handled pruning shears",
+    "spot": "bedroom_1_dresser_by_the_armchair_top_of_the_dresser"
+   },
+   "verdict": "good",
+   "verdict_text": "Found it in 1 look.",
+   "n_looks": 1,
+   "metres": 10.34,
+   "clear": 5,
+   "fair": 5,
+   "comment": "Clear. Never moved in 5 days: on the bedroom dresser every patrol. Trivial. Realism note: a landscape architect's pruning shears and gardening gloves living untouched on the bedroom dresser all week is implausible; they never went to the garden."
+  },
+  {
+   "n": 6,
+   "day": 6,
+   "time": "14:00",
+   "text": "Where are the bunched orange carrots?",
+   "kind": "put away",
+   "probe": false,
+   "guesses": [
+    {
+     "furniture": "kitchen|kitchen sink cabinet",
+     "note": "at the sink at noon"
+    },
+    {
+     "furniture": "kitchen|kitchen island",
+     "note": "at the sink at noon"
+    },
+    {
+     "furniture": "kitchen|refrigerator",
+     "note": "at the sink at noon"
+    }
+   ],
+   "looks": [
+    {
+     "furniture": "kitchen|kitchen sink cabinet",
+     "saw": [
+      "yellow cellulose sponge",
+      "green pump dish soap",
+      "natural roll paper towels",
+      "cream stoneware plate",
+      "speckled blue plate",
+      "cream blue-rimmed mug",
+      "blue speckled mug",
+      "terracotta banded mug",
+      "basil and mint glass market herbs",
+      "yellow handled paring knife",
+      "cream floral plate",
+      "white cereal bowl",
+      "ochre checked dish towel",
+      "brushed steel forks"
+     ]
+    },
+    {
+     "furniture": "kitchen|kitchen island",
+     "saw": [
+      "clear steel water bottle",
+      "black elastic menu folder",
+      "blue ballpoint pen",
+      "creased white slips receipts",
+      "tall ribbed water glass",
+      "red felt tip pen",
+      "long thermal slip restaurant receipt",
+      "cream painted stripe mug",
+      "maple oval cutting board",
+      "dark roast pouch coffee beans",
+      "red square tea tin",
+      "red tins canned tomatoes",
+      "amber bear honey jar",
+      "wrapped salted block butter",
+      "brown carton eggs",
+      "rectangular walnut wooden tray",
+      "yellow banana"
+     ]
+    },
+    {
+     "furniture": "kitchen|range",
+     "saw": [
+      "large seasoned cast iron skillet",
+      "small copper saucepan",
+      "red heatproof silicone spatula",
+      "deep steel ladle"
+     ]
+    },
+    {
+     "furniture": "kitchen|kitchen cabinet by the range",
+     "saw": [
+      "green glass bottle olive oil",
+      "white ceramic salt cellar",
+      "walnut turned pepper mill",
+      "rigatoni paper bag pasta"
+     ]
+    },
+    {
+     "furniture": "kitchen|kitchen drawer cabinet",
+     "saw": []
+    },
+    {
+     "furniture": "dining_room|dining table",
+     "saw": [
+      "shallow rust bowl",
+      "thin green stem wine glass",
+      "ochre linen cloth napkin",
+      "white rimmed plate",
+      "blue checked cotton cloth napkin"
+     ]
+    }
+   ],
+   "wrong_picks": [],
+   "answer": {
+    "type": "putaway",
+    "spot": null,
+    "fkey": "kitchen|refrigerator"
+   },
+   "verdict": "good",
+   "verdict_text": "Right piece of furniture (the robot cannot tell its drawers apart, so this counts).",
+   "n_looks": 6,
+   "metres": 24.56,
+   "clear": 5,
+   "fair": 4,
+   "comment": "Clear. Seen at the sink at noon, gone at 14:00 with nothing on the counters; the fridge is the obvious home for vegetables, so answerable by reasoning. Realism: the carrots sat on the island unrefrigerated from day 2 to day 5 before ever reaching the fridge. Used 6 looks to rule out visible spots, which felt right."
+  },
+  {
+   "n": 7,
+   "day": 6,
+   "time": "18:00",
+   "text": "Where is Mara's black glass phone?",
+   "kind": "someone has it",
+   "probe": false,
+   "guesses": [
+    {
+     "furniture": "bedroom_1|nightstand by the main bed",
+     "note": "never seen; probably carried"
+    },
+    {
+     "furniture": "living_room|living room coffee table",
+     "note": "never seen; probably carried"
+    },
+    {
+     "furniture": "tv_room|coffee table by the sectional",
+     "note": "never seen; probably carried"
+    }
+   ],
+   "looks": [
+    {
+     "furniture": "bedroom_1|nightstand by the main bed",
+     "saw": [
+      "white braided phone charger",
+      "tortoiseshell oval reading glasses",
+      "black braided usb c phone charger",
+      "short clear tumbler water glass",
+      "white botanical tube hand cream",
+      "green glass phone"
+     ]
+    },
+    {
+     "furniture": "living_room|living room coffee table",
+     "saw": [
+      "cream spiral sketchbook",
+      "tall clear fluted water glass",
+      "sage ceramic mug",
+      "teal bird cover paperback book",
+      "stoneware blue snack bowl",
+      "red square tea tin"
+     ]
+    },
+    {
+     "furniture": "tv_room|coffee table by the sectional",
+     "saw": [
+      "black rounded remote control",
+      "mustard ceramic mug",
+      "cream mystery cover paperback book"
+     ]
+    },
+    {
+     "furniture": "kitchen|kitchen island",
+     "saw": [
+      "silver slim laptop",
+      "clear steel water bottle",
+      "black elastic menu folder",
+      "blue ballpoint pen",
+      "creased white slips receipts",
+      "tall ribbed water glass",
+      "blue recycled board project folder",
+      "red felt tip pen",
+      "long thermal slip restaurant receipt",
+      "cream painted stripe mug",
+      "maple oval cutting board",
+      "dark roast pouch coffee beans",
+      "red tins canned tomatoes",
+      "amber bear honey jar",
+      "wrapped salted block butter",
+      "brown carton eggs",
+      "plain glass jar yogurt",
+      "rectangular walnut wooden tray",
+      "yellow banana"
+     ]
+    },
+    {
+     "furniture": "kitchen|kitchen island",
+     "saw": [
+      "silver slim laptop",
+      "clear steel water bottle",
+      "black elastic menu folder",
+      "blue ballpoint pen",
+      "creased white slips receipts",
+      "tall ribbed water glass",
+      "blue recycled board project folder",
+      "red felt tip pen",
+      "long thermal slip restaurant receipt",
+      "cream painted stripe mug",
+      "maple oval cutting board",
+      "dark roast pouch coffee beans",
+      "red tins canned tomatoes",
+      "amber bear honey jar",
+      "wrapped salted block butter",
+      "brown carton eggs",
+      "plain glass jar yogurt",
+      "rectangular walnut wooden tray",
+      "yellow banana"
+     ]
+    },
+    {
+     "furniture": "living_room|living room sectional",
+     "saw": []
+    },
+    {
+     "furniture": "living_room|end table by the accent chairs",
+     "saw": [
+      "gray braided usb c phone charger"
+     ]
+    }
+   ],
+   "wrong_picks": [],
+   "answer": {
+    "type": "someone",
+    "who": "mara"
+   },
+   "verdict": "good",
+   "verdict_text": "Right.",
+   "n_looks": 7,
+   "metres": 36.14,
+   "clear": 3,
+   "fair": 3,
+   "comment": "Wording '\\''Mara'\\''s black glass phone'\\'' is needed because Julian also owns a 'black glass phone', but it is confusing that Mara owns two phones (black and green) and only the green one was ever seen. A black glass phone on bathroom_2 floor on day 2 could be either resident's; nothing says whose. Reached the answer by finding Mara in the living room with the phone not on any surface there. The 'Mara is in the room' line on a look is very useful. Tool: re-looking the same furniture silently costs a look (I wasted one); a warning would help."
+  },
+  {
+   "n": 8,
+   "day": 7,
+   "time": "10:00",
+   "text": "Where is the green glass bottle olive oil?",
+   "kind": "moved since last seen",
+   "probe": false,
+   "guesses": [
+    {
+     "furniture": "kitchen|kitchen cabinet by the range",
+     "note": "my look Sat 14:00 by range"
+    },
+    {
+     "furniture": "kitchen|range",
+     "note": "my look Sat 14:00 by range"
+    },
+    {
+     "furniture": "kitchen|kitchen island",
+     "note": "my look Sat 14:00 by range"
+    }
+   ],
+   "looks": [
+    {
+     "furniture": "kitchen|kitchen cabinet by the range",
+     "saw": [
+      "red heatproof silicone spatula",
+      "green glass bottle olive oil",
+      "white ceramic salt cellar",
+      "walnut turned pepper mill",
+      "rigatoni paper bag pasta"
+     ]
+    }
+   ],
+   "wrong_picks": [],
+   "answer": {
+    "type": "found",
+    "thing": "green glass bottle olive oil",
+    "spot": "kitchen_kitchen_cabinet_by_the_range_countertop_by_the_range"
+   },
+   "verdict": "good",
+   "verdict_text": "Found it in 1 look.",
+   "n_looks": 1,
+   "metres": 4.43,
+   "clear": 5,
+   "fair": 5,
+   "comment": "Clear. My own look from yesterday 14:00 put it on the counter by the range, and it was still there. Good that earlier looks count as evidence (notes search finds them). Minor: 'X (next to the white ceramic salt cellar)' style is fine. Patrol lines say 'Mara was in the bedroom_1' using the raw room id."
+  },
+  {
+   "n": 9,
+   "day": 7,
+   "time": "14:00",
+   "text": "Where are Mara's lounge pants?",
+   "kind": "by owner",
+   "probe": false,
+   "guesses": [
+    {
+     "furniture": "bedroom_1|floor",
+     "note": "bedroom floor until Sat noon; floor cleared Sunday; laundry pile in bathroom 2 lacks it"
+    },
+    {
+     "furniture": "laundryroom|floor",
+     "note": "bedroom floor until Sat noon; floor cleared Sunday; laundry pile in bathroom 2 lacks it"
+    },
+    {
+     "furniture": "bathroom_2|floor",
+     "note": "bedroom floor until Sat noon; floor cleared Sunday; laundry pile in bathroom 2 lacks it"
+    }
+   ],
+   "looks": [
+    {
+     "furniture": "laundryroom|floor",
+     "saw": [
+      "ivory linen work blouse",
+      "charcoal wide leg work trousers",
+      "rust merino work cardigan",
+      "black jersey lounge pants",
+      "natural canvas laundry basket",
+      "white mesh zippered delicates bag",
+      "slate upright vacuum cleaner"
+     ]
+    },
+    {
+     "furniture": "bedroom_1|floor",
+     "saw": [
+      "gray felt house slippers"
+     ]
+    }
+   ],
+   "wrong_picks": [],
+   "answer": {
+    "type": "found",
+    "thing": "black jersey lounge pants",
+    "spot": "laundryroom_floor"
+   },
+   "verdict": "good",
+   "verdict_text": "Found it in 2 looks.",
+   "n_looks": 2,
+   "metres": 14.87,
+   "clear": 4,
+   "fair": 4,
+   "comment": "\"Mara's lounge pants\" resolves via owners to the black jersey lounge pants (her only lounge pants), fine, though a person must cross-reference the owners list; Julian's navy pair are also 'lounge pants' so the owner word matters. Evidence: bedroom floor cleared overnight, other clothes went to a pile on the bathroom_2 floor without these, so the laundry basket was a sensible next look. Items inside an open basket are visible, good. Tool: when two looks print in one command the earlier look is reprinted, fine."
+  },
+  {
+   "n": 10,
+   "day": 7,
+   "time": "18:00",
+   "text": "Where is the navy padded satin sleep mask?",
+   "kind": "seen where it is",
+   "probe": false,
+   "guesses": [
+    {
+     "furniture": "bedroom_1|bed in the main bedroom",
+     "note": "always on the bed"
+    },
+    {
+     "furniture": "bedroom_1|nightstand by the main bed 2",
+     "note": "always on the bed"
+    },
+    {
+     "furniture": "bedroom_1|nightstand by the main bed",
+     "note": "always on the bed"
+    }
+   ],
+   "looks": [
+    {
+     "furniture": "bedroom_1|bed in the main bedroom",
+     "saw": [
+      "blue botanical cover paperback book",
+      "pressed fern paper bookmark",
+      "navy padded satin sleep mask"
+     ]
+    }
+   ],
+   "wrong_picks": [],
+   "answer": {
+    "type": "found",
+    "thing": "navy padded satin sleep mask",
+    "spot": "bedroom_1_bed_in_the_main_bedroom_bottom_shelf_of_the_bed"
+   },
+   "verdict": "good",
+   "verdict_text": "Found it in 1 look.",
+   "n_looks": 1,
+   "metres": 1.59,
+   "clear": 5,
+   "fair": 5,
+   "comment": "Clear, unique. Sat on the bed in every bedroom patrol; trivial. A sleep mask that never moves across nights (it is never on a nightstand or in use) is a little static but plausible."
+  },
+  {
+   "n": 11,
+   "day": 8,
+   "time": "10:00",
+   "text": "Where is the white rimmed plate?",
+   "kind": "put away",
+   "probe": false,
+   "guesses": [
+    {
+     "furniture": "kitchen|kitchen sink cabinet",
+     "note": "last seen dining table Sat; absent since, likely in a cupboard"
+    },
+    {
+     "furniture": "dining_room|dining table",
+     "note": "last seen dining table Sat; absent since, likely in a cupboard"
+    },
+    {
+     "furniture": "kitchen|kitchen island",
+     "note": "last seen dining table Sat; absent since, likely in a cupboard"
+    }
+   ],
+   "looks": [
+    {
+     "furniture": "kitchen|kitchen sink cabinet",
+     "saw": [
+      "brushed steel thermos",
+      "yellow cellulose sponge",
+      "green pump dish soap",
+      "natural roll paper towels",
+      "terracotta banded mug",
+      "clear ribbed water bottle",
+      "small copper saucepan",
+      "walnut long wooden spoon",
+      "red heatproof silicone spatula",
+      "stainless balloon whisk",
+      "deep steel ladle",
+      "brushed steel forks",
+      "oval silver table spoons"
+     ]
+    },
+    {
+     "furniture": "dining_room|dining table",
+     "saw": [
+      "speckled blue plate",
+      "shallow rust bowl",
+      "thin green stem wine glass",
+      "ochre linen cloth napkin",
+      "walnut handled serving spoon",
+      "tall clear fluted water glass",
+      "short green tumbler water glass",
+      "blue checked cotton cloth napkin"
+     ]
+    }
+   ],
+   "wrong_picks": [],
+   "answer": {
+    "type": "putaway",
+    "spot": null,
+    "fkey": "kitchen|upper kitchen cabinet by the sink"
+   },
+   "verdict": "good",
+   "verdict_text": "Right piece of furniture (the robot cannot tell its drawers apart, so this counts).",
+   "n_looks": 2,
+   "metres": 17.48,
+   "clear": 5,
+   "fair": 3,
+   "comment": "Clear, unique. Last seen on the dining table Sat, gone from all visible kitchen/dining surfaces since -> put away was inferable. Picking the right one of ~14 kitchen cupboards only worked because the black matte mug (Q3) had been in the same cabinet: the game seems to keep all dishes in 'upper kitchen cabinet by the sink'. A person learns this only from a previous reveal, which is fine as learning but means the first such question is a lottery."
+  },
+  {
+   "n": 12,
+   "day": 8,
+   "time": "14:00",
+   "text": "Where is the ochre checked dish towel?",
+   "kind": "moved since last seen",
+   "probe": false,
+   "guesses": [
+    {
+     "furniture": "kitchen|kitchen sink cabinet",
+     "note": "sink or island usually; gone from sink at 10:00"
+    },
+    {
+     "furniture": "kitchen|kitchen island",
+     "note": "sink or island usually; gone from sink at 10:00"
+    },
+    {
+     "furniture": "laundryroom|floor",
+     "note": "sink or island usually; gone from sink at 10:00"
+    }
+   ],
+   "looks": [
+    {
+     "furniture": "kitchen|kitchen island",
+     "saw": [
+      "charcoal canvas backpack",
+      "clear zip box food storage bags",
+      "mustard ceramic mug",
+      "dark roast pouch coffee beans",
+      "red square tea tin",
+      "amber bear honey jar",
+      "bright yellow lemons",
+      "wrapped salted block butter",
+      "ochre checked dish towel",
+      "half-gallon carton milk"
+     ]
+    }
+   ],
+   "wrong_picks": [],
+   "answer": {
+    "type": "found",
+    "thing": "ochre checked dish towel",
+    "spot": "kitchen_kitchen_island_island_countertop"
+   },
+   "verdict": "good",
+   "verdict_text": "Found it in 1 look.",
+   "n_looks": 1,
+   "metres": 3.27,
+   "clear": 5,
+   "fair": 5,
+   "comment": "Clear, unique. It alternates between the sink cabinet and the island; my own look at 10:00 showed it had left the sink, so the island was the obvious first look. Fair. Realism: half-gallon milk and butter sitting on the island from 08:00 to 14:00."
+  },
+  {
+   "n": 13,
+   "day": 8,
+   "time": "18:00",
+   "text": "Where are the soft blue cotton sleep pants?",
+   "kind": "moved since last seen",
+   "probe": false,
+   "guesses": [
+    {
+     "furniture": "laundryroom|floor",
+     "note": "left bathroom_2 floor pile; not in basket at 08:00"
+    },
+    {
+     "furniture": "bathroom_1|floor",
+     "note": "left bathroom_2 floor pile; not in basket at 08:00"
+    },
+    {
+     "furniture": "bedroom_1|dresser by the armchair",
+     "note": "left bathroom_2 floor pile; not in basket at 08:00"
+    }
+   ],
+   "looks": [
+    {
+     "furniture": "laundryroom|floor",
+     "saw": [
+      "ivory linen work blouse",
+      "charcoal wide leg work trousers",
+      "rust merino work cardigan",
+      "natural canvas laundry basket",
+      "white mesh zippered delicates bag",
+      "slate upright vacuum cleaner"
+     ]
+    },
+    {
+     "furniture": "bathroom_1|floor",
+     "saw": [
+      "soft blue cotton sleep shirt",
+      "soft blue cotton sleep pants",
+      "soft charcoal cotton sleep shirt",
+      "soft charcoal cotton sleep pants",
+      "gray waffle cotton robe",
+      "olive linen wrap dress",
+      "cream ribbed bath mat"
+     ]
+    }
+   ],
+   "wrong_picks": [],
+   "answer": {
+    "type": "found",
+    "thing": "soft blue cotton sleep pants",
+    "spot": "bathroom_1_floor"
+   },
+   "verdict": "good",
+   "verdict_text": "Found it in 2 looks.",
+   "n_looks": 2,
+   "metres": 16.28,
+   "clear": 5,
+   "fair": 3,
+   "comment": "Clear, unique. It drifted bedroom floor -> bathroom_2 floor -> bathroom_1 floor (where Julian's sleepwear was seen this morning); found on the 2nd look by guessing the other bathroom. Plausible (changing in the bathroom). Minor oddity: sleepwear left on a bathroom floor for 10+ hours of the day. Fine question."
+  },
+  {
+   "n": 14,
+   "day": 9,
+   "time": "10:00",
+   "text": "Where is the tall clear fluted water glass?",
+   "kind": "moved since last seen",
+   "probe": false,
+   "guesses": [
+    {
+     "furniture": "kitchen|kitchen island",
+     "note": "island at 08:00"
+    },
+    {
+     "furniture": "kitchen|kitchen sink cabinet",
+     "note": "island at 08:00"
+    },
+    {
+     "furniture": "living_room|living room coffee table",
+     "note": "island at 08:00"
+    }
+   ],
+   "looks": [
+    {
+     "furniture": "kitchen|kitchen island",
+     "saw": [
+      "red clothbound restaurant notebook",
+      "amber bottle cold medicine",
+      "clear zip box food storage bags",
+      "red heatproof silicone spatula",
+      "dark roast pouch coffee beans",
+      "red square tea tin",
+      "amber bear honey jar",
+      "bright yellow lemons",
+      "wrapped salted block butter",
+      "brown carton eggs",
+      "plain glass jar yogurt",
+      "ochre checked dish towel",
+      "yellow banana",
+      "half-gallon carton milk"
+     ]
+    },
+    {
+     "furniture": "kitchen|kitchen sink cabinet",
+     "saw": [
+      "yellow cellulose sponge",
+      "green pump dish soap",
+      "natural roll paper towels",
+      "cream stoneware plate",
+      "speckled blue plate",
+      "cream blue-rimmed mug",
+      "terracotta banded mug",
+      "stoneware blue snack bowl",
+      "large seasoned cast iron skillet",
+      "small copper saucepan",
+      "walnut long wooden spoon",
+      "stainless balloon whisk",
+      "deep steel ladle",
+      "black matte mug",
+      "brushed steel forks",
+      "oval silver table spoons"
+     ]
+    },
+    {
+     "furniture": "bedroom_1|nightstand by the main bed",
+     "saw": [
+      "white braided phone charger",
+      "tortoiseshell oval reading glasses",
+      "black braided usb c phone charger",
+      "tall ribbed water glass",
+      "short clear tumbler water glass",
+      "white botanical tube hand cream",
+      "red felt tip pen",
+      "green glass phone"
+     ]
+    },
+    {
+     "furniture": "bedroom_1|nightstand by the main bed 2",
+     "saw": [
+      "navy padded satin sleep mask"
+     ]
+    },
+    {
+     "furniture": "living_room|living room coffee table",
+     "saw": [
+      "clear steel water bottle",
+      "cream spiral sketchbook",
+      "brown leather bifold wallet",
+      "amber silicone earplugs",
+      "white cube box tissues",
+      "glossy orange cover landscape magazine",
+      "blue speckled mug",
+      "clear ribbed water bottle",
+      "teal bird cover paperback book",
+      "cream painted stripe mug"
+     ]
+    },
+    {
+     "furniture": "dining_room|dining table",
+     "saw": [
+      "shallow rust bowl",
+      "thin green stem wine glass",
+      "ochre linen cloth napkin",
+      "walnut handled serving spoon",
+      "short green tumbler water glass",
+      "rectangular walnut wooden tray",
+      "blue checked cotton cloth napkin"
+     ]
+    },
+    {
+     "furniture": "tv_room|coffee table by the sectional",
+     "saw": [
+      "black rounded remote control",
+      "cream mystery cover paperback book"
+     ]
+    },
+    {
+     "furniture": "office|office desk",
+     "saw": [
+      "olive canvas tote bag",
+      "silver slim laptop",
+      "linen swatches fabric samples",
+      "rolled tracing paper planting sketches",
+      "dark restaurant tablet",
+      "black elastic menu folder",
+      "blue ballpoint pen",
+      "creased white slips receipts",
+      "white braided usb c phone charger",
+      "clear steel water bottle",
+      "unopened envelopes mail",
+      "blue recycled board project folder",
+      "white gridded sketch paper pad",
+      "lemon yellow pad sticky notes",
+      "gray urbanist cover paperback book",
+      "long thermal slip restaurant receipt",
+      "white cereal bowl",
+      "tall amber tumbler water glass",
+      "red apple"
+     ]
+    }
+   ],
+   "wrong_picks": [],
+   "answer": {
+    "type": "putaway",
+    "spot": null,
+    "fkey": "kitchen|upper kitchen cabinet by the sink"
+   },
+   "verdict": "bad",
+   "verdict_text": "Not right.",
+   "n_looks": 8,
+   "metres": 50.3,
+   "clear": 5,
+   "fair": 2,
+   "comment": "Description clear. Last seen on the island at 08:00; at 10:00 it was on the mattress of the main bed. Clues were thin: cold medicine on the island and Mara in the bedroom hinted she was ill in bed, but a water glass standing on a mattress (not the nightstand right beside it, which already held two other glasses) is an odd place a person would not guess. Bug-looking: at this same moment the 'clear steel water bottle' was visible both on the living room coffee table (look 5) and on the office desk (look 8); Mara owns only one."
+  },
+  {
+   "n": 15,
+   "day": 10,
+   "time": "10:00",
+   "text": "Where is the red apple?",
+   "kind": "seen where it is",
+   "probe": false,
+   "guesses": [
+    {
+     "furniture": "office|office desk",
+     "note": "on office desk for a week"
+    },
+    {
+     "furniture": "kitchen|kitchen island",
+     "note": "on office desk for a week"
+    },
+    {
+     "furniture": "kitchen|kitchen sink cabinet",
+     "note": "on office desk for a week"
+    }
+   ],
+   "looks": [
+    {
+     "furniture": "office|office desk",
+     "saw": [
+      "olive canvas tote bag",
+      "silver slim laptop",
+      "linen swatches fabric samples",
+      "rolled tracing paper planting sketches",
+      "dark restaurant tablet",
+      "black elastic menu folder",
+      "blue ballpoint pen",
+      "creased white slips receipts",
+      "white braided usb c phone charger",
+      "clear steel water bottle",
+      "unopened envelopes mail",
+      "blue recycled board project folder",
+      "white gridded sketch paper pad",
+      "lemon yellow pad sticky notes",
+      "gray urbanist cover paperback book",
+      "long thermal slip restaurant receipt",
+      "tall amber tumbler water glass",
+      "red apple"
+     ]
+    }
+   ],
+   "wrong_picks": [],
+   "answer": {
+    "type": "found",
+    "thing": "red apple",
+    "spot": "office_office_desk_desk_top"
+   },
+   "verdict": "good",
+   "verdict_text": "Found it in 1 look.",
+   "n_looks": 1,
+   "metres": 0.0,
+   "clear": 5,
+   "fair": 5,
+   "comment": "Clear and trivial: on the office desk since day 3. Realism: one apple sitting uneaten on a desk for a week. If there are several apples in the house the bare 'the red apple' would be ambiguous, but only one was ever seen."
+  },
+  {
+   "n": 16,
+   "day": 10,
+   "time": "14:00",
+   "text": "Where is the soft blue cotton sleep shirt?",
+   "kind": "moved since last seen",
+   "probe": false,
+   "guesses": [
+    {
+     "furniture": "bathroom_1|floor",
+     "note": "bathroom_1 floor last night"
+    },
+    {
+     "furniture": "bedroom_1|floor",
+     "note": "bathroom_1 floor last night"
+    },
+    {
+     "furniture": "laundryroom|floor",
+     "note": "bathroom_1 floor last night"
+    }
+   ],
+   "looks": [
+    {
+     "furniture": "bathroom_1|floor",
+     "saw": [
+      "gray waffle cotton robe",
+      "olive linen wrap dress",
+      "cream ribbed bath mat"
+     ]
+    },
+    {
+     "furniture": "laundryroom|floor",
+     "saw": [
+      "ivory linen work blouse",
+      "charcoal wide leg work trousers",
+      "rust merino work cardigan",
+      "natural canvas laundry basket",
+      "white mesh zippered delicates bag",
+      "slate upright vacuum cleaner"
+     ]
+    },
+    {
+     "furniture": "bedroom_1|floor",
+     "saw": [
+      "gray felt house slippers"
+     ]
+    },
+    {
+     "furniture": "living_room|living room sectional",
+     "saw": [
+      "purple river cover paperback book"
+     ]
+    }
+   ],
+   "wrong_picks": [],
+   "answer": {
+    "type": "someone",
+    "who": "mara"
+   },
+   "verdict": "bad",
+   "verdict_text": "Not right.",
+   "n_looks": 4,
+   "metres": 40.78,
+   "clear": 5,
+   "fair": 3,
+   "comment": "Clear, unique. Moved from the bathroom_1 floor (last night) to the main bed; the bed was a reasonable spot I skipped, my mistake. But it shows a rule ambiguity: the answer options cover 'a resident has it' but say nothing about clothes being worn. With a sick resident, 'Mara is wearing her pyjamas' was a natural reading, and nothing in a look tells you what a person is wearing (only 'holding'). The rules should say whether worn clothes count as 'someone has it'."
+  },
+  {
+   "n": 17,
+   "day": 10,
+   "time": "18:00",
+   "text": "Where is the wrapped salted block butter?",
+   "kind": "moved since last seen",
+   "probe": false,
+   "guesses": [
+    {
+     "furniture": "kitchen|kitchen island",
+     "note": "island at noon; cooking spots"
+    },
+    {
+     "furniture": "kitchen|range",
+     "note": "island at noon; cooking spots"
+    },
+    {
+     "furniture": "kitchen|kitchen cabinet by the range",
+     "note": "island at noon; cooking spots"
+    }
+   ],
+   "looks": [
+    {
+     "furniture": "kitchen|kitchen island",
+     "saw": [
+      "clear steel water bottle",
+      "blue ballpoint pen",
+      "amber bottle cold medicine",
+      "clear zip box food storage bags",
+      "long thermal slip restaurant receipt",
+      "red heatproof silicone spatula",
+      "stainless balloon whisk",
+      "yellow handled paring knife",
+      "white cereal bowl",
+      "maple oval cutting board",
+      "dark roast pouch coffee beans",
+      "red square tea tin",
+      "amber bear honey jar",
+      "bright yellow lemons",
+      "ochre checked dish towel",
+      "half-gallon carton milk"
+     ]
+    },
+    {
+     "furniture": "kitchen|range",
+     "saw": [
+      "basil and mint glass market herbs",
+      "large seasoned cast iron skillet",
+      "small copper saucepan",
+      "walnut long wooden spoon",
+      "green glass bottle olive oil",
+      "red tins canned tomatoes",
+      "bunched orange carrots"
+     ]
+    },
+    {
+     "furniture": "kitchen|kitchen cabinet by the range",
+     "saw": [
+      "white ceramic salt cellar",
+      "walnut turned pepper mill",
+      "rigatoni paper bag pasta",
+      "white paper sack flour",
+      "wrapped salted block butter",
+      "brown carton eggs"
+     ]
+    }
+   ],
+   "wrong_picks": [],
+   "answer": {
+    "type": "found",
+    "thing": "wrapped salted block butter",
+    "spot": "kitchen_kitchen_cabinet_by_the_range_countertop_by_the_range"
+   },
+   "verdict": "good",
+   "verdict_text": "Found it in 3 looks.",
+   "n_looks": 3,
+   "metres": 8.77,
+   "clear": 5,
+   "fair": 4,
+   "comment": "Clear. Shuttles between the island and the counter by the range (seen there Tue night), found on the 3rd look. Fair. Realism: butter and milk never go in the fridge all week; carrots went into the fridge on day 6 yet now sit on the range. Tool: in the look list 'red tins canned tomatoes (on top of the bunched orange carrots)' is fine."
+  },
+  {
+   "n": 18,
+   "day": 11,
+   "time": "10:00",
+   "text": "Where are the lemon yellow pad sticky notes?",
+   "kind": "seen where it is",
+   "probe": false,
+   "guesses": [
+    {
+     "furniture": "office|office desk",
+     "note": "always on the desk"
+    },
+    {
+     "furniture": "kitchen|kitchen island",
+     "note": "always on the desk"
+    },
+    {
+     "furniture": "living_room|living room coffee table",
+     "note": "always on the desk"
+    }
+   ],
+   "looks": [
+    {
+     "furniture": "office|office desk",
+     "saw": [
+      "olive canvas tote bag",
+      "silver slim laptop",
+      "linen swatches fabric samples",
+      "rolled tracing paper planting sketches",
+      "dark restaurant tablet",
+      "black elastic menu folder",
+      "creased white slips receipts",
+      "white braided usb c phone charger",
+      "clear steel water bottle",
+      "unopened envelopes mail",
+      "blue recycled board project folder",
+      "white gridded sketch paper pad",
+      "lemon yellow pad sticky notes",
+      "gray urbanist cover paperback book",
+      "tall amber tumbler water glass",
+      "red apple"
+     ]
+    }
+   ],
+   "wrong_picks": [],
+   "answer": {
+    "type": "found",
+    "thing": "lemon yellow pad sticky notes",
+    "spot": "office_office_desk_desk_top"
+   },
+   "verdict": "good",
+   "verdict_text": "Found it in 1 look.",
+   "n_looks": 1,
+   "metres": 10.95,
+   "clear": 5,
+   "fair": 5,
+   "comment": "Clear; 'lemon yellow pad sticky notes' word order is a bit clumsy but recognisable. Never left the office desk; trivial. Many questions so far are 'still where it always is' \u2014 easy but fine as calibration."
+  },
+  {
+   "n": 19,
+   "day": 11,
+   "time": "14:00",
+   "text": "Where is the olive canvas knife roll?",
+   "kind": "someone has it",
+   "probe": false,
+   "guesses": [
+    {
+     "furniture": "entryway|floor",
+     "note": "never seen; probably in Julian's backpack or at the restaurant"
+    },
+    {
+     "furniture": "kitchen|kitchen island",
+     "note": "never seen; probably in Julian's backpack or at the restaurant"
+    },
+    {
+     "furniture": "bedroom_2|chair by the coat rack",
+     "note": "never seen; probably in Julian's backpack or at the restaurant"
+    }
+   ],
+   "looks": [
+    {
+     "furniture": "entryway|floor",
+     "saw": [
+      "brass house keys",
+      "brown leather work loafers",
+      "white green mesh running shoes",
+      "faded denim chore jacket",
+      "brown ankle rain boots",
+      "long black shoehorn",
+      "folded weekend newspaper"
+     ]
+    },
+    {
+     "furniture": "kitchen|kitchen island",
+     "saw": [
+      "blue ballpoint pen",
+      "red clothbound restaurant notebook",
+      "amber bottle cold medicine",
+      "clear zip box food storage bags",
+      "long thermal slip restaurant receipt",
+      "red heatproof silicone spatula",
+      "stainless balloon whisk",
+      "yellow handled paring knife",
+      "maple oval cutting board",
+      "dark roast pouch coffee beans",
+      "red square tea tin",
+      "amber bear honey jar",
+      "bright yellow lemons",
+      "wrapped salted block butter",
+      "ochre checked dish towel",
+      "half-gallon carton milk"
+     ]
+    }
+   ],
+   "wrong_picks": [],
+   "answer": {
+    "type": "out",
+    "who": "julian"
+   },
+   "verdict": "good",
+   "verdict_text": "Right.",
+   "n_looks": 2,
+   "metres": 19.96,
+   "clear": 5,
+   "fair": 3,
+   "comment": "Clear name. The knife roll was never seen in 11 days of patrols, so the answer rests on world knowledge (a chef carries it to the restaurant) plus the backpack being absent. Fair for a person who reads the owners list job lines, but the evidence is thin: no patrol ever showed Julian leaving or the roll at home. Mildly misleading: one set of brass house keys stayed at the entryway, and Julian's work shirt, work trousers and clogs were on the bathroom_2 floor at 08:00, which suggested he was home."
+  },
+  {
+   "n": 20,
+   "day": 11,
+   "time": "22:00",
+   "text": "Where is Mara's phone?",
+   "kind": "ambiguous by owner",
+   "probe": true,
+   "guesses": [
+    {
+     "furniture": "bedroom_1|nightstand by the main bed",
+     "note": "green phone on her nightstand at 20:00; black one was on living room table yesterday"
+    },
+    {
+     "furniture": "living_room|living room coffee table",
+     "note": "green phone on her nightstand at 20:00; black one was on living room table yesterday"
+    },
+    {
+     "furniture": "bedroom_1|bed in the main bedroom",
+     "note": "green phone on her nightstand at 20:00; black one was on living room table yesterday"
+    }
+   ],
+   "looks": [
+    {
+     "furniture": "bedroom_1|nightstand by the main bed",
+     "saw": [
+      "white braided phone charger",
+      "tortoiseshell oval reading glasses",
+      "clear steel water bottle",
+      "black braided usb c phone charger",
+      "digital white thermometer",
+      "short clear tumbler water glass",
+      "white botanical tube hand cream",
+      "cream blue-rimmed mug",
+      "tall clear fluted water glass",
+      "red felt tip pen",
+      "green glass phone"
+     ]
+    }
+   ],
+   "wrong_picks": [],
+   "answer": {
+    "type": "found",
+    "thing": "green glass phone",
+    "spot": "bedroom_1_nightstand_by_the_main_bed_top_of_the_nightstand"
+   },
+   "verdict": "good",
+   "verdict_text": "Found it in 1 look.",
+   "n_looks": 1,
+   "metres": 8.29,
+   "clear": 2,
+   "fair": 4,
+   "comment": "Ambiguous: Mara owns two phones (black glass and green glass), so 'Mara's phone' could be either. The game accepted either one, which is the right fix, but the player is not told that in advance, so I hesitated over which to chase. Either say 'one of Mara's phones' or name the colour. Why one person keeps two phones (one never leaves the nightstand) is unexplained; if one is a work phone, say so in the owners list."
+  },
+  {
+   "n": 21,
+   "day": 12,
+   "time": "10:00",
+   "text": "Where is the charcoal cotton bath towel?",
+   "kind": "moved since last seen",
+   "probe": false,
+   "guesses": [
+    {
+     "furniture": "bathroom_2|bathtub",
+     "note": "in the bathtub since Tuesday"
+    },
+    {
+     "furniture": "bathroom_2|bathroom vanity by the bathtub",
+     "note": "in the bathtub since Tuesday"
+    },
+    {
+     "furniture": "bathroom_2|floor",
+     "note": "in the bathtub since Tuesday"
+    }
+   ],
+   "looks": [
+    {
+     "furniture": "bathroom_2|bathtub",
+     "saw": [
+      "white waffle guest towel"
+     ]
+    },
+    {
+     "furniture": "bathroom_2|bathroom vanity by the bathtub",
+     "saw": [
+      "clear pump hand soap",
+      "speckled ceramic toothbrush holder",
+      "mustard ceramic mug",
+      "dark blue toothbrush",
+      "white mint tube toothpaste",
+      "amber pump bottle shampoo",
+      "white flip-top bottle conditioner",
+      "charcoal cotton bath towel",
+      "small silver nail clippers",
+      "matte tortoiseshell hair clip"
+     ]
+    },
+    {
+     "furniture": "bathroom_2|floor",
+     "saw": [
+      "heather gray cotton evening shirt",
+      "navy drawstring lounge pants",
+      "soft charcoal cotton sleep shirt",
+      "soft charcoal cotton sleep pants",
+      "thin bronze round reading glasses",
+      "black leather strap watch",
+      "dark brown woven belt",
+      "mustard ribbed wool socks",
+      "indigo straight leg jeans",
+      "faded navy cotton hoodie",
+      "blue canvas zippered toiletry bag"
+     ]
+    }
+   ],
+   "wrong_picks": [],
+   "answer": {
+    "type": "found",
+    "thing": "charcoal cotton bath towel",
+    "spot": "bathroom_2_bathroom_vanity_by_the_bathtub_vanity_top"
+   },
+   "verdict": "good",
+   "verdict_text": "Found it in 3 looks.",
+   "n_looks": 3,
+   "metres": 11.12,
+   "clear": 5,
+   "fair": 5,
+   "comment": "Clear. It alternates between the bathtub and the vanity in bathroom 2; found on the 2nd look. Fair. Realism: Julian's bathroom_2 floor has held the same pile of clothes, reading glasses, watch and toiletry bag for ~10 days; it never gets tidied."
+  },
+  {
+   "n": 22,
+   "day": 12,
+   "time": "14:00",
+   "text": "Where is the black elastic menu folder?",
+   "kind": "someone has it",
+   "probe": false,
+   "guesses": [
+    {
+     "furniture": "office|office desk",
+     "note": "gone from desk at noon together with the restaurant tablet"
+    },
+    {
+     "furniture": "kitchen|kitchen island",
+     "note": "gone from desk at noon together with the restaurant tablet"
+    },
+    {
+     "furniture": "dining_room|dining room sideboard",
+     "note": "gone from desk at noon together with the restaurant tablet"
+    }
+   ],
+   "looks": [
+    {
+     "furniture": "kitchen|kitchen island",
+     "saw": [
+      "blue ballpoint pen",
+      "red clothbound restaurant notebook",
+      "white stoneware mugs",
+      "clear zip box food storage bags",
+      "shallow rust bowl",
+      "long thermal slip restaurant receipt",
+      "red heatproof silicone spatula",
+      "stainless balloon whisk",
+      "yellow handled paring knife",
+      "maple oval cutting board",
+      "dark roast pouch coffee beans",
+      "red square tea tin",
+      "amber bear honey jar",
+      "bright yellow lemons",
+      "wrapped salted block butter",
+      "plain glass jar yogurt",
+      "ochre checked dish towel",
+      "red apple",
+      "yellow banana",
+      "oval silver table spoons",
+      "half-gallon carton milk"
+     ]
+    },
+    {
+     "furniture": "dining_room|dining room sideboard",
+     "saw": []
+    }
+   ],
+   "wrong_picks": [],
+   "answer": {
+    "type": "out",
+    "who": "julian"
+   },
+   "verdict": "good",
+   "verdict_text": "Right.",
+   "n_looks": 2,
+   "metres": 19.81,
+   "clear": 5,
+   "fair": 4,
+   "comment": "Clear, unique. Gone from the office desk at noon together with Julian's restaurant tablet, a good clue that he took his work things out. Fair. BUG seen in this patrol: the Friday 12:00 patrol lists the 'clear steel water bottle' on both the bedroom_1 nightstand and the office desk at the same moment (also seen at Tue 10:00 in my looks). Only Mara owns one. Either a duplicate object or a stale entry."
+  },
+  {
+   "n": 23,
+   "day": 12,
+   "time": "18:00",
+   "text": "Where is the cream floral plate?",
+   "kind": "put away",
+   "probe": false,
+   "guesses": [
+    {
+     "furniture": "kitchen|kitchen sink cabinet",
+     "note": "not seen for 6 days: likely in a cupboard, but dinner time"
+    },
+    {
+     "furniture": "dining_room|dining table",
+     "note": "not seen for 6 days: likely in a cupboard, but dinner time"
+    },
+    {
+     "furniture": "kitchen|kitchen island",
+     "note": "not seen for 6 days: likely in a cupboard, but dinner time"
+    }
+   ],
+   "looks": [
+    {
+     "furniture": "kitchen|kitchen sink cabinet",
+     "saw": [
+      "brushed steel thermos",
+      "yellow cellulose sponge",
+      "green pump dish soap",
+      "natural roll paper towels",
+      "cream stoneware plate",
+      "speckled blue plate",
+      "tall ribbed water glass",
+      "stoneware blue snack bowl",
+      "basil and mint glass market herbs",
+      "tall stainless stockpot",
+      "deep steel ladle",
+      "white cereal bowl",
+      "black matte mug",
+      "brushed steel forks"
+     ]
+    },
+    {
+     "furniture": "dining_room|dining table",
+     "saw": [
+      "thin green stem wine glass",
+      "ochre linen cloth napkin",
+      "walnut handled serving spoon",
+      "short green tumbler water glass",
+      "rectangular walnut wooden tray",
+      "blue checked cotton cloth napkin"
+     ]
+    }
+   ],
+   "wrong_picks": [],
+   "answer": {
+    "type": "putaway",
+    "spot": null,
+    "fkey": "kitchen|upper kitchen cabinet by the sink"
+   },
+   "verdict": "good",
+   "verdict_text": "Right piece of furniture (the robot cannot tell its drawers apart, so this counts).",
+   "n_looks": 2,
+   "metres": 16.01,
+   "clear": 5,
+   "fair": 4,
+   "comment": "Clear. Not seen on any surface for 6 days while the kitchen was patrolled often, so 'put away' is well supported, and after Q3 and Q11 I knew dishes live in the upper cabinet by the sink. This is the third 'dish in that same cupboard' question; they become a memory test once learned. A first-time player still faces ~14 kitchen cupboards with no way to choose."
+  },
+  {
+   "n": 24,
+   "day": 12,
+   "time": "22:00",
+   "text": "Where is the sage cotton button-up work blouse?",
+   "kind": "never seen",
+   "probe": false,
+   "guesses": [
+    {
+     "furniture": "closet|wardrobe by the ottoman",
+     "note": "never seen in 12 days; must be in a wardrobe or drawer"
+    },
+    {
+     "furniture": "closet|wardrobe by the other wardrobe",
+     "note": "never seen in 12 days; must be in a wardrobe or drawer"
+    },
+    {
+     "furniture": "bedroom_1|dresser by the armchair",
+     "note": "never seen in 12 days; must be in a wardrobe or drawer"
+    }
+   ],
+   "looks": [
+    {
+     "furniture": "laundryroom|floor",
+     "saw": [
+      "ivory linen work blouse",
+      "charcoal wide leg work trousers",
+      "rust merino work cardigan",
+      "indigo denim apron",
+      "natural canvas laundry basket",
+      "white mesh zippered delicates bag",
+      "sage cotton button-up work blouse",
+      "slate upright vacuum cleaner"
+     ]
+    },
+    {
+     "furniture": "closet|bedroom ottoman",
+     "saw": []
+    }
+   ],
+   "wrong_picks": [],
+   "answer": {
+    "type": "found",
+    "thing": "sage cotton button-up work blouse",
+    "spot": "laundryroom_floor"
+   },
+   "verdict": "good",
+   "verdict_text": "Found it in 2 looks.",
+   "n_looks": 2,
+   "metres": 13.41,
+   "clear": 5,
+   "fair": 2,
+   "comment": "Description clear, but the blouse was never in any patrol in 12 days (the laundry room was patrolled at 20:00 tonight without it), then it is in the laundry basket at 22:00. Where it was before is unexplained: Mara has been home sick, so she wasn't wearing it to work; if it came out of the wardrobe it should say so. I found it only because the laundry basket was a cheap look; my planned answer was 'put away in the closet wardrobe'. Nothing in the evidence pointed to the basket."
+  },
+  {
+   "n": 25,
+   "day": 13,
+   "time": "10:00",
+   "text": "Where is Mara's work blouse?",
+   "kind": "ambiguous by owner",
+   "probe": true,
+   "guesses": [
+    {
+     "furniture": "laundryroom|floor",
+     "note": "both work blouses in the basket at 08:00"
+    },
+    {
+     "furniture": "laundryroom|washing machine by the laundry cabinet",
+     "note": "both work blouses in the basket at 08:00"
+    },
+    {
+     "furniture": "laundryroom|clothes rail by the laundry cabinets",
+     "note": "both work blouses in the basket at 08:00"
+    }
+   ],
+   "looks": [
+    {
+     "furniture": "laundryroom|floor",
+     "saw": [
+      "soft blue cotton sleep shirt",
+      "soft blue cotton sleep pants",
+      "ivory linen work blouse",
+      "charcoal wide leg work trousers",
+      "rust merino work cardigan",
+      "oatmeal knit evening sweater",
+      "black jersey lounge pants",
+      "indigo denim apron",
+      "natural canvas laundry basket",
+      "white mesh zippered delicates bag",
+      "sage cotton button-up work blouse",
+      "slate upright vacuum cleaner"
+     ]
+    }
+   ],
+   "wrong_picks": [],
+   "answer": {
+    "type": "found",
+    "thing": "ivory linen work blouse",
+    "spot": "laundryroom_floor"
+   },
+   "verdict": "good",
+   "verdict_text": "Found it in 1 look.",
+   "n_looks": 1,
+   "metres": 6.81,
+   "clear": 2,
+   "fair": 5,
+   "comment": "Ambiguous wording: Mara owns two work blouses (ivory linen, sage cotton button-up), so 'Mara's work blouse' doesn't say which. Both happened to be in the same laundry basket, and the game accepts either, so it was easy. It would be a real problem if they had been apart. Realism: the laundry basket has been filling for 12 days and nothing has ever been washed; the denim apron sits beside it."
+  },
+  {
+   "n": 26,
+   "day": 13,
+   "time": "14:00",
+   "text": "Where is Mara's sleep shirt?",
+   "kind": "by owner",
+   "probe": false,
+   "guesses": [
+    {
+     "furniture": "laundryroom|floor",
+     "note": "in the basket at 08:00"
+    },
+    {
+     "furniture": "laundryroom|washing machine by the laundry cabinet",
+     "note": "in the basket at 08:00"
+    },
+    {
+     "furniture": "bedroom_1|floor",
+     "note": "in the basket at 08:00"
+    }
+   ],
+   "looks": [
+    {
+     "furniture": "laundryroom|floor",
+     "saw": [
+      "soft blue cotton sleep shirt",
+      "soft blue cotton sleep pants",
+      "ivory linen work blouse",
+      "charcoal wide leg work trousers",
+      "rust merino work cardigan",
+      "indigo denim apron",
+      "olive linen wrap dress",
+      "natural canvas laundry basket",
+      "white mesh zippered delicates bag",
+      "sage cotton button-up work blouse",
+      "slate upright vacuum cleaner"
+     ]
+    }
+   ],
+   "wrong_picks": [],
+   "answer": {
+    "type": "found",
+    "thing": "soft blue cotton sleep shirt",
+    "spot": "laundryroom_floor"
+   },
+   "verdict": "good",
+   "verdict_text": "Found it in 1 look.",
+   "n_looks": 1,
+   "metres": 0.0,
+   "clear": 4,
+   "fair": 5,
+   "comment": "Clear once you check the owners list: Mara has one sleep shirt (soft blue). Still in the laundry basket from this morning. Easy. Three of the last four questions are about the same laundry basket."
+  },
+  {
+   "n": 27,
+   "day": 13,
+   "time": "22:00",
+   "text": "Where are the gray folded stack microfiber cloths?",
+   "kind": "never seen",
+   "probe": false,
+   "guesses": [
+    {
+     "furniture": "laundryroom|laundry drawer cabinet",
+     "note": "never seen; cleaning things live in laundry cabinets or under the kitchen sink"
+    },
+    {
+     "furniture": "kitchen|kitchen sink cabinet",
+     "note": "never seen; cleaning things live in laundry cabinets or under the kitchen sink"
+    },
+    {
+     "furniture": "laundryroom|laundry sink cabinet",
+     "note": "never seen; cleaning things live in laundry cabinets or under the kitchen sink"
+    }
+   ],
+   "looks": [
+    {
+     "furniture": "laundryroom|laundry drawer cabinet",
+     "saw": []
+    },
+    {
+     "furniture": "laundryroom|laundry sink cabinet",
+     "saw": [
+      "yellow rubber gloves",
+      "cream waffle hand towel"
+     ]
+    },
+    {
+     "furniture": "kitchen|kitchen sink cabinet",
+     "saw": [
+      "yellow cellulose sponge",
+      "green pump dish soap",
+      "natural roll paper towels",
+      "cream stoneware plate",
+      "speckled blue plate",
+      "shallow rust bowl",
+      "tall ribbed water glass",
+      "cream blue-rimmed mug",
+      "blue speckled mug",
+      "stoneware blue snack bowl",
+      "tall stainless stockpot",
+      "deep steel ladle",
+      "black matte mug",
+      "plain glass jar yogurt",
+      "brushed steel forks"
+     ]
+    },
+    {
+     "furniture": "laundryroom|laundry cabinet by the washing machine",
+     "saw": [
+      "orange spray bottle stain remover"
+     ]
+    },
+    {
+     "furniture": "kitchen|kitchen island",
+     "saw": [
+      "green nitrile gardening gloves",
+      "red handled pruning shears",
+      "black glass phone",
+      "blue ballpoint pen",
+      "red clothbound restaurant notebook",
+      "clear blue bottle cleaning spray",
+      "gray folded stack microfiber cloths",
+      "clear zip box food storage bags",
+      "terracotta banded mug",
+      "basil and mint glass market herbs",
+      "long thermal slip restaurant receipt",
+      "stainless balloon whisk",
+      "yellow handled paring knife",
+      "white cereal bowl",
+      "maple oval cutting board",
+      "green glass bottle olive oil",
+      "bunched orange carrots",
+      "brown carton eggs",
+      "ochre checked dish towel",
+      "red apple",
+      "yellow banana",
+      "oval silver table spoons"
+     ]
+    }
+   ],
+   "wrong_picks": [],
+   "answer": {
+    "type": "found",
+    "thing": "gray folded stack microfiber cloths",
+    "spot": "kitchen_kitchen_island_island_countertop"
+   },
+   "verdict": "good",
+   "verdict_text": "Found it in 5 looks.",
+   "n_looks": 5,
+   "metres": 28.09,
+   "clear": 4,
+   "fair": 3,
+   "comment": "Name 'gray folded stack microfiber cloths' is clumsy but recognisable. Never seen in 13 days of patrols (presumably lived in a closed laundry cabinet). The good clue was indirect: the cleaning spray had left the laundry cabinet top since 08:00, so I followed the spray and found both on the kitchen island. Satisfying, but a person needs to notice a missing *other* object. Odd: 'cloths (on top of the spray bottle)' and gardening gloves on the kitchen island at 22:00."
+  },
+  {
+   "n": 28,
+   "day": 14,
+   "time": "14:00",
+   "text": "Where is the olive linen wrap dress?",
+   "kind": "moved since last seen",
+   "probe": false,
+   "guesses": [
+    {
+     "furniture": "closet|bedroom ottoman",
+     "note": "left the basket between Sat 14:00 and Sun noon"
+    },
+    {
+     "furniture": "laundryroom|floor",
+     "note": "left the basket between Sat 14:00 and Sun noon"
+    },
+    {
+     "furniture": "bedroom_1|armchair by the small table",
+     "note": "left the basket between Sat 14:00 and Sun noon"
+    }
+   ],
+   "looks": [
+    {
+     "furniture": "closet|bedroom ottoman",
+     "saw": []
+    },
+    {
+     "furniture": "bedroom_1|armchair by the small table",
+     "saw": []
+    },
+    {
+     "furniture": "laundryroom|clothes rail by the laundry cabinets",
+     "saw": [
+      "wooden maple hanger"
+     ]
+    },
+    {
+     "furniture": "living_room|living room sectional",
+     "saw": [
+      "purple river cover paperback book"
+     ]
+    },
+    {
+     "furniture": "entryway|floor",
+     "saw": [
+      "brown leather work loafers",
+      "charcoal canvas backpack",
+      "black rubber kitchen clogs",
+      "faded denim chore jacket",
+      "brown ankle rain boots",
+      "long black shoehorn",
+      "folded weekend newspaper"
+     ]
+    }
+   ],
+   "wrong_picks": [],
+   "answer": {
+    "type": "out",
+    "who": "mara"
+   },
+   "verdict": "bad",
+   "verdict_text": "Not right.",
+   "n_looks": 5,
+   "metres": 42.14,
+   "clear": 5,
+   "fair": 2,
+   "comment": "Clear, unique. But the evidence pointed away from the answer: in my look Sat 14:00 it was in the laundry basket; the laundry room patrol at Sun 12:00 listed the basket in full WITHOUT the dress; two hours later it is back in the basket. It was not visible anywhere in between. With Mara's running shoes and the house keys gone from the entryway I answered 'out with Mara'. I should have spent a look on the basket, but a dress leaving a laundry basket and returning two hours later, unseen, is hard to reason about. Worth checking whether the 12:00 patrol dropped it by mistake."
+  },
+  {
+   "n": 29,
+   "day": 14,
+   "time": "18:00",
+   "text": "Where is the smoked glass water bottle?",
+   "kind": "moved since last seen",
+   "probe": false,
+   "guesses": [
+    {
+     "furniture": "hallway_1|floor",
+     "note": "on the hallway 1 floor all fortnight"
+    },
+    {
+     "furniture": "kitchen|kitchen sink cabinet",
+     "note": "on the hallway 1 floor all fortnight"
+    },
+    {
+     "furniture": "hallway_2|side table by the sofa chair",
+     "note": "on the hallway 1 floor all fortnight"
+    }
+   ],
+   "looks": [
+    {
+     "furniture": "hallway_1|floor",
+     "saw": [
+      "red coastal cover paperback book",
+      "green braided usb c phone charger"
+     ]
+    },
+    {
+     "furniture": "kitchen|kitchen sink cabinet",
+     "saw": [
+      "brushed steel thermos",
+      "yellow cellulose sponge",
+      "green pump dish soap",
+      "natural roll paper towels",
+      "shallow rust bowl",
+      "tall ribbed water glass",
+      "terracotta banded mug",
+      "white chipped mug",
+      "smoked glass water bottle",
+      "stoneware blue snack bowl",
+      "white cereal bowl",
+      "black matte mug",
+      "cream painted stripe mug",
+      "plain glass jar yogurt",
+      "brushed steel forks",
+      "oval silver table spoons"
+     ]
+    },
+    {
+     "furniture": "kitchen|kitchen island",
+     "saw": [
+      "green nitrile gardening gloves",
+      "red handled pruning shears",
+      "blue ballpoint pen",
+      "red clothbound restaurant notebook",
+      "clear blue bottle cleaning spray",
+      "gray folded stack microfiber cloths",
+      "clear zip box food storage bags",
+      "teal bird cover paperback book",
+      "long thermal slip restaurant receipt",
+      "stainless balloon whisk",
+      "dark roast pouch coffee beans",
+      "white paper sack flour",
+      "ochre checked dish towel",
+      "red apple",
+      "yellow banana",
+      "half-gallon carton milk"
+     ]
+    }
+   ],
+   "wrong_picks": [],
+   "answer": {
+    "type": "found",
+    "thing": "smoked glass water bottle",
+    "spot": "kitchen_kitchen_sink_cabinet_countertop_beside_the_kitchen_sink"
+   },
+   "verdict": "good",
+   "verdict_text": "Found it in 3 looks.",
+   "n_looks": 3,
+   "metres": 24.38,
+   "clear": 5,
+   "fair": 4,
+   "comment": "Clear, unique. On the hallway_1 floor for 13 days, then it and the white chipped mug went to the kitchen sink together, i.e. someone tidied the hallway; the sink was the natural second look. Fair and a nice question. Realism: a mug and bottle on a hallway floor for two weeks first."
+  },
+  {
+   "n": 30,
+   "day": 14,
+   "time": "22:00",
+   "text": "Where is the terracotta banded mug?",
+   "kind": "moved since last seen",
+   "probe": false,
+   "guesses": [
+    {
+     "furniture": "kitchen|kitchen cabinet by the sink",
+     "note": "drying on the counter by the sink at 20:00"
+    },
+    {
+     "furniture": "kitchen|kitchen sink cabinet",
+     "note": "drying on the counter by the sink at 20:00"
+    },
+    {
+     "furniture": "kitchen|upper kitchen cabinet by the sink",
+     "note": "drying on the counter by the sink at 20:00"
+    }
+   ],
+   "looks": [
+    {
+     "furniture": "kitchen|kitchen cabinet by the sink",
+     "saw": [
+      "red insulated thermos"
+     ]
+    },
+    {
+     "furniture": "kitchen|kitchen sink cabinet",
+     "saw": [
+      "brushed steel thermos",
+      "yellow cellulose sponge",
+      "green pump dish soap",
+      "natural roll paper towels",
+      "cream stoneware plate",
+      "speckled blue plate",
+      "shallow rust bowl",
+      "tall ribbed water glass",
+      "walnut handled serving spoon",
+      "terracotta banded mug",
+      "white chipped mug",
+      "smoked glass water bottle",
+      "stoneware blue snack bowl",
+      "large seasoned cast iron skillet",
+      "small copper saucepan",
+      "white rimmed plate",
+      "cream floral plate",
+      "black matte mug",
+      "cream painted stripe mug",
+      "stainless forks",
+      "plain glass jar yogurt",
+      "brushed steel forks",
+      "oval silver table spoons"
+     ]
+    },
+    {
+     "furniture": "living_room|living room coffee table",
+     "saw": [
+      "black glass phone",
+      "cream spiral sketchbook",
+      "brown leather bifold wallet",
+      "amber silicone earplugs",
+      "amber bottle cold medicine",
+      "white cube box tissues",
+      "white stoneware mugs",
+      "glossy orange cover landscape magazine",
+      "purple river cover paperback book"
+     ]
+    }
+   ],
+   "wrong_picks": [],
+   "answer": {
+    "type": "found",
+    "thing": "terracotta banded mug",
+    "spot": "kitchen_kitchen_sink_cabinet_kitchen_sink_basin"
+   },
+   "verdict": "good",
+   "verdict_text": "Found it in 3 looks.",
+   "n_looks": 3,
+   "metres": 10.98,
+   "clear": 5,
+   "fair": 4,
+   "comment": "Clear, unique. It shuttles between the sink basin, the counter next to it and the island; it was on 'kitchen cabinet by the sink' at 20:00 and back in the sink basin at 22:00. Found on the 2nd kitchen look. Fair. Tool: 'kitchen sink cabinet' (holds the sink basin) vs 'kitchen cabinet by the sink' (a separate counter) vs 'upper kitchen cabinet by the sink' are easy to mix up."
+  }
+ ],
+ "at": [
+  -7.6417,
+  -1.5543
+ ]
+}
