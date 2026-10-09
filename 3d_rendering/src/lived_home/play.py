@@ -59,7 +59,8 @@ def phrase(o: dict) -> str:
     """How a thing is named by its look: 'white chipped coffee mug'."""
     looks = (o.get("looks") or "").strip().lower()
     t = o["type"].lower()
-    words = [w for w in looks.split() if w not in t.split()]
+    counts = {"one", "two", "three", "four", "five", "six", "pair", "of", "single", "set"}
+    words = [w for w in looks.split() if w not in t.split() and w not in counts and not w.isdigit()]
     return " ".join(words + [t]).strip()
 
 
