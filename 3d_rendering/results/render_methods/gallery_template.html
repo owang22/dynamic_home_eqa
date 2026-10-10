@@ -1,0 +1,119 @@
+<title>Render Trials</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: status strip, then six test views as rows with each renderer side by side, then every picture per renderer */
+:root {
+  --bg: #f3f4f2; --panel: #ffffff; --fg: #1d2321; --muted: #5d6763; --line: #d9ddda;
+  --accent: #2f6f73; --run: #a06312; --runbg: #f6ead7; --done: #2f6b3f; --donebg: #e1efe4;
+  --shade: rgba(20, 24, 22, .88);
+  --sans: "Public Sans", "Segoe UI", system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #151918; --panel: #1e2422; --fg: #e4e8e6; --muted: #9aa5a0; --line: #323a37;
+  --accent: #7cc0c3; --run: #e8b46a; --runbg: #3a2e1b; --done: #8fd0a0; --donebg: #1f3326;
+  --shade: rgba(0, 0, 0, .9); color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #151918; --panel: #1e2422; --fg: #e4e8e6; --muted: #9aa5a0; --line: #323a37;
+  --accent: #7cc0c3; --run: #e8b46a; --runbg: #3a2e1b; --done: #8fd0a0; --donebg: #1f3326;
+  --shade: rgba(0, 0, 0, .9); color-scheme: dark }
+body { background: var(--bg); color: var(--fg); font-family: var(--sans); font-size: 15px; line-height: 1.5; }
+.wrap { max-width: 1400px; margin: 0 auto; padding-inline: 20px; padding-block: 28px 60px; display: grid; gap: 36px; }
+h1 { font-size: 1.7rem; margin: 0; letter-spacing: -.01em; text-wrap: balance; }
+h2 { font-size: 1.25rem; margin: 0 0 12px; text-wrap: balance; }
+h3 { font-size: 1rem; margin: 0; }
+h4 { font-size: .8rem; margin: 0 0 8px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); font-weight: 600; }
+header { display: grid; gap: 6px; }
+header p { margin: 0; color: var(--muted); max-width: 70ch; }
+.meta { font-family: var(--mono); font-size: .8rem; color: var(--muted); }
+.statuses { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
+.status { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 14px 16px; display: grid; gap: 6px; align-content: start; min-width: 0; }
+.status p { margin: 0; }
+.st-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.pill { font-family: var(--mono); font-size: .72rem; padding: 2px 8px; border-radius: 99px; text-transform: uppercase; letter-spacing: .06em; }
+.pill.done { color: var(--done); background: var(--donebg); }
+.pill.running { color: var(--run); background: var(--runbg); }
+.count { font-family: var(--mono); font-size: .8rem; color: var(--muted); }
+.log { font-size: .82rem; color: var(--muted); border-top: 1px solid var(--line); padding-top: 8px; overflow-wrap: anywhere; }
+.log span { display: block; font-size: .7rem; text-transform: uppercase; letter-spacing: .06em; font-weight: 600; }
+.row { display: grid; gap: 10px; border-top: 1px solid var(--line); padding-top: 16px; }
+.vn { font-family: var(--mono); color: var(--accent); margin-right: 6px; }
+.cells { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); gap: 16px; }
+.cell { min-width: 0; }
+.pair { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 230px), 1fr)); gap: 12px; margin-bottom: 18px; }
+.grp { font-family: var(--mono); text-transform: none; letter-spacing: 0; }
+figure { margin: 0; display: grid; gap: 4px; min-width: 0; }
+figcaption { font-size: .78rem; color: var(--muted); overflow-wrap: anywhere; }
+.shot { padding: 0; border: 1px solid var(--line); background: var(--panel); border-radius: 4px; cursor: zoom-in; display: block; width: 100%; }
+.shot img { display: block; width: 100%; height: auto; border-radius: 3px; }
+.shot:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.none { color: var(--muted); font-size: .85rem; margin: 0; padding: 20px 0; }
+.method { border-top: 2px solid var(--fg); padding-top: 16px; }
+.note { font-size: .85rem; color: var(--muted); margin: 0; }
+#box { position: fixed; inset: 0; background: var(--shade); display: grid; place-items: center; padding: 16px; z-index: 10; }
+#box figure { max-width: min(1200px, 100%); gap: 10px; }
+#box img { max-height: 82vh; width: auto; max-width: 100%; margin: 0 auto; display: block; }
+#box .bar { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+#box button { font: inherit; font-size: .85rem; padding: 6px 12px; border-radius: 4px; border: 1px solid var(--line); background: var(--panel); color: var(--fg); cursor: pointer; }
+#box figcaption { color: #e4e8e6; text-align: center; font-size: .85rem; }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>Render Trials</h1>
+    <p>Three ways of rendering household A on day 7 at 18:00, each run by its own agent. What to look for is whether the snapshot is physically and everyday plausible once it has real geometry: things clipping into furniture, landing in basins, floating, or piling up on floors. Click any picture to enlarge it. Habitat pictures can also show each object of the spot outlined in yellow.</p>
+    <span class="meta">Updated {{UPDATED}}</span>
+  </header>
+
+  <div class="statuses">{{STATUS}}</div>
+
+  <section>
+    <h2>Side by side</h2>
+    <p class="note">BEHAVIOR's views are its own framing of the same spots, so the camera positions differ from Habitat's.</p>
+    {{ROWS}}
+  </section>
+
+  <section>
+    <h2>Before and after 2 s of physics</h2>
+    <p class="note">BEHAVIOR, on our HSSD home. Left: objects as placed from the snapshot. Right: after gravity ran for 2 s. Walls have no collision in this import, so some objects fly into other rooms. Towels and clothes are rigid shells here, not cloth.</p>
+    <div class="cells">{{SETTLE}}</div>
+  </section>
+
+  {{PER_METHOD}}
+</div>
+
+<div id="box" hidden>
+  <figure>
+    <img id="box-img" alt="">
+    <figcaption id="box-cap"></figcaption>
+    <div class="bar">
+      <button id="box-alt" type="button" hidden>Show outlines</button>
+      <button id="box-close" type="button">Close</button>
+    </div>
+  </figure>
+</div>
+
+<script>
+const box = document.getElementById('box'), bimg = document.getElementById('box-img'),
+      bcap = document.getElementById('box-cap'), balt = document.getElementById('box-alt');
+let cur = null, showAlt = false;
+function show() {
+  bimg.src = showAlt && cur.dataset.alt ? cur.dataset.alt : cur.dataset.full;
+  balt.textContent = showAlt ? 'Hide outlines' : 'Show outlines';
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('.shot');
+  if (b) {
+    cur = b; showAlt = false;
+    bcap.textContent = b.querySelector('img').alt;
+    balt.hidden = !b.dataset.alt;
+    show(); box.hidden = false; document.getElementById('box-close').focus();
+  }
+});
+balt.addEventListener('click', () => { showAlt = !showAlt; show(); });
+document.getElementById('box-close').addEventListener('click', () => { box.hidden = true; cur && cur.focus(); });
+box.addEventListener('click', e => { if (e.target === box) box.hidden = true; });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') box.hidden = true; });
+</script>

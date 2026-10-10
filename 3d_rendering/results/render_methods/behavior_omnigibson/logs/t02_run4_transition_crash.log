@@ -1,0 +1,1076 @@
+[0m[00:00:05.086] [INFO] [omnigibson.simulator] ----- Starting OmniGibson. This will take 10-30 seconds... -----[0m
+DEBUG:asyncio:Using selector: EpollSelector
+[Info] [carb] Logging to file: /mnt/nvme/oliver/robot/render_methods/behavior/BEHAVIOR-1K/OmniGibson/appdata/local/logs/Kit/OmniGibson/3.9/kit_20261010_142818.log
+[0.026s] [ext: omni.kit.async_engine-0.0.3] startup
+[0.075s] [ext: omni.metrics.core-0.0.3] startup
+[0.076s] [ext: omni.client.lib-1.1.0] startup
+[0.083s] [ext: omni.blobkey-1.1.2] startup
+[0.083s] [ext: omni.stats-1.0.1] startup
+[0.084s] [ext: omni.datastore-0.0.0] startup
+[0.088s] [ext: omni.client-1.3.0] startup
+[0.092s] [ext: omni.ujitso.default-1.0.0] startup
+[0.093s] [ext: omni.hsscclient-1.1.2] startup
+[0.106s] [ext: omni.gpu_foundation.shadercache.vulkan-1.0.0] startup
+[0.107s] [ext: omni.assets.plugins-0.0.0] startup
+[0.108s] [ext: omni.gpu_foundation-0.0.0] startup
+[0.112s] [ext: carb.windowing.plugins-1.0.0] startup
+2026-10-10T21:28:18Z [104ms] [Warning] [carb.windowing-glfw.plugin] GLFW initialization failed.
+2026-10-10T21:28:18Z [104ms] [Warning] [carb] Failed to startup plugin carb.windowing-glfw.plugin (interfaces: [carb::windowing::IGLContext v1.0],[carb::windowing::IWindowing v1.5]) (impl: carb.windowing-glfw.plugin)
+[0.113s] [ext: omni.kit.renderer.init-0.0.0] startup
+2026-10-10T21:28:18Z [151ms] [Warning] [omni.platforminfo.plugin] failed to open the default display.  Can't verify X Server version.
+
+|---------------------------------------------------------------------------------------------|
+| Driver Version: 580.178.04    | Graphics API: Vulkan
+|=============================================================================================|
+| GPU | Name                             | Active | LDA | GPU Memory | Vendor-ID | LUID       |
+|     |                                  |        |     |            | Device-ID | UUID       |
+|     |                                  |        |     |            | Bus-ID    |            |
+|---------------------------------------------------------------------------------------------|
+| 0   | NVIDIA RTX PRO 6000 Blackwell .. | Yes: 0 |     | 98133   MB | 10de      | 0          |
+|     |                                  |        |     |            | 2bb1      | 80494b58.. |
+|     |                                  |        |     |            | 1         |            |
+|=============================================================================================|
+| OS: 22.04.5 LTS (Jammy Jellyfish) ubuntu, Version: 22.04.5, Kernel: 5.15.0-198-generic
+| Processor: AMD Ryzen 9 9900X 12-Core Processor
+| Cores: 12 | Logical Cores: 24
+|---------------------------------------------------------------------------------------------|
+| Total Memory (MB): 190782 | Free Memory: 177500
+| Total Page/Swap (MB): 2047 | Free Page/Swap: 2047
+|---------------------------------------------------------------------------------------------|
+2026-10-10T21:28:18Z [595ms] [Warning] [gpu.foundation.plugin] IOMMU is enabled.
+[0.765s] [ext: omni.materialx.libs-1.0.7] startup
+[0.772s] [ext: omni.kit.loop-isaac-1.3.7] startup
+[0.772s] [ext: omni.kit.test-2.0.1] startup
+[0.786s] [ext: omni.usd.config-1.0.6] startup
+[0.788s] [ext: omni.gpucompute.plugins-0.0.0] startup
+[0.788s] [ext: omni.usd.libs-1.0.1] startup
+[0.870s] [ext: omni.kit.telemetry-0.5.2] startup
+[0.900s] [ext: omni.mdl-56.0.3] startup
+[0.915s] [ext: omni.iray.libs-0.0.0] startup
+[0.918s] [ext: omni.mdl.neuraylib-0.2.12] startup
+[0.919s] [ext: omni.kit.usd.mdl-1.1.5] startup
+[0.987s] [ext: omni.kit.pipapi-0.0.0] startup
+[0.988s] [ext: omni.appwindow-1.1.10] startup
+2026-10-10T21:28:19Z [980ms] [Warning] [carb.windowing-glfw.plugin] GLFW initialization failed.
+2026-10-10T21:28:19Z [980ms] [Warning] [carb] Failed to startup plugin carb.windowing-glfw.plugin (interfaces: [carb::windowing::IGLContext v1.0],[carb::windowing::IWindowing v1.5]) (impl: carb.windowing-glfw.plugin)
+[0.990s] [ext: omni.kit.renderer.core-1.1.0] startup
+2026-10-10T21:28:19Z [991ms] [Warning] [carb.windowing-glfw.plugin] GLFW initialization failed.
+2026-10-10T21:28:19Z [992ms] [Warning] [carb] Failed to startup plugin carb.windowing-glfw.plugin (interfaces: [carb::windowing::IGLContext v1.0],[carb::windowing::IWindowing v1.5]) (impl: carb.windowing-glfw.plugin)
+2026-10-10T21:28:19Z [996ms] [Warning] [carb.windowing-glfw.plugin] GLFW initialization failed.
+2026-10-10T21:28:19Z [996ms] [Warning] [carb] Failed to startup plugin carb.windowing-glfw.plugin (interfaces: [carb::windowing::IGLContext v1.0],[carb::windowing::IWindowing v1.5]) (impl: carb.windowing-glfw.plugin)
+[1.005s] [ext: omni.kit.renderer.capture-0.0.0] startup
+[1.007s] [ext: omni.kit.renderer.imgui-2.0.5] startup
+2026-10-10T21:28:19Z [1,000ms] [Warning] [carb.windowing-glfw.plugin] GLFW initialization failed.
+2026-10-10T21:28:19Z [1,000ms] [Warning] [carb] Failed to startup plugin carb.windowing-glfw.plugin (interfaces: [carb::windowing::IGLContext v1.0],[carb::windowing::IWindowing v1.5]) (impl: carb.windowing-glfw.plugin)
+2026-10-10T21:28:19Z [1,001ms] [Warning] [carb.windowing-glfw.plugin] GLFW initialization failed.
+2026-10-10T21:28:19Z [1,001ms] [Warning] [carb] Failed to startup plugin carb.windowing-glfw.plugin (interfaces: [carb::windowing::IGLContext v1.0],[carb::windowing::IWindowing v1.5]) (impl: carb.windowing-glfw.plugin)
+2026-10-10T21:28:19Z [1,001ms] [Warning] [carb.windowing-glfw.plugin] GLFW initialization failed.
+2026-10-10T21:28:19Z [1,001ms] [Warning] [carb] Failed to startup plugin carb.windowing-glfw.plugin (interfaces: [carb::windowing::IGLContext v1.0],[carb::windowing::IWindowing v1.5]) (impl: carb.windowing-glfw.plugin)
+[1.045s] [ext: omni.ui-2.27.1] startup
+[1.051s] [ext: omni.kit.mainwindow-1.0.3] startup
+[1.052s] [ext: carb.audio-0.1.0] startup
+[1.073s] [ext: omni.uiaudio-1.0.0] startup
+[1.073s] [ext: omni.kit.uiapp-0.0.0] startup
+[1.073s] [ext: omni.usd.schema.metrics.assembler-107.3.1] startup
+[1.075s] [ext: omni.usd.schema.audio-0.0.0] startup
+[1.077s] [ext: omni.usd_resolver-1.0.0] startup
+[1.080s] [ext: omni.usd.core-1.5.3] startup
+[1.083s] [ext: omni.usd.schema.omni_lens_distortion-0.0.0] startup
+[1.094s] [ext: omni.usd.schema.anim-0.0.0] startup
+[1.109s] [ext: omni.usd.schema.geospatial-0.0.0] startup
+[1.111s] [ext: omni.usd.schema.semantics-0.0.0] startup
+[1.113s] [ext: omni.kit.actions.core-1.0.0] startup
+[1.114s] [ext: omni.activity.core-1.0.3] startup
+[1.115s] [ext: omni.kit.commands-1.4.10] startup
+[1.117s] [ext: usdrt.scenegraph-7.6.1] startup
+[1.139s] [ext: omni.resourcemonitor-107.0.1] startup
+[1.140s] [ext: omni.kit.audiodeviceenum-1.0.2] startup
+[1.141s] [ext: omni.hydra.usdrt_delegate-7.5.1] startup
+[1.146s] [ext: omni.kit.usd_undo-0.1.8] startup
+[1.146s] [ext: omni.kit.window.popup_dialog-2.0.24] startup
+[1.149s] [ext: omni.graph.exec-0.9.6] startup
+[1.149s] [ext: omni.timeline-1.0.14] startup
+[1.150s] [ext: omni.kit.widget.nucleus_connector-2.0.1] startup
+[1.151s] [ext: omni.kit.exec.core-0.13.4] startup
+[1.152s] [ext: omni.hydra.scene_delegate-0.3.4] startup
+[1.156s] [ext: omni.usd-1.13.10] startup
+[1.173s] [ext: omni.kit.asset_converter-5.0.17] startup
+[1.182s] [ext: omni.usd.schema.isaac-3.0.5] startup
+[1.182s] [ext: omni.usd.schema.omnigraph-1.0.0] startup
+[1.186s] [ext: isaacsim.robot.schema-3.6.0] startup
+[1.192s] [ext: omni.usd.schema.omniscripting-1.0.0] startup
+[1.196s] [ext: omni.usd.schema.flow-107.1.1] startup
+[1.196s] [ext: omni.usd.schema.omni_sensors-0.0.0] startup
+[1.196s] [ext: omni.usd.schema.physx-107.3.26] startup
+[1.219s] [ext: omni.inspect-1.0.2] startup
+[1.220s] [ext: omni.kit.notification_manager-1.0.10] startup
+[1.221s] [ext: omni.graph.core-2.184.5] startup
+[1.223s] [ext: isaacsim.core.deprecation_manager-0.2.7] startup
+[1.223s] [ext: omni.usd.schema.render_settings.rtx-0.0.0] startup
+[1.224s] [ext: omni.anim.graph.schema-107.3.3] startup
+[1.229s] [ext: omni.anim.navigation.schema-107.3.3] startup
+[1.231s] [ext: omni.kit.widget.path_field-2.0.11] startup
+[1.232s] [ext: omni.kit.viewport.legacy_gizmos-1.0.19] startup
+[1.234s] [ext: omni.kit.widget.browser_bar-2.0.10] startup
+[1.235s] [ext: omni.kit.clipboard-1.0.5] startup
+[1.235s] [ext: omni.kit.usd.layers-2.2.11] startup
+[1.240s] [ext: omni.ui.scene-1.11.5] startup
+[1.242s] [ext: omni.index.libs-380600.8087.0] startup
+[1.242s] [ext: omni.kit.viewport.scene_camera_model-1.0.6] startup
+[1.247DEBUG:AutoNode:Defining data type 'any' as 'Any'
+DEBUG:AutoNode:Defining data type 'bool' as 'Bool' and array 'BoolArray
+DEBUG:AutoNode:Defining data type 'bundle' as 'Bundle'
+DEBUG:AutoNode:Defining data type 'colord[3]' as 'Color3d' and array 'Color3dArray
+DEBUG:AutoNode:Defining data type 'colorf[3]' as 'Color3f' and array 'Color3fArray
+DEBUG:AutoNode:Defining data type 'colorh[3]' as 'Color3h' and array 'Color3hArray
+DEBUG:AutoNode:Defining data type 'colord[4]' as 'Color4d' and array 'Color4dArray
+DEBUG:AutoNode:Defining data type 'colorf[4]' as 'Color4f' and array 'Color4fArray
+DEBUG:AutoNode:Defining data type 'colorh[4]' as 'Color4h' and array 'Color4hArray
+DEBUG:AutoNode:Defining data type 'double' as 'Double' and array 'DoubleArray
+DEBUG:AutoNode:Defining data type 'double[2]' as 'Double2' and array 'Double2Array
+DEBUG:AutoNode:Defining data type 'double[3]' as 'Double3' and array 'Double3Array
+DEBUG:AutoNode:Defining data type 'double[4]' as 'Double4' and array 'Double4Array
+DEBUG:AutoNode:Defining data type 'execution' as 'Execution'
+DEBUG:AutoNode:Defining data type 'float' as 'Float' and array 'FloatArray
+DEBUG:AutoNode:Defining data type 'float[2]' as 'Float2' and array 'Float2Array
+DEBUG:AutoNode:Defining data type 'float[3]' as 'Float3' and array 'Float3Array
+DEBUG:AutoNode:Defining data type 'float[4]' as 'Float4' and array 'Float4Array
+DEBUG:AutoNode:Defining data type 'frame[4]' as 'Frame' and array 'FrameArray
+DEBUG:AutoNode:Defining data type 'half' as 'Half' and array 'HalfArray
+DEBUG:AutoNode:Defining data type 'half[2]' as 'Half2' and array 'Half2Array
+DEBUG:AutoNode:Defining data type 'half[3]' as 'Half3' and array 'Half3Array
+DEBUG:AutoNode:Defining data type 'half[4]' as 'Half4' and array 'Half4Array
+DEBUG:AutoNode:Defining data type 'int' as 'Int' and array 'IntArray
+DEBUG:AutoNode:Defining data type 'int[2]' as 'Int2' and array 'Int2Array
+DEBUG:AutoNode:Defining data type 'int[3]' as 'Int3' and array 'Int3Array
+DEBUG:AutoNode:Defining data type 'int[4]' as 'Int4' and array 'Int4Array
+DEBUG:AutoNode:Defining data type 'int64' as 'Int64' and array 'Int64Array
+DEBUG:AutoNode:Defining data type 'matrixd[2]' as 'Matrix2d' and array 'Matrix2dArray
+DEBUG:AutoNode:Defining data type 'matrixd[3]' as 'Matrix3d' and array 'Matrix3dArray
+DEBUG:AutoNode:Defining data type 'matrixd[4]' as 'Matrix4d' and array 'Matrix4dArray
+DEBUG:AutoNode:Defining data type 'normald[3]' as 'Normal3d' and array 'Normal3dArray
+DEBUG:AutoNode:Defining data type 'normalf[3]' as 'Normal3f' and array 'Normal3fArray
+DEBUG:AutoNode:Defining data type 'normalh[3]' as 'Normal3h' and array 'Normal3hArray
+DEBUG:AutoNode:Defining data type 'objectId' as 'ObjectId' and array 'ObjectIdArray
+DEBUG:AutoNode:Defining data type 'path' as 'Path'
+DEBUG:AutoNode:Defining data type 'pointd[3]' as 'Point3d' and array 'Point3dArray
+DEBUG:AutoNode:Defining data type 'pointf[3]' as 'Point3f' and array 'Point3fArray
+DEBUG:AutoNode:Defining data type 'pointh[3]' as 'Point3h' and array 'Point3hArray
+DEBUG:AutoNode:Defining data type 'quatd[4]' as 'Quatd' and array 'QuatdArray
+DEBUG:AutoNode:Defining data type 'quatf[4]' as 'Quatf' and array 'QuatfArray
+DEBUG:AutoNode:Defining data type 'quath[4]' as 'Quath' and array 'QuathArray
+DEBUG:AutoNode:Defining data type 'string' as 'String'
+DEBUG:AutoNode:Defining data type 'target' as 'Target'
+DEBUG:AutoNode:Defining data type 'texcoordd[2]' as 'TexCoord2d' and array 'TexCoord2dArray
+DEBUG:AutoNode:Defining data type 'texcoordf[2]' as 'TexCoord2f' and array 'TexCoord2fArray
+DEBUG:AutoNode:Defining data type 'texcoordh[2]' as 'TexCoord2h' and array 'TexCoord2hArray
+DEBUG:AutoNode:Defining data type 'texcoordd[3]' as 'TexCoord3d' and array 'TexCoord3dArray
+DEBUG:AutoNode:Defining data type 'texcoordf[3]' as 'TexCoord3f' and array 'TexCoord3fArray
+DEBUG:AutoNode:Defining data type 'texcoordh[3]' as 'TexCoord3h' and array 'TexCoord3hArray
+DEBUG:AutoNode:Defining data type 'timecode' as 'Timecode' and array 'TimecodeArray
+DEBUG:AutoNode:Defining data type 'token' as 'Token' and array 'TokenArray
+DEBUG:AutoNode:Defining data type 'uchar' as 'UChar' and array 'UCharArray
+DEBUG:AutoNode:Defining data type 'uint' as 'UInt' and array 'UIntArray
+DEBUG:AutoNode:Defining data type 'uint64' as 'UInt64' and array 'UInt64Array
+DEBUG:AutoNode:Defining data type 'vectord[3]' as 'Vector3d' and array 'Vector3dArray
+DEBUG:AutoNode:Defining data type 'vectorf[3]' as 'Vector3f' and array 'Vector3fArray
+DEBUG:AutoNode:Defining data type 'vectorh[3]' as 'Vector3h' and array 'Vector3hArray
+s] [ext: omni.index-1.0.1] startup
+[1.247s] [ext: omni.hydra.rtx.shadercache.vulkan-1.0.0] startup
+[1.248s] [ext: omni.kit.widget.options_menu-1.1.6] startup
+[1.249s] [ext: omni.volume-0.5.2] startup
+[1.251s] [ext: omni.ujitso.client-0.0.0] startup
+[1.251s] [ext: omni.kit.helper.file_utils-0.1.9] startup
+[1.252s] [ext: omni.kit.menu.core-1.1.2] startup
+[1.252s] [ext: omni.hydra.rtx-1.0.0] startup
+2026-10-10T21:28:19Z [1,258ms] [Warning] [omni.log] Source: omni.hydra was already registered.
+[1.279s] [ext: omni.kit.widget.options_button-1.0.3] startup
+[1.279s] [ext: omni.kit.widget.filebrowser-2.12.3] startup
+[1.282s] [ext: omni.kit.widget.context_menu-1.2.5] startup
+[1.283s] [ext: omni.kit.hydra_texture-1.4.6] startup
+[1.286s] [ext: omni.kit.window.filepicker-2.13.4] startup
+[1.291s] [ext: omni.kit.menu.utils-2.0.5] startup
+[1.296s] [ext: omni.kit.context_menu-1.8.6] startup
+[1.297s] [ext: omni.kit.widget.viewport-107.1.3] startup
+[1.299s] [ext: omni.kit.viewport.registry-104.0.6] startup
+[1.300s] [ext: omni.kit.window.file_importer-1.1.18] startup
+[1.301s] [ext: omni.kit.raycast.query-1.1.0] startup
+[1.306s] [ext: omni.kit.material.library-2.0.7] startup
+[1.309s] [ext: omni.kit.window.drop_support-1.0.5] startup
+[1.309s] [ext: omni.hydra.engine.stats-1.0.3] startup
+[1.311s] [ext: omni.kit.viewport.window-107.2.0] startup
+[1.323s] [ext: omni.kit.widget.zoombar-1.0.6] startup
+[1.323s] [ext: omni.kit.widget.searchfield-1.1.8] startup
+[1.324s] [ext: omni.kit.widget.filter-1.1.4] startup
+[1.324s] [ext: omni.kit.window.file_exporter-1.0.33] startup
+[1.324s] [ext: omni.kit.hotkeys.core-1.3.10] startup
+[1.325s] [ext: omni.kit.browser.core-2.3.13] startup
+[1.326s] [ext: omni.kit.stage_template.core-1.1.22] startup
+[1.327s] [ext: omni.kit.widget.stage-3.1.4] startup
+[1.333s] [ext: omni.kit.browser.folder.core-1.10.9] startup
+[1.335s] [ext: omni.kit.window.file-2.0.5] startup
+[1.337s] [ext: omni.kit.window.content_browser_registry-0.0.6] startup
+[1.337s] [ext: omni.kit.widget.prompt-1.0.7] startup
+[1.337s] [ext: omni.kit.usd.collect-2.4.5] startup
+[1.339s] [ext: omni.graph.tools-1.79.2] startup
+[1.352s] [ext: omni.kit.window.content_browser-3.1.3] startup
+[1.358s] [ext: omni.kit.usdz_export-1.0.9] startup
+[1.359s] [ext: omni.graph.action_core-1.1.7] startup
+[1.360s] [ext: omni.graph-1.141.2] startup
+[1.382s] [ext: omni.kit.widget.stage_icons-1.0.8] startup
+[1.382s] [ext: omni.kit.tool.asset_importer-4.3.2] startup
+[1.385s] [ext: omni.graph.action_nodes-1.50.4] startup
+[1.390s] [ext: omni.kit.window.stage-2.6.1] startup
+[1.447s] [ext: omni.kit.widget.searchable_combobox-1.0.6] startup
+[1.449s] [ext: omni.graph.action-1.130.0] startup
+[1.450s] [ext: omni.kit.menu.stage-1.2.7] startup
+[1.451s] [ext: omni.kit.widget.settings-1.2.6] startup
+[1.453s] [ext: omni.kit.viewport.utility-1.1.2] startup
+[1.454s] [ext: omni.kit.property.adapter.core-1.0.2] startup
+[1.456s] [ext: omni.kit.window.preferences-1.8.0] startup
+[1.460s] [ext: omni.kit.viewport.actions-107.0.2] startup
+[1.463s] [ext: omni.kit.widget.highlight_label-1.0.3] startup
+[1.464s] [ext: omni.kit.property.adapter.usd-1.0.2] startup
+[1.468s] [ext: omni.kit.viewport.menubar.core-107.2.1] startup
+[1.480s] [ext: omni.kit.property.adapter.fabric-1.0.3] startup
+[1.481s] [ext: omni.kit.viewport.menubar.display-107.0.3] startup
+[1.482s] [ext: omni.kit.window.property-1.12.1] startup
+[1.484s] [ext: omni.ui_query-1.1.8] startup
+[1.485s] [ext: omni.kit.property.usd-4.5.12] startup
+[1.490s] [ext: omni.kit.menu.create-2.0.1] startup
+[1.491s] [ext: isaacsim.core.version-2.0.6] startup
+[1.492s] [ext: omni.kit.ui_test-1.3.7] startup
+[1.494s] [ext: omni.kit.scripting-107.3.2] startup
+[1.496s] [ext: omni.convexdecomposition-107.3.26] startup
+[1.499s] [ext: isaacsim.storage.native-1.5.1] startup
+[1.500s] [ext: omni.kit.widget.toolbar-2.0.1] startup
+[1.505s] [ext: omni.kit.manipulator.transform-107.0.0] startup
+[1.508s] [ext: omni.kvdb-107.3.26] startup
+[1.509s] [ext: omni.usdphysics-107.3.26] startup
+[1.511s] [ext: omni.physx.foundation-107.3.26] startup
+[1.512s] [ext: omni.localcache-107.3.26] startup
+[1.513s] [ext: omni.kit.window.extensions-1.4.27] startup
+[1.516s] [ext: omni.physx.cooking-107.3.26] startup
+[1.518s] [ext: omni.kit.manipulator.viewport-107.0.1] startup
+[1.519s] [ext: omni.physx-107.3.26] startup
+[1.525s] [ext: omni.graph.visualization.nodes-2.1.3] startup
+[1.529s] [ext: isaacsim.replicator.behavior-1.1.16] startup
+[1.530s] [ext: omni.kit.tool.collect-2.2.18] startup
+[1.532s] [ext: omni.kit.manipulator.tool.snap-1.5.13] startup
+[1.537s] [ext: omni.kit.manipulator.selector-1.1.3] startup
+[1.538s] [ext: isaacsim.gui.components-1.2.1] startup
+[1.540s] [ext: isaacsim.examples.browser-0.2.1] startup
+[1.542s] [ext: isaacsim.asset.importer.urdf-2.4.30] startup
+[1.589s] [ext: omni.kit.viewport.manipulator.transform-107.0.4] startup
+[1.591s] [ext: omni.kit.primitive.mesh-1.0.17] startup
+[1.599s] [ext: omni.kit.manipulator.prim.core-107.0.8] startup
+[1.603s] [ext: omni.fabric.commands-1.1.6] startup
+[1.605s] [ext: omni.kit.manipulator.prim.usd-107.0.3] startup
+[1.606s] [ext: omni.kit.manipulator.prim.fabric-107.0.4] startup
+[1.607s] [ext: omni.kit.widget.layers-1.8.6] startup
+[1.614s] [ext: omni.kit.manipulator.selection-106.0.1] startup
+[1.615s] [ext: omni.kit.manipulator.prim-107.0.0] startup
+[1.615s] [ext: omni.debugdraw-0.1.4] startup
+[1.618s] [ext: omni.physics-107.3.26] startup
+[1.620s] [ext: omni.usdphysics.ui-107.3.26] startup
+[1.635s] [ext: omni.physx.commands-107.3.26] startup
+[1.638s] [ext: omni.physics.stageupdate-107.3.26] startup
+[1.639s] [ext: omni.kit.window.toolbar-2.0.0] startup
+[1.641s] [ext: omni.physx.ui-107.3.26] startup
+[1.659s] [ext: omni.kit.widget.graph-2.0.0] startup
+[1.663s] [ext: omni.physx.supportui-107.3.26] startup
+[1.671s] [ext: omni.kit.graph.delegate.default-1.2.3] startup
+[1.672s] [ext: omni.kit.numpy.common-0.1.3] startup
+[1.673s] [ext: omni.usd.metrics.assembler-107.3.1] startup
+[1.678s] [ext: omni.physics.physx-107.3.26] startup
+2026-10-10T21:28:19Z [1,671ms] [Warning] [carb] Acquiring non optional plugin interface which is not listed as dependency: [omni::physx::IPhysxBenchmarks v1.0] (plugin: <default plugin>), by client: omni.physics.physx.plugin. Add it to CARB_PLUGIN_IMPL_DEPS() macro of a client.
+[1.681s] [ext: omni.physics.tensors-107.3.26] startup
+[1.684s] [ext: omni.warp.core-1.8.2] startup
+[1.685s] [ext: omni.usd.metrics.assembler.physics-107.3.26] startup
+[1.687s] [ext: omni.isaac.dynamic_control-2.0.7] startup
+2026-10-10T21:28:19Z [1,684ms] [Warning] [omni.isaac.dynamic_control] omni.isaac.dynamic_control is deprecated as of Isaac Sim 4.5. No action is needed from end-users.
+[1.693s] [ext: omni.physx.tensors-107.3.26] startup
+[1.700s] [ext: isaacsim.core.utils-3.5.1] startup
+[1.703s] [ext: omni.graph.image.core-0.6.1] startup
+[1.705s] [ext: isaacsim.core.simulation_manager-1.4.4] startup
+[1.795s] [ext: omni.graph.image.nodes-1.3.1] startup
+[1.797s] [ext: omni.kit.stage_templates-2.0.0] startup
+[1.798s] [ext: isaacsim.core.prims-0.6.1] startup
+[1.811s] [ext: omni.syntheticdata-0.6.13] startup
+[1.820s] [ext: isaacsim.core.api-4.8.0] startup
+[1.832s] [ext: omni.videoencoding-0.1.2] startup
+[1.834s] [ext: isaacsim.core.experimental.utils-0.3.0] startup
+[1.835s] [ext: omni.kit.graph.editor.core-1.5.3] startup
+[1.838s] [ext: omni.kit.graph.usd.commands-1.3.1] startup
+[1.838s] [ext: isaacsim.simulation_app-2.12.2] startup
+[1.839s] [ext: omni.graph.ui_nodes-1.50.5] startup
+[1.841s] [ext: omni.graph.nodes-1.170.10] startup
+[1.849s] [ext: omni.kit.widget.material_preview-1.0.16] startup
+[1.850s] [ext: isaacsim.test.docstring-1.1.0] startup
+[1.853s] [ext: omni.isaac.kit-2.0.6] startup
+2026-10-10T21:28:20Z [1,844ms] [Warning] [omni.isaac.kit] omni.isaac.kit has been deprecated in favor of isaacsim.simulation_app. Please update your code accordingly.
+[1.853s] [ext: isaacsim.robot_motion.lula-4.0.8] startup
+[1.858s] [ext: omni.warp-1.8.2] startup
+[1.863s] [ext: omni.kit.window.material_graph-1.9.1] startup
+[1.872s] [ext: omni.graph.scriptnode-1.50.0] startup
+[1.874s] [ext: isaacsim.robot_motion.motion_generation-8.0.26] startup
+[1.885s] [ext: isaacsim.core.experimental.prims-0.8.1] startup
+[1.925s] [ext: omni.replicator.core-1.12.27] startup
+2026-10-10T21:28:20Z [1,933ms] [Warning] [pxr.Semantics] pxr.Semantics is deprecated - please use Semantics instead
+2026-10-10T21:28:20Z [1,990ms] [Warning] [omni.graph.core.plugin] Found duplicate of category 'Replicator' - was 'Annotators', adding 'Fabric Reader'
+2026-10-10T21:28:20Z [1,990ms] [Warning] [omni.graph.core.plugin] Category 'Replicator' not accepted on node type 'omni.replicator.core.FabricReader' in extension 'omni.replicator.core'
+2026-10-10T21:28:20Z [1,991ms] [Warning] [omni.replicator.core.scripts.extension] No material configuration file, adding configuration to material settings directly.
+[2.002s] [ext: isaacsim.robot_motion.lula_test_widget-1.0.12] startup
+[2.005s] [ext: isaacsim.robot.surface_gripper-3.3.1] startup
+[2.009s] [ext: isaacsim.core.nodes-3.4.3] startup
+[2.015s] [ext: omni.isaac.lula_test_widget-1.0.6] startup
+2026-10-10T21:28:20Z [2,008ms] [Warning] [omni.isaac.lula_test_widget] omni.isaac.lula_test_widget has been deprecated in favor of isaacsim.robot_motion.lula_test_widget. Please update your code accordingly.
+[2.018s] [ext: isaacsim.robot.manipulators-3.3.6] startup
+[2.027s] [ext: isaacsim.core.experimental.objects-0.4.0] startup
+[2.059s] [ext: isaacsim.core.experimental.materials-0.4.0] startup
+[2.068s] [ext: isaacsim.core.throttling-2.2.2] startup
+[2.074s] [ext: isaacsim.robot.manipulators.examples-1.1.2] startup
+[2.076s] [ext: omni.flowusd-107.1.8] startup
+2026-10-10T21:28:20Z [2,070ms] [Warning] [omni.stageupdate.plugin] Deprecated: direct use of IStageUpdate callbacks is deprecated. Use IStageUpdate::getStageUpdate instead.
+[2.084s] [ext: isaacsim.cortex.framework-1.0.12] startup
+[2.085s] [ext: omni.isaac.core_nodes-2.0.6] startup
+2026-10-10T21:28:20Z [2,079ms] [Warning] [omni.isaac.core_nodes] omni.isaac.core_nodes has been deprecated in favor of isaacsim.core.nodes. Please update your code accordingly.
+[2.088s] [ext: omni.isaac.cortex-1.0.5] startup
+2026-10-10T21:28:20Z [2,081ms] [Warning] [omni.isaac.cortex] omni.isaac.cortex has been deprecated in favor of isaacsim.cortex.framework. Please update your code accordingly.
+[2.090s] [ext: omni.anim.curve.core-1.3.1] startup
+[2.105s] [ext: omni.isaac.franka-1.0.7] startup
+2026-10-10T21:28:20Z [2,097ms] [Warning] [omni.isaac.franka] omni.isaac.franka has been deprecated in favor of isaacsim.robot.manipulators.examples.franka. Please update your code accordingly.
+2026-10-10T21:28:20Z [2,097ms] [Warning] [omni.isaac.franka.franka] omni.isaac.franka has been deprecated in favor of isaacsim.robot.manipulators.examples.franka. Please update your code accordingly.
+2026-10-10T21:28:20Z [2,112ms] [Warning] [omni.isaac.franka.kinematics_solver] omni.isaac.franka has been deprecated in favor of isaacsim.robot.manipulators.examples.franka. Please update your code accordingly.
+[2.121s] [ext: omni.kit.viewport.menubar.camera-107.0.6] startup
+[2.130s] [ext: omni.isaac.lula-4.0.6] startup
+2026-10-10T21:28:20Z [2,122ms] [Warning] [omni.isaac.lula] omni.isaac.lula has been deprecated in favor of isaacsim.robot_motion.lula. Please update your code accordingly.
+[2.131s] [ext: omni.kit.selection-0.1.6] startup
+[2.133s] [ext: omni.kit.viewport.menubar.settings-107.0.3] startup
+[2.137s] [ext: omni.isaac.manipulators-3.0.7] startup
+2026-10-10T21:28:20Z [2,129ms] [Warning] [omni.isaac.manipulators] omni.isaac.manipulators has been deprecated in favor of isaacsim.robot.manipulators. Please update your code accordingly.
+2026-10-10T21:28:20Z [2,129ms] [Warning] [omni.isaac.manipulators.controllers] omni.isaac.manipulators has been deprecated in favor of isaacsim.robot.manipulators. Please update your code accordingly.
+2026-10-10T21:28:20Z [2,129ms] [Warning] [omni.isaac.manipulators.controllers.pick_place_controller] omni.isaac.manipulators has been deprecated in favor of isaacsim.robot.manipulators. Please update your code accordingly.
+2026-10-10T21:28:20Z [2,131ms] [Warning] [omni.isaac.manipulators.controllers.stacking_controller] omni.isaac.manipulators has been deprecated in favor of isaacsim.robot.manipulators. Please update your code accordingly.
+2026-10-10T21:28:20Z [2,131ms] [Warning] [omni.isaac.manipulators.grippers] omni.isaac.manipulators has been deprecated in favor of isaacsim.robot.manipulators. Please update your code accordingly.
+2026-10-10T21:28:20Z [2,131ms] [Warning] [omni.isaac.manipulators.grippers.gripper] omni.isaac.manipulators has been deprecated in favor of isaacsim.robot.manipulators. Please update your code accordingly.
+2026-10-10T21:28:20Z [2,131ms] [Warning] [omni.isaac.manipulators.grippers.parallel_gripper] omni.isaac.manipulators has been deprecated in favor of isaacsim.robot.manipulators. Please update your code accordingly.
+2026-10-10T21:28:20Z [2,131ms] [Warning] [omni.isaac.manipulators.grippers.surface_gripper] omni.isaac.manipulators has been deprecated in favor of isaacsim.robot.manipulators. Please update your code accordingly.
+2026-10-10T21:28:20Z [2,132ms] [Warning] [omni.isaac.manipulators.manipulators] omni.isaac.manipulators has been deprecated in favor of isaacsim.robot.manipulators. Please update your code accordingly.
+2026-10-10T21:28:20Z [2,132ms] [Warning] [omni.isaac.manipulators.manipulators.single_manipulator] omni.isaac.manipulators has been deprecated in favor of isaacsim.robot.manipulators. Please update your code accordingly.
+[2.141s] [ext: isaacsim.gui.menu-2.4.4] startup
+[2.154s] [ext: isaacsim.sensors.physics-0.4.3] startup
+[2.162s] [ext: isaacsim.asset.browser-1.3.23] startup
+[2.171s] [ext: omni.isaac.menu-1.0.6] startup
+2026-10-10T21:28:20Z [2,164ms] [Warning] [omni.isaac.menu] omni.isaac.menu has been deprecated in favor of isaacsim.gui.menu. Please update your code accordingly.
+[2.174s] [ext: isaacsim.robot.policy.examples-4.1.11] startup
+[2.194s] [ext: omni.isaac.motion_generation-8.0.7] startup
+2026-10-10T21:28:20Z [2,187ms] [Warning] [omni.isaac.motion_generation] omni.isaac.motion_generation has been deprecated in favor of isaacsim.robot_motion.motion_generation. Please update your code accordingly.
+2026-10-10T21:28:20Z [2,187ms] [Warning] [omni.isaac.motion_generation.articulation_kinematics_solver] omni.isaac.motion_generation has been deprecated in favor of isaacsim.robot_motion.motion_generation. Please update your code accordingly.
+2026-10-10T21:28:20Z [2,188ms] [Warning] [omni.isaac.motion_generation.articulation_motion_policy] omni.isaac.motion_generation has been deprecated in favor of isaacsim.robot_motion.motion_generation. Please update your code accordingly.
+2026-10-10T21:28:20Z [2,190ms] [Warning] [omni.isaac.motion_generation.articulation_trajectory] omni.isaac.motion_generation has been deprecated in favor of isaacsim.robot_motion.motion_generation. Please update your code accordingly.
+2026-10-10T21:28:20Z [2,191ms] [Warning] [omni.isaac.motion_generation.kinematics_interface] omni.isaac.motion_generation has been deprecated in favor of isaacsim.robot_motion.motion_generation. Please update your code accordingly.
+2026-10-10T21:28:20Z [2,192ms] [Warning] [omni.isaac.motion_generation.lula] omni.isaac.motion_generation has been deprecated in favor of isaacsim.robot_motion.motion_generation. Please update your code accordingly.
+2026-10-10T21:28:20Z [2,193ms] [Warning] [omni.isaac.motion_generation.lula.kinematics] omni.isaac.motion_generation has been deprecated in favor of isaacsim.robot_motion.motion_generation. Please update your code accordingly.
+2026-10-10T21:28:20Z [2,194ms] [Warning] [omni.isaac.motion_generation.lula.motion_policies] omni.isaac.motion_generation has been deprecated in favor of isaacsim.robot_motion.motion_generation. Please update your code accordingly.
+2026-10-10T21:28:20Z [2,195ms] [Warning] [omni.isaac.motion_generation.lula.path_planners] omni.isaac.motion_generation has been deprecated in favor of isaacsim.robot_motion.motion_generation. Please update your code accordingly.
+2026-10-10T21:28:20Z [2,199ms] [Warning] [omni.isaac.motion_generation.lula.trajectory_generator] omni.isaac.motion_generation has been deprecated in favor of isaacsim.robot_motion.motion_generation. Please update your code accordingly.
+2026-10-10T21:28:20Z [2,200ms] [Warning] [omni.isaac.motion_generation.motion_policy_controller] omni.isaac.motion_generation has been deprecated in favor of isaacsim.robot_motion.motion_generation. Please update your code accordingly.
+2026-10-10T21:28:20Z [2,200ms] [Warning] [omni.isaac.motion_generation.motion_policy_interface] omni.isaac.motion_generation has been deprecated in favor of isaacsim.robot_motion.motion_generation. Please update your code accordingly.
+2026-10-10T21:28:20Z [2,200ms] [Warning] [omni.isaac.motion_generation.path_planner_visualizer] omni.isaac.motion_generation has been deprecated in favor of isaacsim.robot_motion.motion_generation. Please update your code accordingly.
+2026-10-10T21:28:20Z [2,200ms] [Warning] [omni.isaac.motion_generation.path_planning_interface] omni.isaac.motion_generation has been deprecated in favor of isaacsim.robot_motion.motion_generation. Please update your code accordingly.
+2026-10-10T21:28:20Z [2,200ms] [Warning] [omni.isaac.motion_generation.trajectory] omni.isaac.motion_generation has been deprecated in favor of isaacsim.robot_motion.motion_generation. Please update your code accordingly.
+2026-10-10T21:28:20Z [2,204ms] [Warning] [omni.isaac.motion_generation.world_interface] omni.isaac.motion_generation has been deprecated in favor of isaacsim.robot_motion.motion_generation. Please update your code accordingly.
+[2.215s] [ext: omni.isaac.asset_browser-1.0.6] startup
+2026-10-10T21:28:20Z [2,209ms] [Warning] [omni.isaac.asset_browser] omni.isaac.asset_browser has been deprecated in favor of isaacsim.asset.browser. Please update your code accordingly.
+[2.221s] [ext: omni.isaac.nucleus-1.0.6] startup
+2026-10-10T21:28:20Z [2,219ms] [Warning] [omni.isaac.nucleus] omni.isaac.nucleus has been deprecated in favor of isaacsim.storage.native. Please update your code accordingly.
+2026-10-10T21:28:20Z [2,221ms] [Warning] [omni.isaac.nucleus.nucleus] omni.isaac.nucleus.nucleus has been deprecated in favor of isaacsim.storage.native. Please update your code accordingly.
+[2.231s] [ext: omni.isaac.quadruped-3.0.7] startup
+2026-10-10T21:28:20Z [2,225ms] [Warning] [omni.isaac.quadruped] omni.isaac.quadruped has been deprecated in favor of isaacsim.robot.policy.examples. Please update your code accordingly.
+[2.241s] [ext: omni.isaac.assets_check-0.3.13] startup
+2026-10-10T21:28:20Z [2,251ms] [Warning] [omni.isaac.assets_check] omni.isaac.assets_check has been deprecated in favor of isaacsim.asset.browser. Please update your code accordingly.
+[2.261s] [ext: isaacsim.gui.content_browser-0.1.11] startup
+[2.275s] [ext: omni.isaac.utils-2.0.6] startup
+[2.282s] [ext: isaacsim.robot.wheeled_robots-4.0.24] startup
+[2.454s] [ext: isaacsim.app.about-2.0.11] startup
+[2.459s] [ext: omni.isaac.version-2.0.7] startup
+2026-10-10T21:28:20Z [2,451ms] [Warning] [omni.isaac.version] omni.isaac.version has been deprecated in favor of isaacsim.core.version. Please update your code accordingly.
+[2.461s] [ext: isaacsim.cortex.behaviors-2.0.14] startup
+[2.462s] [ext: omni.isaac.wheeled_robots-3.0.7] startup
+2026-10-10T21:28:20Z [2,455ms] [Warning] [omni.isaac.wheeled_robots] omni.isaac.wheeled_robots has been deprecated in favor of isaacsim.robot.wheeled_robots. Please update your code accordingly.
+2026-10-10T21:28:20Z [2,455ms] [Warning] [omni.isaac.wheeled_robots.controllers] omni.isaac.wheeled_robots has been deprecated in favor of isaacsim.robot.wheeled_robots. Please update your code accordingly.
+2026-10-10T21:28:20Z [2,457ms] [Warning] [omni.isaac.wheeled_robots.controllers.ackermann_controller] omni.isaac.wheeled_robots has been deprecated in favor of isaacsim.robot.wheeled_robots. Please update your code accordingly.
+2026-10-10T21:28:20Z [2,458ms] [Warning] [omni.isaac.wheeled_robots.controllers.differential_controller] omni.isaac.wheeled_robots has been deprecated in favor of isaacsim.robot.wheeled_robots. Please update your code accordingly.
+2026-10-10T21:28:20Z [2,458ms] [Warning] [omni.isaac.wheeled_robots.controllers.holonomic_controller] omni.isaac.wheeled_robots has been deprecated in favor of isaacsim.robot.wheeled_robots. Please update your code accordingly.
+2026-10-10T21:28:20Z [2,458ms] [Warning] [omni.isaac.wheeled_robots.controllers.quintic_path_planner] omni.isaac.wheeled_robots has been deprecated in favor of isaacsim.robot.wheeled_robots. Please update your code accordingly.
+2026-10-10T21:28:20Z [2,459ms] [Warning] [omni.isaac.wheeled_robots.controllers.stanley_control] omni.isaac.wheeled_robots has been deprecated in favor of isaacsim.robot.wheeled_robots. Please update your code accordingly.
+2026-10-10T21:28:20Z [2,459ms] [Warning] [omni.isaac.wheeled_robots.controllers.wheel_base_pose_controller] omni.isaac.wheeled_robots has been deprecated in favor of isaacsim.robot.wheeled_robots. Please update your code accordingly.
+2026-10-10T21:28:20Z [2,461ms] [Warning] [omni.isaac.wheeled_robots.impl] omni.isaac.wheeled_robots has been deprecated in favor of isaacsim.robot.wheeled_robots. Please update your code accordingly.
+2026-10-10T21:28:20Z [2,461ms] [Warning] [omni.isaac.wheeled_robots.robots] omni.isaac.wheeled_robots has been deprecated in favor of isaacsim.robot.wheeled_robots. Please update your code accordingly.
+2026-10-10T21:28:20Z [2,461ms] [Warning] [omni.isaac.wheeled_robots.robots.holonomic_robot_usd_setup] omni.isaac.wheeled_robots has been deprecated in favor of isaacsim.robot.wheeled_robots. Please update your code accordingly.
+2026-10-10T21:28:20Z [2,462ms] [Warning] [omni.isaac.wheeled_robots.robots.wheeled_robot] omni.isaac.wheeled_robots has been deprecated in favor of isaacsim.robot.wheeled_robots. Please update your code accordingly.
+[2.471s] [ext: omni.isaac.window.about-2.0.7] startup
+2026-10-10T21:28:20Z [2,472ms] [Warning] [omni.isaac.window.about] omni.isaac.window.about has been deprecated in favor of isaacsim.app.about. Please update your code accordingly.
+2026-10-10T21:28:20Z [2,473ms] [Warning] [omni.isaac.window.about.about] omni.isaac.window.about.about has been deprecated in favor of isaacsim.app.about.about. Please update your code accordingly.
+[2.482s] [ext: omni.kit.manipulator.camera-106.0.4] startup
+[2.487s] [ext: omni.isaac.cortex.sample_behaviors-2.0.5] startup
+2026-10-10T21:28:20Z [2,479ms] [Warning] [omni.isaac.cortex.sample_behaviors] omni.isaac.cortex.sample_behaviors has been deprecated in favor of isaacsim.cortex.behaviors. Please update your code accordingly.
+[2.488s] [ext: omni.sensors.nv.common-3.0.0] startup
+[2.496s] [ext: omni.kit.property.audio-1.0.16] startup
+[2.497s] [ext: omni.kit.property.camera-1.0.10] startup
+[2.498s] [ext: omni.sensors.net-1.0.0] startup
+[2.501s] [ext: omni.sensors.nv.materials-2.0.0] startup
+[2.504s] [ext: omni.kit.property.geometry-2.0.4] startup
+[2.506s] [ext: omni.kit.property.light-1.0.12] startup
+[2.514s] [ext: omni.kit.property.material-1.11.9] startup
+[2.519s] [ext: omni.sensors.nv.ids-2.0.0] startup
+[2.520s] [ext: omni.sensors.nv.wpm-3.0.0] startup
+[2.521s] [ext: omni.sensors.nv.lidar-3.0.0] startup
+[2.526s] [ext: omni.hydra.scene_api-0.1.2] startup
+[2.531s] [ext: isaacsim.util.debug_draw-3.1.0] startup
+[2.534s] [ext: omni.sensors.nv.radar-3.0.0] startup
+[2.536s] [ext: omni.kit.property.render-1.2.1] startup
+[2.537s] [ext: omni.kit.property.transform-1.5.13] startup
+[2.540s] [ext: isaacsim.gui.property-1.1.3] startup
+[2.542s] [ext: isaacsim.sensors.physx-2.3.2] startup
+[2.546s] [ext: isaacsim.sensors.camera-1.3.6] startup
+[2.551s] [ext: isaacsim.sensors.rtx-15.8.4] startup
+[2.558s] [ext: isaacsim.core.cloner-1.4.10] startup
+[2.561s] [ext: omni.kit.property.bundle-1.4.1] startup
+[2.564s] [ext: omni.kit.property.isaac-1.0.6] startup
+2026-10-10T21:28:20Z [2,557ms] [Warning] [omni.kit.property.isaac] omni.kit.property.isaac has been deprecated in favor of isaacsim.gui.property. Please update your code accordingly.
+2026-10-10T21:28:20Z [2,559ms] [Warning] [omni.kit.property.isaac.widgets] omni.kit.property.isaac.widgets has been deprecated in favor of isaacsim.gui.property.widgets. Please update your code accordingly.
+[2.568s] [ext: omni.isaac.range_sensor-4.0.6] startup
+2026-10-10T21:28:20Z [2,560ms] [Warning] [omni.isaac.range_sensor] omni.isaac.range_sensor has been deprecated in favor of isaacsim.sensors.physx. Please update your code accordingly.
+2026-10-10T21:28:20Z [2,560ms] [Warning] [omni.isaac.range_sensor.commands] omni.isaac.range_sensor.commands has been deprecated in favor of isaacsim.sensors.physx.commands. Please update your code accordingly.
+[2.569s] [ext: isaacsim.replicator.writers-1.0.17] startup
+[2.579s] [ext: omni.isaac.sensor-13.0.7] startup
+2026-10-10T21:28:20Z [2,572ms] [Warning] [omni.isaac.sensor] omni.isaac.sensor has been deprecated in favor of isaacsim.sensors.camera, isaacsim.sensors.physics, isaacsim.sensors.physx, and isaacsim.sensors.rtx. Please update your code accordingly.
+2026-10-10T21:28:20Z [2,572ms] [Warning] [omni.isaac.sensor.camera] omni.isaac.sensor.camera has been deprecated in favor of isaacsim.sensors.camera.camera. Please update your code accordingly.
+2026-10-10T21:28:20Z [2,572ms] [Warning] [omni.isaac.sensor.camera_view] omni.isaac.sensor.camera_view has been deprecated in favor of isaacsim.sensors.camera.camera_view. Please update your code accordingly.
+2026-10-10T21:28:20Z [2,573ms] [Warning] [omni.isaac.sensor.commands] omni.isaac.sensor.commands has been deprecated in favor of isaacsim.sensors.physics.commands, isaacsim.sensors.physx.commands, and isaacsim.sensors.rtx.commands. Please update your code accordingly.
+2026-10-10T21:28:20Z [2,573ms] [Warning] [omni.isaac.sensor.contact_sensor] omni.isaac.sensor.contact_sensor has been deprecated in favor of isaacsim.sensors.physics.contact_sensor. Please update your code accordingly.
+2026-10-10T21:28:20Z [2,573ms] [Warning] [omni.isaac.sensor.imu_sensor] omni.isaac.sensor.imu_sensor has been deprecated in favor of isaacsim.sensors.physics.imu_sensor. Please update your code accordingly.
+2026-10-10T21:28:20Z [2,573ms] [Warning] [omni.isaac.sensor.lidar_rtx] omni.isaac.sensor.lidar_rtx has been deprecated in favor of isaacsim.sensors.rtx.lidar_rtx. Please update your code accordingly.
+2026-10-10T21:28:20Z [2,573ms] [Warning] [omni.isaac.sensor.rotating_lidar_physX] omni.isaac.sensor.imu_sensor has been deprecated in favor of isaacsim.sensors.physix.rotating_lidar_physX. Please update your code accordingly.
+2026-10-10T21:28:20Z [2,574ms] [Warning] [omni.isaac.sensor.scripts.samples.contact_sensor] omni.isaac.sensor.scripts.samples.contact_sensor has been deprecated in favor of isaacsim.sensors.physics.scripts.samples.contact_sensor. Please update your code accordingly.
+2026-10-10T21:28:20Z [2,574ms] [Warning] [omni.isaac.sensor.scripts.samples.imu_sensor] omni.isaac.sensor.scripts.samples.imu_sensor has been deprecated in favor of isaacsim.sensors.physics.scripts.samples.imu_sensor. Please update your code accordingly.
+2026-10-10T21:28:20Z [2,574ms] [Warning] [omni.isaac.sensor.scripts.samples.lightbeam_sensor] omni.isaac.sensor.scripts.samples.lightbeam_sensor has been deprecated in favor of isaacsim.sensors.physx.scripts.samples.lightbeam_sensor. Please update your code accordingly.
+[2.583s] [ext: omni.isaac.cloner-1.0.7] startup
+2026-10-10T21:28:20Z [2,576ms] [Warning] [omni.isaac.cloner] omni.isaac.cloner has been deprecated in favor of isaacsim.core.cloner. Please update your code accordingly.
+[2.585s] [ext: omni.kit.viewport.menubar.lighting-107.3.1] startup
+[2.596s] [ext: omni.kit.viewport.menubar.render-107.0.10] startup
+[2.600s] [ext: isaacsim.replicator.domain_randomization-1.0.16] startup
+[2.601s] [ext: isaacsim.replicator.examples-1.3.6] startup
+[2.603s] [ext: omni.ocio-0.1.1] startup
+[2.605s] [ext: omni.rtx.window.settings-0.6.19] startup
+[2.612s] [ext: omni.kit.window.console-1.1.4] startup
+[2.620s] [ext: omni.kit.window.status_bar-0.1.9] startup
+[2.623s] [ext: omni.replicator.isaac-2.0.8] startup
+2026-10-10T21:28:20Z [2,615ms] [Warning] [omni.replicator.isaac] omni.replicator.isaac has been deprecated in favor of isaacsim.replicator.domain_randomization, isaacsim.replicator.examples, isaacsim.replicator.writers. Please update your code accordingly.
+[2.624s] [ext: omni.replicator.replicator_yaml-2.0.11] startup
+[2.628s] [ext: omni.rtx.settings.core-0.6.5] startup
+[2.631s] [ext: omni.usd.metrics.assembler.ui-107.3.1] startup
+[2.641s] [ext: omni.isaac.surface_gripper-2.0.6] startup
+2026-10-10T21:28:20Z [2,633ms] [Warning] [omni.isaac.surface_gripper] omni.isaac.surface_gripper has been deprecated in favor of isaacsim.robot.surface_gripper. Please update your code accordingly.
+[2.642s] [ext: semantics.schema.editor-2.0.2] startup
+[2.645s] [ext: omni.kit.ui.actions-1.0.5] startup
+[2.646s] [ext: semantics.schema.property-2.0.1] startup
+[2.647s] [ext: omni.isaac.universal_robots-1.0.6] startup
+2026-10-10T21:28:20Z [2,640ms] [Warning] [omni.isaac.universal_robots] omni.isaac.universal_robots has been deprecated in favor of isaacsim.robot.manipulators.examples.universal_robots. Please update your code accordingly.
+2026-10-10T21:28:20Z [2,640ms] [Warning] [omni.isaac.universal_robots.kinematics_solver] omni.isaac.franka has been deprecated in favor of isaacsim.robot.manipulators.examples.universal_robots. Please update your code accordingly.
+2026-10-10T21:28:20Z [2,640ms] [Warning] [omni.isaac.universal_robots.ur10] omni.isaac.franka has been deprecated in favor of isaacsim.robot.manipulators.examples.universal_robots. Please update your code accordingly.
+[2.649s] [ext: omni.isaac.core-4.0.7] startup
+2026-10-10T21:28:20Z [2,642ms] [Warning] [omni.isaac.core.physics_context.physics_context] omni.isaac.core.physics_context.physics_context has been deprecated in favor of isaacsim.core.api.physics_context.physics_context. Please update your code accordingly.
+2026-10-10T21:28:20Z [2,642ms] [Warning] [omni.isaac.core.simulation_context.simulation_context] omni.isaac.core.simulation_context.simulation_context has been deprecated in favor of isaacsim.core.api.simulation_context.simulation_context. Please update your code accordingly.
+2026-10-10T21:28:20Z [2,642ms] [Warning] [omni.isaac.core.world.world] omni.isaac.core.world.world has been deprecated in favor of isaacsim.core.api.world.world. Please update your code accordingly.
+2026-10-10T21:28:20Z [2,642ms] [Warning] [omni.isaac.core] omni.isaac.core has been deprecated in favor of isaacsim.core.api. Please update your code accordingly.
+[2.651s] [ext: isaacsim.gui.sensors.icon-2.0.3] startup
+[2.659s] [ext: isaacsim.asset.importer.mjcf-2.5.13] startup
+[2.663s] [ext: omni.kit.menu.common-2.0.1] startup
+[2.665s] [ext: isaacsim.exp.base-5.1.0] startup
+[2.666s] [ext: omnigibson_5_1_0-3.9.3] startup
+[2.667s] Simulation App Starting
+2026-10-10T21:28:21Z [2,803ms] [Warning] [omni.fabric.plugin] Warning: attribute viewportHandle not found for bucket id 9
+
+[2.838s] app ready
+[0m[00:00:11.174] [INFO] [omnigibson.simulator] ---------- Welcome to OmniGibson! ----------[0m
+[4.579s] Simulation App Startup Complete
+[4.832s] [ext: omni.physx.fabric-107.3.26] startup
+2026-10-10T21:28:23Z [4,914ms] [Warning] [omni.fabric.plugin] Warning: attribute physics:filteredGroups not found for path /World/collision_groups/structural_doors
+
+2026-10-10T21:28:24Z [6,049ms] [Warning] [omni.syntheticdata.plugin] OgnSdPostRenderVarToHost : rendervar copy from texture directly to host buffer is counter-performant. Please use copy from texture to device buffer first.
+2026-10-10T21:30:38Z [140,326ms] [Warning] [carb] Plugin interface for a client: omni.hydratexture.plugin was already released.
+2026-10-10T21:30:41Z [143,267ms] [Warning] [omni.syntheticdata.plugin] SdRenderVarPtr missing valid input renderVar LdrColorSDhost
+2026-10-10T21:30:43Z [145,421ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:43Z [145,421ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:43Z [145,422ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:43Z [145,422ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:43Z [145,449ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:43Z [145,449ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:43Z [145,449ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:43Z [145,449ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:43Z [145,486ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:43Z [145,486ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:43Z [145,487ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:43Z [145,487ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:43Z [145,487ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:43Z [145,487ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:43Z [145,487ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:43Z [145,487ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:43Z [145,488ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:43Z [145,488ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:43Z [145,488ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:43Z [145,488ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:43Z [145,488ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:43Z [145,488ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:43Z [145,488ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:43Z [145,489ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:43Z [145,489ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:43Z [145,489ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:43Z [145,489ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:43Z [145,489ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:43Z [145,515ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:43Z [145,515ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:43Z [145,516ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:43Z [145,516ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:43Z [145,542ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:43Z [145,542ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:43Z [145,542ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:43Z [145,542ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:43Z [145,568ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:43Z [145,568ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:43Z [145,568ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:43Z [145,568ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:43Z [145,593ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:43Z [145,593ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:43Z [145,593ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:43Z [145,594ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:43Z [145,619ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:43Z [145,619ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:43Z [145,619ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:43Z [145,619ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:43Z [145,681ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:43Z [145,681ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:43Z [145,708ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:43Z [145,708ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:43Z [145,740ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:43Z [145,740ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:43Z [145,772ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:43Z [145,772ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:44Z [145,808ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:44Z [145,808ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:44Z [145,809ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:44Z [145,809ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:44Z [145,809ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:44Z [145,809ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:44Z [145,833ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:44Z [145,833ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:44Z [145,858ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:44Z [145,858ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:44Z [145,887ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:44Z [145,887ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:44Z [145,923ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:44Z [145,923ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:44Z [145,923ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:44Z [145,923ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:44Z [145,923ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:44Z [145,923ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:44Z [145,924ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:44Z [145,924ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:44Z [145,924ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:44Z [145,924ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:44Z [145,924ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:44Z [145,924ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:44Z [145,929ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:44Z [145,929ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:44Z [145,933ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:44Z [145,933ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:44Z [146,647ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:44Z [146,647ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:44Z [146,647ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:44Z [146,647ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:44Z [146,647ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:44Z [146,647ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:45Z [147,615ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:45Z [147,615ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:45Z [147,616ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:45Z [147,616ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:45Z [147,616ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:45Z [147,616ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:45Z [147,640ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:45Z [147,641ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:45Z [147,641ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:45Z [147,641ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:45Z [147,641ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:45Z [147,641ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:45Z [147,641ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:45Z [147,642ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:45Z [147,666ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:45Z [147,666ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:45Z [147,666ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:45Z [147,666ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:45Z [147,667ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:45Z [147,667ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:45Z [147,667ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:45Z [147,667ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:45Z [147,719ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:45Z [147,719ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:45Z [147,723ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:45Z [147,723ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:45Z [147,727ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:45Z [147,727ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:45Z [147,732ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:45Z [147,732ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:45Z [147,732ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:45Z [147,732ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:45Z [147,736ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:45Z [147,736ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:45Z [147,739ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:45Z [147,739ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:45Z [147,743ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:45Z [147,743ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:45Z [147,747ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:45Z [147,747ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:45Z [147,751ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:45Z [147,751ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:45Z [147,755ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:45Z [147,755ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:46Z [148,164ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:46Z [148,164ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:46Z [148,198ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:46Z [148,198ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:46Z [148,198ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:46Z [148,198ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:46Z [148,198ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:46Z [148,198ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:46Z [148,476ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:46Z [148,476ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:46Z [148,480ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:46Z [148,480ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:46Z [148,483ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:46Z [148,484ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:46Z [148,487ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:46Z [148,487ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:46Z [148,491ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:46Z [148,491ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:46Z [148,495ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:46Z [148,495ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:46Z [148,499ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:46Z [148,499ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:46Z [148,502ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:46Z [148,503ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:46Z [148,506ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+[0m[00:02:37.275] [INFO] [omnigibson.simulator] Imported scene 0.[0m
+Starting kit application with the following args:  ['/mnt/nvme/oliver/robot/render_methods/behavior/conda_env/lib/python3.11/site-packages/isaacsim/exts/isaacsim.simulation_app/isaacsim/simulation_app/simulation_app.py', '/mnt/nvme/oliver/robot/render_methods/behavior/conda_env/lib/python3.11/site-packages/isaacsim/apps/omnigibson_5_1_0.kit', '--/app/tokens/exe-path=/mnt/nvme/oliver/robot/render_methods/behavior/conda_env/lib/python3.11/site-packages/isaacsim/kit', '--/persistent/app/viewport/displayOptions=3094', '--/rtx/materialDb/syncLoads=True', '--/rtx/hydra/materialSyncLoads=True', '--/omni.kit.plugin/syncUsdLoads=True', '--/app/renderer/resolution/width=1280', '--/app/renderer/resolution/height=720', '--/app/window/width=1440', '--/app/window/height=900', '--/renderer/multiGpu/enabled=False', '--/app/fastShutdown=True', '--/app/installSignalHandlers=0', '--ext-folder', '/mnt/nvme/oliver/robot/render_methods/behavior/conda_env/lib/python3.11/site-packages/isaacsim/exts', '--ext-folder', '/mnt/nvme/oliver/robot/render_methods/behavior/conda_env/lib/python3.11/site-packages/isaacsim/apps', '--/physics/cudaDevice=0', '--/plugins/carb.tasking.plugin/threadCount=24', '--/plugins/omni.tbb.globalcontrol/maxThreadCount=24', '--no-window', '--/app/window/hideUi=1']
+Passing the following args to the base kit application:  ['--portable-root', '/mnt/nvme/oliver/robot/render_methods/behavior/BEHAVIOR-1K/OmniGibson/appdata/local', '--/app/tokens/omni_global_cache=/mnt/nvme/oliver/robot/render_methods/behavior/BEHAVIOR-1K/OmniGibson/appdata/global/cache', '--/app/tokens/omni_global_data=/mnt/nvme/oliver/robot/render_methods/behavior/BEHAVIOR-1K/OmniGibson/appdata/global/data']
+Warp DeprecationWarning: The symbol `warp.types.array` will soon be removed from the public API. Use `warp.array` instead.
+Warp DeprecationWarning: The symbol `warp.types.Array` will soon be removed from the public API. It can still be accessed from `warp._src.types.Array` but might be changed or removed without notice.
+Warp DeprecationWarning: The symbol `warp.types.launch_bounds_t` will soon be removed from the public API. It can still be accessed from `warp._src.types.launch_bounds_t` but might be changed or removed without notice.
+Warp DeprecationWarning: The symbol `warp.types.vector_types` will soon be removed from the public API. It can still be accessed from `warp._src.types.vector_types` but might be changed or removed without notice.
+Warp DeprecationWarning: The symbol `warp.types.scalar_types` will soon be removed from the public API. It can still be accessed from `warp._src.types.scalar_types` but might be changed or removed without notice.
+Warp DeprecationWarning: The symbol `warp.types.np_dtype_to_warp_type` will soon be removed from the public API. It can still be accessed from `warp._src.types.np_dtype_to_warp_type` but might be changed or removed without notice.
+Warp 1.12.0 initialized:
+   CUDA Toolkit 12.9, Driver 13.0
+   Devices:
+     "cpu"      : "x86_64"
+     "cuda:0"   : "NVIDIA RTX PRO 6000 Blackwell Workstation Edition" (95 GiB, sm_120, mempool enabled)
+   Kernel cache:
+     /mnt/nvme/oliver/robot/render_methods/behavior/BEHAVIOR-1K/OmniGibson/appdata/global/warp_cache
+Warp DeprecationWarning: The symbol `warp.utils.warn` will soon be removed from the public API. It can still be accessed from `warp._src.utils.warn` but might be changed or removed without notice.
+Warp DeprecationWarning: The symbol `warp.types.float32` will soon be removed from the public API. Use `warp.float32` instead.
+Warp DeprecationWarning: The `warp.sim` module is deprecated and will be removed in v1.10. Please transition to using the forthcoming Newton library instead.
+
+                   ____________
+                  /          / \
+                 /          / /__
+                /          / /  /\
+               /__________/ /__/  \
+               \   _____  \ \__\  /
+                \  \  / \  \ \_/ /
+                 \  \/___\  \   /
+                  \__________\_/  
+       ___                  _  ____ _ _                     
+      / _ \ _ __ ___  _ __ (_)/ ___(_) |__  ___  ___  _ __  
+     | | | | '_ ` _ \| '_ \| | |  _| | '_ \/ __|/ _ \| '_ \ 
+     | |_| | | | | | | | | | | |_| | | |_) \__ \ (_) | | | |
+      \___/|_| |_| |_|_| |_|_|\____|_|_.__/|___/\___/|_| |_|
+
+Module omnigibson.utils.usd_utils 57917a4 load on device 'cuda:0' took 0.75 ms  (cached)
+Module omnigibson.object_states.aabb 4de578a load on device 'cuda:0' took 0.24 ms  (cached)
+Module omnigibson.object_states.adjacency 6039c89 load on device 'cuda:0' took 0.35 ms  (cached)
+Module omnigibson.object_states.under ae6dd9f load on device 'cuda:0' took 0.22 ms  (cached)
+Module omnigibson.object_states.touching 3695b1b load on device 'cuda:0' took 0.29 ms  (cached)
+Module omnigibson.object_states.open_state 9f3c76b load on device 'cuda:0' took 0.27 ms  (cached)
+Module omnigibson.object_states.toggle 5172335 load on device 'cuda:0' took 0.41 ms  (cached)
+Module omnigibson.object_states.inside c41ba8f load on device 'cuda:0' took 0.47 ms  (cached)
+Module omnigibson.object_states.heat_source_or_sink 472acd8 load on device 'cuda:0' took 0.24 ms  (cached)
+Module omnigibson.object_states.temperature 10db2b7 load on device 'cuda:0' took 0.53 ms  (cached)
+Module omnigibson.object_states.on_top 52eaeb1 load on device 'cuda:0' took 0.23 ms  (cached)
+Module omnigibson.object_states.on_fire 9bf5add load on device 'cuda:0' took 0.24 ms  (cached)
+Module omnigibson.object_states.next_to f8c23b3 load on device 'cuda:0' took 0.25 ms  (cached)
+LOADED 155.8
+2026-10-10T21:30:46Z [148,506ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:46Z [148,510ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:46Z [148,510ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:46Z [148,514ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:46Z [148,514ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:46Z [148,518ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:46Z [148,518ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:46Z [148,522ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:46Z [148,522ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:46Z [148,526ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:46Z [148,526ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:46Z [148,656ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:46Z [148,656ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:46Z [148,657ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:46Z [148,657ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:46Z [148,680ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:46Z [148,680ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:46Z [148,680ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:46Z [148,680ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:46Z [148,703ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:46Z [148,703ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:46Z [148,703ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:46Z [148,704ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:30:47Z [148,931ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:30:47Z [148,931ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:32:07Z [229,296ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:32:07Z [229,296ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:32:07Z [229,297ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:32:07Z [229,297ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:32:07Z [229,331ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:32:07Z [229,331ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:32:07Z [229,331ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:32:07Z [229,331ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+Module omnigibson.object_states.slicer_active bec19c2 load on device 'cuda:0' took 0.49 ms  (cached)
+Module omnigibson.object_states.max_temperature b0e6082 load on device 'cuda:0' took 0.25 ms  (cached)
+ADDED 237 78.2 gpu 7184
+FURN add_dining_sideboard True 
+FURN add_dining_coffee_table True 
+FURN add_bedroom_dresser True 
+FURN add_bedroom_armchair True 
+FURN add_tv_small_table True 
+FURN add_bedroom2_coatrack True 
+FURN add_hall_piano True 
+FURN add_hall_piano_stool True 
+FURN add_hall_side_table True 
+FURN add_living_sideboard True 
+FURN add_living_end_table True 
+PLACE phone_charger_white_braided on_top nightstand_wbxekb_1 True   0.44
+PLACE keys_brass_house on_top floors_uftgek_0 True   0.71
+PLACE tote_bag_olive_canvas on_top desk_xhjsub_0 True   0.99
+PLACE laptop_silver_slim on_top desk_xhjsub_0 True   0.57
+PLACE water_bottle_clear_steel on_top countertop_kelzer_0 True   18.55
+PLACE field_notebook_green_clothbound on_top add_living_sideboard True   0.56
+PLACE planting_sketches_rolled_tracing_paper on_top desk_xhjsub_0 True   0.46
+PLACE mechanical_pencil_graphite_gray inside desk_xhjsub_0 False  AssertionError('Container object desk_xhjsub_0 must have a fillable meta link') 0.0
+PLACE sketchbook_cream_spiral on_top coffee_table_rlsebe_0 True   0.45
+PLACE gardening_gloves_green_nitrile on_top add_bedroom_dresser True   0.46
+PLACE pruning_shears_red_handled next_to (by hand) gardening_gloves_green_nitrile True   1.49
+PLACE sleep_pants_soft_blue_cotton on_top floors_mawnss_0 True   0.74
+PLACE work_loafers_brown_leather on_top floors_uftgek_0 True   0.44
+PLACE running_shoes_white_green_mesh next_to (by hand) work_loafers_brown_leather True   1.34
+PLACE evening_sweater_oatmeal_knit on_top add_bedroom_armchair False   73.33
+PLACE phone_black_glass_and_aluminum on_top coffee_table_rlsebe_0 True   0.57
+PLACE phone_charger_black_braided_usb_c on_top nightstand_wbxekb_1 True   1.26
+PLACE keys_brass_house_and_steel on_top add_hall_piano True   0.57
+PLACE backpack_charcoal_canvas on_top floors_uftgek_0 True   1.06
+PLACE tablet_dark_restaurant on_top desk_xhjsub_0 True   0.46
+PLACE menu_folder_black_elastic on_top add_dining_sideboard True   26.87
+PLACE apron_indigo_denim inside backpack_charcoal_canvas False  AttributeError('Cannot set attribute DEFAULT_HIGH_LEVEL_SAMPLING_ATTEMPTS in MacroDict, it has alrea 0.0
+PLACE restaurant_notebook_red_clothbound inside backpack_charcoal_canvas False  AttributeError('Cannot set attribute DEFAULT_HIGH_LEVEL_SAMPLING_ATTEMPTS in MacroDict, it has alrea 0.0
+PLACE thermos_brushed_steel on_top countertop_kelzer_0 True   3.1
+PLACE restaurant_shirt_white_cotton on_top floors_mawnss_0 True   0.49
+PLACE work_trousers_black_relaxed_fit on_top floors_mawnss_0 True   0.52
+PLACE evening_shirt_heather_gray_cotton on_top floors_mawnss_0 True   0.86
+PLACE sleep_shirt_soft_charcoal_cotton on_top floors_mawnss_0 True   3.79
+PLACE sleep_pants_soft_charcoal_cotton on_top floors_mawnss_0 True   13.17
+PLACE piano_music_book_cream_spiral_score on_top add_hall_piano True   0.42
+PLACE first_aid_kit_white_zippered inside multi_station_furniture_sink_upwldu_0 True   11.96
+PLACE painkillers_blue_bottle inside first_aid_kit_white_zippered False  AttributeError('Cannot set attribute DEFAULT_HIGH_LEVEL_SAMPLING_ATTEMPTS in MacroDict, it has alrea 0.0
+PLACE cold_medicine_amber_bottle inside first_aid_kit_white_zippered False  AttributeError('Cannot set attribute DEFAULT_HIGH_LEVEL_SAMPLING_ATTEMPTS in MacroDict, it has alrea 0.0
+PLACE thermometer_digital_white inside first_aid_kit_white_zippered False  AttributeError('Cannot set attribute DEFAULT_HIGH_LEVEL_SAMPLING_ATTEMPTS in MacroDict, it has alrea 0.0
+PLACE plasters_beige_tin inside first_aid_kit_white_zippered False  AttributeError('Cannot set attribute DEFAULT_HIGH_LEVEL_SAMPLING_ATTEMPTS in MacroDict, it has alrea 0.0
+PLACE tissues_white_cube_box on_top multi_station_furniture_sink_upwldu_0 True   2.81
+PLACE hand_soap_clear_pump on_top bottom_cabinet_xqmipa_0 True   0.45
+PLACE toothbrush_holder_speckled_ceramic on_top bottom_cabinet_xqmipa_0 True   0.44
+PLACE sponge_yellow_cellulose on_top countertop_kelzer_0 True   7.42
+PLACE dish_soap_green_pump on_top countertop_kelzer_0 True   3.48
+PLACE paper_towels_natural_roll next_to (by hand) sponge_yellow_cellulose True   2.9
+PLACE batteries_mixed_alkaline_pack inside add_dining_sideboard True   0.61
+PLACE adhesive_tape_clear_dispenser inside add_dining_sideboard True   1.11
+PLACE spare_umbrella_navy_folding on_top floors_yrqspn_0 True   0.93
+PLACE phone_charger_white_braided_usb_c on_top desk_xhjsub_0 True   0.42
+PLACE phone_charger_black_braided_usb_c_nylon on_top add_tv_small_table True   0.42
+PLACE water_bottle_clear_steel_stainless on_top desk_xhjsub_0 True   0.44
+PLACE thermos_red_insulated on_top countertop_kelzer_0 True   2.78
+PLACE laundry_detergent_white_refill_pouch inside bottom_cabinet_no_top_gjrero_1 True   7.71
+PLACE stain_remover_orange_spray_bottle on_top countertop_fjkase_0 True   12.65
+PLACE rubber_gloves_yellow_pair on_top countertop_ikwqer_0 True   0.43
+PLACE cleaning_spray_clear_blue_bottle on_top countertop_ikwqer_0 True   1.26
+PLACE microfiber_cloths_gray_folded_stack inside bottom_cabinet_no_top_gjrero_0 True   1.69
+PLACE mugs_white_stoneware inside top_cabinet_lkxmne_0 True   2.76
+PLACE tea_towels_striped_linen inside bottom_cabinet_no_top_gjeoer_0 True   0.36
+PLACE food_storage_bags_clear_zip_box inside top_cabinet_lkxmne_1 False   115.48
+PLACE reusable_shopping_bags_folded_canvas_bundle inside bottom_cabinet_no_top_gjeoer_0 False   115.75
+PLACE plate_cream_stoneware inside top_cabinet_lkxmne_0 True   70.09
+PLACE plate_speckled_blue on_top countertop_kelzer_0 True   51.05
+PLACE bowl_shallow_rust on_top breakfast_table_rhjoby_0 True   0.45
+PLACE water_glass_tall_ribbed inside top_cabinet_lkxmne_0 True   7.13
+PLACE wine_glass_thin_green_stem on_top breakfast_table_rhjoby_0 True   3.52
+PLACE cloth_napkin_ochre_linen on_top breakfast_table_rhjoby_0 True   9.69
+PLACE serving_spoon_walnut_handled on_top add_dining_sideboard True   51.88
+PLACE serving_platter_oval_white inside add_dining_sideboard False  ValueError('Failed to initialize sludge system. Please set gm.USE_GPU_DYNAMICS=True.') 57.91
+PLACE corkscrew_wood_handled inside add_dining_sideboard True   0.34
+PLACE cookbook_green_linen_cover on_top add_dining_coffee_table True   0.46
+PLACE landscape_magazine_glossy_orange_cover on_top coffee_table_rlsebe_0 True   0.42
+PLACE mail_two_unopened_envelopes on_top desk_xhjsub_0 True   0.43
+PLACE coaster_cork_botanical on_top add_dining_coffee_table True   0.47
+PLACE reading_glasses_thin_bronze_round on_top floors_mawnss_0 True   0.42
+PLACE water_glass_short_clear_tumbler on_top nightstand_wbxekb_1 True   0.45
+PLACE hand_cream_white_botanical_tube on_top nightstand_wbxekb_1 True   2.77
+PLACE hairbrush_wooden_oval on_top add_bedroom_dresser True   0.46
+PLACE watch_black_leather_strap on_top floors_mawnss_0 True   5.11
+PLACE belt_dark_brown_woven on_top floors_mawnss_0 True   0.44
+PLACE wool_socks_mustard_ribbed_pair on_top floors_mawnss_0 True   0.45
+PLACE mug_cream_blue_rimmed inside top_cabinet_lkxmne_0 True   1.04
+PLACE perfume_amber_square_bottle on_top add_bedroom_dresser True   0.47
+2026-10-10T21:32:07Z [229,332ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:32:07Z [229,332ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:32:07Z [229,332ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:32:07Z [229,332ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:32:07Z [229,427ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:32:07Z [229,427ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:32:07Z [229,428ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:32:07Z [229,428ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:32:07Z [229,428ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:32:07Z [229,428ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:32:07Z [229,429ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:32:07Z [229,429ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:32:07Z [229,429ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:32:07Z [229,429ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:32:07Z [229,429ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:32:07Z [229,429ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:32:07Z [229,492ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:32:07Z [229,492ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:32:07Z [229,639ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:32:07Z [229,639ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:32:08Z [229,809ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:32:08Z [229,810ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:32:08Z [230,033ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:32:08Z [230,033ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:32:08Z [230,104ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:32:08Z [230,104ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:32:08Z [230,640ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:32:08Z [230,640ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:32:09Z [231,251ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use getDofFrictionProperties instead.
+2026-10-10T21:32:09Z [231,251ms] [Warning] [omni.physx.tensors.plugin] DEPRECATED: Please use setDofFrictionProperties instead.
+2026-10-10T21:45:13Z [1,014,903ms] [Warning] [carb] Failed to startup plugin carb.windowing-glfw.plugin (interfaces: [carb::windowing::IGLContext v1.0],[carb::windowing::IWindowing v1.5]) (impl: carb.windowing-glfw.plugin)
+2026-10-10T21:45:13Z [1,014,906ms] [Warning] [carb] Failed to startup plugin carb.windowing-glfw.plugin (interfaces: [carb::windowing::IGLContext v1.0],[carb::windowing::IWindowing v1.5]) (impl: carb.windowing-glfw.plugin)
+PLACE linen_scarf_blue_gray_gauze inside add_bedroom_dresser False   114.55
+PLACE jeans_indigo_straight_leg on_top floors_mawnss_0 True   37.08
+PLACE jacket_faded_denim_chore on_top floors_uftgek_0 True   0.48
+PLACE mug_mustard_ceramic on_top coffee_table_qtwqqb_0 True   1.25
+PLACE paperback_book_cream_mystery_cover on_top coffee_table_qtwqqb_0 True   0.43
+PLACE throw_blanket_rust_woven on_top sofa_bskyog_0 True   19.52
+PLACE hoodie_faded_navy_cotton on_top eames_chair_hndxiw_0 False   68.74
+PLACE cap_ochre_canvas on_top add_bedroom2_coatrack False   65.6
+PLACE mug_blue_speckled inside drop_in_sink_awvzkn_0 True   0.55
+PLACE water_glass_short_smoky_tumbler on_top nightstand_wbxekb_2 True   0.45
+PLACE paperback_book_green_train_cover on_top bed_rrcvaq_1 False   65.16
+PLACE phone_charger_gray_braided_usb_c inside nightstand_wbxekb_2 False  AssertionError('Container object nightstand_wbxekb_2 must have a fillable meta link') 0.0
+PLACE pen_black_gel inside nightstand_wbxekb_2 False  AssertionError('Container object nightstand_wbxekb_2 must have a fillable meta link') 0.0
+PLACE towel_white_waffle_guest on_top bottom_cabinet_xqmipa_0 False   68.35
+PLACE music_notebook_ochre_clothbound on_top add_hall_piano True   0.43
+PLACE toothbrush_pale_green on_top multi_station_furniture_sink_upwldu_0 True   12.33
+PLACE toothbrush_dark_blue on_top multi_station_furniture_sink_upwldu_0 True   8.0
+PLACE toothpaste_white_mint_tube on_top multi_station_furniture_sink_upwldu_0 True   0.51
+PLACE dental_floss_teal_round_case on_top multi_station_furniture_sink_upwldu_0 True   2.75
+PLACE towel_sage_hand on_top shelf_fjozhc_0 False   66.33
+PLACE bath_mat_cream_ribbed on_top floors_shuuqu_0 True   0.41
+PLACE laundry_basket_natural_canvas on_top floors_glwobe_0 True   0.42
+PLACE towel_blue_cotton_bath on_top floors_shuuqu_0 True   0.44
+PLACE towel_cream_waffle_hand on_top countertop_ikwqer_0 True   7.91
+PLACE pillowcase_white_linen inside bottom_cabinet_no_top_gjrero_0 False   114.67
+PLACE sheet_gray_fitted_jersey inside bottom_cabinet_no_top_gjrero_0 False   116.16
+PLACE laundry_soap_lavender_paper_wrapped_bar inside tabletop_sink_vekaaf_0 False   57.38
+PLACE lint_roller_teal_handled inside bottom_cabinet_no_top_gjrero_3 True   9.54
+PLACE hanger_wooden_maple on_top wardrobe_pyuwgc_0 False   64.92
+PLACE kitchen_towel_green_striped_linen inside washer_ynwamu_0 True   8.21
+PLACE socks_black_cotton_ankle_pair inside clothes_dryer_xsuyua_0 False   114.52
+PLACE work_blouse_sage_cotton_button_up inside clothes_dryer_xsuyua_0 False   114.65
+PLACE shampoo_amber_pump_bottle on_top bottom_cabinet_xqmipa_0 True   0.6
+PLACE conditioner_white_flip_top_bottle on_top bottom_cabinet_xqmipa_0 True   0.43
+PLACE towel_charcoal_cotton_bath on_top bottom_cabinet_xqmipa_0 False   67.57
+PLACE nail_clippers_small_silver on_top bottom_cabinet_xqmipa_0 True   0.47
+PLACE hair_clip_matte_tortoiseshell on_top bottom_cabinet_xqmipa_0 True   0.44
+PLACE toilet_paper_roll_white_embossed on_top toilet_udiezm_0 True   5.19
+PLACE towel_sage_waffle_hand on_top multi_station_furniture_sink_upwldu_0 False   68.72
+PLACE paperback_book_yellow_garden_cover next_to (by hand) toilet_paper_roll_white_embossed False   65.34
+PLACE project_folder_blue_recycled_board on_top desk_xhjsub_0 True   12.25
+PLACE sketch_paper_pad_white_gridded on_top desk_xhjsub_0 False   65.36
+PLACE ruler_clear_aluminum_edge inside tote_bag_olive_canvas False  AttributeError('Cannot set attribute DEFAULT_HIGH_LEVEL_SAMPLING_ATTEMPTS in MacroDict, it has alrea 0.0
+PLACE pencil_case_mustard_canvas inside tote_bag_olive_canvas False  AttributeError('Cannot set attribute DEFAULT_HIGH_LEVEL_SAMPLING_ATTEMPTS in MacroDict, it has alrea 0.0
+PLACE sticky_notes_lemon_yellow_pad on_top desk_xhjsub_0 True   0.45
+PLACE mug_terracotta_banded inside drop_in_sink_awvzkn_0 True   4.97
+PLACE paperback_book_gray_urbanist_cover on_top desk_xhjsub_0 True   16.93
+PLACE binder_clips_black_metal_handful inside desk_xhjsub_0 False  AssertionError('Container object desk_xhjsub_0 must have a fillable meta link') 0.0
+PLACE mug_white_chipped on_top floors_wkdxrr_0 True   0.44
+PLACE water_bottle_smoked_glass next_to (by hand) mug_white_chipped True   1.31
+PLACE paperback_book_red_coastal_cover on_top floors_wkdxrr_0 True   0.44
+PLACE phone_charger_green_braided_usb_c next_to (by hand) paperback_book_red_coastal_cover True   1.29
+PLACE rain_boots_brown_ankle_pair on_top floors_uftgek_0 True   0.44
+PLACE newspaper_folded_weekend on_top floors_uftgek_0 True   0.44
+PLACE parcel_small_kraft_taped on_top add_living_sideboard True   1.21
+PLACE mug_red_ceramic on_top add_hall_side_table True   0.47
+PLACE coaster_blue_felt under mug_red_ceramic False   66.2
+PLACE water_bottle_clear_ribbed on_top thermos_brushed_steel False   64.47
+PLACE phone_charger_blue_braided_usb_c on_top add_hall_piano_stool True   0.45
+PLACE paperback_book_purple_river_cover on_top sofa_hiphpn_0 True   2.78
+PLACE pen_green_rollerball on_top music_notebook_ochre_clothbound True   0.54
+PLACE paperback_book_white_astronomy_cover inside add_hall_piano False  AssertionError('Container object add_hall_piano must have a fillable meta link') 0.0
+PLACE phone_charger_yellow_braided_usb_c inside add_hall_piano False  AssertionError('Container object add_hall_piano must have a fillable meta link') 0.0
+PLACE water_glass_tall_clear_fluted on_top coffee_table_rlsebe_0 True   0.43
+PLACE mug_sage_ceramic on_top add_hall_side_table True   0.51
+PLACE phone_charger_gray_braided_usb_c_nylon_and_plastic on_top add_living_end_table True   1.16
+PLACE paperback_book_teal_bird_cover on_top coffee_table_rlsebe_0 True   0.46
+PLACE ceramic_tray_white_oval on_top add_living_sideboard False   65.77
+PLACE snack_bowl_stoneware_blue on_top coffee_table_rlsebe_0 True   0.43
+PLACE phone_green_glass on_top nightstand_wbxekb_1 True   2.83
+PLACE market_herbs_basil_and_mint_glass on_top thermos_brushed_steel False   66.17
+PLACE restaurant_receipt_long_thermal_slip next_to (by hand) menu_folder_black_elastic False   64.77
+PLACE cast_iron_skillet_large_seasoned on_top burner_mjvqii_0 True   0.44
+PLACE saucepan_small_copper on_top burner_mjvqii_0 False   65.73
+PLACE stockpot_tall_stainless on_top burner_mjvqii_0 False   65.81
+PLACE mixing_bowl_yellow_melamine inside top_cabinet_lkxmne_0 True   2.71
+PLACE mixing_bowl_clear_glass inside top_cabinet_lkxmne_1 True   0.43
+PLACE colander_blue_enamel inside top_cabinet_lkxmne_1 True   11.96
+PLACE silicone_spatula_red_heatproof on_top countertop_kelker_0 True   23.73
+PLACE tongs_black_locking inside bottom_cabinet_no_top_gjeoer_0 True   0.83
+PLACE measuring_spoons_blue_nesting_set inside bottom_cabinet_no_top_gjeoer_0 True   0.41
+PLACE plate_white_rimmed inside top_cabinet_lkxmne_0 True   0.5
+PLACE plate_cream_floral inside top_cabinet_lkxmne_0 True   5.16
+PLACE bowl_white_cereal on_top breakfast_table_rhjoby_0 True   2.81
+PLACE water_glass_short_green_tumbler inside top_cabinet_lkxmne_0 True   0.42
+PLACE water_glass_tall_amber_tumbler inside top_cabinet_lkxmne_0 True   2.77
+PLACE mug_black_matte inside top_cabinet_lkxmne_0 True   7.62
+PLACE mug_cream_painted_stripe on_top coffee_table_rlsebe_0 True   2.81
+PLACE forks_four_stainless inside bottom_cabinet_no_top_gjeoer_0 True   2.8
+PLACE knives_four_table inside bottom_cabinet_no_top_gjeoer_0 True   0.78
+PLACE napkins_blue_cotton_stack inside bottom_cabinet_no_top_gjeoer_0 True   0.68
+PLACE cutting_board_maple_oval on_top countertop_kelker_0 True   9.78
+PLACE rolling_pin_short_beech inside top_cabinet_lkxmne_1 True   5.81
+PLACE salt_cellar_white_ceramic on_top countertop_kelker_0 True   0.46
+PLACE pepper_mill_walnut_turned next_to (by hand) salt_cellar_white_ceramic True   5.51
+PLACE coffee_beans_dark_roast_pouch inside top_cabinet_lkxmne_0 True   4.78
+PLACE tea_tin_red_square inside top_cabinet_lkxmne_0 True   21.54
+PLACE sugar_jar_clear_glass_clamp inside top_cabinet_lkxmne_1 True   2.93
+PLACE pasta_rigatoni_paper_bag next_to (by hand) cutting_board_maple_oval True   19.8
+PLACE rice_brown_sack inside top_cabinet_lkxmne_2 True   0.48
+PLACE flour_white_paper_sack on_top countertop_kelker_0 True   16.88
+PLACE canned_tomatoes_three_red_tins on_top countertop_kelker_0 True   0.44
+PLACE honey_jar_amber_bear inside bowl_white_cereal False  AttributeError('Cannot set attribute DEFAULT_HIGH_LEVEL_SAMPLING_ATTEMPTS in MacroDict, it has alrea 0.0
+PLACE lemons_three_bright_yellow inside fridge_dszchb_0 True   0.83
+PLACE carrots_bunched_orange on_top cutting_board_maple_oval True   0.46
+PLACE butter_wrapped_salted_block on_top burner_mjvqii_0 True   43.94
+PLACE eggs_six_brown_carton on_top burner_mjvqii_0 False   65.74
+PLACE yogurt_plain_glass_jar inside fridge_dszchb_0 True   1.25
+PLACE dish_towel_ochre_checked on_top sponge_yellow_cellulose False   65.74
+PLACE wooden_tray_rectangular_walnut on_top mixing_bowl_yellow_melamine False   66.7
+PLACE apple_single_red inside backpack_charcoal_canvas False  AttributeError('Cannot set attribute DEFAULT_HIGH_LEVEL_SAMPLING_ATTEMPTS in MacroDict, it has alrea 0.0
+PLACE banana_two_yellow on_top add_hall_side_table True   0.48
+PLACE forks_single_brushed_steel on_top countertop_kelzer_0 True   0.45
+PLACE table_knives_one_serrated_silver inside bottom_cabinet_no_top_gjeoer_0 True   0.64
+PLACE table_knives_one_black_handled inside bottom_cabinet_no_top_gjeoer_0 True   0.55
+PLACE table_spoons_one_oval_silver inside bottom_cabinet_no_top_gjeoer_0 True   2.94
+PLACE table_spoons_one_narrow_silver inside bottom_cabinet_no_top_gjeoer_0 True   0.55
+PLACE bowls_blue_speckled inside top_cabinet_lkxmne_0 True   0.44
+PLACE milk_half_gallon_carton inside fridge_dszchb_0 True   0.56
+PLACE hand_soap_amber_pump on_top multi_station_furniture_sink_upwldu_0 True   0.57
+PLACE toilet_brush_white_handled on_top floors_shuuqu_0 True   0.44
+PLACE cloth_napkin_blue_checked_cotton on_top breakfast_table_rhjoby_0 True   0.45
+PLACE vacuum_cleaner_slate_upright on_top floors_glwobe_0 True   0.43
+PLACE wallet_tan_zippered inside tote_bag_olive_canvas False  AttributeError('Cannot set attribute DEFAULT_HIGH_LEVEL_SAMPLING_ATTEMPTS in MacroDict, it has alrea 0.0
+PLACE sleep_shirt_soft_blue_cotton on_top sleep_pants_soft_blue_cotton False   69.36
+PLACE work_blouse_ivory_linen inside laundry_basket_natural_canvas False  AttributeError('Cannot set attribute DEFAULT_HIGH_LEVEL_SAMPLING_ATTEMPTS in MacroDict, it has alrea 0.0
+PLACE work_trousers_charcoal_wide_leg inside laundry_basket_natural_canvas False  AttributeError('Cannot set attribute DEFAULT_HIGH_LEVEL_SAMPLING_ATTEMPTS in MacroDict, it has alrea 0.0
+PLACE work_cardigan_rust_merino inside laundry_basket_natural_canvas False  AttributeError('Cannot set attribute DEFAULT_HIGH_LEVEL_SAMPLING_ATTEMPTS in MacroDict, it has alrea 0.0
+PLACE lounge_pants_black_jersey inside laundry_basket_natural_canvas False  AttributeError('Cannot set attribute DEFAULT_HIGH_LEVEL_SAMPLING_ATTEMPTS in MacroDict, it has alrea 0.0
+PLACE wallet_brown_leather_bifold inside jeans_indigo_straight_leg False  AttributeError('Cannot set attribute DEFAULT_HIGH_LEVEL_SAMPLING_ATTEMPTS in MacroDict, it has alrea 0.0
+PLACE receipts_creased_white_slips next_to (by hand) mail_two_unopened_envelopes False   7.66
+PLACE wooden_spoon_walnut_long on_top cutting_board_maple_oval True   38.47
+PLACE whisk_stainless_balloon on_top cutting_board_maple_oval False   66.13
+PLACE paring_knife_yellow_handled on_top cutting_board_maple_oval False   66.25
+PLACE olive_oil_green_glass_bottle next_to (by hand) salt_cellar_white_ceramic True   3.66
+2026-10-10T21:45:13Z [1,014,906ms] [Warning] [carb] Failed to startup plugin carb.windowing-glfw.plugin (interfaces: [carb::windowing::IGLContext v1.0],[carb::windowing::IWindowing v1.5]) (impl: carb.windowing-glfw.plugin)
+2026-10-10T22:08:26Z [2,408,489ms] [Warning] [carb] Client gpu.foundation.plugin has acquired [gpu::unstable::IMemoryBudgetManagerFactory v0.1] 100 times. Consider accessing this interface with carb::getCachedInterface() (Performance warning)
+2026-10-10T22:27:20Z [3,542,448ms] [Error] [omni.kit.app._impl] [py stderr]: /mnt/nvme/oliver/robot/render_methods/behavior/conda_env/lib/python3.11/site-packages/torch/functional.py:554: UserWarning: torch.meshgrid: in an upcoming release, it will be required to pass the indexing argument. (Triggered internally at /pytorch/aten/src/ATen/native/TensorShape.cpp:4314.)
+  return _VF.meshgrid(tensors, **kwargs)  # type: ignore[attr-defined]
+2026-10-10T22:27:20Z [3,542,531ms] [Warning] [omni.usd] Warning: in _ComputeExtentAtTimePreamble at line 1153 of /builds/omniverse/usd-ci/USD/pxr/usd/usdGeom/pointInstancer.cpp -- /World/scene_0/sludge/sludgeInstancer0/instancer -- no prototype indices
+
+2026-10-10T22:27:20Z [3,542,538ms] [Error] [omni.kit.app._impl] [py stderr]: Traceback (most recent call last):
+2026-10-10T22:27:20Z [3,542,538ms] [Error] [omni.kit.app._impl] [py stderr]:   File "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/render_methods/behavior_omnigibson/scripts/t02_place_snapshot.py", line 387, in <module>
+2026-10-10T22:27:20Z [3,542,539ms] [Error] [omni.kit.app._impl] [py stderr]:     main()
+2026-10-10T22:27:20Z [3,542,539ms] [Error] [omni.kit.app._impl] [py stderr]:   File "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/render_methods/behavior_omnigibson/scripts/t02_place_snapshot.py", line 326, in main
+2026-10-10T22:27:20Z [3,542,539ms] [Error] [omni.kit.app._impl] [py stderr]:     og.sim.step()
+2026-10-10T22:27:20Z [3,542,539ms] [Error] [omni.kit.app._impl] [py stderr]:   File "/mnt/nvme/oliver/robot/render_methods/behavior/BEHAVIOR-1K/OmniGibson/omnigibson/simulator.py", line 87, in wrapper
+2026-10-10T22:27:20Z [3,542,539ms] [Error] [omni.kit.app._impl] [py stderr]:     return fn(self, *args, **kwargs)
+2026-10-10T22:27:20Z [3,542,539ms] [Error] [omni.kit.app._impl] [py stderr]:            ^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-10T22:27:20Z [3,542,539ms] [Error] [omni.kit.app._impl] [py stderr]:   File "/mnt/nvme/oliver/robot/render_methods/behavior/BEHAVIOR-1K/OmniGibson/omnigibson/simulator.py", line 1545, in step
+2026-10-10T22:27:20Z [3,542,539ms] [Error] [omni.kit.app._impl] [py stderr]:     self._non_physics_step()
+2026-10-10T22:27:20Z [3,542,539ms] [Error] [omni.kit.app._impl] [py stderr]:   File "/mnt/nvme/oliver/robot/render_methods/behavior/BEHAVIOR-1K/OmniGibson/omnigibson/simulator.py", line 87, in wrapper
+2026-10-10T22:27:20Z [3,542,539ms] [Error] [omni.kit.app._impl] [py stderr]:     return fn(self, *args, **kwargs)
+2026-10-10T22:27:20Z [3,542,539ms] [Error] [omni.kit.app._impl] [py stderr]:            ^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-10T22:27:20Z [3,542,539ms] [Error] [omni.kit.app._impl] [py stderr]:   File "/mnt/nvme/oliver/robot/render_methods/behavior/BEHAVIOR-1K/OmniGibson/omnigibson/simulator.py", line 1430, in _non_physics_step
+2026-10-10T22:27:20Z [3,542,539ms] [Error] [omni.kit.app._impl] [py stderr]:     scene.transition_rule_api.step()
+2026-10-10T22:27:20Z [3,542,539ms] [Error] [omni.kit.app._impl] [py stderr]:   File "/mnt/nvme/oliver/robot/render_methods/behavior/BEHAVIOR-1K/OmniGibson/omnigibson/transition_rules.py", line 174, in step
+2026-10-10T22:27:20Z [3,542,539ms] [Error] [omni.kit.app._impl] [py stderr]:     output = rule.step()
+2026-10-10T22:27:20Z [3,542,539ms] [Error] [omni.kit.app._impl] [py stderr]:              ^^^^^^^^^^^
+2026-10-10T22:27:20Z [3,542,539ms] [Error] [omni.kit.app._impl] [py stderr]:   File "/mnt/nvme/oliver/robot/render_methods/behavior/BEHAVIOR-1K/OmniGibson/omnigibson/transition_rules.py", line 717, in step
+2026-10-10T22:27:20Z [3,542,539ms] [Error] [omni.kit.app._impl] [py stderr]:     return self.transition(object_candidates=object_candidates)
+2026-10-10T22:27:20Z [3,542,539ms] [Error] [omni.kit.app._impl] [py stderr]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-10T22:27:20Z [3,542,539ms] [Error] [omni.kit.app._impl] [py stderr]:   File "/mnt/nvme/oliver/robot/render_methods/behavior/BEHAVIOR-1K/OmniGibson/omnigibson/transition_rules.py", line 1692, in transition
+2026-10-10T22:27:20Z [3,542,539ms] [Error] [omni.kit.app._impl] [py stderr]:     garbage_results = self._execute_recipe(
+2026-10-10T22:27:20Z [3,542,539ms] [Error] [omni.kit.app._impl] [py stderr]:                       ^^^^^^^^^^^^^^^^^^^^^
+2026-10-10T22:27:20Z [3,542,539ms] [Error] [omni.kit.app._impl] [py stderr]:   File "/mnt/nvme/oliver/robot/render_methods/behavior/BEHAVIOR-1K/OmniGibson/omnigibson/transition_rules.py", line 1847, in _execute_recipe
+2026-10-10T22:27:20Z [3,542,539ms] [Error] [omni.kit.app._impl] [py stderr]:     out_system.generate_particles_from_link(
+2026-10-10T22:27:20Z [3,542,539ms] [Error] [omni.kit.app._impl] [py stderr]:   File "/mnt/nvme/oliver/robot/render_methods/behavior/BEHAVIOR-1K/OmniGibson/omnigibson/systems/micro_particle_system.py", line 1053, in generate_particles_from_link
+2026-10-10T22:27:20Z [3,542,539ms] [Error] [omni.kit.app._impl] [py stderr]:     return super().generate_particles_from_link(
+2026-10-10T22:27:20Z [3,542,539ms] [Error] [omni.kit.app._impl] [py stderr]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-10T22:27:20Z [3,542,539ms] [Error] [omni.kit.app._impl] [py stderr]:   File "/mnt/nvme/oliver/robot/render_methods/behavior/BEHAVIOR-1K/OmniGibson/omnigibson/systems/system_base.py", line 964, in generate_particles_from_link
+2026-10-10T22:27:20Z [3,542,540ms] [Error] [omni.kit.app._impl] [py stderr]:     return self.generate_particles(
+2026-10-10T22:27:20Z [3,542,540ms] [Error] [omni.kit.app._impl] [py stderr]:            ^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-10T22:27:20Z [3,542,540ms] [Error] [omni.kit.app._impl] [py stderr]:   File "/mnt/nvme/oliver/robot/render_methods/behavior/BEHAVIOR-1K/OmniGibson/omnigibson/systems/micro_particle_system.py", line 884, in generate_particles
+2026-10-10T22:27:20Z [3,542,540ms] [Error] [omni.kit.app._impl] [py stderr]:     self.default_particle_instancer
+2026-10-10T22:27:20Z [3,542,540ms] [Error] [omni.kit.app._impl] [py stderr]:   File "/mnt/nvme/oliver/robot/render_methods/behavior/BEHAVIOR-1K/OmniGibson/omnigibson/systems/micro_particle_system.py", line 786, in default_particle_instancer
+2026-10-10T22:27:20Z [3,542,540ms] [Error] [omni.kit.app._impl] [py stderr]:     else self.generate_particle_instancer(n_particles=0, idn=self.default_instancer_idn)
+2026-10-10T22:27:20Z [3,542,540ms] [Error] [omni.kit.app._impl] [py stderr]:          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-10T22:27:20Z [3,542,540ms] [Error] [omni.kit.app._impl] [py stderr]:   File "/mnt/nvme/oliver/robot/render_methods/behavior/BEHAVIOR-1K/OmniGibson/omnigibson/systems/micro_particle_system.py", line 981, in generate_particle_instancer
+2026-10-10T22:27:20Z [3,542,540ms] [Error] [omni.kit.app._impl] [py stderr]:     instance = create_physx_particleset_pointinstancer(
+2026-10-10T22:27:20Z [3,542,540ms] [Error] [omni.kit.app._impl] [py stderr]:                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-10T22:27:20Z [3,542,540ms] [Error] [omni.kit.app._impl] [py stderr]:   File "/mnt/nvme/oliver/robot/render_methods/behavior/BEHAVIOR-1K/OmniGibson/omnigibson/utils/physx_utils.py", line 175, in create_physx_particleset_pointinstancer
+2026-10-10T22:27:20Z [3,542,540ms] [Error] [omni.kit.app._impl] [py stderr]:     particle_system.HasAPI(lazy.pxr.PhysxSchema.PhysxParticleIsosurfaceAPI)
+2026-10-10T22:27:20Z [3,542,540ms] [Error] [omni.kit.app._impl] [py stderr]:     ^^^^^^^^^^^^^^^^^^^^^^
+2026-10-10T22:27:20Z [3,542,540ms] [Error] [omni.kit.app._impl] [py stderr]: RuntimeError: Accessed invalid null prim
+Fatal Python error: Segmentation fault
+
+Thread 0x00007f9531580640 (most recent call first):
+  File "/mnt/nvme/oliver/robot/render_methods/behavior/conda_env/lib/python3.11/threading.py", line 331 in wait
+  File "/mnt/nvme/oliver/robot/render_methods/behavior/conda_env/lib/python3.11/threading.py", line 629 in wait
+  File "/mnt/nvme/oliver/robot/render_methods/behavior/conda_env/lib/python3.11/site-packages/tqdm/_monitor.py", line 69 in run
+  File "/mnt/nvme/oliver/robot/render_methods/behavior/conda_env/lib/python3.11/threading.py", line 1045 in _bootstrap_inner
+  File "/mnt/nvme/oliver/robot/render_methods/behavior/conda_env/lib/python3.11/threading.py", line 1002 in _bootstrap
+
+Thread 0x00007f9798a62640 (most recent call first):
+  File "/mnt/nvme/oliver/robot/render_methods/behavior/conda_env/lib/python3.11/site-packages/torch/_inductor/compile_worker/subproc_pool.py", line 55 in _recv_msg
+  File "/mnt/nvme/oliver/robot/render_methods/behavior/conda_env/lib/python3.11/site-packages/torch/_inductor/compile_worker/subproc_pool.py", line 191 in _read_thread
+  File "/mnt/nvme/oliver/robot/render_methods/behavior/conda_env/lib/python3.11/threading.py", line 982 in run
+  File "/mnt/nvme/oliver/robot/render_methods/behavior/conda_env/lib/python3.11/threading.py", line 1045 in _bootstrap_inner
+  File "/mnt/nvme/oliver/robot/render_methods/behavior/conda_env/lib/python3.11/threading.py", line 1002 in _bootstrap
+
+Current thread 0x00007f98e7323480 (most recent call first):
+  <no Python frame>
+
+Extension modules: numpy.core._multiarray_umath, numpy.core._multiarray_tests, numpy.linalg._umath_linalg, numpy.fft._pocketfft_internal, numpy.random._common, numpy.random.bit_generator, numpy.random._bounded_integers, numpy.random._mt19937, numpy.random.mtrand, numpy.random._philox, numpy.random._pcg64, numpy.random._sfc64, numpy.random._generator, torch._C, torch._C._dynamo.autograd_compiler, torch._C._dynamo.eval_frame, torch._C._dynamo.guards, torch._C._dynamo.utils, torch._C._fft, torch._C._linalg, torch._C._nested, torch._C._nn, torch._C._sparse, torch._C._special, h5py._errors, h5py.defs, h5py._objects, h5py.h5, h5py.utils, h5py.h5t, h5py.h5s, h5py.h5ac, h5py.h5p, h5py.h5r, h5py._proxy, h5py._conv, h5py.h5z, h5py.h5a, h5py.h5d, h5py.h5ds, h5py.h5g, h5py.h5i, h5py.h5o, h5py.h5f, h5py.h5fd, h5py.h5pl, h5py.h5l, h5py._selector, markupsafe._speedups, scipy._lib._ccallback_c, yaml._yaml, numba.core.typeconv._typeconv, numba._helperlib, numba._dynfunc, numba._dispatcher, numba.core.runtime._nrt_python, numba.np.ufunc._internal, numba.experimental.jitclass._box, scipy.sparse._sparsetools, _csparsetools, scipy.sparse._csparsetools, scipy.linalg._fblas, scipy.linalg._flapack, scipy.linalg.cython_lapack, scipy.linalg._cythonized_array_utils, scipy.linalg._solve_toeplitz, scipy.linalg._decomp_lu_cython, scipy.linalg._matfuncs_sqrtm_triu, scipy.linalg._matfuncs_expm, scipy.linalg._linalg_pythran, scipy.linalg.cython_blas, scipy.linalg._decomp_update, scipy.sparse.linalg._dsolve._superlu, scipy.sparse.linalg._eigen.arpack._arpack, scipy.sparse.linalg._propack._spropack, scipy.sparse.linalg._propack._dpropack, scipy.sparse.linalg._propack._cpropack, scipy.sparse.linalg._propack._zpropack, scipy.sparse.csgraph._tools, scipy.sparse.csgraph._shortest_path, scipy.sparse.csgraph._traversal, scipy.sparse.csgraph._min_spanning_tree, scipy.sparse.csgraph._flow, scipy.sparse.csgraph._matching, scipy.sparse.csgraph._reordering, scipy.spatial._ckdtree, scipy._lib.messagestream, scipy.spatial._qhull, scipy.spatial._voronoi, scipy.spatial._distance_wrap, scipy.spatial._hausdorff, scipy.special._ufuncs_cxx, scipy.special._ufuncs, scipy.special._specfun, scipy.special._comb, scipy.special._ellip_harm_2, scipy.spatial.transform._rotation, xxhash._xxhash, PIL._imaging, scipy.optimize._group_columns, scipy.optimize._trlib._trlib, scipy.optimize._lbfgsb, _moduleTNC, scipy.optimize._moduleTNC, scipy.optimize._cobyla, scipy.optimize._slsqp, scipy.optimize._minpack, scipy.optimize._lsq.givens_elimination, scipy.optimize._zeros, scipy.optimize._cython_nnls, scipy._lib._uarray._uarray, scipy.linalg._decomp_interpolative, scipy.optimize._bglu_dense, scipy.optimize._lsap, scipy.optimize._direct, psutil._psutil_linux, psutil._psutil_posix, lxml._elementpath, lxml.etree, scipy.ndimage._nd_image, scipy.ndimage._rank_filter_1d, _ni_label, scipy.ndimage._ni_label, _cffi_backend, kiwisolver._cext, wcwidth._wcwidth_c, scipy.integrate._odepack, scipy.integrate._quadpack, scipy.integrate._vode, scipy.integrate._dop, scipy.integrate._lsoda, scipy.interpolate._fitpack, scipy.interpolate._dfitpack, scipy.interpolate._dierckx, scipy.interpolate._ppoly, scipy.interpolate._interpnd, scipy.interpolate._rbfinterp_pythran, scipy.interpolate._rgi_cython, scipy.interpolate._bspl, cvacaqtcmn6iflo5zihvof6sxhbzv6nubzaflcmepoyf4wgqaf4i.kernel, cuda_utils, scipy.special.cython_special, scipy.stats._stats, scipy.stats._sobol, scipy.stats._qmc_cy, scipy.stats._biasedurn, scipy.stats._stats_pythran, scipy.stats._levy_stable.levyst, scipy.stats._ansari_swilk_statistics, scipy.stats._mvn, scipy.stats._rcont.rcont, av._core, av.logging, av.bytesource, av.buffer, av.audio.format, av.error, av.dictionary, av.container.pyio, av.utils, av.option, av.descriptor, av.format, av.stream, av.container.streams, av.sidedata.motionvectors, av.sidedata.sidedata, av.opaque, av.packet, av.container.input, av.container.output, av.container.core, av.codec.context, av.video.format, av.video.reformatter, av.plane, av.video.plane, av.video.frame, av.video.stream, av.codec.hwaccel, av.codec.codec, av.frame, av.audio.layout, av.audio.plane, av.audio.frame, av.audio.stream, av.filter.link, av.filter.context, av.filter.graph, av.filter.filter, av.filter.loudnorm, av.audio.resampler, av.audio.codeccontext, av.audio.fifo, av.bitstream, av.video.codeccontext, pyarrow.lib, pandas._libs.tslibs.ccalendar, pandas._libs.tslibs.np_datetime, pandas._libs.tslibs.dtypes, pandas._libs.tslibs.base, pandas._libs.tslibs.nattype, pandas._libs.tslibs.timezones, pandas._libs.tslibs.fields, pandas._libs.tslibs.timedeltas, pandas._libs.tslibs.tzconversion, pandas._libs.tslibs.timestamps, pandas._libs.properties, pandas._libs.tslibs.offsets, pandas._libs.tslibs.strptime, pandas._libs.tslibs.parsing, pandas._libs.tslibs.conversion, pandas._libs.tslibs.period, pandas._libs.tslibs.vectorized, pandas._libs.ops_dispatch, pandas._libs.missing, pandas._libs.hashtable, pandas._libs.algos, pandas._libs.interval, pandas._libs.lib, pyarrow._compute, pandas._libs.ops, pandas._libs.hashing, pandas._libs.arrays, pandas._libs.tslib, pandas._libs.sparse, pandas._libs.internals, pandas._libs.indexing, pandas._libs.index, pandas._libs.writers, pandas._libs.join, pandas._libs.window.aggregations, pandas._libs.window.indexers, pandas._libs.reshape, pandas._libs.groupby, pandas._libs.json, pandas._libs.parsers, pandas._libs.testing, pyarrow._acero, pyarrow._fs, pyarrow._csv, pyarrow._json, pyarrow._substrait, pyarrow._dataset, pyarrow._dataset_orc, pyarrow._parquet, pyarrow._parquet_encryption, pyarrow._dataset_parquet_encryption, pyarrow._dataset_parquet, pyarrow._azurefs, pyarrow._hdfs, pyarrow._gcsfs, pyarrow._s3fs, charset_normalizer.md, requests.packages.charset_normalizer.md, requests.packages.chardet.md, multidict._multidict, yarl._quoting_c, propcache._helpers_c, aiohttp._http_writer, aiohttp._http_parser, aiohttp._websocket.mask, aiohttp._websocket.reader_c, frozenlist._frozenlist, omni.mdl.pymdlsdk._pymdlsdk, osqp._osqp, scipy.io.matlab._mio_utils, scipy.io.matlab._streams, scipy.io.matlab._mio5_utils, PIL._imagingft, c6flcjizyxywcl47wwj6xm4iu2frbad4wt6mtiwkonoku7jbyjx5.kernel, csyegtwurb6fh52yziwkk2pxka2qp43eyjz5i4bvknqodbl62om7.kernel, cvirbediym3arunudgvdvjyyaihdpitwgrrq5hckjzlnjelestsx.kernel, c6rmovclnwn2sm2gvnjb37f7fpbdryu22wb7pwzky55iwvpniuty.kernel, cxgl52xyjrf65jowrlhdveuzrywee4oh5gmkdg3ikpt5rswdfgnk.kernel, cmhw5o5ocmhclybqeplv67ys7t654qflqpd23wbzevpvm7ebnrx3.kernel, c7myugcofh54qoodrhc5bvqagknqjkl7gx3ms5dbgnu2x43n4bes.kernel, cuqvhwhwi5nfx6poeaze466asajo6apv32xopgpn5nlvtv65enl4.kernel, cupv5fzohjwusqeooneacmxq42rcmsfytzwg3el5gdjxgpw6wzfx.kernel, csg23voubibtuhfedtncy4ntlptxgswnnpmy2s4arhzqujrvlfxq.kernel, ckt5socdvmprsvg6efun6s3beswi7acyk34a4llwynuulpqwhbbr.kernel, c2gx6cu3obaoqm6gugwwlbbfdia6l44ywymeouzfk4a3jdq772ee.kernel, coth2wk4umr6djia7mej5x7rxjd7t3dtx7otgccvqo76fplfyfm2.kernel, c2o2q4ziscoatcslqo3stvslse7m74f4ntdkdsrxwx7b6mnvxhbu.kernel, coahjbiqio6374twkqw6el64szqtcewvh5uusgoli5umfsstfllv.kernel, cosgp5trhfdd5xlygz4yzdahhpcgugwkd3qeuxery7skaju62uvn.kernel, cakrkgm77dy2frb2vdjcxyph26gflk54d4mgjohkfb4of5hplv3r.kernel, c3eb4rkg6yjyzwukijiobzipser665rpazskm3migr56hzofubci.kernel, cyb4mby6sm3liuekkem4iigquponsofn5gxaupqp7qea7mlm5qp7.kernel, cdz4pkajlytd33zeutzow66eeclf3zoym7xsgzc35biuhwnksdlh.kernel, cahlajgmyse5e7mz6wrmj3quutargv2mbu7tqqcgwnamllicslsj.kernel, cj7u432yn3punn3auryg2ha6feep2bck67pz67ds2ro2yjjuxaus.kernel, cy7jgs5scbmeav74liqmqu6oaticjt4r7rbhzcgerajgcjwoxfkl.kernel, cswti3uupi3dfppz74r2jqbzurq7awh27ofchaezx6wd3c6iahvu.kernel, chreurlkpmamicsoz746mla5nxy4g3ltddi52ebxf7xgl7h7d72k.kernel, c4ehpqjlv3uqkt5nc52vbgbgplwwiqlkur4lgsjmmhersntaraqv.kernel, cylvyy4fy6j5iqmgejpl4krglrxod3xvcgdqrveedlkdbltgv73o.kernel, c2y45csb7q5xywc7lkudmhncec3mlbr3q7o6yl5uqp3sf6j7l3as.kernel, co4aub4fra4bv5shbattduo2kyoyadzwzpamgp6rsnaddsebs74d.kernel, cot65pbdm34yxxl4viwebx4aprdy24jo3s6dxltygtvmi4edsago.kernel, cphurcrm5jdipgctpvufr7k5ds5yopt56vk24nw65o4yy4yvwlla.kernel, cttbspqabnotuo2xhoo36owku5m6l4irzillcpwt42bdgrptro54.kernel, csfbrmm4wnbt5xe2icqpp74dkhcjv7huqomwca6zujbo5na2c4ws.kernel, c3anledizm6mltxtadngrmp6pz453mofhonryry6lbayyeso4tfb.kernel (total: 304)
