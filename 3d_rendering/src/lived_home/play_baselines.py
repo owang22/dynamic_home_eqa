@@ -3,9 +3,13 @@
 Each method sees the same patrol notes and has the same looks as the player. It
 walks to pieces of furniture in its own order, and stops when the thing asked
 for is visible there (it recognises it perfectly, unlike a person or a camera).
-If it has not seen it after the last look, it answers "can't tell". It does
-not answer without seeing, so questions about things put away or carried are
-never right for it; those are reported separately.
+If it has not seen it after the last look, it answers "can't tell". A thing
+counts as visible when some look would show it: on a surface, or in the hands of
+someone standing at a piece of furniture. Results are given as found within 1, 2
+and 3 looks as well as within all of them: with 8 looks most things are found,
+which hides differences between methods. It does
+not answer without seeing, so questions about things put away, carried out of
+sight or worn are never right for it; those are reported separately.
 
 - nearest: no memory; always the nearest piece of furniture not yet looked at
 - last seen: first where a patrol last saw the thing (any thing that fits the
@@ -80,16 +84,21 @@ def play(data: dict, method: str) -> list:
             if any(t["oid"] in q["accept"] for t in q["looks"].get(f, [])):
                 found = True
                 break
-        kinds = {a["kind"] for a in q["answer"].values()}
-        rows.append({"n": q["n"], "kind": q["kind"], "visible": "visible" in kinds, "found": found,
+        # findable by a look: on a surface, or in the hands of someone standing at furniture
+        findable = any(t["oid"] in q["accept"] for ts in q["looks"].values() for t in ts)
+        rows.append({"n": q["n"], "kind": q["kind"], "visible": findable, "found": found,
                      "looks": len(looked), "metres": round(metres, 1)})
     return rows
+
+
+WITHIN = (1, 2, 3)
 
 
 def summary(rows: list) -> dict:
     vis = [r for r in rows if r["visible"]]
     return {"questions": len(rows), "visible": len(vis),
             "found": sum(r["found"] for r in vis),
+            **{f"found_within_{k}": sum(r["found"] and r["looks"] <= k for r in vis) for k in WITHIN},
             "looks_when_found": round(sum(r["looks"] for r in vis if r["found"]) / max(1, sum(r["found"] for r in vis)), 1),
             "metres": round(sum(r["metres"] for r in rows), 1)}
 
@@ -105,10 +114,11 @@ def main() -> None:
         for k in sorted({x["kind"] for x in r}):
             xs = [x for x in r if x["kind"] == k and x["visible"]]
             by_kind[k][m] = f"{sum(x['found'] for x in xs)}/{len(xs)}" if xs else "-"
-    print("method | found (of visible) | looks when found | metres walked")
+    print("method | found within 1 / 2 / 3 / all looks (of visible) | looks when found | metres walked")
     for m, r in res.items():
         s = r["summary"]
-        print(f"{m:11s} | {s['found']}/{s['visible']} | {s['looks_when_found']} | {s['metres']}")
+        within = " / ".join(str(s[f"found_within_{k}"]) for k in WITHIN)
+        print(f"{m:11s} | {within} / {s['found']} of {s['visible']} | {s['looks_when_found']} | {s['metres']}")
     print("by question kind (found / visible):")
     for k, v in by_kind.items():
         print(f"  {k:24s} " + "  ".join(f"{m}: {x}" for m, x in v.items()))

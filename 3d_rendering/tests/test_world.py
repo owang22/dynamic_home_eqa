@@ -543,3 +543,71 @@ def test_nothing_goes_under_a_floor():
     w.apply("ana", A("pick_up", object="mug_red"), 0)
     ok, msg, _ = w.apply("ana", A("put_down", object="mug_red", place="kitchen_island", relation="under"), 1)
     assert ok and w.where["mug_red"]["rel"] == "on_top" and not w.hidden("mug_red")
+
+
+def test_homes_come_from_where_things_start_unless_dropped():
+    from lived_home.world import homes
+    w = make()
+    w.objects["shirt_blue"] = obj("shirt", "dresser_drawers", "inside", owner="ben")
+    w.objects["shirt_green"] = obj("shirt", "bed", owner="ben")          # left on the bed
+    w.objects["book_open"] = obj("book", "living_couch")                  # dropped on a seat
+    w.objects["pillow_white"] = obj("pillow", "bed")                      # belongs on the bed
+    w.objects["sock_dirty"] = obj("socks", None, inside="laundry_basket_x", owner="ben")
+    w.objects["laundry_basket_x"] = obj("laundry basket", "bedroom_closet", "inside", carrier="open")
+    w.objects["shampoo_x"] = obj("shampoo", "bathroom_bathtub_edge")
+    h = homes(w.objects, w.layout)
+    assert h["mug_white"] == {"place": "kitchen_upper_cabinet"}
+    assert h["mug_red"] == {"place": "kitchen_counter_by_sink"}
+    assert h["laptop_work"] == {"carrier": "backpack_black"}
+    assert h["slipper_left"] == {"place": "bed"}                          # under the bed, a slipper's place
+    assert h["book_open"] is None
+    assert h["pillow_white"] == {"place": "bed"}
+    assert h["shirt_green"] == {"place": "dresser_drawers", "inferred": True}
+    assert h["sock_dirty"] == {"place": "dresser_drawers", "inferred": True}   # not the laundry basket
+    assert h["shampoo_x"] == {"place": "bathroom_bathtub_edge"}           # an edge is not the tub
+
+
+def test_kept_shown_only_when_asked_and_only_for_things_lying_about():
+    w = make()
+    w.apply("ana", A("go", place="kitchen_upper_cabinet"), 0)
+    w.apply("ana", A("pick_up", object="mug_white"), 0)
+    w.apply("ana", A("put_down", object="mug_white", place="kitchen_sink"), 1)
+    assert "usually kept" not in w.room_view("ana")
+    view = w.room_view("ana", kept=True)
+    assert "mug_white (usually kept in kitchen_upper_cabinet)" in view
+    assert "mug_red (usually" not in view                              # at home: nothing said
+    w.apply("ana", A("pick_up", object="mug_white"), 2)
+    w.apply("ana", A("put_down", object="mug_white", place="kitchen_island"), 3)
+    assert "usually kept" not in w.room_view("ana", kept=True)         # another table: maybe its new place
+    w.apply("ana", A("pick_up", object="mug_white"), 2)
+    assert "usually kept in kitchen_upper_cabinet" in w.holding_view("ana", kept=True)[0]
+    assert "usually kept" not in w.holding_view("ana")[0]
+    w.dirty.add("mug_white")
+    assert "usually kept" not in w.holding_view("ana", kept=True)[0]   # dirty: not back in the cupboard
+
+
+def test_tidying_activities():
+    from lived_home.run_pilot import is_tidying
+    assert is_tidying({"activity": "Clear the dinner dishes and wipe the counter"})
+    assert is_tidying({"activity": "Fold and put away the laundry"})
+    assert not is_tidying({"activity": "Take a walk", "intention": "clear my head"})
+    assert not is_tidying({"activity": "Free time before: dinner", "free": True,
+                           "intention": "rest, a small chore, or something else"})
+
+
+def test_worn_today_gets_no_note_and_sink_cabinet_drawers_are_not_basins():
+    from lived_home.layout import Layout, Place
+    from lived_home.world import homes
+    w = make()
+    w.objects["shirt_blue"] = obj("shirt", "dresser_drawers", "inside", owner="ben")
+    w.where["shirt_blue"] = dict(w.objects["shirt_blue"]["start"])
+    w.home = homes(w.objects, w.layout)
+    w.apply("ben", A("wear", object="shirt_blue", place="dresser_drawers"), 0)
+    w.apply("ben", A("go", place="bed"), 1300)
+    w.apply("ben", A("pick_up", object="shirt_blue"), 1301)
+    w.apply("ben", A("put_down", object="shirt_blue", place="bed"), 1301)
+    assert "usually kept" not in w.room_view("ben", kept=True)          # worn today, dirty tonight
+    lay = Layout([Place("k_drawer", "kitchen", "kitchen sink counter", "middle narrow drawer", "closed"),
+                  Place("k_basin", "kitchen", "kitchen sink counter", "sink basin", "open")], "k_drawer")
+    h = homes({"fork_a": obj("fork", "k_drawer", "inside"), "plate_a": obj("plate", "k_basin", "inside")}, lay)
+    assert h["fork_a"] == {"place": "k_drawer"} and h["plate_a"] is None

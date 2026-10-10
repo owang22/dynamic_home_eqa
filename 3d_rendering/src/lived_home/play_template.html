@@ -62,6 +62,9 @@ textarea { width: 100%; box-sizing: border-box; min-height: 54px; }
 .thing:hover { border-color: var(--accent); }
 .thing.static { cursor: default; }
 .closed { color: var(--muted); font-style: italic; font-size: 13px; }
+.moves { margin-top: 8px; }
+.moves summary { cursor: pointer; font-weight: 600; }
+.mv { padding: 4px 0; border-bottom: 1px solid var(--line, rgba(127,127,127,.2)); }
 .verdict { padding: 8px 10px; border-radius: 8px; margin: 8px 0; font-weight: 600; }
 .verdict.good { background: color-mix(in srgb, var(--good) 18%, var(--panel)); }
 .verdict.bad { background: color-mix(in srgb, var(--bad) 15%, var(--panel)); }
@@ -114,10 +117,10 @@ th { color: var(--muted); font-weight: 600; }
           <ul>
             <li>You are the robot. You know the floor plan and who owns what. You do not know where things are, except from the <b>patrol notes</b>: at 08:00, 12:00, 16:00 and 20:00 each day the robot walked through a few rooms (not all) and noted what it could see.</li>
             <li>The robot cannot open drawers, cupboards, wardrobes or the fridge, does not see under things, and cannot see inside closed bags or boxes.</li>
-            <li>If you think a thing is out of sight, answer <b>Put away in...</b> and pick the piece of furniture (a drawer of it, or a bag or box lying on it: both count as put away there). <b>Has it (at home)</b> means a resident is holding, carrying or wearing it at home (a look shows what people hold, not what they wear); <b>Out of the house</b> means it went out with them.</li>
+            <li>If you think a thing is out of sight, answer <b>Put away in...</b> and pick the piece of furniture (a drawer of it, or a bag or box lying on it: both count as put away there). <b>Has it (at home)</b> means a resident is holding, carrying or wearing it at home (a look shows what people in the room hold, not what they wear; what someone holds while standing at a piece of furniture also shows in a look at that furniture, and you can click it there); <b>Out of the house</b> means it went out with them.</li>
             <li>Some things look alike (two identical phones, two clear steel water bottles): the notes cannot tell them apart, so a sighting may be either one. A question about one of them names its owner.</li>
             <li>Each question is at a time between patrols. First, if you like, set up to three ranked guesses and a note on each (click <b>Place guess</b>, then a box on the plan).</li>
-            <li>Then <b>look</b>: click a box to walk there and see what is on it right now. You have up to <span id="maxlooks"></span> looks. When you see the thing, click it in the list to say "that's it". If you think it is out of sight, answer without seeing it.</li>
+            <li>Then <b>look</b>: click a box to walk there and see what is on it right now. You have up to <span id="maxlooks"></span> looks; a look that shows nothing means the surface really is empty. When you see the thing, click it in the list to say "that's it". If you think it is out of sight, answer without seeing it.</li>
             <li>Everything you see in your looks is kept and shows up under <b>Your earlier looks</b> for later questions, so a look can be worth it even when it does not find the thing.</li>
             <li>After each answer you see where it really was. Rate how clear the question was and how answerable, and write anything that seems off.</li>
           </ul>
@@ -283,7 +286,7 @@ function judge(ans) {
 function truthText() {
   return Object.entries(cur.q.answer).map(([oid, a]) => {
     const name = (D.names || {})[oid] || oid;
-    if (a.kind === 'someone has it') return `the ${name}: ${RES[a.who].first} had it (${pretty(a.how)}${a.inside ? ', inside a bag' : ''}) in the ${pretty(a.room)}`;
+    if (a.kind === 'someone has it') return `the ${name}: ${RES[a.who].first} had it (${pretty(a.how)}${a.inside ? ', inside a bag' : ''}) in the ${pretty(a.room)}${a.spot && SPOT[a.spot] ? `, standing at the ${F[SPOT[a.spot].fkey].name}` : ''}`;
     if (a.kind === 'out of the house') return `the ${name}: out of the house with ${RES[a.who].first}`;
     const s = SPOT[a.spot];
     const rel = a.reference_kind === 'object' ? `${pretty(a.relation)} the ${(D.names || {})[a.reference] || pretty(a.reference)}, ` : '';
@@ -301,7 +304,7 @@ function renderQ() {
   const q = cur.q;
   let h = `<div class="meta"><span>Question ${q.n} of ${D.questions.length}</span><span>${esc(when(q.day, q.time))}</span>
     <span class="meter">looks ${cur.looks.length} / ${MAX}</span><span class="meter">walked ${cur.metres.toFixed(1)} m</span></div>
-    <div class="q">${esc(q.text)}</div>`;
+    <div class="q">${esc(q.text)}</div>${q.type ? `<div class="btns" style="margin-top:4px"><button data-act="filt">Notes that mention "${esc(q.type)}"</button></div>` : ''}`;
   if (flashMsg) h += `<div class="verdict part">${esc(flashMsg)}</div>`;
   // guesses
   h += `<h2 style="margin-top:12px">Your guesses (optional, before looking)</h2>`;
@@ -319,7 +322,7 @@ function renderQ() {
     const f = F[L.fkey];
     const closed = f ? f.spots.filter(s => s.kind === 'closed').map(s => s.name) : [];
     h += `<div class="look"><div class="h">${i + 1}. ${esc(fname(L.fkey))}</div>`;
-    h += L.things.length ? L.things.map((t, j) => `<span class="thing${cur.answer ? ' static' : ''}" ${cur.answer ? '' : `data-act="pick" data-i="${i}" data-j="${j}" role="button" tabindex="0" title="Click if this is the thing asked for"`}>${esc(t.thing)}${t.where ? ` <span class="small">(${esc(t.where)})</span>` : ''}${f && f.spots.length > 1 ? ` <span class="small">· ${esc((SPOT[t.spot] || {}).name || '')}</span>` : ''}</span>`).join('') : '<span class="small">nothing you can see</span>';
+    h += L.things.length ? L.things.map((t, j) => `<span class="thing${cur.answer ? ' static' : ''}" ${cur.answer ? '' : `data-act="pick" data-i="${i}" data-j="${j}" role="button" tabindex="0" title="Click if this is the thing asked for"`}>${esc(t.thing)}${t.where ? ` <span class="small">(${esc(t.where)})</span>` : ''}${f && f.spots.length > 1 ? ` <span class="small">· ${esc((SPOT[t.spot] || {}).name || '')}</span>` : ''}</span>`).join('') : `<span class="small">${f && f.name === 'floor' ? 'the floor is clear: nothing on it' : 'nothing lying on it'}</span>`;
     if (closed.length) h += `<div class="closed">closed, can't see inside: ${esc(closed.join(', '))}</div>`;
     if (L.people.length) h += `<div class="small">${L.people.map(p => `${esc(RES[p.who].first)} is in the room${p.holding.length ? ', holding ' + esc(p.holding.join(', ')) : ''}`).join('; ')}</div>`;
     h += `</div>`;
@@ -339,6 +342,8 @@ function renderQ() {
   } else {
     const v = cur.verdict;
     h += `<div class="verdict ${v.level}">${esc(v.text)}</div><div><b>Where it really was:</b> ${esc(truthText())}</div>`;
+    const mv = q.moves || [];
+    h += `<details class="moves"${mv.length ? ' open' : ''}><summary>How it got there (moves in the 24 hours before the question)</summary>${mv.length ? mv.map(m => `<div class="mv"><span class="small">${esc(when(m.day, m.time))}</span> <b style="color:${RES[m.who].color}">${esc(RES[m.who].first)}</b> ${esc(m.text)}${m.why ? ` <i>"${esc(m.why)}"</i>` : ''}${m.doing ? `<div class="small">during: ${esc(m.doing)}</div>` : ''}</div>`).join('') : '<div class="small">Nobody moved it in those 24 hours.</div>'}</details>`;
     if (q.probe) h += `<div class="small" style="margin-top:4px">This question was meant to be ambiguous: more than one thing fits it, and any of them counted.</div>`;
     h += `<h2 style="margin-top:14px">How was this question?</h2>
       <div class="scale">Clear to understand: ${[1, 2, 3, 4, 5].map(v => `<button data-act="rate" data-k="clear" data-v="${v}" class="${cur.clear === v ? 'on' : ''}">${v}</button>`).join('')}</div>
@@ -360,10 +365,13 @@ $('qpanel').addEventListener('click', e => {
   else if (a === 'out') finish({ type: 'out', who: b.dataset.who });
   else if (a === 'cant') finish({ type: 'cant' });
   else if (a === 'rate') { const c = $('comment'); if (c) cur.comment = c.value; cur[b.dataset.k] = +b.dataset.v; renderQ(); }
+  else if (a === 'filt') { $('filter').value = q_type(); tab = 'patrols'; renderLog(); }
   else if (a === 'next') { const c = $('comment'); if (c) cur.comment = c.value; save(); }
 });
 $('qpanel').addEventListener('keydown', e => { const b = e.target.closest('[data-act="pick"]'); if (b && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); pick(+b.dataset.i, +b.dataset.j); } });
 $('qpanel').addEventListener('input', e => { const t = e.target; if (t.dataset.act === 'gnote') cur.guesses[+t.dataset.i].note = t.value; if (t.id === 'comment') cur.comment = t.value; });
+
+function q_type() { return (cur && cur.q.type) || ''; }
 
 // ---------- saving ----------
 function record() {

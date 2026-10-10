@@ -18,8 +18,8 @@ questions name them by owner ("Julian's travel mug"). A few questions are
 deliberately ambiguous (an owner with two of a kind) to test how people read
 them; the answer key accepts any thing that fits.
 
-Usage: python -m lived_home.play <run folder> [--questions 30] [--seed 0]
-writes <run>/play/play_data.json (everything the page needs).
+Usage: python -m lived_home.play <run folder> [--questions 30] [--seed 0] [--out folder]
+writes <run>/play/play_data.json (everything the page needs) and index.html.
 """
 from __future__ import annotations
 
@@ -29,6 +29,7 @@ import json
 import math
 import pathlib
 import random
+import re
 
 PATROL_TIMES = ["0800", "1200", "1600", "2000"]
 QUESTION_TIMES = ["1000", "1400", "1800", "2200"]
@@ -126,10 +127,14 @@ def build_layout(spec: dict, states: dict) -> dict:
             "entry": spec["layout"]["entry"]}
 
 
-def visible_at(state: dict, names: dict) -> tuple[dict, dict]:
+def visible_at(state: dict, names: dict, first: dict | None = None) -> tuple[dict, dict]:
     """What a look at each piece of furniture would show at this moment, and who is
-    in each room holding what. Things are given by their look, never by id."""
+    in each room holding what. Things are given by their look, never by id.
+    What a resident holds while standing at a piece of furniture (a notebook at the
+    desk she writes at) shows in a look at that furniture too: a camera pointed
+    there sees it in her hands."""
     places = state["places"]
+    first = first or {}
     shown = collections.defaultdict(list)
     for oid, o in state["objects"].items():
         if o["relation"] in CARRIED or o["hidden"] or not o.get("place") or o["place"] not in places:
@@ -147,13 +152,18 @@ def visible_at(state: dict, names: dict) -> tuple[dict, dict]:
     people = collections.defaultdict(list)
     for rid, w in state["people"].items():
         if w.get("room") and w["room"] != "out_of_house":
-            held = [names[oid] for oid, o in state["objects"].items()
-                    if o["relation"] == "held_by" and o.get("reference") == rid]
-            people[w["room"]].append({"who": rid, "holding": held})
+            held_ids = [oid for oid, o in state["objects"].items()
+                        if o["relation"] == "held_by" and o.get("reference") == rid]
+            people[w["room"]].append({"who": rid, "holding": [names[oid] for oid in held_ids]})
+            if w.get("place") in places:
+                for oid in held_ids:
+                    shown[furniture_key(places[w["place"]])].append(
+                        {"spot": w["place"], "thing": names[oid], "oid": oid,
+                         "where": f"in {first.get(rid, rid.title())}'s hands"})
     return shown, people
 
 
-def patrols(states: dict, layout: dict, names: dict, rng: random.Random) -> list:
+def patrols(states: dict, layout: dict, names: dict, rng: random.Random, first: dict | None = None) -> list:
     rooms = [r["id"] for r in layout["rooms"]]
     per = max(3, math.ceil(len(rooms) * ROOMS_SHARE))
     days = sorted({d for d, _ in states})
@@ -168,7 +178,7 @@ def patrols(states: dict, layout: dict, names: dict, rng: random.Random) -> list
                 cycle += more
             visit, cycle = cycle[:per], cycle[per:]
             visit = list(dict.fromkeys(visit))
-            shown, people = visible_at(states[(day, t)], names)
+            shown, people = visible_at(states[(day, t)], names, first)
             seen = []
             for f in layout["furniture"]:
                 if f["room"] in visit:
@@ -212,7 +222,107 @@ def answer_key(state: dict, oid: str) -> dict:
             "reference_kind": o.get("reference_kind")}
 
 
-def questions(spec, states, patrol_log, layout, names, n, rng, settle=SETTLE_DAYS) -> list:
+def spot_words(furniture: str, name: str) -> str:
+    """A spot named with its furniture, without repeats: 'glass desk' + 'desk top'
+    is 'glass desk top'; 'floor' + 'floor' is 'floor'."""
+    if furniture.lower() in name.lower():
+        return name
+    fw, nw = furniture.split(), name.split()
+    if fw and nw and fw[-1].lower() == nw[0].lower():
+        return " ".join(fw + nw[1:])
+    return f"{furniture} {name}"
+
+
+MOVE_VERBS = {"pick_up": "picked up", "put_down": "put down", "pocket": "pocketed",
+              "wear": "put on", "give": "handed over"}
+
+
+def load_moves(run: pathlib.Path) -> tuple[list, dict]:
+    """Every action that moved a thing (events.jsonl), and each day's plans, to say
+    after an answer how the thing got where it was."""
+    events = []
+    path = run / "events.jsonl"
+    if path.exists():
+        for line in path.read_text().splitlines():
+            if line.strip():
+                e = json.loads(line)
+                if e.get("verb") in MOVE_VERBS and e.get("object"):
+                    events.append(e)
+    plans = {}
+    for d in run.glob("day_*"):
+        f = d / "plans.json"
+        if f.exists():
+            plans[int(d.name.split("_")[1])] = json.loads(f.read_text())
+    return events, plans
+
+
+def how_it_got_there(oids: list, state: dict, slot: tuple, events: list, plans: dict,
+                     names: dict, first: dict, places: dict, hours: int = 24) -> list:
+    """The moves of the things asked for in the hours before the question, in plain
+    words, with the mover's own reason and the activity they were in. A bag the
+    thing was inside at the question's time is followed too, but only from when the
+    thing went into it. Moves at the question's minute come after the snapshot and
+    are left out."""
+    day, t = slot
+    end = day * 1440 + int(t[:2]) * 60 + int(t[2:])
+    start = end - hours * 60
+    at = lambda e: e["day"] * 1440 + e["minute"]
+    track = {oid: (None, start) for oid in oids}       # thing -> (the thing asked for, followed since)
+    for oid in oids:
+        o, inner, seen = state["objects"][oid], oid, set()
+        while o["relation"] == "inside" and o.get("reference_kind") == "object" \
+                and o["reference"] in state["objects"] and o["reference"] not in seen:
+            bag = o["reference"]
+            seen.add(bag)
+            went_in = max((at(e) for e in events if e["object"] == inner and at(e) < end
+                           and (e.get("to_pos") or {}).get("carrier") == bag), default=start)
+            since = max(went_in, track[inner][1])
+            if bag not in track:
+                track[bag] = (oid, since)
+            inner, o = bag, state["objects"][bag]
+    ids = sorted(list(names) + list(places), key=len, reverse=True)
+
+    def words(text: str) -> str:
+        for i in ids:
+            if i in text:
+                if i in names:
+                    text = text.replace(i, f"the {names[i]}")
+                else:
+                    pl = places[i]
+                    text = text.replace(i, f"the {spot_words(pl['furniture'], pl['name'])} "
+                                           f"({pl['room'].replace('_', ' ')})")
+        for rid, nm in first.items():
+            text = re.sub(rf"\b{re.escape(rid)}'s\b", f"{nm}'s", text)
+            text = re.sub(rf"\b{re.escape(rid)}\b", nm, text)
+        return text.replace("on top ", "on top of ").replace("_", " ")
+
+    out = []
+    for e in events:
+        if e["object"] not in track:
+            continue
+        asked, since = track[e["object"]]
+        if not (since <= at(e) < end):
+            continue
+        acts = (plans.get(e["day"]) or {}).get(e["resident"]) or []
+        doing = next((a["activity"] for a in acts if a["start_min"] <= e["minute"] < a["end_min"]), "")
+        what = MOVE_VERBS[e["verb"]]
+        if e["verb"] == "pick_up" and (e.get("from") or "").startswith("worn by"):
+            what, where = "took off", ""
+        elif e["verb"] == "pick_up":
+            where = f"from {words(e.get('from') or '')}"
+        elif e["verb"] in ("pocket", "wear"):
+            where = f"(it was {words(e.get('from') or '')})"
+        else:
+            where = words(e.get("to") or "")
+        thing = f"the {names[e['object']]}" + (f" (with the {names[asked]} inside)" if asked else "")
+        out.append({"day": e["day"], "time": e["time"], "who": e["resident"],
+                    "text": f"{what} {thing} {where}".strip(),
+                    "why": (e.get("why") or "").strip(), "doing": doing})
+    return out[-10:]
+
+
+def questions(spec, states, patrol_log, layout, names, n, rng, settle=SETTLE_DAYS,
+              history=None) -> list:
     objects = {o["id"]: o for o in spec["objects"]}
     days = sorted({d for d, _ in states})
     first = states[min(states)]
@@ -283,9 +393,12 @@ def questions(spec, states, patrol_log, layout, names, n, rng, settle=SETTLE_DAY
             accept, probe, kind = [oid], False, k2
         recent.extend(accept)
         keys_ = {oid: answer_key(state, oid) for oid in accept}
-        shown, people = visible_at(state, names)
+        shown, people = visible_at(state, names, first_names)
+        story = how_it_got_there(accept, state, slot, *history, names, first_names, state["places"]) \
+            if history else []
         out.append({"n": len(out) + 1, "day": slot[0], "time": hhmm(slot[1]), "text": text,
-                    "kind": kind, "probe": probe, "accept": accept, "answer": keys_,
+                    "kind": kind, "probe": probe, "accept": accept, "answer": keys_, "moves": story,
+                    "type": objects[accept[0]]["type"],
                     "looks": {f: [{k: v for k, v in s.items()} for s in shown.get(f, [])]
                               for f in shown},
                     "people": {r: v for r, v in people.items()}})
@@ -298,8 +411,9 @@ def build(run: pathlib.Path, n: int, seed: int, settle: int = SETTLE_DAYS) -> di
     objects = {o["id"]: o for o in spec["objects"]}
     names = {oid: phrase(o) for oid, o in objects.items()}
     layout = build_layout(spec, states)
-    patrol_log = patrols(states, layout, names, rng)
-    qs = questions(spec, states, patrol_log, layout, names, n, rng, settle)
+    first_names = {r["id"]: r["name"].split()[0] for r in spec["residents"]}
+    patrol_log = patrols(states, layout, names, rng, first_names)
+    qs = questions(spec, states, patrol_log, layout, names, n, rng, settle, load_moves(run))
     owned = collections.defaultdict(list)
     for oid, o in objects.items():
         if o.get("owner") in {r["id"] for r in spec["residents"]}:
@@ -323,10 +437,20 @@ def main() -> None:
     ap.add_argument("--questions", type=int, default=30)
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--settle", type=int, default=SETTLE_DAYS, help="days before questions start")
+    ap.add_argument("--out", type=pathlib.Path, help="folder to write to (default <run>/play)")
+    ap.add_argument("--force", action="store_true", help="overwrite a session even if its questions change")
     args = ap.parse_args()
     data = build(args.run, args.questions, args.seed, args.settle)
-    out = args.run / "play"
-    out.mkdir(exist_ok=True)
+    out = args.out or args.run / "play"
+    out.mkdir(parents=True, exist_ok=True)
+    old = out / "play_data.json"
+    if old.exists() and not args.force:
+        prev = json.loads(old.read_text())
+        key = lambda d: [(q["day"], q["time"], q["text"]) for q in d["questions"]]
+        if prev.get("session") == data["session"] and key(prev) != key(data):
+            raise SystemExit(f"{old} holds session {data['session']} with different questions; saved "
+                             "answers are keyed by session and question number, so they would land on "
+                             "other questions. Use another --seed or --out, or --force.")
     (out / "play_data.json").write_text(json.dumps(data, indent=1))
     template = (pathlib.Path(__file__).parent / "play_template.html").read_text()
     page = template.replace("/*__TITLE__*/", data["title"]).replace(

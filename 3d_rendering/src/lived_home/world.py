@@ -31,10 +31,11 @@ is out of date when someone else moved it.
 """
 from __future__ import annotations
 
+import collections
 from dataclasses import dataclass, field
 from typing import Optional
 
-from lived_home.layout import CLOSED, SURFACE, Layout
+from lived_home.layout import CLOSED, OPEN, SURFACE, Layout
 
 HANDS = 2
 POCKET_SLOTS = 5
@@ -88,6 +89,135 @@ def is_bottoms(type_: str) -> bool:
     return not is_sleepwear(t) and any(t.endswith(w) or f"{w} " in t for w in BOTTOMS)
 
 
+# Where a thing is kept ("its home") is where it started, unless it started on a
+# spot people drop things on rather than keep them: a floor, a bed or seat (not
+# their shelves or drawers), a basin or tub, a washer drum, a stovetop.
+# Exceptions: large things and shoes live on floors, bedding and cushions on beds
+# and seats, soap, sponges and shampoo in basins and on shower floors.
+FLOOR_DWELLERS = ("shoe", "boot", "sneaker", "trainer", "slipper", "sandal", "flats", "heels",
+                  "loafer", "clog", "basket", "hamper", "bin", "rug", "mat", "dumbbell",
+                  "kettlebell", "toilet brush", "umbrella")
+BED_DWELLERS = ("pillow", "duvet", "blanket", "throw", "cushion", "comforter", "quilt",
+                "sheet", "bedspread")
+SINK_DWELLERS = ("sponge", "soap", "brush", "scrubber", "shampoo", "conditioner", "body wash",
+                 "face wash", "loofah")
+SEATS = ("mattress", "bed", "sofa", "couch", "sectional", "seat", "chair", "stool", "bench",
+         "ottoman", "armchair")
+STORAGE = ("shelf", "drawer", "compartment", "cabinet", "cubby", "storage", "rack", "hook")
+WET = ("sink", "basin", "tub", "bathtub")         # only the basin itself, not a counter or edge
+PASSING = ("drum", "hamper", "laundry basket")     # things pass through, nothing lives there
+HOT = ("stove", "stovetop", "burner", "hob", "cooktop")
+
+
+def _spot_words(place) -> str:
+    """The spot's own words, without 'by the ottoman' or 'near the bed' (a
+    nightstand by the bed is not a bed)."""
+    import re
+    cut = lambda x: re.split(r"\b(?:by|near|next to|beside|under|across from)\b", x.lower())[0]
+    return f" {cut(place.furniture)} {cut(place.name)} "
+
+
+def _has(words: str, w: str) -> bool:
+    import re
+    return re.search(rf"\b{re.escape(w)}s?\b", words) is not None
+
+
+def _drop_kind(place, rel: str = "") -> str:
+    """'floor', 'seat', 'wet', 'hot', 'passing' for a spot people drop things on,
+    else ''. Under something counts as the floor (slippers under the bed). A basin
+    is judged by the spot's own name: the drawers of a sink cabinet are not wet."""
+    import re
+    w = _spot_words(place)
+    own = " " + re.split(r"\b(?:by|near|next to|beside|under|across from)\b", place.name.lower())[0] + " "
+    storage = any(_has(w, x) for x in STORAGE)
+    if _has(w, "floor") or rel == "under":
+        return "floor"
+    if any(_has(w, x) for x in PASSING):
+        return "passing"
+    if place.kind != SURFACE and any(_has(own, x) for x in WET) and not _has(own, "cabinet"):
+        return "wet"
+    if any(_has(own, x) for x in HOT) and not storage:
+        return "hot"
+    if any(_has(w, x) for x in SEATS) and not any(_has(w, x) for x in STORAGE):
+        return "seat"
+    return ""
+
+
+def _clothing(type_: str) -> bool:
+    t = type_.lower()
+    return washable(t) or is_sleepwear(t) or any(
+        _has(f" {t} ", w) for w in ("blazer", "jacket", "coat", "robe", "bathrobe", "scarf", "vest",
+                                    "suit", "dress"))
+
+
+# bags and baskets things are dropped into on their way somewhere (a dirty sock's
+# place is not the laundry basket); a wallet kept in a backpack is a home
+PASSING_CARRIERS = ("laundry", "hamper", "trash", "rubbish", "garbage", "bin", "grocery",
+                    "shopping", "delicates")
+
+
+def _may_live_on(type_: str, size: str, place, rel: str = "") -> bool:
+    t, kind, w = f" {type_.lower()} ", _drop_kind(place, rel), _spot_words(place)
+    if kind == "passing":
+        return False
+    if kind and _clothing(t.strip()):
+        return False                       # clothes are not kept on floors, beds or seats
+    if kind == "floor" and (_has(w, "shower") or _has(w, "bath")):
+        return any(_has(t, x) for x in SINK_DWELLERS)
+    if kind == "floor":
+        return size == "large" or any(_has(t, x) for x in FLOOR_DWELLERS)
+    if kind == "wet":
+        return any(_has(t, x) for x in SINK_DWELLERS)
+    if kind == "hot":
+        return any(_has(t, x) for x in ("kettle", "pan", "saucepan", "pot", "skillet"))
+    return kind == "" or any(_has(t, x) for x in BED_DWELLERS)
+
+
+def homes(objects: dict, layout: Layout) -> dict:
+    """Where each thing is kept: {"place": p} or {"carrier": c} (a pen kept in its
+    pencil case), or None when its starting spot says nothing about that (dropped
+    on a floor, worn in bed). Clothes with no home of their own are kept where most
+    of the same person's clothes are kept."""
+    out = {}
+    for oid, o in objects.items():
+        st = o.get("start") or {}
+        if st.get("at") == "place" and st.get("place") in layout.places:
+            pl = layout.places[st["place"]]
+            ok = _may_live_on(o.get("type", ""), o.get("size", ""), pl, st.get("rel") or "")
+            out[oid] = {"place": st["place"]} if ok else None
+        elif st.get("at") == "inside" and st.get("carrier") in objects:
+            ctype = objects[st["carrier"]].get("type", "").lower()
+            out[oid] = None if any(_has(f" {ctype} ", w) for w in PASSING_CARRIERS) else {"carrier": st["carrier"]}
+        else:
+            out[oid] = None
+    # a plate on the dining table or a mug on a nightstand is in use, not kept there:
+    # when most things of its type are kept shut away (cupboard, drawer), so is it
+    shut = collections.defaultdict(collections.Counter)
+    total = collections.Counter(o.get("type", "") for o in objects.values())
+    for oid, o in objects.items():
+        h = out[oid]
+        if h and "place" in h and layout.places[h["place"]].kind == CLOSED:
+            shut[o.get("type", "")][h["place"]] += 1
+    for oid, o in objects.items():
+        t, h = o.get("type", ""), out[oid]
+        if shut[t] and sum(shut[t].values()) * 2 > total[t] and not _clothing(t) \
+                and (h is None or ("place" in h and layout.places[h["place"]].kind == SURFACE)):
+            out[oid] = {"place": shut[t].most_common(1)[0][0], "inferred": True}
+    for oid, o in objects.items():
+        t = o.get("type", "")
+        if out[oid] is None and o.get("owner") and _clothing(t):
+            kept = collections.Counter(
+                out[x]["place"] for x, p in objects.items()
+                if x != oid and p.get("owner") == o["owner"] and out.get(x) and "place" in out[x]
+                and not out[x].get("inferred") and _clothing(p.get("type", "")))
+            shut_away = collections.Counter({k: v for k, v in kept.items()
+                                             if layout.places[k].kind == CLOSED})
+            kept = shut_away or kept          # a drawer or wardrobe before an open shelf
+            if kept:
+                out[oid] = {"place": kept.most_common(1)[0][0], "inferred": True}
+    return out
+
+
 @dataclass
 class Resident:
     rid: str
@@ -116,6 +246,7 @@ class World:
         for person in self.people.values():
             person.belief = {oid: {"pos": dict(o["start"]), "day": -1, "minute": 0}
                              for oid, o in objects.items()}
+        self.home = homes(objects, layout)     # where each thing is kept (None: nowhere known)
         self.day, self.log = 0, []
         self.dirty: set = set()               # clothes worn and not yet washed
         self.worn_today: set = set()
@@ -272,8 +403,49 @@ class World:
             return ""
         return " (yours)" if owner == rid else f" ({self.names.get(owner, owner)}'s)"
 
-    def _label(self, oid: str, rid: str) -> str:
+    def away_from_home(self, oid: str) -> Optional[str]:
+        """Where oid is usually kept, in words, when it is somewhere else now; else None."""
+        h = getattr(self, "home", {}).get(oid)
+        if not h:
+            return None
+        if "carrier" in h:
+            pos = self.where[oid]
+            return None if pos["at"] == "inside" and pos["carrier"] == h["carrier"] else f"inside {h['carrier']}"
+        if self.place_of(oid) == h["place"]:
+            return None
+        return ("in " if self.layout.places[h["place"]].kind != SURFACE else "on ") + h["place"]
+
+    KEPT_MAX = 8        # "usually kept" notes per view: a reminder, not a to-do list
+
+    def lying_about(self, oid: str) -> bool:
+        """Held, or lying on a spot people drop things on (floor, seat, bed, basin,
+        stovetop) away from where it is kept. Things that moved to another shelf or
+        table may have found a new place, and are left alone."""
+        worn_today = oid in self.worn_today and washable(self.objects[oid]["type"])
+        if oid in self.dirty or worn_today or not self.away_from_home(oid):
+            return False                   # worn today: dirty tonight, not back in the drawer
+        pos = self.where[oid]
+        if pos["at"] == "hand":
+            return True
+        place = self.place_of(oid)
+        return pos["at"] == "place" and place is not None and \
+            _drop_kind(self.layout.places[place], pos.get("rel") or "") != ""
+
+    def kept_notes(self, rid: str) -> set:
+        """Which things get a "usually kept" note in this resident's view now: what
+        they hold first, then what lies about in the room, at most KEPT_MAX."""
+        person = self.people[rid]
+        room = self.room_of_person(rid)
+        held = [o for o in person.hands if self.lying_about(o)]
+        here = [o for p in (self.layout.places_in(room) if room else [])
+                for o in self.things_at(p) if self.can_see(rid, o) and self.lying_about(o)]
+        return set((held + here)[:self.KEPT_MAX])
+
+    def _label(self, oid: str, rid: str, kept=False) -> str:
         pos, out = self.where[oid], oid + self.owner_tag(oid, rid)
+        home = self.away_from_home(oid) if kept and (kept is True or oid in kept) else None
+        if home:
+            out += f" (usually kept {home})"
         if oid in self.dirty:
             out += " (worn, needs washing)"
         ref = pos.get("ref") if pos["at"] == "place" and pos.get("ref") and self.can_see(rid, pos["ref"]) else None
@@ -285,19 +457,22 @@ class World:
                 out += f" [holding: {', '.join(self.tag(i, rid) for i in inside)}]"
         return out
 
-    def room_view(self, rid: str) -> str:
-        """What the resident sees around them: only places with something visible."""
+    def room_view(self, rid: str, kept: bool = False) -> str:
+        """What the resident sees around them: only places with something visible.
+        With kept, things lying away from where they are usually kept say where that
+        is (what anyone living there knows; shown during tidying and before bed)."""
         room = self.room_of_person(rid)
         if room is None:
             return "You are out of the house."
         person = self.people[rid]
         here = self.layout.places[person.at]
+        kept = self.kept_notes(rid) if kept else set()
         lines = [f"You are in the {room}, at {person.at} ({here.name})."]
         for place in self.layout.places_in(room):
             seen = [o for o in self.things_at(place) if self.can_see(rid, o)]
             if seen:
                 full = " (full)" if self._full(place, None, "on_top", None) else ""
-                lines.append(f"  {place}{full}: " + ", ".join(self._label(o, rid) for o in seen))
+                lines.append(f"  {place}{full}: " + ", ".join(self._label(o, rid, kept) for o in seen))
         if len(lines) == 1:
             lines.append("  Nothing is lying out in this room.")
         for other in self.others_in_room(rid):
@@ -346,9 +521,10 @@ class World:
                 out += self.contents(w)
         return out
 
-    def holding_view(self, rid: str) -> tuple[str, str, str]:
+    def holding_view(self, rid: str, kept: bool = False) -> tuple[str, str, str]:
         person = self.people[rid]
-        hands = [self._label(o, rid) for o in person.hands]
+        kept = self.kept_notes(rid) if kept and person.at else set()
+        hands = [self._label(o, rid, kept) for o in person.hands]
         worn = [self._label(o, rid) for o in person.worn]
         return (", ".join(hands) or "nothing",
                 ", ".join(self.tag(o, rid) for o in self.pocket_items(rid)) or "nothing",

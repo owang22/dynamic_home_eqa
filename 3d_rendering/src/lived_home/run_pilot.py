@@ -32,6 +32,21 @@ MAX_INTERRUPTS = 3  # per activity; further news waits for the next call
 REPLY_WINDOW = 10   # minutes: a remark answering one made this recently continues a conversation
 MAX_CONVERSATION = 12   # remarks in one conversation before the cap applies again
 FREE_MIN = 15       # finishing this many minutes early gives a call to use the free time
+# activities in which a resident is shown where things lying out are usually kept
+TIDY_WORDS = ("tidy", "tidies", "tidying", "clean up", "cleaning", "clean the", "clean down", "put away",
+              "puts away", "putting away", "dishes", "wash the", "washing up", "laundry", "fold",
+              "chore", "declutter", "cleanup", "clearing", "rinse", "clear the", "clear away", "clear up",
+              "clear off", "unload", "unpack", "straighten", "wipe", "dishwasher")
+
+
+def is_tidying(activity: dict) -> bool:
+    """A planned activity that says it tidies, cleans or puts away. Free-time calls
+    do not count (their standard text offers 'a small chore')."""
+    if activity.get("free"):
+        return False
+    import re
+    text = activity.get("activity", "").lower()      # the intention says "clear my head" too
+    return any(re.search(rf"\b{re.escape(w)}(?:s|es|ed|ing)?\b", text) for w in TIDY_WORDS)
 
 
 def lines(items) -> str:
@@ -69,6 +84,7 @@ class Household:
             habit_ids = [h["id"] for h in self.people[r]["response_habits"]]
             self.act_schemas[r], self.enums = act_schema_fitting(
                 list(self.objects), self.layout.place_ids, [x for x in self.rids if x != r], habit_ids)
+        self.kept_cue = True       # show where things are usually kept while tidying and at bedtime
         self.recap = {r: "This is the first day of the simulation." for r in self.rids}
         self.inbox = {r: [] for r in self.rids}
         self.states, self.thoughts = [], []
@@ -183,7 +199,8 @@ class Household:
         heard = [f"At {t} {who} {how}: {text}" if who else f"At {t}: {text}"
                  for t, who, how, text in self.inbox[rid]]
         self.inbox[rid] = []
-        hands, pocket, worn = self.world.holding_view(rid)
+        kept = getattr(self, "kept_cue", False) and (last or is_tidying(activity))
+        hands, pocket, worn = self.world.holding_view(rid, kept)
         user = prompts.ACT_USER.format(
             time=clock(minute), weekday=weekday, day=day + 1,
             activity=activity["activity"], start=activity["start"], end=activity["end"],
@@ -192,7 +209,7 @@ class Household:
             situations=self._situations_for(rid, day),
             events="\n".join(events + heard) + ("\n" if events or heard else ""),
             conversation=self._conversation(rid, minute),
-            view=self.world.room_view(rid), hands=hands, pocket=pocket, worn=worn,
+            view=self.world.room_view(rid, kept), hands=hands, pocket=pocket, worn=worn,
             memory=self.world.memory_view(rid, set(activity.get("uses") or [])),
             problem=(f"\nSo far in this activity you have: {'; '.join(done) or 'done nothing yet'}.\n"
                      f"Then this did not work: {problem}\n"
@@ -205,6 +222,7 @@ class Household:
         self._note(rid, day, minute, "act", out)
         self._log("responses.jsonl", {"day": day + 1, "time": clock(minute), "resident": rid,
                                       "stage": "act", "activity": activity["activity"],
+                                      "kept_shown": kept,
                                       "problem_given": problem or None,
                                       "interrupted_by": events if interrupted else None, **out})
         return out["actions"]
@@ -509,6 +527,9 @@ def _load_checkpoint(out: pathlib.Path, day: int, caller) -> "Household":
     import pickle
     home = pickle.loads((out / "checkpoints" / f"day_{day:02d}.pkl").read_bytes())
     home.caller = caller
+    if not hasattr(home.world, "home"):          # saved before things had a usual place
+        from lived_home.world import homes
+        home.world.home = homes(home.objects, home.layout)
     # the saved state carries the prompts and schemas of the code that wrote it; a
     # resume runs the current code, so rebuild them
     home.systems = {r: home._system(r) for r in home.rids}
@@ -574,6 +595,8 @@ def main() -> None:
                     help="continue from the saved state at the end of this day (1-based); "
                          "logs after that day are cut back first")
     ap.add_argument("--fake", action="store_true", help="offline scripted residents, for testing")
+    ap.add_argument("--no_kept_cue", action="store_true",
+                    help="do not show where things are usually kept (runs before 2026-10-10 did not)")
     args = ap.parse_args()
 
     args.out.mkdir(parents=True, exist_ok=True)
@@ -604,6 +627,18 @@ def main() -> None:
         home = _load_checkpoint(args.out, args.resume, caller)
         _cut_logs(args.out, args.resume)
         print(f"resumed after day {args.resume}", flush=True)
+    home.kept_cue = not args.no_kept_cue
+    if args.resume:
+        # a run keeps the setting it started with (runs before 2026-10-10 had no cue)
+        cfg = args.out / "run_config.json"
+        before = json.loads(cfg.read_text()).get("kept_cue") if cfg.exists() else False
+        if before != home.kept_cue:
+            raise SystemExit(f"this run started with kept_cue={before}; resume it with the same setting "
+                             f"({'' if before else '--no_kept_cue'})")
+    (args.out / "homes.json").write_text(json.dumps(home.world.home, indent=1))
+    (args.out / "run_config.json").write_text(json.dumps(
+        {"kept_cue": home.kept_cue, "model": args.model, "effort": args.effort, "days": args.days,
+         "variation": args.variation, "seed": args.seed, "sick": args.sick, "commit": _commit()}, indent=1))
     (args.out / "schedule.json").write_text(json.dumps(home.schedule, indent=1))
     (args.out / "code_version.txt").write_text(_commit() + "\n")
     (args.out / "subjects.json").write_text(json.dumps(home.subjects, indent=1))
