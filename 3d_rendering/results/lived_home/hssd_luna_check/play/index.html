@@ -243,7 +243,12 @@ function pick(i, j) { // "that's it" on a seen thing
   const right = cur.q.accept.includes(t.oid);
   cur.picks.push({ look: i + 1, thing: t.thing, right });
   if (right) finish({ type: 'found', thing: t.thing, spot: t.spot });
-  else { flash(`Not that one: the ${t.thing} is not what was asked for. Keep looking, or answer.`); renderQ(); }
+  else {
+    const twin = cur.q.accept.some(a => (D.names || {})[a] === t.thing);
+    flash(twin ? `That one looks the same, but it is not the one asked for. Keep looking, or answer.`
+               : `Not that one: the ${t.thing} is not what was asked for. Keep looking, or answer.`);
+    renderQ();
+  }
 }
 
 function finish(ans) {
