@@ -1,0 +1,32 @@
+Traceback (most recent call last):
+  File "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/questions/kinds.py", line 265, in <module>
+    {"build": lambda: build(W), "run": lambda: run(W), "report": report}[sys.argv[1]]()
+  File "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/questions/kinds.py", line 265, in <lambda>
+    {"build": lambda: build(W), "run": lambda: run(W), "report": report}[sys.argv[1]]()
+  File "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/questions/kinds.py", line 219, in run
+    outs = list(ex.map(lambda j: (j[0], j[1], j[2](j[1])), jobs))
+  File "/home/oliver/miniconda3/envs/dynamic_eqa/lib/python3.9/concurrent/futures/_base.py", line 609, in result_iterator
+    yield fs.pop().result()
+  File "/home/oliver/miniconda3/envs/dynamic_eqa/lib/python3.9/concurrent/futures/_base.py", line 439, in result
+    return self.__get_result()
+  File "/home/oliver/miniconda3/envs/dynamic_eqa/lib/python3.9/concurrent/futures/_base.py", line 391, in __get_result
+    raise self._exception
+  File "/home/oliver/miniconda3/envs/dynamic_eqa/lib/python3.9/concurrent/futures/thread.py", line 58, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/questions/kinds.py", line 219, in <lambda>
+    outs = list(ex.map(lambda j: (j[0], j[1], j[2](j[1])), jobs))
+  File "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/questions/kinds.py", line 213, in <lambda>
+    jobs = [("change", q, lambda q: ask_change(W, q)) for q in qs["change"]] + \
+  File "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/questions/kinds.py", line 162, in ask_change
+    ans, _ = vlm.ask(prompt, pics, captions=[f"{q['t1'][:2]}:00", f"{q['t2'][:2]}:00"], max_tokens=5)
+  File "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/questions/vlm.py", line 35, in ask
+    content.append(_img(p))
+  File "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/questions/vlm.py", line 25, in _img
+    data = base64.b64encode(pathlib.Path(path).read_bytes()).decode()
+  File "/home/oliver/miniconda3/envs/dynamic_eqa/lib/python3.9/pathlib.py", line 1187, in read_bytes
+    with self.open(mode='rb') as f:
+  File "/home/oliver/miniconda3/envs/dynamic_eqa/lib/python3.9/pathlib.py", line 1180, in open
+    return io.open(self, mode, buffering, encoding, errors, newline,
+  File "/home/oliver/miniconda3/envs/dynamic_eqa/lib/python3.9/pathlib.py", line 1038, in _opener
+    return self._accessor.open(self, flags, mode)
+FileNotFoundError: [Errno 2] No such file or directory: '/mnt/nvme/oliver/robot/render_methods/vlm_night/hssd_a/day_09/2000/bedroom_1_bed_in_the_main_bedroom_mattress.jpg'

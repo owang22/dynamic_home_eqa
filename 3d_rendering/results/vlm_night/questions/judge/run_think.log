@@ -1,0 +1,40 @@
+Traceback (most recent call last):
+  File "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/questions/judge_bench.py", line 155, in <module>
+    main()
+  File "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/questions/judge_bench.py", line 136, in main
+    said = list(ex.map(lambda it: judge(W, it, how), its))
+  File "/home/oliver/miniconda3/envs/dynamic_eqa/lib/python3.9/concurrent/futures/_base.py", line 609, in result_iterator
+    yield fs.pop().result()
+  File "/home/oliver/miniconda3/envs/dynamic_eqa/lib/python3.9/concurrent/futures/_base.py", line 446, in result
+    return self.__get_result()
+  File "/home/oliver/miniconda3/envs/dynamic_eqa/lib/python3.9/concurrent/futures/_base.py", line 391, in __get_result
+    raise self._exception
+  File "/home/oliver/miniconda3/envs/dynamic_eqa/lib/python3.9/concurrent/futures/thread.py", line 58, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/questions/judge_bench.py", line 136, in <lambda>
+    said = list(ex.map(lambda it: judge(W, it, how), its))
+  File "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/questions/judge_bench.py", line 123, in judge
+    text, _ = vlm.ask(p + " End your reply with a last line that is exactly 'ANSWER: yes' or 'ANSWER: no'.",
+  File "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/questions/vlm.py", line 52, in ask
+    out = json.loads(urllib.request.urlopen(req, timeout=900).read())
+  File "/home/oliver/miniconda3/envs/dynamic_eqa/lib/python3.9/urllib/request.py", line 214, in urlopen
+    return opener.open(url, data, timeout)
+  File "/home/oliver/miniconda3/envs/dynamic_eqa/lib/python3.9/urllib/request.py", line 517, in open
+    response = self._open(req, data)
+  File "/home/oliver/miniconda3/envs/dynamic_eqa/lib/python3.9/urllib/request.py", line 534, in _open
+    result = self._call_chain(self.handle_open, protocol, protocol +
+  File "/home/oliver/miniconda3/envs/dynamic_eqa/lib/python3.9/urllib/request.py", line 494, in _call_chain
+    result = func(*args)
+  File "/home/oliver/miniconda3/envs/dynamic_eqa/lib/python3.9/urllib/request.py", line 1375, in http_open
+    return self.do_open(http.client.HTTPConnection, req)
+  File "/home/oliver/miniconda3/envs/dynamic_eqa/lib/python3.9/urllib/request.py", line 1350, in do_open
+    r = h.getresponse()
+  File "/home/oliver/miniconda3/envs/dynamic_eqa/lib/python3.9/http/client.py", line 1377, in getresponse
+    response.begin()
+  File "/home/oliver/miniconda3/envs/dynamic_eqa/lib/python3.9/http/client.py", line 320, in begin
+    version, status, reason = self._read_status()
+  File "/home/oliver/miniconda3/envs/dynamic_eqa/lib/python3.9/http/client.py", line 281, in _read_status
+    line = str(self.fp.readline(_MAXLINE + 1), "iso-8859-1")
+  File "/home/oliver/miniconda3/envs/dynamic_eqa/lib/python3.9/socket.py", line 716, in readinto
+    return self._sock.recv_into(b)
+socket.timeout: timed out

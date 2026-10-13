@@ -1,0 +1,3274 @@
+{
+ "scene": "107734254_176000121",
+ "coordinates": "habitat world: y up, metres; floors at y = 0",
+ "camera": {
+  "width": 640,
+  "height": 480,
+  "hfov_deg": 75.0,
+  "eye_height_m": 1.0,
+  "how_to_aim": "habitat_sim agent at eye, looking at target, up = +y (common.look_from)"
+ },
+ "rule": "Choose one fixed robot viewpoint per open spot of household A, from the empty home.\n\n    ~/miniconda3/envs/dynamic_eqa/bin/python choose_views.py\n\nWhich spots: every place whose kind is \"surface\" or \"open\" (tables, counters, seats, shelves,\nfloors, sinks, the bathtub, the fireplace opening). Closed places (drawers, cabinets, the\nwashing-machine drums, compartments) are left out: their insides cannot be seen from outside.\n\nHow a stand is scored (no snapshot object is in the scene, so the choice does not depend on\nwhat lies on the spot on any day):\n  1. The spot's surface is found by the committed scanner (scene.Home.grid_for): 2 cm cells\n     of the spot's furniture (or the room's floor) at the spot height, seen from above.\n  2. Up to 600 of those cells become test points 4 cm above the surface, where a small object\n     lying there would be. For open places (sinks, the bathtub, the fireplace opening) the\n     points are 12 cm above the bottom: from 1.0 m the bottom of a basin is hidden by its near\n     rim, and what can be seen is the top of what stands in it (a mug, a stack of plates).\n  3. Candidate stands: walkable floor (navmesh, 0.2 m body radius), rings 0.6 m to 3.5 m (to\n     6 m for floors) around the middle of the points, 0.15 m apart, 24 bearings. Eye at 1.0 m,\n     75 deg horizontal lens, aimed at the middle of the points with tilt limited to 60 deg down\n     and 30 deg up.\n  4. A test point counts as seen when it projects inside the picture (2% margin) and nothing is\n     drawn in front of it (depth picture 320x240, tolerance 2 cm + 1% of the distance).\n  5. Score = mean over test points of seen x min(1, (near / distance)^2) x slant, where\n     near = 1.3 m (2.5 m for floors, where things are bigger and the room matters) and\n     slant = min(1, 0.25 + 0.75 sin(angle down onto the point) / sin 25 deg): the share of the\n     surface seen, with far points counted less (fewer pixels) and points seen nearly edge-on\n     counted less (a flat thing there shows as a sliver). A point level with or above the eye\n     keeps slant 0.25, so high shelves are not ruled out.\n     Near-equal scores (within 0.01) prefer a stand about 1.2 m away, so some furniture shows.\nA spot is skipped when its best stand sees under 5% of its test points.\n\nWrites spot_views.json here, and for checking, under PICS/spot_views/: the empty-home picture\nof each view, and a copy with the test points drawn (green seen, red not seen).\n",
+ "views": [
+  {
+   "spot": "bathroom_1_bathroom_vanity_by_the_toilet_top",
+   "room": "bathroom_1",
+   "spot_name": "top (bathroom vanity by the toilet, bathroom 1)",
+   "furniture": "bathroom vanity by the toilet",
+   "place_name": "top",
+   "kind": "surface",
+   "eye": [
+    0.934,
+    1.0,
+    -6.228
+   ],
+   "target": [
+    1.716,
+    0.571,
+    -5.776
+   ],
+   "middle_of_surface": [
+    1.843,
+    0.501,
+    -5.703
+   ],
+   "yaw_deg": 60.0,
+   "pitch_deg": -25.4,
+   "metres_from_middle": 1.05,
+   "surface_share_seen": 1.0,
+   "score": 0.997,
+   "scanned_area_m2": 0.025,
+   "snapshot_area_m2": 0.189,
+   "test_points": 62,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 214,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "bathroom_1_floor",
+   "room": "bathroom_1",
+   "spot_name": "bathroom floor (bathroom 1)",
+   "furniture": "floor",
+   "place_name": "bathroom floor",
+   "kind": "surface",
+   "eye": [
+    3.488,
+    1.0,
+    -4.816
+   ],
+   "target": [
+    2.775,
+    0.325,
+    -5.007
+   ],
+   "middle_of_surface": [
+    2.474,
+    0.04,
+    -5.088
+   ],
+   "yaw_deg": -105.0,
+   "pitch_deg": -42.4,
+   "metres_from_middle": 1.05,
+   "surface_share_seen": 0.485,
+   "score": 0.438,
+   "scanned_area_m2": 3.57,
+   "snapshot_area_m2": 6.19,
+   "test_points": 600,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 218,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "bathroom_1_low_table_by_the_armchair_lower_shelf",
+   "room": "bathroom_1",
+   "spot_name": "lower shelf (low table by the armchair, bathroom 1)",
+   "furniture": "low table by the armchair",
+   "place_name": "lower shelf",
+   "kind": "surface",
+   "eye": [
+    1.502,
+    1.0,
+    -5.547
+   ],
+   "target": [
+    1.502,
+    1.038,
+    -4.548
+   ],
+   "middle_of_surface": [
+    1.502,
+    1.04,
+    -4.497
+   ],
+   "yaw_deg": -0.0,
+   "pitch_deg": 2.2,
+   "metres_from_middle": 1.05,
+   "surface_share_seen": 1.0,
+   "score": 0.248,
+   "scanned_area_m2": 0.266,
+   "snapshot_area_m2": 0.464,
+   "test_points": 600,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 218,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "bathroom_1_low_table_by_the_armchair_sink_basin",
+   "room": "bathroom_1",
+   "spot_name": "sink basin (low table by the armchair, bathroom 1)",
+   "furniture": "low table by the armchair",
+   "place_name": "sink basin",
+   "kind": "open",
+   "eye": [
+    2.387,
+    1.0,
+    -5.374
+   ],
+   "target": [
+    1.68,
+    1.034,
+    -4.668
+   ],
+   "middle_of_surface": [
+    1.538,
+    1.04,
+    -4.526
+   ],
+   "yaw_deg": -45.0,
+   "pitch_deg": 1.9,
+   "metres_from_middle": 1.2,
+   "surface_share_seen": 1.0,
+   "score": 0.245,
+   "scanned_area_m2": 0.138,
+   "snapshot_area_m2": 0.115,
+   "test_points": 345,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 214,
+   "test_point_height_above_surface_m": 0.12
+  },
+  {
+   "spot": "bathroom_1_low_table_by_the_armchair_upper_shelf",
+   "room": "bathroom_1",
+   "spot_name": "upper shelf (low table by the armchair, bathroom 1)",
+   "furniture": "low table by the armchair",
+   "place_name": "upper shelf",
+   "kind": "surface",
+   "eye": [
+    0.879,
+    1.0,
+    -5.571
+   ],
+   "target": [
+    0.655,
+    1.5,
+    -4.735
+   ],
+   "middle_of_surface": [
+    0.569,
+    1.966,
+    -4.412
+   ],
+   "yaw_deg": -15.0,
+   "pitch_deg": 30.0,
+   "metres_from_middle": 1.2,
+   "surface_share_seen": 0.131,
+   "score": 0.026,
+   "scanned_area_m2": 0.067,
+   "snapshot_area_m2": 0.218,
+   "test_points": 168,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 232,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "bathroom_2_bathroom_vanity_by_the_bathtub_sink_basin",
+   "room": "bathroom_2",
+   "spot_name": "sink basin (bathroom vanity by the bathtub, bathroom 2)",
+   "furniture": "bathroom vanity by the bathtub",
+   "place_name": "sink basin",
+   "kind": "open",
+   "eye": [
+    1.587,
+    1.0,
+    9.39
+   ],
+   "target": [
+    1.091,
+    0.884,
+    8.53
+   ],
+   "middle_of_surface": [
+    1.137,
+    0.895,
+    8.611
+   ],
+   "yaw_deg": -150.0,
+   "pitch_deg": -6.7,
+   "metres_from_middle": 0.9,
+   "surface_share_seen": 0.833,
+   "score": 0.394,
+   "scanned_area_m2": 0.555,
+   "snapshot_area_m2": 0.286,
+   "test_points": 600,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 177,
+   "test_point_height_above_surface_m": 0.12
+  },
+  {
+   "spot": "bathroom_2_bathroom_vanity_by_the_bathtub_vanity_top",
+   "room": "bathroom_2",
+   "spot_name": "vanity top (bathroom vanity by the bathtub, bathroom 2)",
+   "furniture": "bathroom vanity by the bathtub",
+   "place_name": "vanity top",
+   "kind": "surface",
+   "eye": [
+    1.668,
+    1.0,
+    8.154
+   ],
+   "target": [
+    0.982,
+    0.758,
+    8.84
+   ],
+   "middle_of_surface": [
+    1.137,
+    0.813,
+    8.684
+   ],
+   "yaw_deg": -45.0,
+   "pitch_deg": -14.0,
+   "metres_from_middle": 0.75,
+   "surface_share_seen": 0.493,
+   "score": 0.367,
+   "scanned_area_m2": 0.432,
+   "snapshot_area_m2": 0.457,
+   "test_points": 600,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 178,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "bathroom_2_bathtub_bathtub",
+   "room": "bathroom_2",
+   "spot_name": "bathtub (bathtub, bathroom 2)",
+   "furniture": "bathtub",
+   "place_name": "bathtub",
+   "kind": "open",
+   "eye": [
+    1.811,
+    1.0,
+    8.613
+   ],
+   "target": [
+    2.606,
+    0.432,
+    8.4
+   ],
+   "middle_of_surface": [
+    2.97,
+    0.172,
+    8.302
+   ],
+   "yaw_deg": 105.0,
+   "pitch_deg": -34.6,
+   "metres_from_middle": 1.2,
+   "surface_share_seen": 0.765,
+   "score": 0.525,
+   "scanned_area_m2": 0.774,
+   "snapshot_area_m2": 0.68,
+   "test_points": 600,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 112,
+   "test_point_height_above_surface_m": 0.12
+  },
+  {
+   "spot": "bathroom_2_floor",
+   "room": "bathroom_2",
+   "spot_name": "bathroom floor (bathroom 2)",
+   "furniture": "floor",
+   "place_name": "bathroom floor",
+   "kind": "surface",
+   "eye": [
+    2.691,
+    1.0,
+    8.891
+   ],
+   "target": [
+    2.999,
+    0.212,
+    9.424
+   ],
+   "middle_of_surface": [
+    3.066,
+    0.04,
+    9.54
+   ],
+   "yaw_deg": 30.0,
+   "pitch_deg": -52.0,
+   "metres_from_middle": 0.75,
+   "surface_share_seen": 0.76,
+   "score": 0.76,
+   "scanned_area_m2": 2.67,
+   "snapshot_area_m2": 7.683,
+   "test_points": 600,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 130,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "bathroom_2_toilet_by_the_bathtub_toilet_top",
+   "room": "bathroom_2",
+   "spot_name": "toilet top (toilet by the bathtub, bathroom 2)",
+   "furniture": "toilet by the bathtub",
+   "place_name": "toilet top",
+   "kind": "surface",
+   "eye": [
+    2.16,
+    1.0,
+    9.374
+   ],
+   "target": [
+    1.937,
+    0.492,
+    10.206
+   ],
+   "middle_of_surface": [
+    1.927,
+    0.47,
+    10.243
+   ],
+   "yaw_deg": -15.0,
+   "pitch_deg": -30.5,
+   "metres_from_middle": 0.9,
+   "surface_share_seen": 1.0,
+   "score": 1.0,
+   "scanned_area_m2": 0.164,
+   "snapshot_area_m2": 0.179,
+   "test_points": 411,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 99,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "bedroom_1_armchair_by_the_small_table_seat",
+   "room": "bedroom_1",
+   "spot_name": "seat (armchair by the small table, bedroom 1)",
+   "furniture": "armchair by the small table",
+   "place_name": "seat",
+   "kind": "surface",
+   "eye": [
+    -2.389,
+    1.0,
+    8.812
+   ],
+   "target": [
+    -2.389,
+    0.456,
+    9.651
+   ],
+   "middle_of_surface": [
+    -2.389,
+    0.514,
+    9.562
+   ],
+   "yaw_deg": 0.0,
+   "pitch_deg": -33.0,
+   "metres_from_middle": 0.75,
+   "surface_share_seen": 0.993,
+   "score": 0.989,
+   "scanned_area_m2": 0.656,
+   "snapshot_area_m2": 0.517,
+   "test_points": 600,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 125,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "bedroom_1_bed_in_the_main_bedroom_mattress",
+   "room": "bedroom_1",
+   "spot_name": "mattress (bed in the main bedroom, bedroom 1)",
+   "furniture": "bed in the main bedroom",
+   "place_name": "mattress",
+   "kind": "surface",
+   "eye": [
+    -3.08,
+    1.0,
+    8.736
+   ],
+   "target": [
+    -3.579,
+    0.945,
+    7.871
+   ],
+   "middle_of_surface": [
+    -3.605,
+    0.942,
+    7.826
+   ],
+   "yaw_deg": -150.0,
+   "pitch_deg": -3.2,
+   "metres_from_middle": 1.05,
+   "surface_share_seen": 1.0,
+   "score": 0.337,
+   "scanned_area_m2": 1.006,
+   "snapshot_area_m2": 1.067,
+   "test_points": 600,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 144,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "bedroom_1_bed_in_the_main_bedroom_middle_shelf_of_the_bed",
+   "room": "bedroom_1",
+   "spot_name": "middle shelf of the bed (bed in the main bedroom, bedroom 1)",
+   "furniture": "bed in the main bedroom",
+   "place_name": "middle shelf of the bed",
+   "kind": "surface",
+   "eye": [
+    -2.269,
+    1.0,
+    7.548
+   ],
+   "target": [
+    -2.719,
+    0.564,
+    6.768
+   ],
+   "middle_of_surface": [
+    -2.794,
+    0.491,
+    6.638
+   ],
+   "yaw_deg": -150.0,
+   "pitch_deg": -25.9,
+   "metres_from_middle": 1.05,
+   "surface_share_seen": 1.0,
+   "score": 1.0,
+   "scanned_area_m2": 0.002,
+   "snapshot_area_m2": 0.109,
+   "test_points": 5,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 180,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "bedroom_1_dresser_by_the_armchair_top_of_the_dresser",
+   "room": "bedroom_1",
+   "spot_name": "top of the dresser (dresser by the armchair, bedroom 1)",
+   "furniture": "dresser by the armchair",
+   "place_name": "top of the dresser",
+   "kind": "surface",
+   "eye": [
+    0.362,
+    1.0,
+    8.808
+   ],
+   "target": [
+    -0.138,
+    0.945,
+    7.943
+   ],
+   "middle_of_surface": [
+    -0.013,
+    0.959,
+    8.158
+   ],
+   "yaw_deg": -150.0,
+   "pitch_deg": -3.1,
+   "metres_from_middle": 0.75,
+   "surface_share_seen": 0.765,
+   "score": 0.271,
+   "scanned_area_m2": 0.331,
+   "snapshot_area_m2": 0.491,
+   "test_points": 600,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 208,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "bedroom_1_floor",
+   "room": "bedroom_1",
+   "spot_name": "bedroom floor (bedroom 1)",
+   "furniture": "floor",
+   "place_name": "bedroom floor",
+   "kind": "surface",
+   "eye": [
+    1.128,
+    1.0,
+    9.745
+   ],
+   "target": [
+    0.195,
+    0.742,
+    9.495
+   ],
+   "middle_of_surface": [
+    -2.349,
+    0.04,
+    8.813
+   ],
+   "yaw_deg": -105.0,
+   "pitch_deg": -14.9,
+   "metres_from_middle": 3.6,
+   "surface_share_seen": 0.242,
+   "score": 0.219,
+   "scanned_area_m2": 9.708,
+   "snapshot_area_m2": 23.538,
+   "test_points": 600,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 223,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "bedroom_1_nightstand_by_the_main_bed_2_top_of_the_other_nightstand",
+   "room": "bedroom_1",
+   "spot_name": "top of the other nightstand (nightstand by the main bed 2, bedroom 1)",
+   "furniture": "nightstand by the main bed 2",
+   "place_name": "top of the other nightstand",
+   "kind": "surface",
+   "eye": [
+    -2.092,
+    1.0,
+    7.018
+   ],
+   "target": [
+    -2.508,
+    0.445,
+    6.298
+   ],
+   "middle_of_surface": [
+    -2.392,
+    0.6,
+    6.499
+   ],
+   "yaw_deg": -150.0,
+   "pitch_deg": -33.7,
+   "metres_from_middle": 0.6,
+   "surface_share_seen": 1.0,
+   "score": 1.0,
+   "scanned_area_m2": 0.092,
+   "snapshot_area_m2": 0.207,
+   "test_points": 231,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 210,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "bedroom_1_nightstand_by_the_main_bed_top_of_the_nightstand",
+   "room": "bedroom_1",
+   "spot_name": "top of the nightstand (nightstand by the main bed, bedroom 1)",
+   "furniture": "nightstand by the main bed",
+   "place_name": "top of the nightstand",
+   "kind": "surface",
+   "eye": [
+    -5.107,
+    1.0,
+    6.998
+   ],
+   "target": [
+    -4.519,
+    0.445,
+    6.409
+   ],
+   "middle_of_surface": [
+    -4.683,
+    0.6,
+    6.573
+   ],
+   "yaw_deg": 135.0,
+   "pitch_deg": -33.7,
+   "metres_from_middle": 0.6,
+   "surface_share_seen": 0.98,
+   "score": 0.98,
+   "scanned_area_m2": 0.142,
+   "snapshot_area_m2": 0.207,
+   "test_points": 355,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 110,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "bedroom_1_small_table_by_the_armchair_bottom_shelf_of_the_small_table",
+   "room": "bedroom_1",
+   "spot_name": "bottom shelf of the small table (small table by the armchair, bedroom 1)",
+   "furniture": "small table by the armchair",
+   "place_name": "bottom shelf of the small table",
+   "kind": "surface",
+   "eye": [
+    -2.849,
+    1.0,
+    8.833
+   ],
+   "target": [
+    -3.347,
+    0.29,
+    9.331
+   ],
+   "middle_of_surface": [
+    -3.485,
+    0.093,
+    9.47
+   ],
+   "yaw_deg": -45.0,
+   "pitch_deg": -45.2,
+   "metres_from_middle": 0.9,
+   "surface_share_seen": 0.8,
+   "score": 0.8,
+   "scanned_area_m2": 0.002,
+   "snapshot_area_m2": 0.026,
+   "test_points": 5,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 117,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "bedroom_1_small_table_by_the_armchair_middle_shelf_of_the_small_table",
+   "room": "bedroom_1",
+   "spot_name": "middle shelf of the small table (small table by the armchair, bedroom 1)",
+   "furniture": "small table by the armchair",
+   "place_name": "middle shelf of the small table",
+   "kind": "surface",
+   "eye": [
+    -3.795,
+    1.0,
+    10.28
+   ],
+   "target": [
+    -3.236,
+    0.236,
+    9.957
+   ],
+   "middle_of_surface": [
+    -3.275,
+    0.289,
+    9.98
+   ],
+   "yaw_deg": 120.0,
+   "pitch_deg": -49.9,
+   "metres_from_middle": 0.6,
+   "surface_share_seen": 0.5,
+   "score": 0.5,
+   "scanned_area_m2": 0.003,
+   "snapshot_area_m2": 0.028,
+   "test_points": 8,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 97,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "bedroom_1_small_table_by_the_armchair_top_shelf_of_the_small_table",
+   "room": "bedroom_1",
+   "spot_name": "top shelf of the small table (small table by the armchair, bedroom 1)",
+   "furniture": "small table by the armchair",
+   "place_name": "top shelf of the small table",
+   "kind": "surface",
+   "eye": [
+    -4.312,
+    1.0,
+    10.112
+   ],
+   "target": [
+    -3.485,
+    0.483,
+    9.891
+   ],
+   "middle_of_surface": [
+    -3.442,
+    0.456,
+    9.879
+   ],
+   "yaw_deg": 105.0,
+   "pitch_deg": -31.2,
+   "metres_from_middle": 0.9,
+   "surface_share_seen": 0.589,
+   "score": 0.589,
+   "scanned_area_m2": 0.038,
+   "snapshot_area_m2": 0.099,
+   "test_points": 95,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 105,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "bedroom_2_bed_in_the_second_bedroom_mattress",
+   "room": "bedroom_2",
+   "spot_name": "mattress (bed in the second bedroom, bedroom 2)",
+   "furniture": "bed in the second bedroom",
+   "place_name": "mattress",
+   "kind": "surface",
+   "eye": [
+    1.476,
+    1.0,
+    -8.967
+   ],
+   "target": [
+    2.435,
+    0.715,
+    -8.967
+   ],
+   "middle_of_surface": [
+    2.676,
+    0.644,
+    -8.967
+   ],
+   "yaw_deg": 90.0,
+   "pitch_deg": -16.5,
+   "metres_from_middle": 1.2,
+   "surface_share_seen": 0.842,
+   "score": 0.567,
+   "scanned_area_m2": 1.739,
+   "snapshot_area_m2": 1.945,
+   "test_points": 600,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 81,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "bedroom_2_chair_by_the_coat_rack_seat",
+   "room": "bedroom_2",
+   "spot_name": "seat (chair by the coat rack, bedroom 2)",
+   "furniture": "chair by the coat rack",
+   "place_name": "seat",
+   "kind": "surface",
+   "eye": [
+    1.391,
+    1.0,
+    -9.414
+   ],
+   "target": [
+    0.539,
+    0.477,
+    -9.414
+   ],
+   "middle_of_surface": [
+    0.491,
+    0.447,
+    -9.414
+   ],
+   "yaw_deg": -90.0,
+   "pitch_deg": -31.6,
+   "metres_from_middle": 0.9,
+   "surface_share_seen": 1.0,
+   "score": 1.0,
+   "scanned_area_m2": 0.162,
+   "snapshot_area_m2": 0.199,
+   "test_points": 406,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 96,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "bedroom_2_coat_rack_by_the_chair_lower_shelf",
+   "room": "bedroom_2",
+   "spot_name": "lower shelf (coat rack by the chair, bedroom 2)",
+   "furniture": "coat rack by the chair",
+   "place_name": "lower shelf",
+   "kind": "surface",
+   "eye": [
+    0.641,
+    1.0,
+    -7.772
+   ],
+   "target": [
+    0.418,
+    0.495,
+    -8.606
+   ],
+   "middle_of_surface": [
+    0.408,
+    0.473,
+    -8.642
+   ],
+   "yaw_deg": -165.0,
+   "pitch_deg": -30.3,
+   "metres_from_middle": 0.9,
+   "surface_share_seen": 1.0,
+   "score": 1.0,
+   "scanned_area_m2": 0.136,
+   "snapshot_area_m2": 0.149,
+   "test_points": 339,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 118,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "bedroom_2_coat_rack_by_the_chair_upper_shelf",
+   "room": "bedroom_2",
+   "spot_name": "upper shelf (coat rack by the chair, bedroom 2)",
+   "furniture": "coat rack by the chair",
+   "place_name": "upper shelf",
+   "kind": "surface",
+   "eye": [
+    1.508,
+    1.0,
+    -8.298
+   ],
+   "target": [
+    0.642,
+    1.5,
+    -8.298
+   ],
+   "middle_of_surface": [
+    0.308,
+    1.824,
+    -8.298
+   ],
+   "yaw_deg": -90.0,
+   "pitch_deg": 30.0,
+   "metres_from_middle": 1.2,
+   "surface_share_seen": 0.235,
+   "score": 0.05,
+   "scanned_area_m2": 0.014,
+   "snapshot_area_m2": 0.089,
+   "test_points": 34,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 134,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "bedroom_2_floor",
+   "room": "bedroom_2",
+   "spot_name": "floor (bedroom 2)",
+   "furniture": "floor",
+   "place_name": "floor",
+   "kind": "surface",
+   "eye": [
+    0.885,
+    1.0,
+    -8.519
+   ],
+   "target": [
+    1.437,
+    0.375,
+    -7.967
+   ],
+   "middle_of_surface": [
+    1.734,
+    0.04,
+    -7.67
+   ],
+   "yaw_deg": 45.0,
+   "pitch_deg": -38.6,
+   "metres_from_middle": 1.2,
+   "surface_share_seen": 0.805,
+   "score": 0.783,
+   "scanned_area_m2": 1.485,
+   "snapshot_area_m2": 11.856,
+   "test_points": 600,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 202,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "bedroom_2_nightstand_by_the_dresser_top",
+   "room": "bedroom_2",
+   "spot_name": "top (nightstand by the dresser, bedroom 2)",
+   "furniture": "nightstand by the dresser",
+   "place_name": "top",
+   "kind": "surface",
+   "eye": [
+    2.983,
+    1.0,
+    -10.348
+   ],
+   "target": [
+    3.803,
+    0.473,
+    -10.128
+   ],
+   "middle_of_surface": [
+    3.562,
+    0.628,
+    -10.193
+   ],
+   "yaw_deg": 75.0,
+   "pitch_deg": -31.8,
+   "metres_from_middle": 0.6,
+   "surface_share_seen": 0.991,
+   "score": 0.988,
+   "scanned_area_m2": 0.235,
+   "snapshot_area_m2": 0.252,
+   "test_points": 587,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 38,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "bedroom_2_nightstand_by_the_second_bedroom_bed_top",
+   "room": "bedroom_2",
+   "spot_name": "top (nightstand by the second bedroom bed, bedroom 2)",
+   "furniture": "nightstand by the second bedroom bed",
+   "place_name": "top",
+   "kind": "surface",
+   "eye": [
+    2.976,
+    1.0,
+    -7.883
+   ],
+   "target": [
+    3.796,
+    0.473,
+    -7.663
+   ],
+   "middle_of_surface": [
+    3.555,
+    0.628,
+    -7.728
+   ],
+   "yaw_deg": 75.0,
+   "pitch_deg": -31.8,
+   "metres_from_middle": 0.6,
+   "surface_share_seen": 1.0,
+   "score": 0.999,
+   "scanned_area_m2": 0.136,
+   "snapshot_area_m2": 0.252,
+   "test_points": 340,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 84,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "closet_bedroom_ottoman_ottoman_top",
+   "room": "closet",
+   "spot_name": "ottoman top (bedroom ottoman, closet)",
+   "furniture": "bedroom ottoman",
+   "place_name": "ottoman top",
+   "kind": "surface",
+   "eye": [
+    0.479,
+    1.0,
+    -2.536
+   ],
+   "target": [
+    -0.342,
+    0.473,
+    -2.756
+   ],
+   "middle_of_surface": [
+    -0.391,
+    0.441,
+    -2.769
+   ],
+   "yaw_deg": -105.0,
+   "pitch_deg": -31.8,
+   "metres_from_middle": 0.9,
+   "surface_share_seen": 1.0,
+   "score": 0.999,
+   "scanned_area_m2": 0.316,
+   "snapshot_area_m2": 0.114,
+   "test_points": 600,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 190,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "closet_floor",
+   "room": "closet",
+   "spot_name": "closet floor (closet)",
+   "furniture": "floor",
+   "place_name": "closet floor",
+   "kind": "surface",
+   "eye": [
+    2.258,
+    1.0,
+    -3.071
+   ],
+   "target": [
+    1.619,
+    0.325,
+    -3.44
+   ],
+   "middle_of_surface": [
+    1.349,
+    0.04,
+    -3.596
+   ],
+   "yaw_deg": -120.0,
+   "pitch_deg": -42.4,
+   "metres_from_middle": 1.05,
+   "surface_share_seen": 0.517,
+   "score": 0.375,
+   "scanned_area_m2": 3.682,
+   "snapshot_area_m2": 12.796,
+   "test_points": 600,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 313,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "dining_room_armchair_by_the_coffee_table_seat",
+   "room": "dining_room",
+   "spot_name": "seat (armchair by the coffee table, dining room)",
+   "furniture": "armchair by the coffee table",
+   "place_name": "seat",
+   "kind": "surface",
+   "eye": [
+    -4.007,
+    1.0,
+    4.785
+   ],
+   "target": [
+    -4.007,
+    0.493,
+    3.923
+   ],
+   "middle_of_surface": [
+    -4.007,
+    0.382,
+    3.735
+   ],
+   "yaw_deg": 180.0,
+   "pitch_deg": -30.5,
+   "metres_from_middle": 1.05,
+   "surface_share_seen": 1.0,
+   "score": 0.999,
+   "scanned_area_m2": 0.013,
+   "snapshot_area_m2": 0.183,
+   "test_points": 33,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 159,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "dining_room_armchair_by_the_other_armchair_seat",
+   "room": "dining_room",
+   "spot_name": "seat (armchair by the other armchair, dining room)",
+   "furniture": "armchair by the other armchair",
+   "place_name": "seat",
+   "kind": "surface",
+   "eye": [
+    -1.934,
+    1.0,
+    4.451
+   ],
+   "target": [
+    -2.544,
+    0.493,
+    3.841
+   ],
+   "middle_of_surface": [
+    -2.676,
+    0.383,
+    3.708
+   ],
+   "yaw_deg": -135.0,
+   "pitch_deg": -30.4,
+   "metres_from_middle": 1.05,
+   "surface_share_seen": 1.0,
+   "score": 0.996,
+   "scanned_area_m2": 0.019,
+   "snapshot_area_m2": 0.183,
+   "test_points": 48,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 229,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "dining_room_coffee_table_by_the_armchairs_tabletop",
+   "room": "dining_room",
+   "spot_name": "tabletop (coffee table by the armchairs, dining room)",
+   "furniture": "coffee table by the armchairs",
+   "place_name": "tabletop",
+   "kind": "surface",
+   "eye": [
+    -3.419,
+    1.0,
+    5.305
+   ],
+   "target": [
+    -3.419,
+    0.455,
+    4.466
+   ],
+   "middle_of_surface": [
+    -3.419,
+    0.414,
+    4.405
+   ],
+   "yaw_deg": 180.0,
+   "pitch_deg": -33.1,
+   "metres_from_middle": 0.9,
+   "surface_share_seen": 1.0,
+   "score": 0.998,
+   "scanned_area_m2": 0.306,
+   "snapshot_area_m2": 0.605,
+   "test_points": 600,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 183,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "dining_room_dining_chair_by_the_other_dining_chair_2_seat",
+   "room": "dining_room",
+   "spot_name": "seat (dining chair by the other dining chair 2, dining room)",
+   "furniture": "dining chair by the other dining chair 2",
+   "place_name": "seat",
+   "kind": "surface",
+   "eye": [
+    -3.696,
+    1.0,
+    -0.094
+   ],
+   "target": [
+    -3.464,
+    0.558,
+    0.773
+   ],
+   "middle_of_surface": [
+    -3.424,
+    0.483,
+    0.921
+   ],
+   "yaw_deg": 15.0,
+   "pitch_deg": -26.2,
+   "metres_from_middle": 1.05,
+   "surface_share_seen": 0.888,
+   "score": 0.866,
+   "scanned_area_m2": 0.139,
+   "snapshot_area_m2": 0.089,
+   "test_points": 347,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 229,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "dining_room_dining_chair_by_the_other_dining_chair_3_seat",
+   "room": "dining_room",
+   "spot_name": "seat (dining chair by the other dining chair 3, dining room)",
+   "furniture": "dining chair by the other dining chair 3",
+   "place_name": "seat",
+   "kind": "surface",
+   "eye": [
+    -2.753,
+    1.0,
+    2.067
+   ],
+   "target": [
+    -3.483,
+    0.345,
+    1.871
+   ],
+   "middle_of_surface": [
+    -3.333,
+    0.479,
+    1.911
+   ],
+   "yaw_deg": -105.0,
+   "pitch_deg": -40.9,
+   "metres_from_middle": 0.6,
+   "surface_share_seen": 0.914,
+   "score": 0.914,
+   "scanned_area_m2": 0.093,
+   "snapshot_area_m2": 0.089,
+   "test_points": 233,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 236,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "dining_room_dining_chair_by_the_other_dining_chair_seat",
+   "room": "dining_room",
+   "spot_name": "seat (dining chair by the other dining chair, dining room)",
+   "furniture": "dining chair by the other dining chair",
+   "place_name": "seat",
+   "kind": "surface",
+   "eye": [
+    -4.533,
+    1.0,
+    2.942
+   ],
+   "target": [
+    -4.967,
+    0.501,
+    2.191
+   ],
+   "middle_of_surface": [
+    -4.983,
+    0.482,
+    2.162
+   ],
+   "yaw_deg": -150.0,
+   "pitch_deg": -29.9,
+   "metres_from_middle": 0.9,
+   "surface_share_seen": 0.995,
+   "score": 0.995,
+   "scanned_area_m2": 0.088,
+   "snapshot_area_m2": 0.089,
+   "test_points": 221,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 131,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "dining_room_dining_chair_by_the_table_2_seat",
+   "room": "dining_room",
+   "spot_name": "seat (dining chair by the table 2, dining room)",
+   "furniture": "dining chair by the table 2",
+   "place_name": "seat",
+   "kind": "surface",
+   "eye": [
+    -3.296,
+    1.0,
+    0.061
+   ],
+   "target": [
+    -4.072,
+    0.557,
+    0.51
+   ],
+   "middle_of_surface": [
+    -4.205,
+    0.482,
+    0.586
+   ],
+   "yaw_deg": -60.0,
+   "pitch_deg": -26.3,
+   "metres_from_middle": 1.05,
+   "surface_share_seen": 0.949,
+   "score": 0.934,
+   "scanned_area_m2": 0.087,
+   "snapshot_area_m2": 0.089,
+   "test_points": 217,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 197,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "dining_room_dining_chair_by_the_table_3_seat",
+   "room": "dining_room",
+   "spot_name": "seat (dining chair by the table 3, dining room)",
+   "furniture": "dining chair by the table 3",
+   "place_name": "seat",
+   "kind": "surface",
+   "eye": [
+    -4.613,
+    1.0,
+    0.41
+   ],
+   "target": [
+    -5.046,
+    0.5,
+    1.16
+   ],
+   "middle_of_surface": [
+    -5.063,
+    0.481,
+    1.189
+   ],
+   "yaw_deg": -30.0,
+   "pitch_deg": -30.0,
+   "metres_from_middle": 0.9,
+   "surface_share_seen": 0.924,
+   "score": 0.923,
+   "scanned_area_m2": 0.142,
+   "snapshot_area_m2": 0.089,
+   "test_points": 354,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 154,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "dining_room_dining_chair_by_the_table_seat",
+   "room": "dining_room",
+   "spot_name": "seat (dining chair by the table, dining room)",
+   "furniture": "dining chair by the table",
+   "place_name": "seat",
+   "kind": "surface",
+   "eye": [
+    -5.021,
+    1.0,
+    2.688
+   ],
+   "target": [
+    -4.184,
+    0.5,
+    2.464
+   ],
+   "middle_of_surface": [
+    -4.151,
+    0.48,
+    2.455
+   ],
+   "yaw_deg": 105.0,
+   "pitch_deg": -30.0,
+   "metres_from_middle": 0.9,
+   "surface_share_seen": 0.952,
+   "score": 0.952,
+   "scanned_area_m2": 0.05,
+   "snapshot_area_m2": 0.089,
+   "test_points": 126,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 175,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "dining_room_dining_room_sideboard_countertop",
+   "room": "dining_room",
+   "spot_name": "countertop (dining room sideboard, dining room)",
+   "furniture": "dining room sideboard",
+   "place_name": "countertop",
+   "kind": "surface",
+   "eye": [
+    -2.646,
+    1.0,
+    4.759
+   ],
+   "target": [
+    -3.144,
+    1.104,
+    5.621
+   ],
+   "middle_of_surface": [
+    -3.321,
+    1.142,
+    5.928
+   ],
+   "yaw_deg": -30.0,
+   "pitch_deg": 6.0,
+   "metres_from_middle": 1.35,
+   "surface_share_seen": 0.682,
+   "score": 0.122,
+   "scanned_area_m2": 1.132,
+   "snapshot_area_m2": 1.168,
+   "test_points": 600,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 184,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "dining_room_dining_table_tabletop",
+   "room": "dining_room",
+   "spot_name": "tabletop (dining table, dining room)",
+   "furniture": "dining table",
+   "place_name": "tabletop",
+   "kind": "surface",
+   "eye": [
+    -4.85,
+    1.0,
+    0.566
+   ],
+   "target": [
+    -4.357,
+    0.838,
+    1.42
+   ],
+   "middle_of_surface": [
+    -4.325,
+    0.827,
+    1.475
+   ],
+   "yaw_deg": 30.0,
+   "pitch_deg": -9.3,
+   "metres_from_middle": 1.05,
+   "surface_share_seen": 0.88,
+   "score": 0.443,
+   "scanned_area_m2": 1.344,
+   "snapshot_area_m2": 2.545,
+   "test_points": 600,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 162,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "dining_room_fireplace_bottom_shelf",
+   "room": "dining_room",
+   "spot_name": "bottom shelf (fireplace, dining room)",
+   "furniture": "fireplace",
+   "place_name": "bottom shelf",
+   "kind": "surface",
+   "eye": [
+    -4.213,
+    1.0,
+    4.769
+   ],
+   "target": [
+    -5.066,
+    0.53,
+    4.54
+   ],
+   "middle_of_surface": [
+    -5.227,
+    0.441,
+    4.497
+   ],
+   "yaw_deg": -105.0,
+   "pitch_deg": -28.0,
+   "metres_from_middle": 1.05,
+   "surface_share_seen": 0.715,
+   "score": 0.676,
+   "scanned_area_m2": 0.932,
+   "snapshot_area_m2": 0.811,
+   "test_points": 600,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 97,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "dining_room_fireplace_inside_the_upper_opening",
+   "room": "dining_room",
+   "spot_name": "inside the upper opening (fireplace, dining room)",
+   "furniture": "fireplace",
+   "place_name": "inside the upper opening",
+   "kind": "open",
+   "eye": [
+    -4.446,
+    1.0,
+    4.516
+   ],
+   "target": [
+    -5.196,
+    1.5,
+    4.083
+   ],
+   "middle_of_surface": [
+    -5.355,
+    1.638,
+    3.991
+   ],
+   "yaw_deg": -120.0,
+   "pitch_deg": 30.0,
+   "metres_from_middle": 1.05,
+   "surface_share_seen": 1.0,
+   "score": 0.25,
+   "scanned_area_m2": 0.008,
+   "snapshot_area_m2": 0.137,
+   "test_points": 21,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 80,
+   "test_point_height_above_surface_m": 0.12
+  },
+  {
+   "spot": "dining_room_fireplace_middle_shelf",
+   "room": "dining_room",
+   "spot_name": "middle shelf (fireplace, dining room)",
+   "furniture": "fireplace",
+   "place_name": "middle shelf",
+   "kind": "surface",
+   "eye": [
+    -4.629,
+    1.0,
+    3.978
+   ],
+   "target": [
+    -5.447,
+    0.671,
+    4.45
+   ],
+   "middle_of_surface": [
+    -5.538,
+    0.634,
+    4.503
+   ],
+   "yaw_deg": -60.0,
+   "pitch_deg": -19.2,
+   "metres_from_middle": 1.05,
+   "surface_share_seen": 0.757,
+   "score": 0.628,
+   "scanned_area_m2": 0.054,
+   "snapshot_area_m2": 0.031,
+   "test_points": 136,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 76,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "dining_room_floor",
+   "room": "dining_room",
+   "spot_name": "floor (dining room)",
+   "furniture": "floor",
+   "place_name": "floor",
+   "kind": "surface",
+   "eye": [
+    -1.717,
+    1.0,
+    0.538
+   ],
+   "target": [
+    -2.185,
+    0.648,
+    1.348
+   ],
+   "middle_of_surface": [
+    -2.992,
+    0.04,
+    2.746
+   ],
+   "yaw_deg": -30.0,
+   "pitch_deg": -20.6,
+   "metres_from_middle": 2.55,
+   "surface_share_seen": 0.583,
+   "score": 0.405,
+   "scanned_area_m2": 11.147,
+   "snapshot_area_m2": 26.309,
+   "test_points": 600,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 333,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "entryway_floor",
+   "room": "entryway",
+   "spot_name": "entryway floor (entryway)",
+   "furniture": "floor",
+   "place_name": "entryway floor",
+   "kind": "surface",
+   "eye": [
+    -4.753,
+    1.0,
+    -3.937
+   ],
+   "target": [
+    -4.753,
+    0.608,
+    -4.856
+   ],
+   "middle_of_surface": [
+    -4.753,
+    0.04,
+    -6.187
+   ],
+   "yaw_deg": 180.0,
+   "pitch_deg": -23.1,
+   "metres_from_middle": 2.25,
+   "surface_share_seen": 0.943,
+   "score": 0.699,
+   "scanned_area_m2": 5.097,
+   "snapshot_area_m2": 5.779,
+   "test_points": 600,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 228,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "hallway_1_floor",
+   "room": "hallway_1",
+   "spot_name": "hallway floor (hallway 1)",
+   "furniture": "floor",
+   "place_name": "hallway floor",
+   "kind": "surface",
+   "eye": [
+    0.215,
+    1.0,
+    4.018
+   ],
+   "target": [
+    -0.175,
+    0.375,
+    4.694
+   ],
+   "middle_of_surface": [
+    -0.385,
+    0.04,
+    5.057
+   ],
+   "yaw_deg": -30.0,
+   "pitch_deg": -38.7,
+   "metres_from_middle": 1.2,
+   "surface_share_seen": 0.68,
+   "score": 0.558,
+   "scanned_area_m2": 6.26,
+   "snapshot_area_m2": 7.023,
+   "test_points": 600,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 336,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "hallway_2_floor",
+   "room": "hallway_2",
+   "spot_name": "hallway floor (hallway 2)",
+   "furniture": "floor",
+   "place_name": "hallway floor",
+   "kind": "surface",
+   "eye": [
+    -1.518,
+    1.0,
+    -6.166
+   ],
+   "target": [
+    -0.676,
+    0.461,
+    -6.166
+   ],
+   "middle_of_surface": [
+    -0.018,
+    0.04,
+    -6.166
+   ],
+   "yaw_deg": 90.0,
+   "pitch_deg": -32.6,
+   "metres_from_middle": 1.5,
+   "surface_share_seen": 0.817,
+   "score": 0.755,
+   "scanned_area_m2": 4.228,
+   "snapshot_area_m2": 12.458,
+   "test_points": 600,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 293,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "hallway_2_piano_lowest_piano_shelf",
+   "room": "hallway_2",
+   "spot_name": "lowest piano shelf (piano, hallway 2)",
+   "furniture": "piano",
+   "place_name": "lowest piano shelf",
+   "kind": "surface",
+   "eye": [
+    -2.883,
+    1.0,
+    -5.575
+   ],
+   "target": [
+    -2.194,
+    0.772,
+    -4.886
+   ],
+   "middle_of_surface": [
+    -2.246,
+    0.789,
+    -4.938
+   ],
+   "yaw_deg": 45.0,
+   "pitch_deg": -13.2,
+   "metres_from_middle": 0.9,
+   "surface_share_seen": 0.355,
+   "score": 0.267,
+   "scanned_area_m2": 0.516,
+   "snapshot_area_m2": 0.373,
+   "test_points": 600,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 215,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "hallway_2_piano_middle_piano_shelf",
+   "room": "hallway_2",
+   "spot_name": "middle piano shelf (piano, hallway 2)",
+   "furniture": "piano",
+   "place_name": "middle piano shelf",
+   "kind": "surface",
+   "eye": [
+    -1.95,
+    1.0,
+    -5.538
+   ],
+   "target": [
+    -2.45,
+    0.955,
+    -4.673
+   ],
+   "middle_of_surface": [
+    -2.25,
+    0.973,
+    -5.018
+   ],
+   "yaw_deg": -30.0,
+   "pitch_deg": -2.6,
+   "metres_from_middle": 0.6,
+   "surface_share_seen": 1.0,
+   "score": 0.33,
+   "scanned_area_m2": 0.002,
+   "snapshot_area_m2": 0.02,
+   "test_points": 5,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 212,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "hallway_2_piano_stool_piano_stool_seat",
+   "room": "hallway_2",
+   "spot_name": "piano stool seat (piano stool, hallway 2)",
+   "furniture": "piano stool",
+   "place_name": "piano stool seat",
+   "kind": "surface",
+   "eye": [
+    -1.434,
+    1.0,
+    -5.729
+   ],
+   "target": [
+    -2.152,
+    0.441,
+    -5.315
+   ],
+   "middle_of_surface": [
+    -2.213,
+    0.393,
+    -5.279
+   ],
+   "yaw_deg": -60.0,
+   "pitch_deg": -34.0,
+   "metres_from_middle": 0.9,
+   "surface_share_seen": 1.0,
+   "score": 0.997,
+   "scanned_area_m2": 0.278,
+   "snapshot_area_m2": 0.263,
+   "test_points": 600,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 202,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "hallway_2_piano_top_piano_shelf",
+   "room": "hallway_2",
+   "spot_name": "top piano shelf (piano, hallway 2)",
+   "furniture": "piano",
+   "place_name": "top piano shelf",
+   "kind": "surface",
+   "eye": [
+    -1.888,
+    1.0,
+    -6.127
+   ],
+   "target": [
+    -2.144,
+    1.142,
+    -5.171
+   ],
+   "middle_of_surface": [
+    -2.237,
+    1.194,
+    -4.823
+   ],
+   "yaw_deg": -15.0,
+   "pitch_deg": 8.2,
+   "metres_from_middle": 1.35,
+   "surface_share_seen": 0.795,
+   "score": 0.173,
+   "scanned_area_m2": 0.473,
+   "snapshot_area_m2": 0.494,
+   "test_points": 600,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 197,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "hallway_2_side_table_by_the_sofa_chair_side_table_top",
+   "room": "hallway_2",
+   "spot_name": "side table top (side table by the sofa chair, hallway 2)",
+   "furniture": "side table by the sofa chair",
+   "place_name": "side table top",
+   "kind": "surface",
+   "eye": [
+    -1.349,
+    1.0,
+    -6.244
+   ],
+   "target": [
+    -1.349,
+    0.469,
+    -7.091
+   ],
+   "middle_of_surface": [
+    -1.349,
+    0.624,
+    -6.844
+   ],
+   "yaw_deg": 180.0,
+   "pitch_deg": -32.1,
+   "metres_from_middle": 0.6,
+   "surface_share_seen": 1.0,
+   "score": 0.994,
+   "scanned_area_m2": 0.358,
+   "snapshot_area_m2": 0.335,
+   "test_points": 600,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 164,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "hallway_2_sofa_chair_by_the_piano_sofa_chair_seat",
+   "room": "hallway_2",
+   "spot_name": "sofa chair seat (sofa chair by the piano, hallway 2)",
+   "furniture": "sofa chair by the piano",
+   "place_name": "sofa chair seat",
+   "kind": "surface",
+   "eye": [
+    -2.683,
+    1.0,
+    -5.763
+   ],
+   "target": [
+    -2.683,
+    0.53,
+    -6.645
+   ],
+   "middle_of_surface": [
+    -2.683,
+    0.52,
+    -6.663
+   ],
+   "yaw_deg": 180.0,
+   "pitch_deg": -28.1,
+   "metres_from_middle": 0.9,
+   "surface_share_seen": 0.992,
+   "score": 0.969,
+   "scanned_area_m2": 0.677,
+   "snapshot_area_m2": 0.727,
+   "test_points": 600,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 146,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "kitchen_barstool_by_the_island_2_seat_of_the_third_barstool_by_the_island",
+   "room": "kitchen",
+   "spot_name": "seat of the third barstool by the island (barstool by the island 2, kitchen)",
+   "furniture": "barstool by the island 2",
+   "place_name": "seat of the third barstool by the island",
+   "kind": "surface",
+   "eye": [
+    -4.465,
+    1.0,
+    -1.505
+   ],
+   "target": [
+    -3.827,
+    0.569,
+    -0.867
+   ],
+   "middle_of_surface": [
+    -4.041,
+    0.713,
+    -1.081
+   ],
+   "yaw_deg": 45.0,
+   "pitch_deg": -25.5,
+   "metres_from_middle": 0.6,
+   "surface_share_seen": 1.0,
+   "score": 0.971,
+   "scanned_area_m2": 0.076,
+   "snapshot_area_m2": 0.105,
+   "test_points": 190,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 220,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "kitchen_barstool_by_the_island_seat_of_the_barstool_by_the_island",
+   "room": "kitchen",
+   "spot_name": "seat of the barstool by the island (barstool by the island, kitchen)",
+   "furniture": "barstool by the island",
+   "place_name": "seat of the barstool by the island",
+   "kind": "surface",
+   "eye": [
+    -4.536,
+    1.0,
+    -1.886
+   ],
+   "target": [
+    -3.751,
+    0.578,
+    -1.433
+   ],
+   "middle_of_surface": [
+    -4.016,
+    0.72,
+    -1.586
+   ],
+   "yaw_deg": 60.0,
+   "pitch_deg": -25.0,
+   "metres_from_middle": 0.6,
+   "surface_share_seen": 1.0,
+   "score": 0.97,
+   "scanned_area_m2": 0.022,
+   "snapshot_area_m2": 0.105,
+   "test_points": 55,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 211,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "kitchen_barstool_by_the_other_island_stool_seat_of_the_barstool_by_the_other_island_stool",
+   "room": "kitchen",
+   "spot_name": "seat of the barstool by the other island stool (barstool by the other island stool, kitchen)",
+   "furniture": "barstool by the other island stool",
+   "place_name": "seat of the barstool by the other island stool",
+   "kind": "surface",
+   "eye": [
+    -4.327,
+    1.0,
+    -2.681
+   ],
+   "target": [
+    -3.874,
+    0.573,
+    -1.898
+   ],
+   "middle_of_surface": [
+    -4.027,
+    0.716,
+    -2.161
+   ],
+   "yaw_deg": 30.0,
+   "pitch_deg": -25.3,
+   "metres_from_middle": 0.6,
+   "surface_share_seen": 1.0,
+   "score": 0.965,
+   "scanned_area_m2": 0.048,
+   "snapshot_area_m2": 0.105,
+   "test_points": 121,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 217,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "kitchen_floor",
+   "room": "kitchen",
+   "spot_name": "kitchen floor (kitchen)",
+   "furniture": "floor",
+   "place_name": "kitchen floor",
+   "kind": "surface",
+   "eye": [
+    -5.358,
+    1.0,
+    -3.985
+   ],
+   "target": [
+    -4.894,
+    0.629,
+    -3.181
+   ],
+   "middle_of_surface": [
+    -4.158,
+    0.04,
+    -1.907
+   ],
+   "yaw_deg": 30.0,
+   "pitch_deg": -21.8,
+   "metres_from_middle": 2.4,
+   "surface_share_seen": 0.57,
+   "score": 0.38,
+   "scanned_area_m2": 10.866,
+   "snapshot_area_m2": 22.935,
+   "test_points": 600,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 339,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "kitchen_kitchen_cabinet_by_the_other_upper_cabinet_countertop_by_the_other_upper_cabinet",
+   "room": "kitchen",
+   "spot_name": "countertop by the other upper cabinet (kitchen cabinet by the other upper cabinet, kitchen)",
+   "furniture": "kitchen cabinet by the other upper cabinet",
+   "place_name": "countertop by the other upper cabinet",
+   "kind": "surface",
+   "eye": [
+    -4.209,
+    1.0,
+    -4.333
+   ],
+   "target": [
+    -3.246,
+    0.919,
+    -4.075
+   ],
+   "middle_of_surface": [
+    -3.629,
+    0.951,
+    -4.178
+   ],
+   "yaw_deg": 75.0,
+   "pitch_deg": -4.7,
+   "metres_from_middle": 0.6,
+   "surface_share_seen": 0.958,
+   "score": 0.389,
+   "scanned_area_m2": 0.462,
+   "snapshot_area_m2": 0.456,
+   "test_points": 600,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 218,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "kitchen_kitchen_cabinet_by_the_range_countertop_by_the_range",
+   "room": "kitchen",
+   "spot_name": "countertop by the range (kitchen cabinet by the range, kitchen)",
+   "furniture": "kitchen cabinet by the range",
+   "place_name": "countertop by the range",
+   "kind": "surface",
+   "eye": [
+    -2.132,
+    1.0,
+    -3.678
+   ],
+   "target": [
+    -1.168,
+    0.935,
+    -3.419
+   ],
+   "middle_of_surface": [
+    -1.407,
+    0.951,
+    -3.483
+   ],
+   "yaw_deg": 75.0,
+   "pitch_deg": -3.7,
+   "metres_from_middle": 0.75,
+   "surface_share_seen": 0.998,
+   "score": 0.367,
+   "scanned_area_m2": 0.454,
+   "snapshot_area_m2": 0.456,
+   "test_points": 600,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 201,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "kitchen_kitchen_cabinet_by_the_sink_countertop_by_the_sink",
+   "room": "kitchen",
+   "spot_name": "countertop by the sink (kitchen cabinet by the sink, kitchen)",
+   "furniture": "kitchen cabinet by the sink",
+   "place_name": "countertop by the sink",
+   "kind": "surface",
+   "eye": [
+    -1.928,
+    1.0,
+    -1.361
+   ],
+   "target": [
+    -1.065,
+    0.919,
+    -0.863
+   ],
+   "middle_of_surface": [
+    -1.409,
+    0.951,
+    -1.061
+   ],
+   "yaw_deg": 60.0,
+   "pitch_deg": -4.7,
+   "metres_from_middle": 0.6,
+   "surface_share_seen": 0.953,
+   "score": 0.38,
+   "scanned_area_m2": 0.455,
+   "snapshot_area_m2": 0.456,
+   "test_points": 600,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 218,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "kitchen_kitchen_cabinet_by_the_upper_cabinet_countertop_by_the_upper_cabinet",
+   "room": "kitchen",
+   "spot_name": "countertop by the upper cabinet (kitchen cabinet by the upper cabinet, kitchen)",
+   "furniture": "kitchen cabinet by the upper cabinet",
+   "place_name": "countertop by the upper cabinet",
+   "kind": "surface",
+   "eye": [
+    -2.406,
+    1.0,
+    -3.654
+   ],
+   "target": [
+    -1.908,
+    0.919,
+    -4.517
+   ],
+   "middle_of_surface": [
+    -2.106,
+    0.951,
+    -4.174
+   ],
+   "yaw_deg": 150.0,
+   "pitch_deg": -4.7,
+   "metres_from_middle": 0.6,
+   "surface_share_seen": 0.955,
+   "score": 0.379,
+   "scanned_area_m2": 0.462,
+   "snapshot_area_m2": 0.456,
+   "test_points": 600,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 212,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "kitchen_kitchen_drawer_cabinet_countertop_of_the_kitchen_drawer_cabinet",
+   "room": "kitchen",
+   "spot_name": "countertop of the kitchen drawer cabinet (kitchen drawer cabinet, kitchen)",
+   "furniture": "kitchen drawer cabinet",
+   "place_name": "countertop of the kitchen drawer cabinet",
+   "kind": "surface",
+   "eye": [
+    -1.993,
+    1.0,
+    -1.822
+   ],
+   "target": [
+    -1.03,
+    0.919,
+    -1.564
+   ],
+   "middle_of_surface": [
+    -1.414,
+    0.951,
+    -1.667
+   ],
+   "yaw_deg": 75.0,
+   "pitch_deg": -4.7,
+   "metres_from_middle": 0.6,
+   "surface_share_seen": 1.0,
+   "score": 0.403,
+   "scanned_area_m2": 0.262,
+   "snapshot_area_m2": 0.27,
+   "test_points": 600,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 202,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "kitchen_kitchen_island_island_countertop",
+   "room": "kitchen",
+   "spot_name": "island countertop (kitchen island, kitchen)",
+   "furniture": "kitchen island",
+   "place_name": "island countertop",
+   "kind": "surface",
+   "eye": [
+    -3.078,
+    1.0,
+    -2.91
+   ],
+   "target": [
+    -3.337,
+    0.956,
+    -1.945
+   ],
+   "middle_of_surface": [
+    -3.428,
+    0.94,
+    -1.606
+   ],
+   "yaw_deg": -15.0,
+   "pitch_deg": -2.5,
+   "metres_from_middle": 1.35,
+   "surface_share_seen": 0.868,
+   "score": 0.24,
+   "scanned_area_m2": 1.944,
+   "snapshot_area_m2": 2.052,
+   "test_points": 600,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 210,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "kitchen_kitchen_sink_cabinet_countertop_beside_the_kitchen_sink",
+   "room": "kitchen",
+   "spot_name": "countertop beside the kitchen sink (kitchen sink cabinet, kitchen)",
+   "furniture": "kitchen sink cabinet",
+   "place_name": "countertop beside the kitchen sink",
+   "kind": "surface",
+   "eye": [
+    -2.542,
+    1.0,
+    -3.659
+   ],
+   "target": [
+    -3.04,
+    0.919,
+    -4.522
+   ],
+   "middle_of_surface": [
+    -2.842,
+    0.951,
+    -4.179
+   ],
+   "yaw_deg": -150.0,
+   "pitch_deg": -4.7,
+   "metres_from_middle": 0.6,
+   "surface_share_seen": 0.938,
+   "score": 0.378,
+   "scanned_area_m2": 0.26,
+   "snapshot_area_m2": 0.23,
+   "test_points": 600,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 209,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "kitchen_kitchen_sink_cabinet_kitchen_sink_basin",
+   "room": "kitchen",
+   "spot_name": "kitchen sink basin (kitchen sink cabinet, kitchen)",
+   "furniture": "kitchen sink cabinet",
+   "place_name": "kitchen sink basin",
+   "kind": "open",
+   "eye": [
+    -2.561,
+    1.0,
+    -3.661
+   ],
+   "target": [
+    -3.041,
+    0.724,
+    -4.494
+   ],
+   "middle_of_surface": [
+    -2.861,
+    0.828,
+    -4.181
+   ],
+   "yaw_deg": -150.0,
+   "pitch_deg": -16.0,
+   "metres_from_middle": 0.6,
+   "surface_share_seen": 0.352,
+   "score": 0.237,
+   "scanned_area_m2": 0.154,
+   "snapshot_area_m2": 0.184,
+   "test_points": 386,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 208,
+   "test_point_height_above_surface_m": 0.12
+  },
+  {
+   "spot": "kitchen_range_grill",
+   "room": "kitchen",
+   "spot_name": "grill (range, kitchen)",
+   "furniture": "range",
+   "place_name": "grill",
+   "kind": "surface",
+   "eye": [
+    -1.92,
+    1.0,
+    -3.268
+   ],
+   "target": [
+    -1.421,
+    0.972,
+    -2.403
+   ],
+   "middle_of_surface": [
+    -1.47,
+    0.974,
+    -2.489
+   ],
+   "yaw_deg": 30.0,
+   "pitch_deg": -1.6,
+   "metres_from_middle": 0.9,
+   "surface_share_seen": 0.947,
+   "score": 0.287,
+   "scanned_area_m2": 0.568,
+   "snapshot_area_m2": 0.134,
+   "test_points": 600,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 201,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "kitchen_range_left_cooktop",
+   "room": "kitchen",
+   "spot_name": "left cooktop (range, kitchen)",
+   "furniture": "range",
+   "place_name": "left cooktop",
+   "kind": "surface",
+   "eye": [
+    -1.981,
+    1.0,
+    -3.408
+   ],
+   "target": [
+    -1.481,
+    0.976,
+    -2.543
+   ],
+   "middle_of_surface": [
+    -1.456,
+    0.975,
+    -2.499
+   ],
+   "yaw_deg": 30.0,
+   "pitch_deg": -1.4,
+   "metres_from_middle": 1.05,
+   "surface_share_seen": 0.985,
+   "score": 0.277,
+   "scanned_area_m2": 0.546,
+   "snapshot_area_m2": 0.328,
+   "test_points": 600,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 198,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "kitchen_range_right_cooktop",
+   "room": "kitchen",
+   "spot_name": "right cooktop (range, kitchen)",
+   "furniture": "range",
+   "place_name": "right cooktop",
+   "kind": "surface",
+   "eye": [
+    -1.967,
+    1.0,
+    -3.396
+   ],
+   "target": [
+    -1.467,
+    0.977,
+    -2.53
+   ],
+   "middle_of_surface": [
+    -1.442,
+    0.976,
+    -2.486
+   ],
+   "yaw_deg": 30.0,
+   "pitch_deg": -1.3,
+   "metres_from_middle": 1.05,
+   "surface_share_seen": 0.982,
+   "score": 0.276,
+   "scanned_area_m2": 0.547,
+   "snapshot_area_m2": 0.163,
+   "test_points": 600,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 196,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "laundryroom_clothes_rail_by_the_laundry_cabinets_top",
+   "room": "laundryroom",
+   "spot_name": "top (clothes rail by the laundry cabinets, laundryroom)",
+   "furniture": "clothes rail by the laundry cabinets",
+   "place_name": "top",
+   "kind": "surface",
+   "eye": [
+    3.362,
+    1.0,
+    3.634
+   ],
+   "target": [
+    3.178,
+    0.295,
+    4.32
+   ],
+   "middle_of_surface": [
+    3.168,
+    0.255,
+    4.359
+   ],
+   "yaw_deg": -15.0,
+   "pitch_deg": -44.8,
+   "metres_from_middle": 0.75,
+   "surface_share_seen": 1.0,
+   "score": 0.998,
+   "scanned_area_m2": 0.408,
+   "snapshot_area_m2": 0.441,
+   "test_points": 600,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 92,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "laundryroom_floor",
+   "room": "laundryroom",
+   "spot_name": "floor (laundryroom)",
+   "furniture": "floor",
+   "place_name": "floor",
+   "kind": "surface",
+   "eye": [
+    2.12,
+    1.0,
+    3.351
+   ],
+   "target": [
+    2.907,
+    0.421,
+    3.562
+   ],
+   "middle_of_surface": [
+    3.424,
+    0.04,
+    3.7
+   ],
+   "yaw_deg": 75.0,
+   "pitch_deg": -35.4,
+   "metres_from_middle": 1.35,
+   "surface_share_seen": 0.997,
+   "score": 0.997,
+   "scanned_area_m2": 0.892,
+   "snapshot_area_m2": 7.288,
+   "test_points": 600,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 167,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "laundryroom_laundry_cabinet_by_the_washing_machine_top",
+   "room": "laundryroom",
+   "spot_name": "top (laundry cabinet by the washing machine, laundryroom)",
+   "furniture": "laundry cabinet by the washing machine",
+   "place_name": "top",
+   "kind": "surface",
+   "eye": [
+    2.498,
+    1.0,
+    3.317
+   ],
+   "target": [
+    2.997,
+    0.927,
+    2.453
+   ],
+   "middle_of_surface": [
+    2.798,
+    0.956,
+    2.797
+   ],
+   "yaw_deg": 150.0,
+   "pitch_deg": -4.2,
+   "metres_from_middle": 0.6,
+   "surface_share_seen": 0.96,
+   "score": 0.367,
+   "scanned_area_m2": 0.454,
+   "snapshot_area_m2": 0.456,
+   "test_points": 600,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 104,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "laundryroom_laundry_drawer_cabinet_top",
+   "room": "laundryroom",
+   "spot_name": "top (laundry drawer cabinet, laundryroom)",
+   "furniture": "laundry drawer cabinet",
+   "place_name": "top",
+   "kind": "surface",
+   "eye": [
+    1.127,
+    1.0,
+    3.317
+   ],
+   "target": [
+    0.628,
+    0.927,
+    2.453
+   ],
+   "middle_of_surface": [
+    0.827,
+    0.956,
+    2.797
+   ],
+   "yaw_deg": -150.0,
+   "pitch_deg": -4.2,
+   "metres_from_middle": 0.6,
+   "surface_share_seen": 0.957,
+   "score": 0.367,
+   "scanned_area_m2": 0.454,
+   "snapshot_area_m2": 0.456,
+   "test_points": 600,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 210,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "laundryroom_laundry_sink_cabinet_top",
+   "room": "laundryroom",
+   "spot_name": "top (laundry sink cabinet, laundryroom)",
+   "furniture": "laundry sink cabinet",
+   "place_name": "top",
+   "kind": "surface",
+   "eye": [
+    2.189,
+    1.0,
+    3.397
+   ],
+   "target": [
+    2.189,
+    0.925,
+    2.4
+   ],
+   "middle_of_surface": [
+    2.189,
+    0.955,
+    2.797
+   ],
+   "yaw_deg": 180.0,
+   "pitch_deg": -4.3,
+   "metres_from_middle": 0.6,
+   "surface_share_seen": 1.0,
+   "score": 0.391,
+   "scanned_area_m2": 0.262,
+   "snapshot_area_m2": 0.27,
+   "test_points": 600,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 132,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "laundryroom_toilet_by_the_bathroom_vanity_top",
+   "room": "laundryroom",
+   "spot_name": "top (toilet by the bathroom vanity, laundryroom)",
+   "furniture": "toilet by the bathroom vanity",
+   "place_name": "top",
+   "kind": "surface",
+   "eye": [
+    1.973,
+    1.0,
+    3.431
+   ],
+   "target": [
+    1.473,
+    0.941,
+    2.566
+   ],
+   "middle_of_surface": [
+    1.598,
+    0.956,
+    2.781
+   ],
+   "yaw_deg": -150.0,
+   "pitch_deg": -3.4,
+   "metres_from_middle": 0.75,
+   "surface_share_seen": 1.0,
+   "score": 0.359,
+   "scanned_area_m2": 0.24,
+   "snapshot_area_m2": 0.26,
+   "test_points": 600,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 166,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "living_room_accent_chair_by_the_coffee_table_seat",
+   "room": "living_room",
+   "spot_name": "seat (accent chair by the coffee table, living room)",
+   "furniture": "accent chair by the coffee table",
+   "place_name": "seat",
+   "kind": "surface",
+   "eye": [
+    -6.76,
+    1.0,
+    -2.882
+   ],
+   "target": [
+    -5.913,
+    0.519,
+    -2.655
+   ],
+   "middle_of_surface": [
+    -5.89,
+    0.506,
+    -2.649
+   ],
+   "yaw_deg": 75.0,
+   "pitch_deg": -28.8,
+   "metres_from_middle": 0.9,
+   "surface_share_seen": 1.0,
+   "score": 1.0,
+   "scanned_area_m2": 0.162,
+   "snapshot_area_m2": 0.275,
+   "test_points": 406,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 205,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "living_room_accent_chair_by_the_other_chair_seat",
+   "room": "living_room",
+   "spot_name": "seat (accent chair by the other chair, living room)",
+   "furniture": "accent chair by the other chair",
+   "place_name": "seat",
+   "kind": "surface",
+   "eye": [
+    -6.794,
+    1.0,
+    -1.895
+   ],
+   "target": [
+    -5.947,
+    0.519,
+    -1.668
+   ],
+   "middle_of_surface": [
+    -5.924,
+    0.506,
+    -1.662
+   ],
+   "yaw_deg": 75.0,
+   "pitch_deg": -28.8,
+   "metres_from_middle": 0.9,
+   "surface_share_seen": 1.0,
+   "score": 1.0,
+   "scanned_area_m2": 0.162,
+   "snapshot_area_m2": 0.275,
+   "test_points": 406,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 215,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "living_room_end_table_by_the_accent_chairs_top",
+   "room": "living_room",
+   "spot_name": "top (end table by the accent chairs, living room)",
+   "furniture": "end table by the accent chairs",
+   "place_name": "top",
+   "kind": "surface",
+   "eye": [
+    -5.237,
+    1.0,
+    -3.526
+   ],
+   "target": [
+    -6.059,
+    0.43,
+    -3.526
+   ],
+   "middle_of_surface": [
+    -5.837,
+    0.584,
+    -3.526
+   ],
+   "yaw_deg": -90.0,
+   "pitch_deg": -34.7,
+   "metres_from_middle": 0.6,
+   "surface_share_seen": 1.0,
+   "score": 0.997,
+   "scanned_area_m2": 0.408,
+   "snapshot_area_m2": 0.367,
+   "test_points": 600,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 203,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "living_room_floor",
+   "room": "living_room",
+   "spot_name": "living room floor (living room)",
+   "furniture": "floor",
+   "place_name": "living room floor",
+   "kind": "surface",
+   "eye": [
+    -6.534,
+    1.0,
+    -1.326
+   ],
+   "target": [
+    -7.086,
+    0.375,
+    -0.773
+   ],
+   "middle_of_surface": [
+    -7.382,
+    0.04,
+    -0.477
+   ],
+   "yaw_deg": -45.0,
+   "pitch_deg": -38.7,
+   "metres_from_middle": 1.2,
+   "surface_share_seen": 0.787,
+   "score": 0.756,
+   "scanned_area_m2": 2.499,
+   "snapshot_area_m2": 17.981,
+   "test_points": 600,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 194,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "living_room_living_room_coffee_table_top",
+   "room": "living_room",
+   "spot_name": "top (living room coffee table, living room)",
+   "furniture": "living room coffee table",
+   "place_name": "top",
+   "kind": "surface",
+   "eye": [
+    -7.868,
+    1.0,
+    -2.299
+   ],
+   "target": [
+    -7.656,
+    0.424,
+    -1.509
+   ],
+   "middle_of_surface": [
+    -7.674,
+    0.472,
+    -1.574
+   ],
+   "yaw_deg": 15.0,
+   "pitch_deg": -35.2,
+   "metres_from_middle": 0.75,
+   "surface_share_seen": 0.993,
+   "score": 0.988,
+   "scanned_area_m2": 0.852,
+   "snapshot_area_m2": 0.884,
+   "test_points": 600,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 168,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "living_room_living_room_sectional_seat",
+   "room": "living_room",
+   "spot_name": "seat (living room sectional, living room)",
+   "furniture": "living room sectional",
+   "place_name": "seat",
+   "kind": "surface",
+   "eye": [
+    -8.587,
+    1.0,
+    -2.771
+   ],
+   "target": [
+    -8.824,
+    0.593,
+    -3.653
+   ],
+   "middle_of_surface": [
+    -8.859,
+    0.533,
+    -3.785
+   ],
+   "yaw_deg": -165.0,
+   "pitch_deg": -24.0,
+   "metres_from_middle": 1.05,
+   "surface_share_seen": 0.81,
+   "score": 0.679,
+   "scanned_area_m2": 1.204,
+   "snapshot_area_m2": 2.251,
+   "test_points": 600,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 56,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "living_room_living_room_sideboard_countertop",
+   "room": "living_room",
+   "spot_name": "countertop (living room sideboard, living room)",
+   "furniture": "living room sideboard",
+   "place_name": "countertop",
+   "kind": "surface",
+   "eye": [
+    -8.334,
+    1.0,
+    -1.109
+   ],
+   "target": [
+    -9.333,
+    0.98,
+    -1.109
+   ],
+   "middle_of_surface": [
+    -9.534,
+    0.975,
+    -1.109
+   ],
+   "yaw_deg": -90.0,
+   "pitch_deg": -1.2,
+   "metres_from_middle": 1.2,
+   "surface_share_seen": 0.965,
+   "score": 0.258,
+   "scanned_area_m2": 0.62,
+   "snapshot_area_m2": 0.666,
+   "test_points": 600,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 76,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "office_floor",
+   "room": "office",
+   "spot_name": "office floor (office)",
+   "furniture": "floor",
+   "place_name": "office floor",
+   "kind": "surface",
+   "eye": [
+    1.183,
+    1.0,
+    6.895
+   ],
+   "target": [
+    1.937,
+    0.375,
+    6.692
+   ],
+   "middle_of_surface": [
+    2.342,
+    0.04,
+    6.584
+   ],
+   "yaw_deg": 105.0,
+   "pitch_deg": -38.7,
+   "metres_from_middle": 1.2,
+   "surface_share_seen": 0.612,
+   "score": 0.545,
+   "scanned_area_m2": 3.104,
+   "snapshot_area_m2": 10.634,
+   "test_points": 600,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 222,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "office_office_chair_seat",
+   "room": "office",
+   "spot_name": "seat (office chair, office)",
+   "furniture": "office chair",
+   "place_name": "seat",
+   "kind": "surface",
+   "eye": [
+    2.212,
+    1.0,
+    6.29
+   ],
+   "target": [
+    2.212,
+    0.53,
+    5.407
+   ],
+   "middle_of_surface": [
+    2.212,
+    0.521,
+    5.39
+   ],
+   "yaw_deg": 180.0,
+   "pitch_deg": -28.0,
+   "metres_from_middle": 0.9,
+   "surface_share_seen": 1.0,
+   "score": 0.997,
+   "scanned_area_m2": 0.199,
+   "snapshot_area_m2": 0.181,
+   "test_points": 497,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 132,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "office_office_desk_desk_shelf",
+   "room": "office",
+   "spot_name": "desk shelf (office desk, office)",
+   "furniture": "office desk",
+   "place_name": "desk shelf",
+   "kind": "surface",
+   "eye": [
+    1.471,
+    1.0,
+    6.788
+   ],
+   "target": [
+    2.425,
+    0.843,
+    6.532
+   ],
+   "middle_of_surface": [
+    3.355,
+    0.69,
+    6.283
+   ],
+   "yaw_deg": 105.0,
+   "pitch_deg": -9.0,
+   "metres_from_middle": 1.95,
+   "surface_share_seen": 0.48,
+   "score": 0.121,
+   "scanned_area_m2": 0.542,
+   "snapshot_area_m2": 0.709,
+   "test_points": 600,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 93,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "office_office_desk_desk_top",
+   "room": "office",
+   "spot_name": "desk top (office desk, office)",
+   "furniture": "office desk",
+   "place_name": "desk top",
+   "kind": "surface",
+   "eye": [
+    2.674,
+    1.0,
+    7.336
+   ],
+   "target": [
+    3.169,
+    0.861,
+    6.478
+   ],
+   "middle_of_surface": [
+    3.274,
+    0.832,
+    6.297
+   ],
+   "yaw_deg": 150.0,
+   "pitch_deg": -8.0,
+   "metres_from_middle": 1.2,
+   "surface_share_seen": 0.892,
+   "score": 0.4,
+   "scanned_area_m2": 1.11,
+   "snapshot_area_m2": 1.205,
+   "test_points": 600,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 95,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "toilet_floor",
+   "room": "toilet",
+   "spot_name": "floor (toilet)",
+   "furniture": "floor",
+   "place_name": "floor",
+   "kind": "surface",
+   "eye": [
+    1.038,
+    1.0,
+    -6.289
+   ],
+   "target": [
+    1.852,
+    0.461,
+    -6.507
+   ],
+   "middle_of_surface": [
+    2.487,
+    0.04,
+    -6.677
+   ],
+   "yaw_deg": 105.0,
+   "pitch_deg": -32.6,
+   "metres_from_middle": 1.5,
+   "surface_share_seen": 0.898,
+   "score": 0.889,
+   "scanned_area_m2": 1.643,
+   "snapshot_area_m2": 2.372,
+   "test_points": 600,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 183,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "toilet_small_bathroom_sink_sink_top",
+   "room": "toilet",
+   "spot_name": "sink top (small bathroom sink, toilet)",
+   "furniture": "small bathroom sink",
+   "place_name": "sink top",
+   "kind": "surface",
+   "eye": [
+    2.482,
+    1.0,
+    -6.527
+   ],
+   "target": [
+    3.447,
+    0.949,
+    -6.785
+   ],
+   "middle_of_surface": [
+    3.642,
+    0.939,
+    -6.837
+   ],
+   "yaw_deg": 105.0,
+   "pitch_deg": -2.9,
+   "metres_from_middle": 1.2,
+   "surface_share_seen": 0.994,
+   "score": 0.333,
+   "scanned_area_m2": 0.14,
+   "snapshot_area_m2": 0.147,
+   "test_points": 351,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 76,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "toilet_toilet_by_the_small_sink_toilet_top",
+   "room": "toilet",
+   "spot_name": "toilet top (toilet by the small sink, toilet)",
+   "furniture": "toilet by the small sink",
+   "place_name": "toilet top",
+   "kind": "surface",
+   "eye": [
+    1.629,
+    1.0,
+    -6.803
+   ],
+   "target": [
+    2.461,
+    0.492,
+    -7.026
+   ],
+   "middle_of_surface": [
+    2.499,
+    0.47,
+    -7.036
+   ],
+   "yaw_deg": 105.0,
+   "pitch_deg": -30.5,
+   "metres_from_middle": 0.9,
+   "surface_share_seen": 1.0,
+   "score": 1.0,
+   "scanned_area_m2": 0.133,
+   "snapshot_area_m2": 0.179,
+   "test_points": 332,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 141,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "tv_room_coffee_table_by_the_sectional_top",
+   "room": "tv_room",
+   "spot_name": "top (coffee table by the sectional, tv room)",
+   "furniture": "coffee table by the sectional",
+   "place_name": "top",
+   "kind": "surface",
+   "eye": [
+    1.688,
+    1.0,
+    -0.06
+   ],
+   "target": [
+    1.48,
+    0.404,
+    -0.836
+   ],
+   "middle_of_surface": [
+    1.494,
+    0.444,
+    -0.785
+   ],
+   "yaw_deg": -165.0,
+   "pitch_deg": -36.6,
+   "metres_from_middle": 0.75,
+   "surface_share_seen": 1.0,
+   "score": 0.997,
+   "scanned_area_m2": 0.8,
+   "snapshot_area_m2": 0.777,
+   "test_points": 600,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 150,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "tv_room_floor",
+   "room": "tv_room",
+   "spot_name": "floor (tv room)",
+   "furniture": "floor",
+   "place_name": "floor",
+   "kind": "surface",
+   "eye": [
+    -0.345,
+    1.0,
+    3.199
+   ],
+   "target": [
+    -0.345,
+    0.681,
+    2.252
+   ],
+   "middle_of_surface": [
+    -0.345,
+    0.04,
+    0.349
+   ],
+   "yaw_deg": 180.0,
+   "pitch_deg": -18.6,
+   "metres_from_middle": 2.85,
+   "surface_share_seen": 0.863,
+   "score": 0.538,
+   "scanned_area_m2": 1.393,
+   "snapshot_area_m2": 17.551,
+   "test_points": 600,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 348,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "tv_room_sectional_sofa_seat",
+   "room": "tv_room",
+   "spot_name": "seat (sectional sofa, tv room)",
+   "furniture": "sectional sofa",
+   "place_name": "seat",
+   "kind": "surface",
+   "eye": [
+    2.086,
+    1.0,
+    0.271
+   ],
+   "target": [
+    2.305,
+    0.468,
+    1.089
+   ],
+   "middle_of_surface": [
+    2.319,
+    0.435,
+    1.14
+   ],
+   "yaw_deg": 15.0,
+   "pitch_deg": -32.1,
+   "metres_from_middle": 0.9,
+   "surface_share_seen": 0.437,
+   "score": 0.286,
+   "scanned_area_m2": 4.378,
+   "snapshot_area_m2": 4.13,
+   "test_points": 600,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 105,
+   "test_point_height_above_surface_m": 0.04
+  },
+  {
+   "spot": "tv_room_small_table_by_the_television_top",
+   "room": "tv_room",
+   "spot_name": "top (small table by the television, tv room)",
+   "furniture": "small table by the television",
+   "place_name": "top",
+   "kind": "surface",
+   "eye": [
+    0.813,
+    1.0,
+    -1.071
+   ],
+   "target": [
+    0.592,
+    0.485,
+    -0.243
+   ],
+   "middle_of_surface": [
+    0.58,
+    0.459,
+    -0.202
+   ],
+   "yaw_deg": -15.0,
+   "pitch_deg": -31.0,
+   "metres_from_middle": 0.9,
+   "surface_share_seen": 1.0,
+   "score": 0.995,
+   "scanned_area_m2": 0.418,
+   "snapshot_area_m2": 0.423,
+   "test_points": 600,
+   "test_points_from": "scanned surface cells",
+   "stands_tried": 194,
+   "test_point_height_above_surface_m": 0.04
+  }
+ ],
+ "skipped": [
+  {
+   "spot": "bedroom_1_bed_in_the_main_bedroom_bottom_shelf_of_the_bed",
+   "room": "bedroom_1",
+   "spot_name": "bottom shelf of the bed (bed in the main bedroom, bedroom 1)",
+   "reason": "best stand sees only 0% of the surface's test points",
+   "test_points": 49,
+   "stands_tried": 154,
+   "test_points_from": "disc around the spot centre (the scan found no surface cells)"
+  },
+  {
+   "spot": "dining_room_fireplace_top_shelf",
+   "room": "dining_room",
+   "spot_name": "top shelf (fireplace, dining room)",
+   "reason": "best stand sees only 0% of the surface's test points",
+   "test_points": 21,
+   "stands_tried": 67,
+   "test_points_from": "scanned surface cells"
+  },
+  {
+   "spot": "laundryroom_toilet_by_the_bathroom_vanity_sink_basin",
+   "room": "laundryroom",
+   "spot_name": "sink basin (toilet by the bathroom vanity, laundryroom)",
+   "reason": "best stand sees only 2% of the surface's test points",
+   "test_points": 386,
+   "stands_tried": 166,
+   "test_points_from": "scanned surface cells"
+  },
+  {
+   "spot": "toilet_small_bathroom_sink_sink_basin",
+   "room": "toilet",
+   "spot_name": "sink basin (small bathroom sink, toilet)",
+   "reason": "best stand sees only 0% of the surface's test points",
+   "test_points": 154,
+   "stands_tried": 82,
+   "test_points_from": "scanned surface cells"
+  }
+ ],
+ "closed_places_not_viewed": [
+  "bathroom_1_bathroom_vanity_by_the_toilet_inside_compartment",
+  "bathroom_2_toilet_by_the_bathtub_inside_the_toilet",
+  "bedroom_1_dresser_by_the_armchair_one_lower_drawer_of_the_dresser",
+  "bedroom_1_dresser_by_the_armchair_one_middle_drawer_of_the_dresser",
+  "bedroom_1_dresser_by_the_armchair_one_upper_drawer_of_the_dresser",
+  "bedroom_1_dresser_by_the_armchair_other_lower_drawer_of_the_dresser",
+  "bedroom_1_dresser_by_the_armchair_other_middle_drawer_of_the_dresser",
+  "bedroom_1_dresser_by_the_armchair_other_upper_drawer_of_the_dresser",
+  "bedroom_2_nightstand_by_the_dresser_lower_drawer",
+  "bedroom_2_nightstand_by_the_dresser_upper_drawer",
+  "bedroom_2_nightstand_by_the_second_bedroom_bed_lower_drawer",
+  "bedroom_2_nightstand_by_the_second_bedroom_bed_upper_drawer",
+  "closet_wardrobe_by_the_other_wardrobe_shelf_inside_other_wardrobe",
+  "closet_wardrobe_by_the_ottoman_shelf_inside_wardrobe_by_ottoman",
+  "dining_room_dining_room_sideboard_inside_the_sideboard",
+  "dining_room_fireplace_lower_compartment",
+  "dining_room_fireplace_upper_compartment",
+  "hallway_2_piano_lower_piano_compartment",
+  "hallway_2_piano_upper_piano_compartment",
+  "kitchen_kitchen_cabinet_by_the_other_upper_cabinet_drawer_of_the_kitchen_cabinet_by_the_other_upper_cabinet",
+  "kitchen_kitchen_cabinet_by_the_other_upper_cabinet_lower_shelf_of_the_kitchen_cabinet_by_the_other_upper_cabinet",
+  "kitchen_kitchen_cabinet_by_the_range_drawer_of_the_kitchen_cabinet_by_the_range",
+  "kitchen_kitchen_cabinet_by_the_range_lower_shelf_of_the_kitchen_cabinet_by_the_range",
+  "kitchen_kitchen_cabinet_by_the_sink_drawer_of_the_kitchen_cabinet_by_the_sink",
+  "kitchen_kitchen_cabinet_by_the_sink_lower_shelf_of_the_kitchen_cabinet_by_the_sink",
+  "kitchen_kitchen_cabinet_by_the_upper_cabinet_drawer_of_the_kitchen_cabinet_by_the_upper_cabinet",
+  "kitchen_kitchen_cabinet_by_the_upper_cabinet_lower_shelf_of_the_kitchen_cabinet_by_the_upper_cabinet",
+  "kitchen_kitchen_drawer_cabinet_bottom_drawer_of_the_kitchen_drawer_cabinet",
+  "kitchen_kitchen_drawer_cabinet_bottom_shelf_of_the_kitchen_drawer_cabinet",
+  "kitchen_kitchen_drawer_cabinet_middle_drawer_of_the_kitchen_drawer_cabinet",
+  "kitchen_kitchen_drawer_cabinet_top_drawer_of_the_kitchen_drawer_cabinet",
+  "kitchen_kitchen_sink_cabinet_shelf_beneath_the_kitchen_sink",
+  "kitchen_range_range_drawer",
+  "kitchen_refrigerator_lower_door_shelf_of_the_refrigerator",
+  "kitchen_refrigerator_refrigerator_crisper_drawer",
+  "kitchen_refrigerator_upper_refrigerator_door_shelf",
+  "kitchen_upper_kitchen_cabinet_by_the_base_cabinet_bottom_shelf_of_the_upper_cabinet_by_the_base_cabinet",
+  "kitchen_upper_kitchen_cabinet_by_the_base_cabinet_middle_shelf_of_the_upper_cabinet_by_the_base_cabinet",
+  "kitchen_upper_kitchen_cabinet_by_the_base_cabinet_top_shelf_of_the_upper_cabinet_by_the_base_cabinet",
+  "kitchen_upper_kitchen_cabinet_by_the_drawer_cabinet_2_bottom_shelf_of_the_upper_cabinet_by_the_second_drawer_cabinet",
+  "kitchen_upper_kitchen_cabinet_by_the_drawer_cabinet_2_middle_shelf_of_the_upper_cabinet_by_the_second_drawer_cabinet",
+  "kitchen_upper_kitchen_cabinet_by_the_drawer_cabinet_2_top_shelf_of_the_upper_cabinet_by_the_second_drawer_cabinet",
+  "kitchen_upper_kitchen_cabinet_by_the_drawer_cabinet_bottom_shelf_of_the_upper_cabinet_by_the_drawer_cabinet",
+  "kitchen_upper_kitchen_cabinet_by_the_drawer_cabinet_middle_shelf_of_the_upper_cabinet_by_the_drawer_cabinet",
+  "kitchen_upper_kitchen_cabinet_by_the_drawer_cabinet_top_shelf_of_the_upper_cabinet_by_the_drawer_cabinet",
+  "kitchen_upper_kitchen_cabinet_by_the_kitchen_cabinet_bottom_shelf_of_the_upper_cabinet_by_the_kitchen_cabinet",
+  "kitchen_upper_kitchen_cabinet_by_the_kitchen_cabinet_middle_shelf_of_the_upper_cabinet_by_the_kitchen_cabinet",
+  "kitchen_upper_kitchen_cabinet_by_the_kitchen_cabinet_top_shelf_of_the_upper_cabinet_by_the_kitchen_cabinet",
+  "kitchen_upper_kitchen_cabinet_by_the_other_base_cabinet_bottom_shelf_of_the_upper_cabinet_by_the_other_base_cabinet",
+  "kitchen_upper_kitchen_cabinet_by_the_other_base_cabinet_middle_shelf_of_the_upper_cabinet_by_the_other_base_cabinet",
+  "kitchen_upper_kitchen_cabinet_by_the_other_base_cabinet_top_shelf_of_the_upper_cabinet_by_the_other_base_cabinet",
+  "kitchen_upper_kitchen_cabinet_by_the_other_cabinet_2_bottom_shelf_of_the_upper_cabinet_by_the_other_cabinet",
+  "kitchen_upper_kitchen_cabinet_by_the_other_cabinet_2_middle_shelf_of_the_upper_cabinet_by_the_other_cabinet",
+  "kitchen_upper_kitchen_cabinet_by_the_other_cabinet_2_top_shelf_of_the_upper_cabinet_by_the_other_cabinet",
+  "kitchen_upper_kitchen_cabinet_by_the_other_cabinet_bottom_shelf_of_the_upper_cabinet_by_the_other_cabinet",
+  "kitchen_upper_kitchen_cabinet_by_the_other_cabinet_middle_shelf_of_the_upper_cabinet_by_the_other_cabinet",
+  "kitchen_upper_kitchen_cabinet_by_the_other_cabinet_top_shelf_of_the_upper_cabinet_by_the_other_cabinet",
+  "kitchen_upper_kitchen_cabinet_by_the_range_2_bottom_shelf_of_the_upper_cabinet_by_the_second_range_cabinet",
+  "kitchen_upper_kitchen_cabinet_by_the_range_2_middle_shelf_of_the_upper_cabinet_by_the_second_range_cabinet",
+  "kitchen_upper_kitchen_cabinet_by_the_range_2_top_shelf_of_the_upper_cabinet_by_the_second_range_cabinet",
+  "kitchen_upper_kitchen_cabinet_by_the_range_bottom_shelf_of_the_upper_cabinet_by_the_range",
+  "kitchen_upper_kitchen_cabinet_by_the_range_middle_shelf_of_the_upper_cabinet_by_the_range",
+  "kitchen_upper_kitchen_cabinet_by_the_range_top_shelf_of_the_upper_cabinet_by_the_range",
+  "kitchen_upper_kitchen_cabinet_by_the_sink_2_bottom_shelf_of_the_upper_cabinet_by_the_second_sink",
+  "kitchen_upper_kitchen_cabinet_by_the_sink_2_middle_shelf_of_the_upper_cabinet_by_the_second_sink",
+  "kitchen_upper_kitchen_cabinet_by_the_sink_2_top_shelf_of_the_upper_cabinet_by_the_second_sink",
+  "kitchen_upper_kitchen_cabinet_by_the_sink_3_bottom_shelf_of_the_upper_cabinet_by_the_third_sink",
+  "kitchen_upper_kitchen_cabinet_by_the_sink_3_middle_shelf_of_the_upper_cabinet_by_the_third_sink",
+  "kitchen_upper_kitchen_cabinet_by_the_sink_3_top_shelf_of_the_upper_cabinet_by_the_third_sink",
+  "kitchen_upper_kitchen_cabinet_by_the_sink_bottom_shelf_of_the_upper_cabinet_by_the_sink",
+  "kitchen_upper_kitchen_cabinet_by_the_sink_middle_shelf_of_the_upper_cabinet_by_the_sink",
+  "kitchen_upper_kitchen_cabinet_by_the_sink_top_shelf_of_the_upper_cabinet_by_the_sink",
+  "laundryroom_laundry_cabinet_by_the_washing_machine_bottom_shelf",
+  "laundryroom_laundry_cabinet_by_the_washing_machine_upper_drawer",
+  "laundryroom_laundry_drawer_cabinet_bottom_shelf",
+  "laundryroom_laundry_drawer_cabinet_upper_drawer",
+  "laundryroom_laundry_sink_cabinet_bottom_drawer",
+  "laundryroom_laundry_sink_cabinet_bottom_shelf",
+  "laundryroom_laundry_sink_cabinet_middle_drawer",
+  "laundryroom_laundry_sink_cabinet_top_drawer",
+  "laundryroom_toilet_by_the_bathroom_vanity_inside_the_cabinet",
+  "laundryroom_washing_machine_by_the_laundry_cabinet_washing_machine_drum",
+  "laundryroom_washing_machine_by_the_other_washer_washing_machine_drum",
+  "living_room_living_room_sideboard_center_cabinet",
+  "living_room_living_room_sideboard_left_cabinet",
+  "living_room_living_room_sideboard_right_cabinet",
+  "office_office_desk_bottom_drawer",
+  "office_office_desk_second_drawer_from_the_bottom",
+  "office_office_desk_third_drawer_from_the_bottom",
+  "office_office_desk_top_drawer",
+  "toilet_toilet_by_the_small_sink_toilet_compartment"
+ ],
+ "seconds": 55.0
+}
