@@ -1,0 +1,64 @@
+diff --git a/go2_robot_sdk/go2_robot_sdk/infrastructure/webrtc/go2_connection.py b/go2_robot_sdk/go2_robot_sdk/infrastructure/webrtc/go2_connection.py
+index 7574fbf..05c0df8 100644
+--- a/go2_robot_sdk/go2_robot_sdk/infrastructure/webrtc/go2_connection.py
++++ b/go2_robot_sdk/go2_robot_sdk/infrastructure/webrtc/go2_connection.py
+@@ -13,6 +13,8 @@ import asyncio
+ import json
+ import logging
+ import base64
++import os
++from Crypto.Cipher import AES as _AES
+ from typing import Callable, Optional, Any, Dict, Union
+ from aiortc import RTCPeerConnection, RTCSessionDescription, MediaStreamTrack
+ 
+@@ -24,6 +26,33 @@ logger = logging.getLogger(__name__)
+ #logger.setLevel(logging.INFO)
+ 
+ 
++# con_notify's data2 says how data1 (the robot's public key) is wrapped, following
++# legion1581/go2_webrtc_connect (unitree_auth.py): 1 or absent = plain text; 2 = a key shared by
++# all Go2 firmware below 1.1.15; 3 = a key unique to each robot (Go2 firmware 1.1.15 and later),
++# which the Unitree cloud gives out with `unitree-fetch-aes-key` and is passed here as GO2_AES_KEY.
++_LEGACY_GCM_KEY = bytes([232, 86, 130, 189, 22, 84, 155, 0, 142, 4, 166, 104, 43, 179, 235, 227])
++
++
++def _unwrap_data1(data1: str, data2) -> str:
++    if data2 not in (2, 3):
++        return data1
++    if data2 == 3:
++        hex_key = os.getenv("GO2_AES_KEY", "").strip()
++        if len(hex_key) != 32:
++            raise Go2ConnectionError(
++                "This robot's firmware (1.1.15 or later) needs its own key: set GO2_AES_KEY to the "
++                "32 hex characters printed by `unitree-fetch-aes-key --device-type Go2`")
++        key = bytes.fromhex(hex_key)
++    else:
++        key = _LEGACY_GCM_KEY
++    raw = base64.b64decode(data1)
++    nonce, ciphertext, tag = raw[-28:-16], raw[:-28], raw[-16:]
++    try:
++        return _AES.new(key, _AES.MODE_GCM, nonce=nonce).decrypt_and_verify(ciphertext, tag).decode("utf-8")
++    except ValueError as e:
++        raise Go2ConnectionError(f"GO2_AES_KEY was rejected by the robot (data2={data2}): {e}")
++
++
+ class Go2ConnectionError(Exception):
+     """Custom exception for Go2 connection errors"""
+     pass
+@@ -219,7 +248,7 @@ class Go2Connection:
+             
+             sdp_offer = self.pc.localDescription
+             sdp_offer_json = {
+-                "id": "STA_localNetwork",
++                "id": "" if self.robot_ip == "192.168.12.1" else "STA_localNetwork",  # dog's own hotspot vs a shared network
+                 "sdp": sdp_offer.sdp,
+                 "type": sdp_offer.type,
+                 "token": self.token
+@@ -241,6 +270,7 @@ class Go2Connection:
+                 data1 = decoded_json.get('data1')
+                 if not data1:
+                     raise Go2ConnectionError("No data1 field in public key response")
++                data1 = _unwrap_data1(data1, decoded_json.get('data2'))
+                                 
+                 # Extract the public key from 'data1'
+                 public_key_pem = data1[10:len(data1)-10]

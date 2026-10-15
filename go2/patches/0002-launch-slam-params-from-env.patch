@@ -1,0 +1,23 @@
+diff --git a/go2_robot_sdk/launch/robot.launch.py b/go2_robot_sdk/launch/robot.launch.py
+index eaf7e04..b59643a 100644
+--- a/go2_robot_sdk/launch/robot.launch.py
++++ b/go2_robot_sdk/launch/robot.launch.py
+@@ -21,7 +21,7 @@ class Go2LaunchConfig:
+         self.robot_ip = os.getenv('ROBOT_IP', '')
+         self.robot_ip_list = self._parse_ip_list(self.robot_ip)
+         self.map_name = os.getenv('MAP_NAME', '3d_map')
+-        self.save_map = os.getenv('MAP_SAVE', 'true')
++        self.save_map = os.getenv('MAP_SAVE', 'false')  # was 'true': wrote a raw point cloud every 10 s
+         self.conn_type = os.getenv('CONN_TYPE', 'webrtc')
+         
+         # Derived configurations
+@@ -64,7 +64,8 @@ class Go2LaunchConfig:
+         return {
+             'joystick': os.path.join(self.package_dir, 'config', 'joystick.yaml'),
+             'twist_mux': os.path.join(self.package_dir, 'config', 'twist_mux.yaml'),
+-            'slam': os.path.join(self.package_dir, 'config', 'mapper_params_online_async.yaml'),
++            # SLAM_PARAMS picks mapping or localisation (go2_patrol ships both); default: the lab's file
++            'slam': os.getenv('SLAM_PARAMS', os.path.join(self.package_dir, 'config', 'mapper_params_online_async.yaml')),
+             'nav2': os.path.join(self.package_dir, 'config', 'nav2_params.yaml'),
+             'rviz': os.path.join(self.package_dir, 'config', self.rviz_config),
+             'urdf': os.path.join(self.package_dir, 'urdf', self.urdf_file),
