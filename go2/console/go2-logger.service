@@ -1,0 +1,15 @@
+# Logs the lab console's pose + lidar stream while the Go2 is on (read-only). Install:
+#   mkdir -p ~/.config/systemd/user && cp go2/console/go2-logger.service ~/.config/systemd/user/
+#   systemctl --user daemon-reload && systemctl --user enable --now go2-logger
+# Status: systemctl --user status go2-logger     Messages: journalctl --user -u go2-logger -f
+[Unit]
+Description=Go2 console logger (only while the dog is on)
+After=network-online.target
+
+[Service]
+ExecStart=/home/oliver/miniconda3/bin/python3 -u /home/oliver/robot/dynamic_home_eqa/go2/console/log_events.py
+Restart=always
+RestartSec=30
+
+[Install]
+WantedBy=default.target
