@@ -272,3 +272,21 @@ prior_work/results/rendered_look/hh_s151/frames_eye*/
 # Go2 robot: pictures, maps, bags and the per-dog key stay local
 go2/data/
 go2/robot.env
+
+# go2 (2026-10-19): robot data and model caches stay on cheetah
+go2/data/
+go2/evidence_memory/cache*/
+go2/evidence_memory/out/page.html
+go2/evidence_memory/lab/
+go2/lab_routine_sim/runs_discarded/
+robot_brain/data/
+robot_brain/*.log
+robot_brain/vlm.log
+
+# 3d_rendering (2026-10-19 tidy): per-snapshot habitat logs, single-model check pictures, run leftovers
+3d_rendering/results/vlm_night/render/run_*/logs/
+3d_rendering/results/vlm_night/render/run_v3/*/logs/
+3d_rendering/results/vlm_night/render/run_0p4_*.log
+3d_rendering/results/vlm_night/render/run_v3/model_check/*/[0-9]*.jpg
+3d_rendering/results/lived_home/spend_ledger.lock
+3d_rendering/results/lived_home/*/pid
