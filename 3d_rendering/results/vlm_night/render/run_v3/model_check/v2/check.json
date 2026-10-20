@@ -1,0 +1,4740 @@
+{
+ "set": "v2",
+ "verdicts": [
+  "looks_right",
+  "right_thing_odd_colour_or_detail",
+  "wrong_kind_of_thing",
+  "broken_or_missing_texture",
+  "broken_or_shredded_mesh",
+  "too_coarse",
+  "cannot_tell"
+ ],
+ "prompt": "The picture shows one 3D model, seen from two angles (left and right halves), on a plain grey background. In a simulated home it stands for: a {typ} ({looks}).\n\nJudge the model itself. Does it look like a normal, intact {typ} that a person would recognise? Pick one verdict:\n- looks_right: a normal, intact {typ}\n- right_thing_odd_colour_or_detail: it is a {typ}, but its colour or a detail is odd\n- wrong_kind_of_thing: it looks like a different kind of object\n- broken_or_missing_texture: texture missing, stretched, smeared, flat single colour where detail is expected, or magenta/checkerboard\n- broken_or_shredded_mesh: holes, see-through or inside-out faces, spikes, shredded or exploded geometry\n- too_coarse: so blocky or low-detail that it is hard to recognise\n- cannot_tell: too small or unclear to judge\nGive the verdict and a short reason (one sentence).",
+ "items": [
+  {
+   "type": "adhesive tape",
+   "looks": "clear dispenser",
+   "model": {
+    "source": "objaverse",
+    "id": "2e1faaf0656649e8ae1d6555217a11b8",
+    "looks_like": "Duct tape (Low poly)",
+    "stand_in": false,
+    "scale": 0.03216,
+    "size_m": [
+     0.093,
+     0.036,
+     0.1
+    ]
+   },
+   "objects": [
+    "adhesive_tape_clear_dispenser"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/000.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is clearly a roll of adhesive tape, but the tape is a solid, opaque yellow/gold color instead of the expected clear or translucent material."
+  },
+  {
+   "type": "apple",
+   "looks": "single red",
+   "model": {
+    "source": "objaverse",
+    "id": "dc5a0c0c439942d58d038a10d7064c91",
+    "looks_like": "Delicious Red Apple",
+    "stand_in": false,
+    "scale": 0.01304,
+    "size_m": [
+     0.067,
+     0.08,
+     0.068
+    ]
+   },
+   "objects": [
+    "apple_single_red"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/001.jpg",
+   "verdict": "looks_right",
+   "reason": "The model displays the correct shape, color, and surface details of a normal, intact apple."
+  },
+  {
+   "type": "backpack",
+   "looks": "charcoal canvas",
+   "model": {
+    "source": "props",
+    "id": "backpack_390164707739",
+    "looks_like": "cute green kid youthful",
+    "stand_in": false,
+    "scale": 0.00434,
+    "size_m": [
+     0.345,
+     0.45,
+     0.393
+    ]
+   },
+   "objects": [
+    "backpack_charcoal_canvas"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/002.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is clearly a backpack, but it has an odd bright green color and cartoonish frog-like eyes and a smile on the front, which are not typical for a normal backpack."
+  },
+  {
+   "type": "banana",
+   "looks": "two yellow",
+   "model": {
+    "source": "objaverse",
+    "id": "4d4c8d85a09b476c8136f0c4cd24c45a",
+    "looks_like": "Banana",
+    "stand_in": false,
+    "scale": 0.64673,
+    "size_m": [
+     0.2,
+     0.059,
+     0.12
+    ]
+   },
+   "objects": [
+    "banana_two_yellow"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/003.jpg",
+   "verdict": "looks_right",
+   "reason": "The model displays the characteristic curved shape, yellow color, and brown speckles of a ripe banana, and it is recognizable as such from both angles."
+  },
+  {
+   "type": "bath mat",
+   "looks": "cream ribbed",
+   "model": {
+    "source": "hssd",
+    "id": "066d889d160db3dd0999a601bfd5df67540f1df5",
+    "looks_like": "Clean Feet Bath Mat - 40x70 cms, Blue",
+    "stand_in": false,
+    "scale": 1.0,
+    "size_m": [
+     0.7,
+     0.005,
+     0.401
+    ]
+   },
+   "objects": [
+    "bath_mat_cream_ribbed"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/004.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The object is a flat, rectangular mat with rounded corners, but it is a solid dark blue color instead of the expected cream ribbed texture."
+  },
+  {
+   "type": "batteries",
+   "looks": "mixed alkaline pack",
+   "model": {
+    "source": "objaverse",
+    "id": "d53a6c13c3c6420696aac17e21339a0e",
+    "looks_like": "battery",
+    "stand_in": false,
+    "scale": 0.01973,
+    "size_m": [
+     0.05,
+     0.048,
+     0.027
+    ]
+   },
+   "objects": [
+    "batteries_mixed_alkaline_pack"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/005.jpg",
+   "verdict": "broken_or_missing_texture",
+   "reason": "The surface texture is heavily smeared and distorted, with unnatural color bleeding and a lack of clear, crisp details expected on a battery."
+  },
+  {
+   "type": "belt",
+   "looks": "dark brown woven",
+   "model": {
+    "source": "objaverse",
+    "id": "80270537268f472fadf3b589245f40ff",
+    "looks_like": "Roman soldier's belt - Cingulum militare",
+    "stand_in": false,
+    "scale": 0.05885,
+    "size_m": [
+     0.257,
+     0.3,
+     0.221
+    ]
+   },
+   "objects": [
+    "belt_dark_brown_woven"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/006.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is recognisable as a belt, but the colour scheme (black and tan) and the three dangling straps with buckles are unusual details for a standard belt."
+  },
+  {
+   "type": "bottle opener",
+   "looks": "flat brass",
+   "model": {
+    "source": "hssd",
+    "id": "eeb2c878be62e81eb938e7e809efab0747ae8785",
+    "looks_like": "Suck UK Magnet Bottle Opener",
+    "stand_in": false,
+    "scale": 1.0,
+    "size_m": [
+     0.12,
+     0.021,
+     0.18
+    ]
+   },
+   "objects": [
+    "bottle_opener_flat_brass"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/007.jpg",
+   "verdict": "wrong_kind_of_thing",
+   "reason": "The model is a flat, dark rectangular plate with a circular indentation, which does not resemble the shape or features of a bottle opener."
+  },
+  {
+   "type": "bowl",
+   "looks": "shallow rust",
+   "model": {
+    "source": "props",
+    "id": "bowl_826eeb384b64",
+    "looks_like": "porcelain white",
+    "stand_in": false,
+    "scale": 1.03954,
+    "size_m": [
+     0.218,
+     0.08,
+     0.22
+    ]
+   },
+   "objects": [
+    "bowl_shallow_rust"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/008.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is clearly a bowl, but its surface has a mottled, rust-like texture and a dull, non-uniform color that is not typical for a normal, intact bowl."
+  },
+  {
+   "type": "bowl",
+   "looks": "white cereal",
+   "model": {
+    "source": "props",
+    "id": "bowl_f1eccbd01c88",
+    "looks_like": "dark glazed lacquered wooden",
+    "stand_in": false,
+    "scale": 0.00503,
+    "size_m": [
+     0.22,
+     0.101,
+     0.22
+    ]
+   },
+   "objects": [
+    "bowl_white_cereal"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/009.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is clearly a bowl, but its surface has a mottled, dark, metallic or stone-like texture that is not typical for a bowl meant to hold white cereal."
+  },
+  {
+   "type": "bowls",
+   "looks": "blue speckled",
+   "model": {
+    "source": "props",
+    "id": "bowl_826eeb384b64",
+    "looks_like": "porcelain white",
+    "stand_in": false,
+    "scale": 1.03954,
+    "size_m": [
+     0.218,
+     0.08,
+     0.22
+    ]
+   },
+   "objects": [
+    "bowls_blue_speckled"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/010.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is clearly a bowl, but its color is a flat, dark grey/brown instead of the expected blue speckled finish, and the surface texture appears very plain and lacks the speckled detail."
+  },
+  {
+   "type": "candle",
+   "looks": "short amber jar",
+   "model": {
+    "source": "props",
+    "id": "candle_222643de666b",
+    "looks_like": "candlestick bronze dark thin elegant fancy",
+    "stand_in": false,
+    "scale": 7e-05,
+    "size_m": [
+     0.046,
+     0.15,
+     0.046
+    ]
+   },
+   "objects": [
+    "candle_short_amber_jar"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/011.jpg",
+   "verdict": "wrong_kind_of_thing",
+   "reason": "The model depicts a tall, ornate metal candlestick with a base and stem, not a short amber jar candle."
+  },
+  {
+   "type": "canned tomatoes",
+   "looks": "three red tins",
+   "model": {
+    "source": "objaverse",
+    "id": "566323fb276f4fa7ac2943b38bb4e98d",
+    "looks_like": "Can of beans",
+    "stand_in": false,
+    "scale": 0.06,
+    "size_m": [
+     0.072,
+     0.12,
+     0.071
+    ]
+   },
+   "objects": [
+    "canned_tomatoes_three_red_tins"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/012.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is clearly a can, but the body is rendered as a solid black color instead of the expected metallic silver or red label, making the color detail odd."
+  },
+  {
+   "type": "cap",
+   "looks": "ochre canvas",
+   "model": {
+    "source": "objaverse",
+    "id": "892e724659c44d6c8771252523075b54",
+    "looks_like": "Pokemon master's cap",
+    "stand_in": false,
+    "scale": 9e-05,
+    "size_m": [
+     0.13,
+     0.183,
+     0.25
+    ]
+   },
+   "objects": [
+    "cap_ochre_canvas"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/013.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is clearly a cap, but the white front panel with a green 'L' logo is an unusual detail for a standard ochre canvas cap."
+  },
+  {
+   "type": "carrots",
+   "looks": "bunched orange",
+   "model": {
+    "source": "objaverse",
+    "id": "583b980bb3c4432abe5422d8a54ffe99",
+    "looks_like": "carrot",
+    "stand_in": false,
+    "scale": 0.09247,
+    "size_m": [
+     0.2,
+     0.051,
+     0.059
+    ]
+   },
+   "objects": [
+    "carrots_bunched_orange"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/014.jpg",
+   "verdict": "looks_right",
+   "reason": "The model displays the characteristic tapered shape and orange color of a carrot, with a smooth surface and no visible mesh or texture defects."
+  },
+  {
+   "type": "cast iron skillet",
+   "looks": "large seasoned",
+   "model": {
+    "source": "hssd",
+    "id": "ef65c930c62e036c22ecbdfd26e4c9e5f052c8f9",
+    "looks_like": "DENVER",
+    "stand_in": false,
+    "scale": 1.0,
+    "size_m": [
+     0.42,
+     0.16,
+     0.2
+    ]
+   },
+   "objects": [
+    "cast_iron_skillet_large_seasoned"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/015.jpg",
+   "verdict": "broken_or_missing_texture",
+   "reason": "The model is rendered as a flat, solid black silhouette with no visible surface details, textures, or shading, making it impossible to recognize as a cast iron skillet."
+  },
+  {
+   "type": "ceramic tray",
+   "looks": "white oval",
+   "model": {
+    "source": "props",
+    "id": "tray_4b8d86761f94",
+    "looks_like": "wooden container",
+    "stand_in": false,
+    "scale": 0.01034,
+    "size_m": [
+     0.4,
+     0.078,
+     0.278
+    ]
+   },
+   "objects": [
+    "ceramic_tray_white_oval"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/016.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is a rectangular tray, but its dark brown, wood-like color and texture are odd for a ceramic tray, which is typically white or glazed."
+  },
+  {
+   "type": "chef jacket",
+   "looks": "black cotton",
+   "model": {
+    "source": "objaverse",
+    "id": "d45c39547a9846a9a54840faee0f8990",
+    "looks_like": "Leather Jacket 2",
+    "stand_in": false,
+    "scale": 0.25,
+    "size_m": [
+     0.5,
+     0.264,
+     0.128
+    ]
+   },
+   "objects": [
+    "chef_jacket_black_cotton"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/017.jpg",
+   "verdict": "broken_or_shredded_mesh",
+   "reason": "The mesh is severely deformed and shredded, with the left view showing a crumpled, unrecognizable shape and the right view showing a distorted, incomplete jacket structure."
+  },
+  {
+   "type": "cleaning spray",
+   "looks": "clear blue bottle",
+   "model": {
+    "source": "objaverse",
+    "id": "4c8af55af44c4e888fa9e3ca037f65e3",
+    "looks_like": "Spray Paint Can",
+    "stand_in": false,
+    "scale": 0.01379,
+    "size_m": [
+     0.085,
+     0.25,
+     0.085
+    ]
+   },
+   "objects": [
+    "cleaning_spray_clear_blue_bottle"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/018.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is clearly a spray can, but the label features a red oval with text and colorful circles, which is not typical for a standard cleaning spray, making the detail odd."
+  },
+  {
+   "type": "cloth napkin",
+   "looks": "blue checked cotton",
+   "model": {
+    "source": "hssd",
+    "id": "xxxxd32eb1e2x09a7x45dcx8b7ex16a21c988ef7",
+    "looks_like": "Fete White Cloth Napkin",
+    "stand_in": false,
+    "scale": 1.0,
+    "size_m": [
+     0.287,
+     0.024,
+     0.305
+    ]
+   },
+   "objects": [
+    "cloth_napkin_blue_checked_cotton"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/019.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is clearly a folded cloth napkin, but it is plain white instead of the expected blue checked cotton pattern."
+  },
+  {
+   "type": "cloth napkin",
+   "looks": "ochre linen",
+   "model": {
+    "source": "hssd",
+    "id": "4681d7a50b9f9a12acaaeeb06349203ac7235303",
+    "looks_like": "8 White Napkins",
+    "stand_in": false,
+    "scale": 1.0,
+    "size_m": [
+     0.4,
+     0.01,
+     0.2
+    ]
+   },
+   "objects": [
+    "cloth_napkin_ochre_linen"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/020.jpg",
+   "verdict": "wrong_kind_of_thing",
+   "reason": "The model is a flat, rigid, metallic-looking rectangle, resembling a sheet of metal or a card, rather than a soft, textured cloth napkin."
+  },
+  {
+   "type": "clothespins",
+   "looks": "wooden mixed pack",
+   "model": {
+    "source": "objaverse",
+    "id": "4b213aac56bb4484b57cdedfa4c146fc",
+    "looks_like": "Clothespin",
+    "stand_in": false,
+    "scale": 0.00131,
+    "size_m": [
+     0.07,
+     0.01,
+     0.018
+    ]
+   },
+   "objects": [
+    "clothespins_wooden_mixed_pack"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/021.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is clearly a clothespin, but it has a uniform, flat yellow color and lacks the typical wood grain texture or spring detail expected of a real clothespin."
+  },
+  {
+   "type": "coaster",
+   "looks": "blue felt",
+   "model": {
+    "source": "hssd",
+    "id": "cded5a507a3834e1168b4d5da82aec47e969403b",
+    "looks_like": "Bloom Felt Coaster",
+    "stand_in": false,
+    "scale": 1.0,
+    "size_m": [
+     0.1,
+     0.005,
+     0.1
+    ]
+   },
+   "objects": [
+    "coaster_blue_felt",
+    "coaster_cork_botanical"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/022.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The object is clearly a coaster, but its surface has a strange, mottled beige texture instead of the expected blue felt."
+  },
+  {
+   "type": "coffee beans",
+   "looks": "dark roast pouch",
+   "model": {
+    "source": "objaverse",
+    "id": "00d1be4411f848efaeb72b936d4d1692",
+    "looks_like": "Lays Packet",
+    "stand_in": true,
+    "scale": 0.00058,
+    "size_m": [
+     0.217,
+     0.25,
+     0.079
+    ]
+   },
+   "objects": [
+    "coffee_beans_dark_roast_pouch"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/023.jpg",
+   "verdict": "wrong_kind_of_thing",
+   "reason": "The model is clearly a bag of Lay's potato chips, not a pouch of coffee beans."
+  },
+  {
+   "type": "colander",
+   "looks": "blue enamel",
+   "model": {
+    "source": "hssd",
+    "id": "df2bb6e9b40f141a109b14313a357d9e4fd62624",
+    "looks_like": "Retro Colanderbr Red",
+    "stand_in": false,
+    "scale": 1.0,
+    "size_m": [
+     0.281,
+     0.131,
+     0.236
+    ]
+   },
+   "objects": [
+    "colander_blue_enamel"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/024.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is clearly a colander, but its color is a solid, uniform red instead of the expected blue enamel, and the perforations appear as simple white dots rather than realistic holes."
+  },
+  {
+   "type": "cold medicine",
+   "looks": "amber bottle",
+   "model": {
+    "source": "props",
+    "id": "medicine_429536ff8dd8",
+    "looks_like": "pill bottle orange thicker",
+    "stand_in": false,
+    "scale": 0.7968,
+    "size_m": [
+     0.074,
+     0.12,
+     0.075
+    ]
+   },
+   "objects": [
+    "cold_medicine_amber_bottle"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/025.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The object is clearly a medicine bottle, but the right view shows a white body instead of the expected amber color, making the color inconsistent and odd."
+  },
+  {
+   "type": "conditioner",
+   "looks": "white flip-top bottle",
+   "model": {
+    "source": "objaverse",
+    "id": "d2153a9ed0d64c15911db2f53f1772bc",
+    "looks_like": "SHAMPOO GRANDES HEROES",
+    "stand_in": false,
+    "scale": 0.00113,
+    "size_m": [
+     0.087,
+     0.2,
+     0.048
+    ]
+   },
+   "objects": [
+    "conditioner_white_flip_top_bottle"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/026.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The bottle's shape and cap are correct for a conditioner, but the label texture is dark, muddled, and lacks the clear, bright graphics expected on a real product."
+  },
+  {
+   "type": "cookbook",
+   "looks": "green linen cover",
+   "model": {
+    "source": "asked",
+    "id": "2d16bb0da869abae99bb080d54869111fdfa2c67",
+    "looks_like": "paperback with a blue city photograph on the cover",
+    "stand_in": false,
+    "scale": 1.0,
+    "size_m": [
+     0.144,
+     0.026,
+     0.205
+    ]
+   },
+   "objects": [
+    "cookbook_green_linen_cover"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/027.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The object is clearly a book, but the cover displays a blue 'COOL LONDON' design instead of the expected green linen cover, making the detail odd."
+  },
+  {
+   "type": "cutting board",
+   "looks": "maple oval",
+   "model": {
+    "source": "props",
+    "id": "cutting_board_c1e6ac573c37",
+    "looks_like": "wooden beige kitchen",
+    "stand_in": false,
+    "scale": 0.46182,
+    "size_m": [
+     0.212,
+     0.022,
+     0.35
+    ]
+   },
+   "objects": [
+    "cutting_board_maple_oval"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/028.jpg",
+   "verdict": "looks_right",
+   "reason": "The model displays a clear, intact rectangular cutting board with rounded corners and a plausible wood grain texture, recognizable from both angles."
+  },
+  {
+   "type": "dish soap",
+   "looks": "green pump",
+   "model": {
+    "source": "objaverse",
+    "id": "79e0499328ca420783c8c98695732930",
+    "looks_like": "ACE",
+    "stand_in": false,
+    "scale": 0.0066,
+    "size_m": [
+     0.116,
+     0.22,
+     0.046
+    ]
+   },
+   "objects": [
+    "dish_soap_green_pump"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/029.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is recognisable as a dish soap bottle, but the label is garbled and the colour is an odd orange rather than the expected green pump bottle."
+  },
+  {
+   "type": "dish towel",
+   "looks": "ochre checked",
+   "model": {
+    "source": "asked",
+    "id": "towel_35b76b90614d",
+    "looks_like": "plain cream towel",
+    "stand_in": false,
+    "scale": 0.00131,
+    "size_m": [
+     0.4,
+     0.122,
+     0.353
+    ]
+   },
+   "objects": [
+    "dish_towel_ochre_checked"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/030.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is clearly a folded dish towel, but it is a plain, solid beige color instead of the expected ochre checked pattern."
+  },
+  {
+   "type": "dress",
+   "looks": "olive linen wrap",
+   "model": {
+    "source": "objaverse",
+    "id": "cadc1e7d00f54cbeb14e0beb3b1a2e7f",
+    "looks_like": "Night Dress",
+    "stand_in": false,
+    "scale": 0.16911,
+    "size_m": [
+     0.26,
+     0.5,
+     0.189
+    ]
+   },
+   "objects": [
+    "dress_olive_linen_wrap"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/031.jpg",
+   "verdict": "broken_or_shredded_mesh",
+   "reason": "The geometry is severely distorted and shredded, with the left view showing a collapsed, fan-like mass of spikes and the right view showing a distorted, non-humanoid shape, indicating a broken mesh."
+  },
+  {
+   "type": "dryer sheets",
+   "looks": "blue cardboard box",
+   "model": {
+    "source": "objaverse",
+    "id": "ece545c8149a4305849171d27c8cb28e",
+    "looks_like": "Compostable Box .::RAWscan::.",
+    "stand_in": true,
+    "scale": 0.06387,
+    "size_m": [
+     0.154,
+     0.2,
+     0.162
+    ]
+   },
+   "objects": [
+    "dryer_sheets_blue_cardboard_box"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/032.jpg",
+   "verdict": "wrong_kind_of_thing",
+   "reason": "The model is a cube with holes in the faces, resembling a die or a block, not a rectangular box of dryer sheets."
+  },
+  {
+   "type": "eggs",
+   "looks": "six brown carton",
+   "model": {
+    "source": "objaverse",
+    "id": "c46d64155bae47d4a0888cdfcf8c27dc",
+    "looks_like": "Egg",
+    "stand_in": false,
+    "scale": 0.15,
+    "size_m": [
+     0.228,
+     0.3,
+     0.224
+    ]
+   },
+   "objects": [
+    "eggs_six_brown_carton"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/033.jpg",
+   "verdict": "looks_right",
+   "reason": "The model displays the characteristic oval shape and brown, speckled texture of a normal, intact egg."
+  },
+  {
+   "type": "evening shirt",
+   "looks": "heather gray cotton",
+   "model": {
+    "source": "objaverse",
+    "id": "20fbb246bd19402c82e01d7541a72f8e",
+    "looks_like": "T-shirt T Pose",
+    "stand_in": false,
+    "scale": 0.00535,
+    "size_m": [
+     0.4,
+     0.33,
+     0.157
+    ]
+   },
+   "objects": [
+    "evening_shirt_heather_gray_cotton"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/034.jpg",
+   "verdict": "broken_or_missing_texture",
+   "reason": "The model is a solid, flat white color with no visible fabric texture, seams, or details expected of a heather gray cotton shirt."
+  },
+  {
+   "type": "evening sweater",
+   "looks": "oatmeal knit",
+   "model": {
+    "source": "objaverse",
+    "id": "e4c89a5628db4c7abadbd18bb407a2a8",
+    "looks_like": "Adidas Hoodie",
+    "stand_in": false,
+    "scale": 0.07412,
+    "size_m": [
+     0.4,
+     0.22,
+     0.129
+    ]
+   },
+   "objects": [
+    "evening_sweater_oatmeal_knit"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/035.jpg",
+   "verdict": "broken_or_missing_texture",
+   "reason": "The collar area displays a distorted, smeared, and illegible pattern instead of a clean knit texture, indicating a broken or missing texture."
+  },
+  {
+   "type": "field notebook",
+   "looks": "green clothbound",
+   "model": {
+    "source": "asked",
+    "id": "0e11918fe7eaf8bdee859494e0d3dfe59d5b2d32",
+    "looks_like": "thin coral-red notebook with an elastic band",
+    "stand_in": false,
+    "scale": 1.0,
+    "size_m": [
+     0.13,
+     0.011,
+     0.212
+    ]
+   },
+   "objects": [
+    "field_notebook_green_clothbound"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/036.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is clearly a notebook, but its color is a solid, glossy red instead of the expected green clothbound finish, and it lacks the typical texture and details of a field notebook."
+  },
+  {
+   "type": "first-aid kit",
+   "looks": "white zippered",
+   "model": {
+    "source": "objaverse",
+    "id": "8b0d64278d504c508d02d33e22ea7f12",
+    "looks_like": "First Aid Kit",
+    "stand_in": false,
+    "scale": 0.89675,
+    "size_m": [
+     0.289,
+     0.103,
+     0.3
+    ]
+   },
+   "objects": [
+    "first_aid_kit_white_zippered"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/037.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is clearly a first-aid kit, but the text on the front is mirrored (reading 'DIA STSIF' instead of 'FIRST AID'), which is an odd detail."
+  },
+  {
+   "type": "flashlight",
+   "looks": "black compact",
+   "model": {
+    "source": "objaverse",
+    "id": "576daeaa281840cfb3ece4850cc42469",
+    "looks_like": "Old Flashlight",
+    "stand_in": false,
+    "scale": 0.03482,
+    "size_m": [
+     0.05,
+     0.05,
+     0.2
+    ]
+   },
+   "objects": [
+    "flashlight_black_compact"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/038.jpg",
+   "verdict": "looks_right",
+   "reason": "The model displays the correct cylindrical shape, head, and button of a compact flashlight, and it appears intact and recognizable from both angles."
+  },
+  {
+   "type": "flour",
+   "looks": "white paper sack",
+   "model": {
+    "source": "objaverse",
+    "id": "48e4219341a4458a83c443fb3f0ff8ac",
+    "looks_like": "flour bag",
+    "stand_in": true,
+    "scale": 0.11596,
+    "size_m": [
+     0.234,
+     0.3,
+     0.096
+    ]
+   },
+   "objects": [
+    "flour_white_paper_sack"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/039.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The object is clearly a flour sack, but its surface is rendered with a shiny, metallic texture instead of the expected matte paper or fabric."
+  },
+  {
+   "type": "food storage bags",
+   "looks": "clear zip box",
+   "model": {
+    "source": "objaverse",
+    "id": "6511cf11970e465bb9a488853d23cd82",
+    "looks_like": "Trashbag",
+    "stand_in": false,
+    "scale": 0.1,
+    "size_m": [
+     0.197,
+     0.2,
+     0.177
+    ]
+   },
+   "objects": [
+    "food_storage_bags_clear_zip_box"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/040.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The object is clearly a tied garbage bag, but it is rendered in a solid, glossy black color instead of the clear or translucent material expected for a food storage bag."
+  },
+  {
+   "type": "forks",
+   "looks": "four stainless",
+   "model": {
+    "source": "objaverse",
+    "id": "34c052f5182d40d9b204c0dc83d1f44b",
+    "looks_like": "Fork low poly",
+    "stand_in": false,
+    "scale": 8e-05,
+    "size_m": [
+     0.2,
+     0.01,
+     0.025
+    ]
+   },
+   "objects": [
+    "forks_four_stainless"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/041.jpg",
+   "verdict": "looks_right",
+   "reason": "The model clearly depicts a standard fork with the expected tines, neck, and handle, and it appears intact and recognizable from both angles."
+  },
+  {
+   "type": "forks",
+   "looks": "single brushed steel",
+   "model": {
+    "source": "objaverse",
+    "id": "629550ccf566447389a2c5fc00af0408",
+    "looks_like": "Fork",
+    "stand_in": false,
+    "scale": 0.01311,
+    "size_m": [
+     0.033,
+     0.2,
+     0.008
+    ]
+   },
+   "objects": [
+    "forks_single_brushed_steel"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/042.jpg",
+   "verdict": "looks_right",
+   "reason": "The model is clearly recognizable as a fork with the correct shape, tines, and handle, and the metallic color is appropriate for a steel utensil."
+  },
+  {
+   "type": "gardening gloves",
+   "looks": "green nitrile",
+   "model": {
+    "source": "objaverse",
+    "id": "79a3902f37f2482c97520f3f19e419ab",
+    "looks_like": "SRG Glove",
+    "stand_in": false,
+    "scale": 0.0908,
+    "size_m": [
+     0.146,
+     0.25,
+     0.11
+    ]
+   },
+   "objects": [
+    "gardening_gloves_green_nitrile"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/043.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is clearly a pair of gloves, but the color is a uniform, metallic-looking grey instead of the expected green nitrile, and the surface texture appears more like a hard material than a soft, n"
+  },
+  {
+   "type": "hair ties",
+   "looks": "black elastic bundle",
+   "model": {
+    "source": "objaverse",
+    "id": "60407a98754344cf8d23a33280a8af3a",
+    "looks_like": "Rubber wrist bands",
+    "stand_in": true,
+    "scale": 1.2582,
+    "size_m": [
+     0.05,
+     0.017,
+     0.027
+    ]
+   },
+   "objects": [
+    "hair_ties_black_elastic_bundle"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/044.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The object is recognisable as a hair tie, but its colour is an unnatural, shiny magenta/purple instead of the expected black elastic."
+  },
+  {
+   "type": "hairbrush",
+   "looks": "wooden oval",
+   "model": {
+    "source": "objaverse",
+    "id": "6da221933be543948c894ba53108e624",
+    "looks_like": "FREE Hair Brush CC0",
+    "stand_in": false,
+    "scale": 0.98362,
+    "size_m": [
+     0.071,
+     0.027,
+     0.22
+    ]
+   },
+   "objects": [
+    "hairbrush_wooden_oval"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/045.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The object is clearly a hairbrush, but its bright red color and the specific pattern of the bristles appear somewhat artificial or stylized rather than realistic."
+  },
+  {
+   "type": "hand cream",
+   "looks": "white botanical tube",
+   "model": {
+    "source": "hssd",
+    "id": "329343e5c540027b4e4ee690129406925dcb1ef3",
+    "looks_like": "MOLTON BROWN ENLIVENING TOKO BODY LOTION",
+    "stand_in": false,
+    "scale": 1.0,
+    "size_m": [
+     0.04,
+     0.097,
+     0.04
+    ]
+   },
+   "objects": [
+    "hand_cream_white_botanical_tube"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/046.jpg",
+   "verdict": "wrong_kind_of_thing",
+   "reason": "The object is a cylindrical bottle with a black pump dispenser, which is characteristic of a lotion or soap bottle, not a hand cream tube."
+  },
+  {
+   "type": "hand lotion",
+   "looks": "small oat tube",
+   "model": {
+    "source": "hssd",
+    "id": "31f11762cd2a9b156589cce98a562016cf75a8be",
+    "looks_like": "LAIT CORPOREL OLIVE LAVANDE BODY LOTION",
+    "stand_in": false,
+    "scale": 1.0,
+    "size_m": [
+     0.081,
+     0.187,
+     0.081
+    ]
+   },
+   "objects": [
+    "hand_lotion_small_oat_tube"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/047.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is recognisable as a hand lotion bottle, but the label text is illegible and smeared, and the overall colour is a flat, uniform beige that looks odd for a typical lotion container."
+  },
+  {
+   "type": "hand soap",
+   "looks": "amber pump",
+   "model": {
+    "source": "hssd",
+    "id": "cfa905cae2b12e877d73b9f7d9011ea29a7aad26",
+    "looks_like": "Careo recycled glass soap dispenser",
+    "stand_in": false,
+    "scale": 1.0,
+    "size_m": [
+     0.09,
+     0.18,
+     0.09
+    ]
+   },
+   "objects": [
+    "hand_soap_amber_pump"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/048.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is clearly a hand soap dispenser, but the body is a solid, flat yellow color instead of the expected amber, and the pump mechanism is a simple black shape rather than a detailed, realistic '"
+  },
+  {
+   "type": "hand soap",
+   "looks": "clear pump",
+   "model": {
+    "source": "hssd",
+    "id": "960ffff978a6c096d2cb191770eca2c8f8597cfb",
+    "looks_like": "Coppercomb Soap Dispenser",
+    "stand_in": false,
+    "scale": 1.0,
+    "size_m": [
+     0.08,
+     0.18,
+     0.062
+    ]
+   },
+   "objects": [
+    "hand_soap_clear_pump"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/049.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is clearly a hand soap dispenser, but it has an unusual brown, wood-like texture instead of the typical clear or white plastic."
+  },
+  {
+   "type": "hanger",
+   "looks": "wooden maple",
+   "model": {
+    "source": "objaverse",
+    "id": "3b5ada364d634aa18007f9c8d8dc79ce",
+    "looks_like": "Wood Clothes Hanger",
+    "stand_in": false,
+    "scale": 0.00513,
+    "size_m": [
+     0.4,
+     0.219,
+     0.012
+    ]
+   },
+   "objects": [
+    "hanger_wooden_maple"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/050.jpg",
+   "verdict": "looks_right",
+   "reason": "The model clearly depicts a standard wooden hanger with a hook and a bottom bar, and it appears intact and recognizable from both angles."
+  },
+  {
+   "type": "headphones",
+   "looks": "black over-ear",
+   "model": {
+    "source": "props",
+    "id": "headphones_19612447cf64",
+    "looks_like": "white charging station headset stand",
+    "stand_in": false,
+    "scale": 0.46292,
+    "size_m": [
+     0.194,
+     0.175,
+     0.2
+    ]
+   },
+   "objects": [
+    "headphones_black_over_ear"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/051.jpg",
+   "verdict": "looks_right",
+   "reason": "The model clearly depicts a pair of over-ear headphones on a stand, with recognizable components like the headband, ear cups, and cable, all rendered with appropriate textures and geometry."
+  },
+  {
+   "type": "honey jar",
+   "looks": "amber bear",
+   "model": {
+    "source": "objaverse",
+    "id": "c6999f442c4e4557a0f9dff8ad760e55",
+    "looks_like": "Formalin-filled jar",
+    "stand_in": false,
+    "scale": 0.35181,
+    "size_m": [
+     0.073,
+     0.12,
+     0.072
+    ]
+   },
+   "objects": [
+    "honey_jar_amber_bear"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/052.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The object is clearly a jar, but the body is a plain, light grey/white color instead of the expected amber glass, and the label texture is stretched and illegible."
+  },
+  {
+   "type": "hoodie",
+   "looks": "faded navy cotton",
+   "model": {
+    "source": "objaverse",
+    "id": "5ffe31a324a6452c8c4ada71daa12da9",
+    "looks_like": "hoodie",
+    "stand_in": false,
+    "scale": 0.40348,
+    "size_m": [
+     0.45,
+     0.25,
+     0.158
+    ]
+   },
+   "objects": [
+    "hoodie_faded_navy_cotton"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/053.jpg",
+   "verdict": "broken_or_shredded_mesh",
+   "reason": "The mesh is severely distorted and shredded, with the left view showing a collapsed, unrecognizable mass and the right view showing a deformed, incomplete garment."
+  },
+  {
+   "type": "house slippers",
+   "looks": "gray felt pair",
+   "model": {
+    "source": "objaverse",
+    "id": "6d656faa5a1d4309a43cb5763cba002f",
+    "looks_like": "PB130 Shoe Low",
+    "stand_in": false,
+    "scale": 0.00717,
+    "size_m": [
+     0.103,
+     0.092,
+     0.28
+    ]
+   },
+   "objects": [
+    "house_slippers_gray_felt_pair"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/054.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is clearly a pair of house slippers, but the shiny, perforated metallic texture is an odd detail for the described gray felt slippers."
+  },
+  {
+   "type": "jacket",
+   "looks": "faded denim chore",
+   "model": {
+    "source": "objaverse",
+    "id": "d45c39547a9846a9a54840faee0f8990",
+    "looks_like": "Leather Jacket 2",
+    "stand_in": false,
+    "scale": 0.25,
+    "size_m": [
+     0.5,
+     0.264,
+     0.128
+    ]
+   },
+   "objects": [
+    "jacket_faded_denim_chore"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/055.jpg",
+   "verdict": "broken_or_shredded_mesh",
+   "reason": "The mesh is severely deformed and shredded, with the left view showing a crumpled, unrecognizable shape and the right view showing a distorted, incomplete jacket structure."
+  },
+  {
+   "type": "jeans",
+   "looks": "indigo straight leg",
+   "model": {
+    "source": "objaverse",
+    "id": "6fe45842b1924f6fbf9e8bb021c034c6",
+    "looks_like": "Blue Jeans Pants",
+    "stand_in": false,
+    "scale": 0.00022,
+    "size_m": [
+     0.165,
+     0.4,
+     0.091
+    ]
+   },
+   "objects": [
+    "jeans_indigo_straight_leg"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/056.jpg",
+   "verdict": "broken_or_shredded_mesh",
+   "reason": "The mesh is severely broken and shredded, with the left view showing a mangled, incomplete shape and the right view showing a distorted, non-standard leg structure."
+  },
+  {
+   "type": "keys",
+   "looks": "brass house keys",
+   "model": {
+    "source": "props",
+    "id": "keychain_1",
+    "looks_like": "keychain_1",
+    "stand_in": false,
+    "scale": 1.0,
+    "size_m": [
+     0.128,
+     0.009,
+     0.073
+    ]
+   },
+   "objects": [
+    "keys_brass_house"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/057.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The object is recognisable as a set of keys, but the bright red colour on the key heads is not typical for brass house keys, making the colour detail odd."
+  },
+  {
+   "type": "keys",
+   "looks": "brass house keys",
+   "model": {
+    "source": "props",
+    "id": "keychain_2",
+    "looks_like": "keychain_2",
+    "stand_in": false,
+    "scale": 1.0,
+    "size_m": [
+     0.13,
+     0.015,
+     0.037
+    ]
+   },
+   "objects": [
+    "keys_brass_house_and_steel"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/058.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The object is clearly a set of keys, but the key fob is black with white buttons and the key ring is red, which are not the typical brass or metallic colors expected for house keys."
+  },
+  {
+   "type": "kitchen clogs",
+   "looks": "black rubber",
+   "model": {
+    "source": "objaverse",
+    "id": "513258ba2c2a4592a77ac1913bd83238",
+    "looks_like": "Day 198: Nike Air Force 1",
+    "stand_in": false,
+    "scale": 0.1431,
+    "size_m": [
+     0.3,
+     0.122,
+     0.139
+    ]
+   },
+   "objects": [
+    "kitchen_clogs_black_rubber"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/059.jpg",
+   "verdict": "wrong_kind_of_thing",
+   "reason": "The model is a white sneaker with laces, not a kitchen clog."
+  },
+  {
+   "type": "kitchen towel",
+   "looks": "green striped linen",
+   "model": {
+    "source": "asked",
+    "id": "towel_35b76b90614d",
+    "looks_like": "plain cream towel",
+    "stand_in": false,
+    "scale": 0.00131,
+    "size_m": [
+     0.4,
+     0.122,
+     0.353
+    ]
+   },
+   "objects": [
+    "kitchen_towel_green_striped_linen"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/060.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is clearly a folded kitchen towel, but its plain beige color and lack of the specified green stripes make the detail odd."
+  },
+  {
+   "type": "knife roll",
+   "looks": "olive canvas roll",
+   "model": {
+    "source": "objaverse",
+    "id": "6d594db7ab9741a7a0e0d8d61115926d",
+    "looks_like": "Pouch",
+    "stand_in": true,
+    "scale": 0.05561,
+    "size_m": [
+     0.134,
+     0.4,
+     0.337
+    ]
+   },
+   "objects": [
+    "knife_roll_olive_canvas"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/061.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is recognisable as a knife roll, but its colour is a uniform brown instead of the expected olive canvas, and the surface lacks the typical texture and stitching details."
+  },
+  {
+   "type": "knives",
+   "looks": "four table knives",
+   "model": {
+    "source": "objaverse",
+    "id": "a8677d9c7a5b43fe966ac48d2798dad2",
+    "looks_like": "Butcher Knife",
+    "stand_in": false,
+    "scale": 0.00614,
+    "size_m": [
+     0.25,
+     0.067,
+     0.012
+    ]
+   },
+   "objects": [
+    "knives_four_table"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/062.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is clearly a cleaver, but the blade is a flat, dark, untextured color instead of the expected shiny metal, making the detail look odd."
+  },
+  {
+   "type": "ladle",
+   "looks": "deep steel",
+   "model": {
+    "source": "objaverse",
+    "id": "33e751c2087542618e2e1a9d9ef77af8",
+    "looks_like": "Ladle",
+    "stand_in": false,
+    "scale": 0.00489,
+    "size_m": [
+     0.3,
+     0.078,
+     0.091
+    ]
+   },
+   "objects": [
+    "ladle_deep_steel"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/063.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is clearly a ladle, but the bowl has a dark, mottled, and somewhat dirty appearance rather than the smooth, reflective surface expected of a steel ladle."
+  },
+  {
+   "type": "landscape magazine",
+   "looks": "glossy orange cover",
+   "model": {
+    "source": "objaverse",
+    "id": "081bbc6af697476da7f057ad89697f62",
+    "looks_like": "Books Magazines",
+    "stand_in": false,
+    "scale": 0.4036,
+    "size_m": [
+     0.28,
+     0.148,
+     0.148
+    ]
+   },
+   "objects": [
+    "landscape_magazine_glossy_orange_cover"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/064.jpg",
+   "verdict": "wrong_kind_of_thing",
+   "reason": "The model is a stack of multiple books or magazines, not a single landscape magazine."
+  },
+  {
+   "type": "laptop",
+   "looks": "silver slim",
+   "model": {
+    "source": "props",
+    "id": "laptop_a031287e7b68",
+    "looks_like": "metallic silver",
+    "stand_in": false,
+    "scale": 0.12073,
+    "size_m": [
+     0.35,
+     0.194,
+     0.351
+    ]
+   },
+   "objects": [
+    "laptop_silver_slim"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/065.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is clearly a laptop, but the screen is a flat, featureless white rectangle and the keyboard texture looks like a generic grid rather than realistic keys, making the details odd."
+  },
+  {
+   "type": "laundry basket",
+   "looks": "natural canvas",
+   "model": {
+    "source": "props",
+    "id": "laundry_basket_1e88c90205f2",
+    "looks_like": "rectangular wicker basket boho",
+    "stand_in": false,
+    "scale": 0.17415,
+    "size_m": [
+     0.304,
+     0.296,
+     0.55
+    ]
+   },
+   "objects": [
+    "laundry_basket_natural_canvas"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/066.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is recognisable as a laundry basket, but the bottom is a flat, plain tan surface that looks like a missing or incorrect texture rather than the woven material seen on the sides."
+  },
+  {
+   "type": "laundry detergent",
+   "looks": "white refill pouch",
+   "model": {
+    "source": "objaverse",
+    "id": "79e0499328ca420783c8c98695732930",
+    "looks_like": "ACE",
+    "stand_in": false,
+    "scale": 0.009,
+    "size_m": [
+     0.158,
+     0.3,
+     0.063
+    ]
+   },
+   "objects": [
+    "laundry_detergent_white_refill_pouch"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/067.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is recognisable as a laundry detergent bottle, but the label is garbled and the overall colour/texture looks off, so it is the right object with odd details."
+  },
+  {
+   "type": "laundry soap",
+   "looks": "lavender paper-wrapped bar",
+   "model": {
+    "source": "objaverse",
+    "id": "79e0499328ca420783c8c98695732930",
+    "looks_like": "ACE",
+    "stand_in": false,
+    "scale": 0.006,
+    "size_m": [
+     0.105,
+     0.2,
+     0.042
+    ]
+   },
+   "objects": [
+    "laundry_soap_lavender_paper_wrapped_bar"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/068.jpg",
+   "verdict": "wrong_kind_of_thing",
+   "reason": "The model is a plastic bottle with a cap and a label, which is a different kind of object than a bar of laundry soap."
+  },
+  {
+   "type": "lemons",
+   "looks": "three bright yellow",
+   "model": {
+    "source": "objaverse",
+    "id": "ed58014072a64680b0fe5ce4cac6234c",
+    "looks_like": "Lemon",
+    "stand_in": false,
+    "scale": 0.02522,
+    "size_m": [
+     0.076,
+     0.08,
+     0.076
+    ]
+   },
+   "objects": [
+    "lemons_three_bright_yellow"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/069.jpg",
+   "verdict": "looks_right",
+   "reason": "The model displays the characteristic yellow color, oval shape, and textured skin of a lemon, appearing intact and recognizable from both angles."
+  },
+  {
+   "type": "linen scarf",
+   "looks": "blue gray gauze",
+   "model": {
+    "source": "objaverse",
+    "id": "41a5488c67194a11965012514eb08714",
+    "looks_like": "Scarf2",
+    "stand_in": false,
+    "scale": 0.00082,
+    "size_m": [
+     0.252,
+     0.4,
+     0.164
+    ]
+   },
+   "objects": [
+    "linen_scarf_blue_gray_gauze"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/070.jpg",
+   "verdict": "broken_or_shredded_mesh",
+   "reason": "The geometry is severely distorted, appearing as a crumpled, shredded mass with long, thin spikes rather than a coherent, intact scarf."
+  },
+  {
+   "type": "lounge pants",
+   "looks": "black jersey",
+   "model": {
+    "source": "objaverse",
+    "id": "0ff94403111942889255f764cb97ba66",
+    "looks_like": "Sweatpants",
+    "stand_in": false,
+    "scale": 0.4349,
+    "size_m": [
+     0.177,
+     0.4,
+     0.127
+    ]
+   },
+   "objects": [
+    "lounge_pants_black_jersey"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/071.jpg",
+   "verdict": "looks_right",
+   "reason": "The model displays the correct shape and structure of lounge pants, with no visible mesh errors, missing textures, or odd details."
+  },
+  {
+   "type": "lounge pants",
+   "looks": "navy drawstring",
+   "model": {
+    "source": "objaverse",
+    "id": "558a28477bca4d7599f82e5621e41daf",
+    "looks_like": "pants test",
+    "stand_in": false,
+    "scale": 0.2,
+    "size_m": [
+     0.217,
+     0.4,
+     0.127
+    ]
+   },
+   "objects": [
+    "lounge_pants_navy_drawstring"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/072.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is clearly a pair of pants, but the camouflage pattern is an odd detail for lounge pants, which are typically solid-colored."
+  },
+  {
+   "type": "mail",
+   "looks": "single cream postcard",
+   "model": {
+    "source": "objaverse",
+    "id": "bb05f9a28e2b455da934a0b2ea2fc444",
+    "looks_like": "Letter & Envelope Assets",
+    "stand_in": false,
+    "scale": 0.01545,
+    "size_m": [
+     0.24,
+     0.041,
+     0.096
+    ]
+   },
+   "objects": [
+    "mail_single_cream_postcard"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/073.jpg",
+   "verdict": "broken_or_shredded_mesh",
+   "reason": "The geometry is fragmented and exploded, with the postcard's faces separated and floating apart rather than forming a single intact object."
+  },
+  {
+   "type": "mail",
+   "looks": "two unopened envelopes",
+   "model": {
+    "source": "objaverse",
+    "id": "5ea2b00e5fc34271b632eb84f7d98aad",
+    "looks_like": "painting folder",
+    "stand_in": false,
+    "scale": 0.32593,
+    "size_m": [
+     0.24,
+     0.025,
+     0.207
+    ]
+   },
+   "objects": [
+    "mail_two_unopened_envelopes"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/074.jpg",
+   "verdict": "looks_right",
+   "reason": "The model clearly depicts two envelopes, one brown and one white, which are recognizable as mail."
+  },
+  {
+   "type": "market herbs",
+   "looks": "basil and mint glass",
+   "model": {
+    "source": "objaverse",
+    "id": "4e535b6097fa46218e85c3e0aab7826d",
+    "looks_like": "Grass",
+    "stand_in": true,
+    "scale": 0.00106,
+    "size_m": [
+     0.25,
+     0.159,
+     0.246
+    ]
+   },
+   "objects": [
+    "market_herbs_basil_and_mint_glass"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/075.jpg",
+   "verdict": "broken_or_shredded_mesh",
+   "reason": "The geometry is severely shredded and exploded, with numerous spikes and fragmented, see-through faces instead of a coherent, intact shape."
+  },
+  {
+   "type": "matchbox",
+   "looks": "cream red stripe",
+   "model": {
+    "source": "objaverse",
+    "id": "d6594cf163044fce92e4e8f539257391",
+    "looks_like": "Matchbox Stylized",
+    "stand_in": false,
+    "scale": 0.00087,
+    "size_m": [
+     0.029,
+     0.01,
+     0.06
+    ]
+   },
+   "objects": [
+    "matchbox_cream_red_stripe"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/076.jpg",
+   "verdict": "looks_right",
+   "reason": "The model clearly depicts a matchbox with a sliding inner tray and matches, and the textures and geometry appear intact and recognizable."
+  },
+  {
+   "type": "measuring spoons",
+   "looks": "blue nesting set",
+   "model": {
+    "source": "objaverse",
+    "id": "e1745c4aa7c046a2b5193d2d23be0192",
+    "looks_like": "Spoon",
+    "stand_in": true,
+    "scale": 0.00136,
+    "size_m": [
+     0.029,
+     0.014,
+     0.15
+    ]
+   },
+   "objects": [
+    "measuring_spoons_blue_nesting_set"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/077.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The object is clearly a measuring spoon, but it has a solid black, metallic appearance instead of the expected blue color for a nesting set."
+  },
+  {
+   "type": "measuring tape",
+   "looks": "yellow retractable",
+   "model": {
+    "source": "objaverse",
+    "id": "e074099f0ce948acb1c7b875fec45edf",
+    "looks_like": "Tape Measure",
+    "stand_in": false,
+    "scale": 0.00448,
+    "size_m": [
+     0.07,
+     0.019,
+     0.007
+    ]
+   },
+   "objects": [
+    "measuring_tape_yellow_retractable"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/078.jpg",
+   "verdict": "looks_right",
+   "reason": "The model clearly depicts a yellow retractable measuring tape with a visible tape blade and a body featuring a label, which is consistent with a normal, intact measuring tape."
+  },
+  {
+   "type": "mechanical pencil",
+   "looks": "graphite gray",
+   "model": {
+    "source": "objaverse",
+    "id": "e67db84c8d2442519353afbae5220de0",
+    "looks_like": "Pencil",
+    "stand_in": false,
+    "scale": 0.00059,
+    "size_m": [
+     0.077,
+     0.14,
+     0.064
+    ]
+   },
+   "objects": [
+    "mechanical_pencil_graphite_gray"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/079.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The object is clearly a mechanical pencil, but its body is a dark red/maroon color instead of the expected graphite gray, and the tip appears to be a bright orange rather than a standard graphite or a"
+  },
+  {
+   "type": "menu folder",
+   "looks": "black elastic folder",
+   "model": {
+    "source": "hssd",
+    "id": "e529ddcb1306b1177e7caf9862c438ff96fb9994",
+    "looks_like": "A4 Ring Binder Black",
+    "stand_in": false,
+    "scale": 1.0,
+    "size_m": [
+     0.25,
+     0.056,
+     0.32
+    ]
+   },
+   "objects": [
+    "menu_folder_black_elastic"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/080.jpg",
+   "verdict": "broken_or_missing_texture",
+   "reason": "The model is a flat, single black color with no visible texture, labels, or details expected on a menu folder."
+  },
+  {
+   "type": "microfiber cloths",
+   "looks": "gray folded stack",
+   "model": {
+    "source": "objaverse",
+    "id": "c5f9e72edf7d4b5eaa2ec9b95c3b099d",
+    "looks_like": "Folded Towel",
+    "stand_in": false,
+    "scale": 0.00034,
+    "size_m": [
+     0.185,
+     0.018,
+     0.3
+    ]
+   },
+   "objects": [
+    "microfiber_cloths_gray_folded_stack"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/081.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is a stack of folded cloths, but the color is white instead of the expected gray, and the edges have a strange blue wireframe-like appearance."
+  },
+  {
+   "type": "milk",
+   "looks": "half-gallon carton",
+   "model": {
+    "source": "objaverse",
+    "id": "43b88b2c6fa6462aa4c9d2d3c5e062a0",
+    "looks_like": "\u041f\u0430\u043a\u0435\u0442 \u043c\u043e\u043b\u043e\u043a\u0430 \"\u0421\u0430\u0432\u0443\u0448\u043a\u0438\u043d \u043f\u0440\u043e\u0434\u0443\u043a\u0442\"",
+    "stand_in": false,
+    "scale": 0.01199,
+    "size_m": [
+     0.115,
+     0.25,
+     0.072
+    ]
+   },
+   "objects": [
+    "milk_half_gallon_carton"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/082.jpg",
+   "verdict": "looks_right",
+   "reason": "The model is a recognizable milk carton with a standard shape, a cap on top, and a label featuring text and a cow illustration, all of which are consistent with a real product."
+  },
+  {
+   "type": "mixing bowl",
+   "looks": "clear glass",
+   "model": {
+    "source": "hssd",
+    "id": "dcbb308c375e044129e5e5a8723960b0dafd9c9b",
+    "looks_like": "Mason Cash Ceramic Mixing Bowl, 3.5L",
+    "stand_in": false,
+    "scale": 1.0,
+    "size_m": [
+     0.26,
+     0.13,
+     0.26
+    ]
+   },
+   "objects": [
+    "mixing_bowl_clear_glass"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/083.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is clearly a mixing bowl, but it is rendered in a solid, opaque beige color instead of the expected clear glass, making the material detail odd."
+  },
+  {
+   "type": "mixing bowl",
+   "looks": "yellow melamine",
+   "model": {
+    "source": "hssd",
+    "id": "8703b6343efd1b00f37c102d7fa76fb08db66d7a",
+    "looks_like": "Krenit Bowl, Large",
+    "stand_in": false,
+    "scale": 1.0,
+    "size_m": [
+     0.251,
+     0.14,
+     0.251
+    ]
+   },
+   "objects": [
+    "mixing_bowl_yellow_melamine"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/084.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The object is clearly a mixing bowl, but its color is a bright, glossy green instead of the expected yellow melamine."
+  },
+  {
+   "type": "mug",
+   "looks": "black matte",
+   "model": {
+    "source": "asked",
+    "id": "mug_9646813e492b",
+    "looks_like": "plain white mug",
+    "stand_in": false,
+    "scale": 0.04482,
+    "size_m": [
+     0.12,
+     0.09,
+     0.088
+    ]
+   },
+   "objects": [
+    "mug_black_matte",
+    "mug_cream_painted_stripe"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/085.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is clearly a mug, but its color is a light beige/cream instead of the specified black matte, making the color odd."
+  },
+  {
+   "type": "mug",
+   "looks": "blue speckled",
+   "model": {
+    "source": "asked",
+    "id": "mug_922cd7d18c67",
+    "looks_like": "squat, near-black navy mug with a round red, white and blue ",
+    "stand_in": false,
+    "scale": 0.00996,
+    "size_m": [
+     0.12,
+     0.06,
+     0.1
+    ]
+   },
+   "objects": [
+    "mug_blue_speckled",
+    "mug_mustard_ceramic"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/086.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is clearly a mug, but the solid dark blue color and the small, indistinct logo on the side are odd details compared to a typical speckled mug."
+  },
+  {
+   "type": "mug",
+   "looks": "cream blue-rimmed",
+   "model": {
+    "source": "asked",
+    "id": "mug_e5e87ddbf3f6",
+    "looks_like": "white and pink mug with a drawing of a girl",
+    "stand_in": false,
+    "scale": 0.01115,
+    "size_m": [
+     0.12,
+     0.085,
+     0.085
+    ]
+   },
+   "objects": [
+    "mug_cream_blue_rimmed",
+    "mug_red_ceramic"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/087.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The mug is recognizable, but the handle has an odd, blocky, and somewhat misshapen design that doesn't look like a normal mug handle."
+  },
+  {
+   "type": "mug",
+   "looks": "sage ceramic",
+   "model": {
+    "source": "hssd",
+    "id": "98c9f836f480292409eba3cc56d2d7de01624bdf",
+    "looks_like": "Cell Hex Mug",
+    "stand_in": false,
+    "scale": 1.0,
+    "size_m": [
+     0.119,
+     0.1,
+     0.085
+    ]
+   },
+   "objects": [
+    "mug_sage_ceramic"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/088.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is clearly a mug, but the texture is odd, featuring a strange hexagonal pattern on the lower half and a flat, single-color appearance on the upper half."
+  },
+  {
+   "type": "mug",
+   "looks": "terracotta banded",
+   "model": {
+    "source": "hssd",
+    "id": "4732b4385ae973f1309ad75682fc11704818afe7",
+    "looks_like": "Emma Bridgewater Celebration Mug Grandpa",
+    "stand_in": false,
+    "scale": 1.0,
+    "size_m": [
+     0.122,
+     0.09,
+     0.091
+    ]
+   },
+   "objects": [
+    "mug_terracotta_banded"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/089.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The object is clearly a mug, but the text on the side is garbled and illegible, making the detail odd."
+  },
+  {
+   "type": "mug",
+   "looks": "white chipped",
+   "model": {
+    "source": "hssd",
+    "id": "8b7632a97cc5c3adf66e7eed98b59a51ef86bf26",
+    "looks_like": "Robin &amp; Laurel Christmas Tankard Mug",
+    "stand_in": false,
+    "scale": 1.0,
+    "size_m": [
+     0.122,
+     0.092,
+     0.091
+    ]
+   },
+   "objects": [
+    "mug_white_chipped"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/090.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is clearly a mug, but its color is a uniform, dull beige/tan rather than the expected white, and the floral pattern is very faint and low-contrast, making the details look odd."
+  },
+  {
+   "type": "mugs",
+   "looks": "white stoneware",
+   "model": {
+    "source": "asked",
+    "id": "mug_9646813e492b",
+    "looks_like": "plain white mug",
+    "stand_in": false,
+    "scale": 0.04482,
+    "size_m": [
+     0.12,
+     0.09,
+     0.088
+    ]
+   },
+   "objects": [
+    "mugs_white_stoneware"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/091.jpg",
+   "verdict": "looks_right",
+   "reason": "The model is a recognizable, intact white mug with a handle, and the two views show consistent geometry and surface without obvious defects."
+  },
+  {
+   "type": "music notebook",
+   "looks": "ochre clothbound",
+   "model": {
+    "source": "asked",
+    "id": "0e11918fe7eaf8bdee859494e0d3dfe59d5b2d32",
+    "looks_like": "thin coral-red notebook with an elastic band",
+    "stand_in": false,
+    "scale": 1.0,
+    "size_m": [
+     0.13,
+     0.011,
+     0.212
+    ]
+   },
+   "objects": [
+    "music_notebook_ochre_clothbound"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/092.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is clearly a notebook, but its color is a bright, glossy red rather than the expected ochre clothbound finish, and the surface lacks the texture of cloth."
+  },
+  {
+   "type": "napkins",
+   "looks": "blue cotton stack",
+   "model": {
+    "source": "hssd",
+    "id": "xxxxd32eb1e2x09a7x45dcx8b7ex16a21c988ef7",
+    "looks_like": "Fete White Cloth Napkin",
+    "stand_in": false,
+    "scale": 1.0,
+    "size_m": [
+     0.287,
+     0.024,
+     0.305
+    ]
+   },
+   "objects": [
+    "napkins_blue_cotton_stack"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/093.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is a stack of napkins, but the color is white instead of the expected blue cotton, and the texture is completely flat and featureless."
+  },
+  {
+   "type": "newspaper",
+   "looks": "folded weekend",
+   "model": {
+    "source": "props",
+    "id": "newspaper_972f084ea5b9",
+    "looks_like": "roll roll of newspaper",
+    "stand_in": false,
+    "scale": 0.18327,
+    "size_m": [
+     0.359,
+     0.223,
+     0.095
+    ]
+   },
+   "objects": [
+    "newspaper_folded_weekend"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/094.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is recognisable as a folded newspaper, but the paper has an unusual brownish/golden tint and the blue band is a very saturated, non\u2011realistic colour."
+  },
+  {
+   "type": "olive oil",
+   "looks": "green glass bottle",
+   "model": {
+    "source": "hssd",
+    "id": "867cf3a6f88aa00b97aee772c2349bff732fbac5",
+    "looks_like": "LIPARI OLIVE OIL BOTTLE 250ML",
+    "stand_in": false,
+    "scale": 1.0,
+    "size_m": [
+     0.088,
+     0.317,
+     0.088
+    ]
+   },
+   "objects": [
+    "olive_oil_green_glass_bottle"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/095.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is recognisable as a bottle, but the label texture is smeared and illegible, and the cap is a simple black cylinder rather than a realistic olive oil bottle cap."
+  },
+  {
+   "type": "painkillers",
+   "looks": "blue bottle",
+   "model": {
+    "source": "asked",
+    "id": "medicine_429536ff8dd8",
+    "looks_like": "orange pill bottle with a white cap",
+    "stand_in": false,
+    "scale": 0.51684,
+    "size_m": [
+     0.048,
+     0.078,
+     0.048
+    ]
+   },
+   "objects": [
+    "painkillers_blue_bottle"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/096.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The object is clearly a pill bottle, but its body is orange instead of the expected blue, and the label texture is blurry and illegible."
+  },
+  {
+   "type": "paper towels",
+   "looks": "natural roll",
+   "model": {
+    "source": "hssd",
+    "id": "a1316f752216c5938f26c70c7c0af1cd80f470e1",
+    "looks_like": "Squeezer Kitchen Roll Holder",
+    "stand_in": false,
+    "scale": 1.0,
+    "size_m": [
+     0.154,
+     0.294,
+     0.137
+    ]
+   },
+   "objects": [
+    "paper_towels_natural_roll"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/097.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The object is clearly a paper towel roll, but the texture is a flat, uniform beige color with a speckled top, lacking the realistic white color and fibrous texture of actual paper towels."
+  },
+  {
+   "type": "paperback book",
+   "looks": "blue botanical cover",
+   "model": {
+    "source": "asked",
+    "id": "2d16bb0da869abae99bb080d54869111fdfa2c67",
+    "looks_like": "paperback with a blue city photograph on the cover",
+    "stand_in": false,
+    "scale": 1.0,
+    "size_m": [
+     0.144,
+     0.026,
+     0.205
+    ]
+   },
+   "objects": [
+    "paperback_book_blue_botanical_cover",
+    "paperback_book_purple_river_cover"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/098.jpg",
+   "verdict": "looks_right",
+   "reason": "The model clearly depicts a normal, intact paperback book with a visible cover and pages, recognizable from both angles."
+  },
+  {
+   "type": "paperback book",
+   "looks": "cream mystery cover",
+   "model": {
+    "source": "asked",
+    "id": "8f2898b7a87221b1689078fedc133b3aea95a38c",
+    "looks_like": "large yellow hardback with multicoloured letters on the cove",
+    "stand_in": false,
+    "scale": 1.0,
+    "size_m": [
+     0.32,
+     0.04,
+     0.25
+    ]
+   },
+   "objects": [
+    "paperback_book_cream_mystery_cover"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/099.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is clearly a paperback book, but the cover features a bright yellow border and a colorful, abstract design that doesn't match the expected 'cream mystery cover' description."
+  },
+  {
+   "type": "paperback book",
+   "looks": "gray urbanist cover",
+   "model": {
+    "source": "asked",
+    "id": "5bb85d3caf11acb1eb2f299ccc724eb7a855b7cf",
+    "looks_like": "dark brown hardback with gold lines",
+    "stand_in": false,
+    "scale": 1.0,
+    "size_m": [
+     0.211,
+     0.05,
+     0.28
+    ]
+   },
+   "objects": [
+    "paperback_book_gray_urbanist_cover"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/100.jpg",
+   "verdict": "looks_right",
+   "reason": "The model displays the correct shape, proportions, and surface details (cover, spine, and page block) of a standard paperback book, with no visible mesh or texture errors."
+  },
+  {
+   "type": "paperback book",
+   "looks": "green train cover",
+   "model": {
+    "source": "hssd",
+    "id": "e46d683380db1069cea53aaec940d9c400c9b61d",
+    "looks_like": "Good Housekeeping- Best of the 1950's",
+    "stand_in": false,
+    "scale": 1.0,
+    "size_m": [
+     0.141,
+     0.01,
+     0.2
+    ]
+   },
+   "objects": [
+    "paperback_book_green_train_cover"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/101.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The object is clearly a paperback book, but the cover art is blurry and the colors (yellow/green) don't match the expected 'green train cover' description, making the details look odd."
+  },
+  {
+   "type": "paperback book",
+   "looks": "red coastal cover",
+   "model": {
+    "source": "hssd",
+    "id": "387d604356db232de6468dc6a4c66230c8cd0fac",
+    "looks_like": "Book",
+    "stand_in": false,
+    "scale": 1.0,
+    "size_m": [
+     0.144,
+     0.026,
+     0.205
+    ]
+   },
+   "objects": [
+    "paperback_book_red_coastal_cover"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/102.jpg",
+   "verdict": "broken_or_missing_texture",
+   "reason": "The cover texture is heavily smeared and distorted, with the text 'LUXURY HOTELS' appearing stretched and illegible, indicating a broken or poorly applied texture."
+  },
+  {
+   "type": "paperback book",
+   "looks": "teal bird cover",
+   "model": {
+    "source": "hssd",
+    "id": "8db837a85a24fbb6e51e4bba33cd3253d0ebfa92",
+    "looks_like": "book",
+    "stand_in": false,
+    "scale": 1.0,
+    "size_m": [
+     0.144,
+     0.026,
+     0.205
+    ]
+   },
+   "objects": [
+    "paperback_book_teal_bird_cover"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/103.jpg",
+   "verdict": "broken_or_missing_texture",
+   "reason": "The cover texture is heavily smeared and distorted, making the text and images unreadable and the surface appear stretched."
+  },
+  {
+   "type": "paperback book",
+   "looks": "white astronomy cover",
+   "model": {
+    "source": "hssd",
+    "id": "9c395719a9c79bc2333db882a9370a913c0e3471",
+    "looks_like": "Book",
+    "stand_in": false,
+    "scale": 1.0,
+    "size_m": [
+     0.144,
+     0.026,
+     0.205
+    ]
+   },
+   "objects": [
+    "paperback_book_white_astronomy_cover"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/104.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The object is clearly a paperback book, but the cover texture is a black-and-white image of a car with the text 'LUXURY TOYS', which is an odd and incorrect detail for a book described as having a 'a'"
+  },
+  {
+   "type": "paperback book",
+   "looks": "yellow garden cover",
+   "model": {
+    "source": "hssd",
+    "id": "c42c9cc7db0f5e58e14f3d6acfff94c9b2c5f488",
+    "looks_like": "Book",
+    "stand_in": false,
+    "scale": 1.0,
+    "size_m": [
+     0.144,
+     0.026,
+     0.205
+    ]
+   },
+   "objects": [
+    "paperback_book_yellow_garden_cover"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/105.jpg",
+   "verdict": "broken_or_missing_texture",
+   "reason": "The cover texture is heavily smeared and distorted, with the text and image details stretched and unreadable, indicating a texture mapping error."
+  },
+  {
+   "type": "parcel",
+   "looks": "small kraft taped",
+   "model": {
+    "source": "objaverse",
+    "id": "78b49c06cbaa4ba19365b9864bbc8845",
+    "looks_like": "Stylized Low Poly Wooden Crate",
+    "stand_in": false,
+    "scale": 0.34473,
+    "size_m": [
+     0.349,
+     0.35,
+     0.35
+    ]
+   },
+   "objects": [
+    "parcel_small_kraft_taped"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/106.jpg",
+   "verdict": "wrong_kind_of_thing",
+   "reason": "The model looks like a wooden crate or box with slats, not a parcel wrapped in kraft paper and tape."
+  },
+  {
+   "type": "paring knife",
+   "looks": "yellow handled",
+   "model": {
+    "source": "objaverse",
+    "id": "a8677d9c7a5b43fe966ac48d2798dad2",
+    "looks_like": "Butcher Knife",
+    "stand_in": false,
+    "scale": 0.00491,
+    "size_m": [
+     0.2,
+     0.053,
+     0.009
+    ]
+   },
+   "objects": [
+    "paring_knife_yellow_handled"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/107.jpg",
+   "verdict": "wrong_kind_of_thing",
+   "reason": "The model is a large, rectangular cleaver with a wooden handle, not a small paring knife with a yellow handle."
+  },
+  {
+   "type": "pasta",
+   "looks": "rigatoni paper bag",
+   "model": {
+    "source": "objaverse",
+    "id": "00d1be4411f848efaeb72b936d4d1692",
+    "looks_like": "Lays Packet",
+    "stand_in": true,
+    "scale": 0.00058,
+    "size_m": [
+     0.217,
+     0.25,
+     0.079
+    ]
+   },
+   "objects": [
+    "pasta_rigatoni_paper_bag"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/108.jpg",
+   "verdict": "wrong_kind_of_thing",
+   "reason": "The model is clearly a Lay's potato chip bag, not a pasta bag."
+  },
+  {
+   "type": "pen",
+   "looks": "black gel",
+   "model": {
+    "source": "objaverse",
+    "id": "9e0dba29de734ac4b20060ec873dc36c",
+    "looks_like": "Pencil",
+    "stand_in": false,
+    "scale": 0.19982,
+    "size_m": [
+     0.14,
+     0.123,
+     0.011
+    ]
+   },
+   "objects": [
+    "pen_black_gel",
+    "pen_red_felt_tip"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/109.jpg",
+   "verdict": "wrong_kind_of_thing",
+   "reason": "The model is clearly a wooden pencil with a sharpened graphite tip and a pink eraser, not a black gel pen."
+  },
+  {
+   "type": "pen",
+   "looks": "blue ballpoint",
+   "model": {
+    "source": "objaverse",
+    "id": "48de5fd3726d4792a474cb9781549155",
+    "looks_like": "Fountain Pens",
+    "stand_in": false,
+    "scale": 0.0039,
+    "size_m": [
+     0.14,
+     0.017,
+     0.14
+    ]
+   },
+   "objects": [
+    "pen_blue_ballpoint"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/110.jpg",
+   "verdict": "broken_or_shredded_mesh",
+   "reason": "The geometry is severely distorted and exploded, with the pen's components appearing as disjointed, shredded fragments rather than a cohesive object."
+  },
+  {
+   "type": "pen",
+   "looks": "green rollerball",
+   "model": {
+    "source": "objaverse",
+    "id": "7a09c75d40e84b10acfd4f8c40e08375",
+    "looks_like": "Old Pen",
+    "stand_in": false,
+    "scale": 0.016,
+    "size_m": [
+     0.14,
+     0.015,
+     0.097
+    ]
+   },
+   "objects": [
+    "pen_green_rollerball"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/111.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is clearly a pen, but its reddish-brown color is odd for a pen that is supposed to be a green rollerball."
+  },
+  {
+   "type": "pencil case",
+   "looks": "mustard canvas",
+   "model": {
+    "source": "objaverse",
+    "id": "1f33e40c27fe451e9efda612c69010ae",
+    "looks_like": "Pens with Pencil holder - desk props",
+    "stand_in": false,
+    "scale": 0.80204,
+    "size_m": [
+     0.111,
+     0.2,
+     0.151
+    ]
+   },
+   "objects": [
+    "pencil_case_mustard_canvas"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/112.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The object is recognisable as a pencil case, but the mustard-coloured canvas texture is stretched and distorted, making the detail look odd."
+  },
+  {
+   "type": "pepper mill",
+   "looks": "walnut turned",
+   "model": {
+    "source": "hssd",
+    "id": "b0e85675655f936f71c6b47f6bf0bcd09e4e09cb",
+    "looks_like": "Craft Mill",
+    "stand_in": false,
+    "scale": 1.0,
+    "size_m": [
+     0.069,
+     0.184,
+     0.069
+    ]
+   },
+   "objects": [
+    "pepper_mill_walnut_turned"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/113.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The object is recognisable as a pepper mill, but the top cap is rendered as a white, marble-like material instead of the expected dark wood or metal, making the colour/detail odd."
+  },
+  {
+   "type": "perfume",
+   "looks": "amber square bottle",
+   "model": {
+    "source": "objaverse",
+    "id": "a1f355ffea18473a99f04c3009ae48cb",
+    "looks_like": "perfume",
+    "stand_in": false,
+    "scale": 0.05375,
+    "size_m": [
+     0.072,
+     0.1,
+     0.036
+    ]
+   },
+   "objects": [
+    "perfume_amber_square_bottle"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/114.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is recognisable as a perfume bottle, but the label is a flat, dark, illegible block instead of a readable label, making that detail odd."
+  },
+  {
+   "type": "phone",
+   "looks": "black glass",
+   "model": {
+    "source": "props",
+    "id": "phone_223b376823b5",
+    "looks_like": "phone_223b376823b5",
+    "stand_in": false,
+    "scale": 0.00951,
+    "size_m": [
+     0.05,
+     0.15,
+     0.03
+    ]
+   },
+   "objects": [
+    "phone_black_glass"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/115.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is recognisable as a phone, but its surface is a flat, uniform grey with no visible screen, buttons, or other details, making the colour and lack of detail odd."
+  },
+  {
+   "type": "phone",
+   "looks": "black glass",
+   "model": {
+    "source": "props",
+    "id": "phone_7f658554a385",
+    "looks_like": "phone_7f658554a385",
+    "stand_in": false,
+    "scale": 0.07777,
+    "size_m": [
+     0.025,
+     0.15,
+     0.033
+    ]
+   },
+   "objects": [
+    "phone_black_glass_and_aluminum"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/116.jpg",
+   "verdict": "wrong_kind_of_thing",
+   "reason": "The model is a handheld device with a keypad and antenna, resembling a walkie-talkie or two-way radio, not a phone."
+  },
+  {
+   "type": "phone charger",
+   "looks": "black braided usb c",
+   "model": {
+    "source": "asked",
+    "id": "charger_9735f27518fa",
+    "looks_like": "white plug with a long cable",
+    "stand_in": false,
+    "scale": 0.00714,
+    "size_m": [
+     0.2,
+     0.021,
+     0.17
+    ]
+   },
+   "objects": [
+    "phone_charger_black_braided_usb_c",
+    "phone_charger_blue_braided_usb_c",
+    "phone_charger_gray_braided_usb_c_nylon_and_plastic",
+    "phone_charger_white_braided",
+    "phone_charger_yellow_braided_usb_c"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/117.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is clearly a phone charger, but it is rendered in a plain white color instead of the expected black braided texture, making the color and surface detail odd."
+  },
+  {
+   "type": "phone charger",
+   "looks": "black braided usb c",
+   "model": {
+    "source": "asked",
+    "id": "charger_0d8a9b971436",
+    "looks_like": "light grey plug block with a socket and no cable",
+    "stand_in": false,
+    "scale": 0.035,
+    "size_m": [
+     0.019,
+     0.07,
+     0.036
+    ]
+   },
+   "objects": [
+    "phone_charger_black_braided_usb_c_nylon",
+    "phone_charger_gray_braided_usb_c",
+    "phone_charger_green_braided_usb_c",
+    "phone_charger_white_braided_usb_c"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/118.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is clearly a phone charger, but it is entirely white, which is an odd color for a charger described as having a black braided USB-C cable."
+  },
+  {
+   "type": "phone",
+   "looks": "green glass",
+   "model": {
+    "source": "props",
+    "id": "phone_708c7214aa7f",
+    "looks_like": "phone_708c7214aa7f",
+    "stand_in": false,
+    "scale": 0.28988,
+    "size_m": [
+     0.025,
+     0.15,
+     0.035
+    ]
+   },
+   "objects": [
+    "phone_green_glass"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/119.jpg",
+   "verdict": "too_coarse",
+   "reason": "The model is extremely blocky and low-detail, making it difficult to clearly recognize as a phone."
+  },
+  {
+   "type": "piano music book",
+   "looks": "cream spiral score",
+   "model": {
+    "source": "asked",
+    "id": "2d16bb0da869abae99bb080d54869111fdfa2c67",
+    "looks_like": "paperback with a blue city photograph on the cover",
+    "stand_in": false,
+    "scale": 1.0,
+    "size_m": [
+     0.144,
+     0.026,
+     0.205
+    ]
+   },
+   "objects": [
+    "piano_music_book_cream_spiral_score"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/120.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The object is clearly a book, but the cover features a blue cityscape (London) and the text 'COOL LONDON' instead of the expected cream-colored spiral-bound piano score."
+  },
+  {
+   "type": "pillowcase",
+   "looks": "white linen",
+   "model": {
+    "source": "objaverse",
+    "id": "287c3f62c2b04a3585e2efe26678b8a6",
+    "looks_like": "Pillow",
+    "stand_in": true,
+    "scale": 0.00058,
+    "size_m": [
+     0.5,
+     0.14,
+     0.495
+    ]
+   },
+   "objects": [
+    "pillowcase_white_linen"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/121.jpg",
+   "verdict": "looks_right",
+   "reason": "The model displays the characteristic shape, wrinkles, and fabric texture of a standard white pillowcase, appearing intact and recognizable from both angles."
+  },
+  {
+   "type": "planting sketches",
+   "looks": "rolled tracing paper",
+   "model": {
+    "source": "objaverse",
+    "id": "cda269eb3c984d03bfd978d61693fed6",
+    "looks_like": "Ancient Rome",
+    "stand_in": true,
+    "scale": 0.00278,
+    "size_m": [
+     0.35,
+     0.026,
+     0.328
+    ]
+   },
+   "objects": [
+    "planting_sketches_rolled_tracing_paper"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/122.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is a flat sheet with a line-drawing texture that reads as a planting sketch, but the background is a solid orange rather than the expected white or paper color, making the color odd."
+  },
+  {
+   "type": "plasters",
+   "looks": "beige tin",
+   "model": {
+    "source": "objaverse",
+    "id": "dc19a68329ab435fa32344269e5a27dc",
+    "looks_like": "BLOODY BAND-AID",
+    "stand_in": false,
+    "scale": 0.01617,
+    "size_m": [
+     0.1,
+     0.028,
+     0.018
+    ]
+   },
+   "objects": [
+    "plasters_beige_tin"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/123.jpg",
+   "verdict": "wrong_kind_of_thing",
+   "reason": "The object is a thin, curved, brown strip that does not resemble a plaster or a beige tin."
+  },
+  {
+   "type": "plate",
+   "looks": "cream floral",
+   "model": {
+    "source": "props",
+    "id": "plate_5d7ba0f7cebb",
+    "looks_like": "rice dark plate food",
+    "stand_in": false,
+    "scale": 0.00634,
+    "size_m": [
+     0.26,
+     0.049,
+     0.26
+    ]
+   },
+   "objects": [
+    "plate_cream_floral"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/124.jpg",
+   "verdict": "broken_or_shredded_mesh",
+   "reason": "The central part of the plate is a lumpy, deformed mass with visible cracks and irregular geometry, rather than a smooth, flat surface."
+  },
+  {
+   "type": "plate",
+   "looks": "cream stoneware",
+   "model": {
+    "source": "hssd",
+    "id": "878dc86bcc60dec276240e2c7551b73094903127",
+    "looks_like": "black heath plate",
+    "stand_in": false,
+    "scale": 1.0,
+    "size_m": [
+     0.25,
+     0.032,
+     0.25
+    ]
+   },
+   "objects": [
+    "plate_cream_stoneware"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/125.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The object is clearly a plate, but it has an unusual green and white striped pattern and a small hole in the center, which are not typical for a standard plate."
+  },
+  {
+   "type": "plate",
+   "looks": "speckled blue",
+   "model": {
+    "source": "hssd",
+    "id": "b599eb548442db2690265de15d2bf8aa549acd02",
+    "looks_like": "Lacquer plate",
+    "stand_in": false,
+    "scale": 1.0,
+    "size_m": [
+     0.25,
+     0.011,
+     0.25
+    ]
+   },
+   "objects": [
+    "plate_speckled_blue"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/126.jpg",
+   "verdict": "broken_or_missing_texture",
+   "reason": "The plate is completely white and lacks the speckled blue texture described, indicating a missing or failed texture."
+  },
+  {
+   "type": "plate",
+   "looks": "white rimmed",
+   "model": {
+    "source": "hssd",
+    "id": "41753aebe629e7e2fbc8c576ce5865056b824ff7",
+    "looks_like": "River Series - Battersea Power Station Plate",
+    "stand_in": false,
+    "scale": 1.0,
+    "size_m": [
+     0.27,
+     0.01,
+     0.27
+    ]
+   },
+   "objects": [
+    "plate_white_rimmed"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/127.jpg",
+   "verdict": "broken_or_missing_texture",
+   "reason": "The texture is heavily distorted and smeared, with large areas of flat white and blue that do not form a coherent, recognizable pattern for a plate."
+  },
+  {
+   "type": "project folder",
+   "looks": "blue recycled board",
+   "model": {
+    "source": "hssd",
+    "id": "e529ddcb1306b1177e7caf9862c438ff96fb9994",
+    "looks_like": "A4 Ring Binder Black",
+    "stand_in": false,
+    "scale": 1.0,
+    "size_m": [
+     0.25,
+     0.056,
+     0.32
+    ]
+   },
+   "objects": [
+    "project_folder_blue_recycled_board"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/128.jpg",
+   "verdict": "broken_or_missing_texture",
+   "reason": "The model is a flat, single-color black shape with no visible texture, labels, or details expected on a project folder."
+  },
+  {
+   "type": "pruning shears",
+   "looks": "red handled",
+   "model": {
+    "source": "props",
+    "id": "shears_0019c537f588",
+    "looks_like": "garden shears outdoors heavy duty",
+    "stand_in": false,
+    "scale": 0.00521,
+    "size_m": [
+     0.204,
+     0.3,
+     0.02
+    ]
+   },
+   "objects": [
+    "pruning_shears_red_handled"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/129.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is recognisable as a pair of pruning shears, but the handles are a plain brown/orange rather than the expected red, and the metal blades appear as a flat, untextured black."
+  },
+  {
+   "type": "rain boots",
+   "looks": "brown ankle pair",
+   "model": {
+    "source": "hssd",
+    "id": "47f2e1e508235ae3c63f61efadf14f569171759f",
+    "looks_like": "Shoes - Boots",
+    "stand_in": false,
+    "scale": 1.0,
+    "size_m": [
+     0.268,
+     0.252,
+     0.295
+    ]
+   },
+   "objects": [
+    "rain_boots_brown_ankle_pair"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/130.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is clearly a pair of ankle boots, but the surface has a metallic, chrome-like texture instead of the expected matte rubber or leather, making the material detail odd."
+  },
+  {
+   "type": "reading glasses",
+   "looks": "thin bronze round",
+   "model": {
+    "source": "asked",
+    "id": "e903b2fc42ecaa04ba1facfed58e4e7ae4795c51",
+    "looks_like": "black-framed glasses",
+    "stand_in": false,
+    "scale": 1.0,
+    "size_m": [
+     0.137,
+     0.04,
+     0.141
+    ]
+   },
+   "objects": [
+    "reading_glasses_thin_bronze_round",
+    "reading_glasses_tortoiseshell_oval"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/131.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is clearly a pair of reading glasses, but the frames are black instead of the expected thin bronze, and the lenses appear as a flat, opaque off-white rather than transparent."
+  },
+  {
+   "type": "receipts",
+   "looks": "creased white slips",
+   "model": {
+    "source": "objaverse",
+    "id": "1356e831277647098c204be4b0edf65c",
+    "looks_like": "Papers",
+    "stand_in": false,
+    "scale": 0.00014,
+    "size_m": [
+     0.129,
+     0.003,
+     0.15
+    ]
+   },
+   "objects": [
+    "receipts_creased_white_slips"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/132.jpg",
+   "verdict": "broken_or_shredded_mesh",
+   "reason": "The geometry is fragmented and exploded, with the receipt pieces separated and floating apart rather than forming a single intact object."
+  },
+  {
+   "type": "remote control",
+   "looks": "black rounded",
+   "model": {
+    "source": "props",
+    "id": "remote_control_35ac912c7dc1",
+    "looks_like": "black sleek new smart tv",
+    "stand_in": false,
+    "scale": 0.00984,
+    "size_m": [
+     0.039,
+     0.029,
+     0.2
+    ]
+   },
+   "objects": [
+    "remote_control_black_rounded"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/133.jpg",
+   "verdict": "looks_right",
+   "reason": "The model is clearly recognizable as a standard black remote control with visible buttons and a smooth, intact surface."
+  },
+  {
+   "type": "restaurant notebook",
+   "looks": "red clothbound",
+   "model": {
+    "source": "asked",
+    "id": "0e11918fe7eaf8bdee859494e0d3dfe59d5b2d32",
+    "looks_like": "thin coral-red notebook with an elastic band",
+    "stand_in": false,
+    "scale": 1.0,
+    "size_m": [
+     0.13,
+     0.011,
+     0.212
+    ]
+   },
+   "objects": [
+    "restaurant_notebook_red_clothbound"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/134.jpg",
+   "verdict": "looks_right",
+   "reason": "The model clearly depicts a red, clothbound notebook with a visible spine and pages, matching the description of a restaurant notebook."
+  },
+  {
+   "type": "restaurant receipt",
+   "looks": "long thermal slip",
+   "model": {
+    "source": "objaverse",
+    "id": "1356e831277647098c204be4b0edf65c",
+    "looks_like": "Papers",
+    "stand_in": false,
+    "scale": 0.00014,
+    "size_m": [
+     0.129,
+     0.003,
+     0.15
+    ]
+   },
+   "objects": [
+    "restaurant_receipt_long_thermal_slip"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/135.jpg",
+   "verdict": "broken_or_shredded_mesh",
+   "reason": "The geometry is severely fragmented and exploded, with the receipt appearing as scattered, disconnected white shards rather than a single intact slip."
+  },
+  {
+   "type": "restaurant shirt",
+   "looks": "white cotton",
+   "model": {
+    "source": "objaverse",
+    "id": "20fbb246bd19402c82e01d7541a72f8e",
+    "looks_like": "T-shirt T Pose",
+    "stand_in": false,
+    "scale": 0.00535,
+    "size_m": [
+     0.4,
+     0.33,
+     0.157
+    ]
+   },
+   "objects": [
+    "restaurant_shirt_white_cotton"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/136.jpg",
+   "verdict": "broken_or_shredded_mesh",
+   "reason": "The mesh is severely distorted and shredded, with large holes and missing geometry, making it unrecognizable as a shirt."
+  },
+  {
+   "type": "reusable shopping bags",
+   "looks": "folded canvas bundle",
+   "model": {
+    "source": "objaverse",
+    "id": "f7848ac0804d461f9493a87b412bc011",
+    "looks_like": "Bought Bread",
+    "stand_in": false,
+    "scale": 4.05266,
+    "size_m": [
+     0.378,
+     0.4,
+     0.261
+    ]
+   },
+   "objects": [
+    "reusable_shopping_bags_folded_canvas_bundle"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/137.jpg",
+   "verdict": "wrong_kind_of_thing",
+   "reason": "The model clearly depicts a bag of bread rolls and a basket of potatoes, not a reusable shopping bag."
+  },
+  {
+   "type": "rice",
+   "looks": "brown rice sack",
+   "model": {
+    "source": "objaverse",
+    "id": "00d1be4411f848efaeb72b936d4d1692",
+    "looks_like": "Lays Packet",
+    "stand_in": true,
+    "scale": 0.00058,
+    "size_m": [
+     0.217,
+     0.25,
+     0.079
+    ]
+   },
+   "objects": [
+    "rice_brown_sack"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/138.jpg",
+   "verdict": "wrong_kind_of_thing",
+   "reason": "The model is clearly a bag of Lay's potato chips, not a sack of brown rice."
+  },
+  {
+   "type": "robe",
+   "looks": "gray waffle cotton",
+   "model": {
+    "source": "objaverse",
+    "id": "0478a5ae37d045ba8263f6c727401e5a",
+    "looks_like": "Kimono",
+    "stand_in": false,
+    "scale": 0.00344,
+    "size_m": [
+     0.335,
+     0.5,
+     0.158
+    ]
+   },
+   "objects": [
+    "robe_gray_waffle_cotton"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/139.jpg",
+   "verdict": "broken_or_shredded_mesh",
+   "reason": "The geometry is severely distorted and shredded, with the left view showing a mangled, unrecognizable mass and the right view showing a fragmented, non-coherent shape that does not resemble an intact "
+  },
+  {
+   "type": "rolling pin",
+   "looks": "short beech",
+   "model": {
+    "source": "objaverse",
+    "id": "9161edd798124768a75d9f41be0c400e",
+    "looks_like": "KOSMOS Sensor Holder Pin V6",
+    "stand_in": false,
+    "scale": 0.00755,
+    "size_m": [
+     0.038,
+     0.038,
+     0.4
+    ]
+   },
+   "objects": [
+    "rolling_pin_short_beech"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/140.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The object is clearly a rolling pin, but it is rendered in a solid, unnatural blue color instead of the expected wood tone, and it lacks the typical handle details."
+  },
+  {
+   "type": "rubber gloves",
+   "looks": "yellow pair",
+   "model": {
+    "source": "objaverse",
+    "id": "79a3902f37f2482c97520f3f19e419ab",
+    "looks_like": "SRG Glove",
+    "stand_in": false,
+    "scale": 0.10896,
+    "size_m": [
+     0.175,
+     0.3,
+     0.132
+    ]
+   },
+   "objects": [
+    "rubber_gloves_yellow_pair"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/141.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is clearly a pair of gloves, but the color is a uniform, desaturated grey instead of the expected yellow, and the surface texture appears flat and lacks the typical sheen or detailed pattern"
+  },
+  {
+   "type": "ruler",
+   "looks": "clear aluminum edge",
+   "model": {
+    "source": "objaverse",
+    "id": "db1883e2b2e04edfba72fa35751a7694",
+    "looks_like": "Ruler",
+    "stand_in": false,
+    "scale": 0.00098,
+    "size_m": [
+     0.3,
+     0.002,
+     0.028
+    ]
+   },
+   "objects": [
+    "ruler_clear_aluminum_edge"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/142.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The object is clearly a ruler, but it is rendered in a solid, bright yellow color instead of the expected clear aluminum or standard plastic, making its color odd."
+  },
+  {
+   "type": "running shoes",
+   "looks": "white green mesh",
+   "model": {
+    "source": "hssd",
+    "id": "394467b057310b24ee40affe51c79784d5d5ad76",
+    "looks_like": "Shoes - All Stars",
+    "stand_in": false,
+    "scale": 1.0,
+    "size_m": [
+     0.214,
+     0.133,
+     0.255
+    ]
+   },
+   "objects": [
+    "running_shoes_white_green_mesh"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/143.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is clearly a pair of high-top sneakers, but the color scheme (bright red with black toe caps) and the flat, uniform texture are odd for a typical running shoe, which is usually more complex."
+  },
+  {
+   "type": "salt cellar",
+   "looks": "white ceramic",
+   "model": {
+    "source": "hssd",
+    "id": "7c6eb71dabf14ce37c91bacf35c8cf700b84db62",
+    "looks_like": "Salt pot and spoon",
+    "stand_in": false,
+    "scale": 1.0,
+    "size_m": [
+     0.196,
+     0.097,
+     0.1
+    ]
+   },
+   "objects": [
+    "salt_cellar_white_ceramic"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/144.jpg",
+   "verdict": "broken_or_shredded_mesh",
+   "reason": "The geometry is severely broken, with the bowl shapes appearing as hollow, open shells with missing walls and jagged, incomplete edges rather than a solid, intact vessel."
+  },
+  {
+   "type": "saucepan",
+   "looks": "small copper",
+   "model": {
+    "source": "hssd",
+    "id": "214a993418b4aee37d1b3797e2b6ed2bd2fd73bc",
+    "looks_like": "DENVER",
+    "stand_in": false,
+    "scale": 1.0,
+    "size_m": [
+     0.338,
+     0.1,
+     0.251
+    ]
+   },
+   "objects": [
+    "saucepan_small_copper"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/145.jpg",
+   "verdict": "broken_or_missing_texture",
+   "reason": "The model is rendered as a solid black silhouette with no visible surface texture, shading, or material detail, making it appear as a flat, untextured shape rather than a recognizable 3D object."
+  },
+  {
+   "type": "scissors",
+   "looks": "red handled",
+   "model": {
+    "source": "props",
+    "id": "scissors_9399c720c9ed",
+    "looks_like": "red kitchen school stationery",
+    "stand_in": false,
+    "scale": 0.69247,
+    "size_m": [
+     0.225,
+     0.012,
+     0.208
+    ]
+   },
+   "objects": [
+    "scissors_red_handled"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/146.jpg",
+   "verdict": "looks_right",
+   "reason": "The model clearly depicts a pair of scissors with red handles and silver blades, and the geometry appears intact and recognizable from both angles."
+  },
+  {
+   "type": "serving platter",
+   "looks": "oval white",
+   "model": {
+    "source": "objaverse",
+    "id": "134e654bfbbc482c884c5bf7a14e1da9",
+    "looks_like": "Cheese Platter",
+    "stand_in": false,
+    "scale": 0.62295,
+    "size_m": [
+     0.4,
+     0.089,
+     0.201
+    ]
+   },
+   "objects": [
+    "serving_platter_oval_white"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/147.jpg",
+   "verdict": "wrong_kind_of_thing",
+   "reason": "The model is a rectangular wooden cutting board with food items on it, not an oval white serving platter."
+  },
+  {
+   "type": "serving spoon",
+   "looks": "walnut handled",
+   "model": {
+    "source": "objaverse",
+    "id": "e1745c4aa7c046a2b5193d2d23be0192",
+    "looks_like": "Spoon",
+    "stand_in": false,
+    "scale": 0.00272,
+    "size_m": [
+     0.058,
+     0.028,
+     0.3
+    ]
+   },
+   "objects": [
+    "serving_spoon_walnut_handled"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/148.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The object is clearly a spoon, but it has a dark, metallic appearance instead of the expected walnut handle color."
+  },
+  {
+   "type": "shampoo",
+   "looks": "amber pump bottle",
+   "model": {
+    "source": "objaverse",
+    "id": "d2153a9ed0d64c15911db2f53f1772bc",
+    "looks_like": "SHAMPOO GRANDES HEROES",
+    "stand_in": false,
+    "scale": 0.00113,
+    "size_m": [
+     0.087,
+     0.2,
+     0.048
+    ]
+   },
+   "objects": [
+    "shampoo_amber_pump_bottle"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/149.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is recognisable as a shampoo bottle, but the label texture is heavily distorted and smeared, making the details look odd and unreadable."
+  },
+  {
+   "type": "sheet",
+   "looks": "gray fitted jersey",
+   "model": {
+    "source": "objaverse",
+    "id": "3e3fb2880a184a418dfa62581d07e12d",
+    "looks_like": "Frosted Sheets",
+    "stand_in": true,
+    "scale": 0.13382,
+    "size_m": [
+     0.4,
+     0.077,
+     0.315
+    ]
+   },
+   "objects": [
+    "sheet_gray_fitted_jersey"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/150.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is a crumpled sheet, but it has a red and white checkered pattern instead of the expected solid grey color."
+  },
+  {
+   "type": "silicone spatula",
+   "looks": "red heatproof",
+   "model": {
+    "source": "objaverse",
+    "id": "c039015dad6245cabd9044c67ada4252",
+    "looks_like": "Spatula (Spongebob)",
+    "stand_in": false,
+    "scale": 0.00037,
+    "size_m": [
+     0.085,
+     0.28,
+     0.015
+    ]
+   },
+   "objects": [
+    "silicone_spatula_red_heatproof"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/151.jpg",
+   "verdict": "wrong_kind_of_thing",
+   "reason": "The object is a metal slotted spatula (turner) with a black handle, not a red silicone spatula."
+  },
+  {
+   "type": "sketch paper pad",
+   "looks": "white gridded",
+   "model": {
+    "source": "objaverse",
+    "id": "b081286782c944f7a3bb3d8b93a7daf8",
+    "looks_like": "Notebook",
+    "stand_in": false,
+    "scale": 0.00102,
+    "size_m": [
+     0.35,
+     0.02,
+     0.217
+    ]
+   },
+   "objects": [
+    "sketch_paper_pad_white_gridded"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/152.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The object is recognisable as a sketch paper pad, but the bright yellow square and the thick black band across the cover are unusual details not typically found on a standard sketch pad."
+  },
+  {
+   "type": "sketchbook",
+   "looks": "cream spiral",
+   "model": {
+    "source": "hssd",
+    "id": "04f1fccc1f38469aff1a8c83a92eee520cce0228",
+    "looks_like": "Vinyl Record Sketch Book",
+    "stand_in": false,
+    "scale": 1.0,
+    "size_m": [
+     0.203,
+     0.018,
+     0.192
+    ]
+   },
+   "objects": [
+    "sketchbook_cream_spiral"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/153.jpg",
+   "verdict": "wrong_kind_of_thing",
+   "reason": "The model looks like a round, disc-shaped object (resembling a record or a button) rather than a rectangular sketchbook."
+  },
+  {
+   "type": "sleep pants",
+   "looks": "soft blue cotton",
+   "model": {
+    "source": "objaverse",
+    "id": "0ff94403111942889255f764cb97ba66",
+    "looks_like": "Sweatpants",
+    "stand_in": false,
+    "scale": 0.38054,
+    "size_m": [
+     0.155,
+     0.35,
+     0.112
+    ]
+   },
+   "objects": [
+    "sleep_pants_soft_blue_cotton"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/154.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is clearly a pair of pants, but the color is black instead of the expected soft blue cotton, and the side stripes are a detail not typical for sleep pants."
+  },
+  {
+   "type": "sleep pants",
+   "looks": "soft charcoal cotton",
+   "model": {
+    "source": "objaverse",
+    "id": "558a28477bca4d7599f82e5621e41daf",
+    "looks_like": "pants test",
+    "stand_in": false,
+    "scale": 0.175,
+    "size_m": [
+     0.19,
+     0.35,
+     0.111
+    ]
+   },
+   "objects": [
+    "sleep_pants_soft_charcoal_cotton"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/155.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is clearly a pair of pants, but the camouflage pattern is odd for sleep pants, which are typically solid-colored or have simple patterns."
+  },
+  {
+   "type": "sleep shirt",
+   "looks": "soft blue cotton",
+   "model": {
+    "source": "objaverse",
+    "id": "20fbb246bd19402c82e01d7541a72f8e",
+    "looks_like": "T-shirt T Pose",
+    "stand_in": false,
+    "scale": 0.00468,
+    "size_m": [
+     0.35,
+     0.289,
+     0.138
+    ]
+   },
+   "objects": [
+    "sleep_shirt_soft_blue_cotton"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/156.jpg",
+   "verdict": "broken_or_missing_texture",
+   "reason": "The model is a solid, flat white color with no visible fabric texture, seams, or details, making it look like a blank 3D shape rather than a realistic sleep shirt."
+  },
+  {
+   "type": "sleep shirt",
+   "looks": "soft charcoal cotton",
+   "model": {
+    "source": "objaverse",
+    "id": "766be84457bd4b50a04c1d7442444baf",
+    "looks_like": "T+shirts",
+    "stand_in": false,
+    "scale": 0.00318,
+    "size_m": [
+     0.35,
+     0.195,
+     0.086
+    ]
+   },
+   "objects": [
+    "sleep_shirt_soft_charcoal_cotton"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/157.jpg",
+   "verdict": "broken_or_shredded_mesh",
+   "reason": "The mesh is severely broken and shredded, with large holes and missing geometry, making it look like a fragmented, incomplete object rather than an intact sleep shirt."
+  },
+  {
+   "type": "snack bowl",
+   "looks": "stoneware blue",
+   "model": {
+    "source": "props",
+    "id": "bowl_826eeb384b64",
+    "looks_like": "porcelain white",
+    "stand_in": false,
+    "scale": 1.03954,
+    "size_m": [
+     0.218,
+     0.08,
+     0.22
+    ]
+   },
+   "objects": [
+    "snack_bowl_stoneware_blue"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/158.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The object is clearly a bowl, but its color is a flat, mottled grey-brown instead of the expected blue stoneware, and the surface texture appears smudged and lacks the crisp detail of a real bowl."
+  },
+  {
+   "type": "socks",
+   "looks": "black cotton ankle pair",
+   "model": {
+    "source": "objaverse",
+    "id": "c58796860c764ae68082b4f752bfd84a",
+    "looks_like": "Women's 80's/90's Rainbow Ski Sock",
+    "stand_in": false,
+    "scale": 0.00077,
+    "size_m": [
+     0.242,
+     0.25,
+     0.085
+    ]
+   },
+   "objects": [
+    "socks_black_cotton_ankle_pair"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/159.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is clearly a pair of socks, but the texture features a chaotic, multi-colored pattern that is not typical for a standard black cotton ankle pair."
+  },
+  {
+   "type": "spare umbrella",
+   "looks": "navy folding",
+   "model": {
+    "source": "objaverse",
+    "id": "ca9bb8c8ffc640c6a9be8ad5f341c9c4",
+    "looks_like": "Elegant umbrella",
+    "stand_in": false,
+    "scale": 0.00481,
+    "size_m": [
+     0.6,
+     0.476,
+     0.6
+    ]
+   },
+   "objects": [
+    "spare_umbrella_navy_folding"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/160.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is clearly a spare umbrella, but its canopy is a very dark, almost black color with a glossy, metallic sheen, which is an odd detail for a typical navy folding umbrella."
+  },
+  {
+   "type": "stain remover",
+   "looks": "orange spray bottle",
+   "model": {
+    "source": "objaverse",
+    "id": "5257f5522875473982e618ba7cfc5825",
+    "looks_like": "Old Medicine Jar",
+    "stand_in": false,
+    "scale": 0.01006,
+    "size_m": [
+     0.082,
+     0.2,
+     0.082
+    ]
+   },
+   "objects": [
+    "stain_remover_orange_spray_bottle"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/161.jpg",
+   "verdict": "wrong_kind_of_thing",
+   "reason": "The model is a simple, smooth cylinder with a small cap, resembling a generic bottle or container, and lacks the distinct spray nozzle, trigger, and label details expected of a stain remover spray."
+  },
+  {
+   "type": "sticky notes",
+   "looks": "lemon yellow pad",
+   "model": {
+    "source": "objaverse",
+    "id": "b081286782c944f7a3bb3d8b93a7daf8",
+    "looks_like": "Notebook",
+    "stand_in": false,
+    "scale": 0.00023,
+    "size_m": [
+     0.08,
+     0.004,
+     0.05
+    ]
+   },
+   "objects": [
+    "sticky_notes_lemon_yellow_pad"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/162.jpg",
+   "verdict": "wrong_kind_of_thing",
+   "reason": "The model depicts a spiral-bound notebook with a black elastic band, not a sticky notes pad."
+  },
+  {
+   "type": "stockpot",
+   "looks": "tall stainless",
+   "model": {
+    "source": "hssd",
+    "id": "b0a324b59d4e885ac850353b422bb78ad404a14e",
+    "looks_like": "Marco Pierre White Range 1003 18cm Vegetable Pan with Lid",
+    "stand_in": false,
+    "scale": 1.0,
+    "size_m": [
+     0.34,
+     0.127,
+     0.183
+    ]
+   },
+   "objects": [
+    "stockpot_tall_stainless"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/163.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is clearly a stockpot, but it is rendered in a solid black color instead of the expected metallic silver, and the handle appears to be a simple, flat, untextured shape."
+  },
+  {
+   "type": "sugar jar",
+   "looks": "clear glass clamp",
+   "model": {
+    "source": "hssd",
+    "id": "273fc31360775931c2a6ae539de7bf152ee0c534",
+    "looks_like": "IRIDESCENT GLASS MOSAIC BATHROOM STORAGE JAR SMALL",
+    "stand_in": false,
+    "scale": 1.0,
+    "size_m": [
+     0.087,
+     0.137,
+     0.087
+    ]
+   },
+   "objects": [
+    "sugar_jar_clear_glass_clamp"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/164.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is recognisable as a lidded jar, but the material is a solid, opaque, marble-like texture rather than the clear glass expected for a sugar jar."
+  },
+  {
+   "type": "table knives",
+   "looks": "one black-handled",
+   "model": {
+    "source": "objaverse",
+    "id": "a8677d9c7a5b43fe966ac48d2798dad2",
+    "looks_like": "Butcher Knife",
+    "stand_in": false,
+    "scale": 0.0054,
+    "size_m": [
+     0.22,
+     0.059,
+     0.01
+    ]
+   },
+   "objects": [
+    "table_knives_one_black_handled"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/165.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The object is clearly a cleaver, but the blade is rendered as a flat, featureless black color instead of the expected metallic silver, making the color detail odd."
+  },
+  {
+   "type": "table knives",
+   "looks": "one serrated silver",
+   "model": {
+    "source": "objaverse",
+    "id": "85d7e91f9ff7481fab88daf098c1194f",
+    "looks_like": "Whale knife",
+    "stand_in": false,
+    "scale": 0.11032,
+    "size_m": [
+     0.065,
+     0.048,
+     0.22
+    ]
+   },
+   "objects": [
+    "table_knives_one_serrated_silver"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/166.jpg",
+   "verdict": "broken_or_shredded_mesh",
+   "reason": "The geometry is severely shredded and fragmented, appearing as thin, broken lines rather than a solid, intact knife."
+  },
+  {
+   "type": "table spoons",
+   "looks": "one narrow silver",
+   "model": {
+    "source": "objaverse",
+    "id": "e55af322cf8f43fa9b4fb2b368bafd0f",
+    "looks_like": "Old spoon",
+    "stand_in": false,
+    "scale": 0.02257,
+    "size_m": [
+     0.039,
+     0.018,
+     0.18
+    ]
+   },
+   "objects": [
+    "table_spoons_one_narrow_silver"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/167.jpg",
+   "verdict": "looks_right",
+   "reason": "The model shows a normal, intact table spoon with a recognizable bowl and handle, and the metallic texture appears consistent and undistorted."
+  },
+  {
+   "type": "table spoons",
+   "looks": "one oval silver",
+   "model": {
+    "source": "objaverse",
+    "id": "9043f465b9e34da5bb87fb45373cb5dd",
+    "looks_like": "Spoon",
+    "stand_in": false,
+    "scale": 0.00366,
+    "size_m": [
+     0.037,
+     0.18,
+     0.012
+    ]
+   },
+   "objects": [
+    "table_spoons_one_oval_silver"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/168.jpg",
+   "verdict": "looks_right",
+   "reason": "The model displays the correct shape and metallic appearance of a standard table spoon, with no visible defects or missing parts."
+  },
+  {
+   "type": "tablet",
+   "looks": "dark restaurant tablet",
+   "model": {
+    "source": "asked",
+    "id": "e726400daa4521c93b85a0e8e8bb239fcb7635e7",
+    "looks_like": "tablet propped up on a folding cover",
+    "stand_in": false,
+    "scale": 1.0,
+    "size_m": [
+     0.185,
+     0.191,
+     0.15
+    ]
+   },
+   "objects": [
+    "tablet_dark_restaurant"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/169.jpg",
+   "verdict": "looks_right",
+   "reason": "The model is clearly recognizable as a tablet with a screen displaying app icons and a stand, and it appears intact and normal from both angles."
+  },
+  {
+   "type": "tea tin",
+   "looks": "red square",
+   "model": {
+    "source": "hssd",
+    "id": "e8d6fdd7c590fec96e683671ce188f4e51a442a7",
+    "looks_like": "Palmers Green Hinged Coffee Tin",
+    "stand_in": false,
+    "scale": 1.0,
+    "size_m": [
+     0.11,
+     0.13,
+     0.11
+    ]
+   },
+   "objects": [
+    "tea_tin_red_square"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/170.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is clearly a tea tin, but the label text is mirrored (e.g., 'PALMER'S' and 'COFFEE' are reversed), which is an odd detail."
+  },
+  {
+   "type": "tea towels",
+   "looks": "striped linen",
+   "model": {
+    "source": "asked",
+    "id": "towel_35b76b90614d",
+    "looks_like": "plain cream towel",
+    "stand_in": false,
+    "scale": 0.00131,
+    "size_m": [
+     0.4,
+     0.122,
+     0.353
+    ]
+   },
+   "objects": [
+    "tea_towels_striped_linen"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/171.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is recognisable as a folded tea towel, but it is a plain, untextured beige colour and lacks the striped linen detail expected for this item."
+  },
+  {
+   "type": "thermometer",
+   "looks": "digital white",
+   "model": {
+    "source": "objaverse",
+    "id": "acb2c16f9224404d996ab44c26d58176",
+    "looks_like": "Fever thermometer",
+    "stand_in": false,
+    "scale": 0.95287,
+    "size_m": [
+     0.019,
+     0.008,
+     0.13
+    ]
+   },
+   "objects": [
+    "thermometer_digital_white"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/172.jpg",
+   "verdict": "looks_right",
+   "reason": "The model clearly depicts a digital thermometer with a recognizable shape, including a display area and a probe tip, and the colors and details appear normal and intact."
+  },
+  {
+   "type": "thermos",
+   "looks": "brushed steel",
+   "model": {
+    "source": "hssd",
+    "id": "6559f3e7b5325e7981d153d288fbb8e54659584a",
+    "looks_like": "Thermos Everyday Flask, Stainless Steel, 0.5L",
+    "stand_in": false,
+    "scale": 1.0,
+    "size_m": [
+     0.053,
+     0.203,
+     0.052
+    ]
+   },
+   "objects": [
+    "thermos_brushed_steel"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/173.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is clearly a thermos, but it is rendered in a solid black color instead of the expected brushed steel, and the surface lacks the metallic texture and reflections typical of that material."
+  },
+  {
+   "type": "thermos",
+   "looks": "red insulated",
+   "model": {
+    "source": "hssd",
+    "id": "aaf1ba3e91ae781751ab5eba22ec2bbd30e05365",
+    "looks_like": "Basic Thermal Jug Vacuum Flask",
+    "stand_in": false,
+    "scale": 1.0,
+    "size_m": [
+     0.152,
+     0.201,
+     0.132
+    ]
+   },
+   "objects": [
+    "thermos_red_insulated"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/174.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is clearly a thermos, but it has an unusual blue color and a strange spherical knob on the lid instead of a normal cap."
+  },
+  {
+   "type": "throw blanket",
+   "looks": "rust woven",
+   "model": {
+    "source": "hssd",
+    "id": "589d23d411e606861d00b3f3dfeda8f596261157",
+    "looks_like": "Throw",
+    "stand_in": false,
+    "scale": 1.0,
+    "size_m": [
+     0.298,
+     0.1,
+     0.499
+    ]
+   },
+   "objects": [
+    "throw_blanket_rust_woven"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/175.jpg",
+   "verdict": "broken_or_shredded_mesh",
+   "reason": "The mesh is severely shredded and exploded, with the fringed edges appearing as a chaotic cloud of disconnected spikes rather than a solid, intact blanket."
+  },
+  {
+   "type": "tissues",
+   "looks": "white cube box",
+   "model": {
+    "source": "hssd",
+    "id": "1472a0b835223f7c39e850146dbde04d28e99da1",
+    "looks_like": "Hinoki Tissue Box",
+    "stand_in": false,
+    "scale": 1.0,
+    "size_m": [
+     0.25,
+     0.157,
+     0.13
+    ]
+   },
+   "objects": [
+    "tissues_white_cube_box"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/176.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The object is recognisable as a tissue box, but the wood-grain texture on the sides and the white, holey texture on the front are odd and unrealistic for a typical tissue box."
+  },
+  {
+   "type": "toilet brush",
+   "looks": "white handled",
+   "model": {
+    "source": "hssd",
+    "id": "ef5e6d723f4929ed1ed175781801e390569e7e9a",
+    "looks_like": "Ink Toilet Brush Holder",
+    "stand_in": false,
+    "scale": 1.0,
+    "size_m": [
+     0.115,
+     0.4,
+     0.115
+    ]
+   },
+   "objects": [
+    "toilet_brush_white_handled"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/177.jpg",
+   "verdict": "wrong_kind_of_thing",
+   "reason": "The model is a simple rectangular block with a thin stick on top, which does not resemble the shape of a toilet brush (which should have a wider, bristled head)."
+  },
+  {
+   "type": "toilet paper roll",
+   "looks": "white embossed",
+   "model": {
+    "source": "objaverse",
+    "id": "448e57880fa744e19e18604e42d64cf3",
+    "looks_like": "Simple Toilet Paper 2.0",
+    "stand_in": false,
+    "scale": 0.05572,
+    "size_m": [
+     0.099,
+     0.111,
+     0.12
+    ]
+   },
+   "objects": [
+    "toilet_paper_roll_white_embossed"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/178.jpg",
+   "verdict": "looks_right",
+   "reason": "The model displays the correct cylindrical shape, white paper texture, and central cardboard core, making it easily recognizable as a standard toilet paper roll."
+  },
+  {
+   "type": "toiletry bag",
+   "looks": "blue canvas zippered",
+   "model": {
+    "source": "hssd",
+    "id": "c7cd117550688ee734436bca9b49d5c7c2217207",
+    "looks_like": "Lazzari Square Large makeup bag - Beauty Make-up Case",
+    "stand_in": false,
+    "scale": 1.0,
+    "size_m": [
+     0.201,
+     0.227,
+     0.164
+    ]
+   },
+   "objects": [
+    "toiletry_bag_blue_canvas_zippered"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/179.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is recognisable as a toiletry bag, but its colour is black instead of the expected blue canvas, and the handle/zipper details are a mismatched orange."
+  },
+  {
+   "type": "tongs",
+   "looks": "black locking",
+   "model": {
+    "source": "objaverse",
+    "id": "dc660aa382114a93b0c8ea2f929c8b07",
+    "looks_like": "Tongue mites 01",
+    "stand_in": false,
+    "scale": 0.71117,
+    "size_m": [
+     0.08,
+     0.026,
+     0.3
+    ]
+   },
+   "objects": [
+    "tongs_black_locking"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/180.jpg",
+   "verdict": "looks_right",
+   "reason": "The model clearly depicts a pair of tongs with the correct shape and structure, recognizable from both angles."
+  },
+  {
+   "type": "toothbrush",
+   "looks": "dark blue",
+   "model": {
+    "source": "objaverse",
+    "id": "3d334e0398ce44a598573a819e0daa79",
+    "looks_like": "Toothbrush",
+    "stand_in": false,
+    "scale": 0.0011,
+    "size_m": [
+     0.016,
+     0.016,
+     0.19
+    ]
+   },
+   "objects": [
+    "toothbrush_dark_blue"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/181.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is clearly a toothbrush, but the handle is a solid dark blue/purple and the bristles are a bright green, which are not typical colors for a standard toothbrush."
+  },
+  {
+   "type": "toothbrush holder",
+   "looks": "speckled ceramic",
+   "model": {
+    "source": "hssd",
+    "id": "952ee2c654a116614574c4407d8182a3d2af656a",
+    "looks_like": "Cute Heart Printed Toothbrush Holder",
+    "stand_in": false,
+    "scale": 1.0,
+    "size_m": [
+     0.088,
+     0.141,
+     0.088
+    ]
+   },
+   "objects": [
+    "toothbrush_holder_speckled_ceramic"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/182.jpg",
+   "verdict": "looks_right",
+   "reason": "The model is a recognizable, intact cylindrical toothbrush holder with a speckled ceramic texture and appropriate holes for holding toothbrushes."
+  },
+  {
+   "type": "toothbrush",
+   "looks": "pale green",
+   "model": {
+    "source": "objaverse",
+    "id": "74a54eea8293455baf97a25f7eb88cd0",
+    "looks_like": "Sonic Care Electric Tooth Brush",
+    "stand_in": false,
+    "scale": 0.07087,
+    "size_m": [
+     0.022,
+     0.19,
+     0.025
+    ]
+   },
+   "objects": [
+    "toothbrush_pale_green"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/183.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is clearly a toothbrush, but the body has a strange, mottled, almost metallic or dirty texture instead of a clean, solid color, and the bristles look very sparse and thin."
+  },
+  {
+   "type": "toothpaste",
+   "looks": "white mint tube",
+   "model": {
+    "source": "objaverse",
+    "id": "3a77c506eaea4e08a10f1d288d2ce45d",
+    "looks_like": "colgate toothpaste tube",
+    "stand_in": false,
+    "scale": 0.00028,
+    "size_m": [
+     0.056,
+     0.038,
+     0.18
+    ]
+   },
+   "objects": [
+    "toothpaste_white_mint_tube"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/184.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is clearly a toothpaste tube, but the label text is mirrored (reading 'etaproc' instead of 'Colgate'), which is an odd detail."
+  },
+  {
+   "type": "tote bag",
+   "looks": "olive canvas",
+   "model": {
+    "source": "objaverse",
+    "id": "df27288416df409891c3432a8ca23cd9",
+    "looks_like": "Feuerwear Shoulder Bag Walter UK",
+    "stand_in": false,
+    "scale": 0.70818,
+    "size_m": [
+     0.277,
+     0.45,
+     0.122
+    ]
+   },
+   "objects": [
+    "tote_bag_olive_canvas"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/185.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model has the correct shape of a tote bag, but the red color and the white stripes are not the expected olive canvas texture."
+  },
+  {
+   "type": "towel",
+   "looks": "blue cotton bath",
+   "model": {
+    "source": "asked",
+    "id": "towel_35b76b90614d",
+    "looks_like": "plain cream towel",
+    "stand_in": false,
+    "scale": 0.00131,
+    "size_m": [
+     0.4,
+     0.122,
+     0.353
+    ]
+   },
+   "objects": [
+    "towel_blue_cotton_bath"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/186.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is clearly a folded towel, but its color is a plain beige/cream instead of the expected blue, and the texture lacks the typical terry cloth detail."
+  },
+  {
+   "type": "towel",
+   "looks": "charcoal cotton bath",
+   "model": {
+    "source": "asked",
+    "id": "d4ea8bd1106cdb831513e091e9f9b05435fba45b",
+    "looks_like": "grey-green towel with a dark band",
+    "stand_in": false,
+    "scale": 1.0,
+    "size_m": [
+     0.379,
+     0.091,
+     0.432
+    ]
+   },
+   "objects": [
+    "towel_charcoal_cotton_bath"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/187.jpg",
+   "verdict": "looks_right",
+   "reason": "The model shows a folded towel with a visible stripe and soft, rounded edges, which is consistent with a normal, intact towel."
+  },
+  {
+   "type": "towel",
+   "looks": "cream waffle hand",
+   "model": {
+    "source": "asked",
+    "id": "3c9a72240fb6d076d1f99dc6231421b834d4a7b4",
+    "looks_like": "black and white zigzag-striped towel",
+    "stand_in": false,
+    "scale": 1.0,
+    "size_m": [
+     0.283,
+     0.05,
+     0.33
+    ]
+   },
+   "objects": [
+    "towel_cream_waffle_hand"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/188.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The object has the correct shape and thickness of a folded towel, but the texture is a high-contrast black and white zebra-like pattern instead of the expected cream waffle weave."
+  },
+  {
+   "type": "towel",
+   "looks": "sage hand towel",
+   "model": {
+    "source": "hssd",
+    "id": "0ecb6b6e40ca570701fad5734563fe2a4772e3f6",
+    "looks_like": "",
+    "stand_in": false,
+    "scale": 1.0,
+    "size_m": [
+     0.4,
+     0.051,
+     0.38
+    ]
+   },
+   "objects": [
+    "towel_sage_hand"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/189.jpg",
+   "verdict": "looks_right",
+   "reason": "The model displays the correct folded shape, fabric texture, and a decorative border typical of a hand towel, making it easily recognizable as an intact towel."
+  },
+  {
+   "type": "towel",
+   "looks": "sage waffle hand",
+   "model": {
+    "source": "hssd",
+    "id": "4239b3c22aacd5f94a9916f9b62dc29d364c0398",
+    "looks_like": "Diament Towel Set in Purple Merlot",
+    "stand_in": false,
+    "scale": 1.0,
+    "size_m": [
+     0.4,
+     0.051,
+     0.38
+    ]
+   },
+   "objects": [
+    "towel_sage_waffle_hand"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/190.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is clearly a folded towel, but its color is a non-standard purple/magenta instead of the expected sage green, and the texture appears somewhat flat and noisy."
+  },
+  {
+   "type": "towel",
+   "looks": "white waffle guest",
+   "model": {
+    "source": "hssd",
+    "id": "d3e9378e7c8ffe773bfdab1ced2ae155981b4f28",
+    "looks_like": "Diament Towel Set in Green Pea",
+    "stand_in": false,
+    "scale": 1.0,
+    "size_m": [
+     0.4,
+     0.051,
+     0.38
+    ]
+   },
+   "objects": [
+    "towel_white_waffle_guest"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/191.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is clearly a folded towel, but its bright yellow-green color and the small flower logo on the right view are odd details for a 'white waffle guest' towel."
+  },
+  {
+   "type": "vacuum cleaner",
+   "looks": "slate upright",
+   "model": {
+    "source": "objaverse",
+    "id": "ff52b849a1c84e7d89a9319977a6cdbc",
+    "looks_like": "Vacuum Cleaner",
+    "stand_in": false,
+    "scale": 0.00872,
+    "size_m": [
+     0.94,
+     1.059,
+     1.1
+    ]
+   },
+   "objects": [
+    "vacuum_cleaner_slate_upright"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/192.jpg",
+   "verdict": "looks_right",
+   "reason": "The model clearly depicts a standard upright vacuum cleaner with a recognizable body, handle, hose, and nozzle, and it appears intact and properly textured."
+  },
+  {
+   "type": "wallet",
+   "looks": "brown leather bifold",
+   "model": {
+    "source": "props",
+    "id": "wallet_4bc4176c10b9",
+    "looks_like": "brown leather old beige",
+    "stand_in": false,
+    "scale": 0.10643,
+    "size_m": [
+     0.149,
+     0.154,
+     0.136
+    ]
+   },
+   "objects": [
+    "wallet_brown_leather_bifold"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/193.jpg",
+   "verdict": "looks_right",
+   "reason": "The model clearly depicts a brown leather bifold wallet with a recognizable shape and texture, appearing intact and normal."
+  },
+  {
+   "type": "wallet",
+   "looks": "tan zippered",
+   "model": {
+    "source": "props",
+    "id": "wallet_4eb66e5c0b4f",
+    "looks_like": "dark dark brown sleek",
+    "stand_in": false,
+    "scale": 0.00095,
+    "size_m": [
+     0.165,
+     0.163,
+     0.13
+    ]
+   },
+   "objects": [
+    "wallet_tan_zippered"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/194.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model has the correct rectangular shape of a wallet, but it is a very dark brown/black color instead of the expected tan, and the surface texture is too smooth and uniform to clearly show the zip."
+  },
+  {
+   "type": "watch",
+   "looks": "black leather strap",
+   "model": {
+    "source": "objaverse",
+    "id": "e3a78e329e7d4050a1c9d1c0bd19e47f",
+    "looks_like": "hand watch  (FREE MODEL)",
+    "stand_in": false,
+    "scale": 0.33618,
+    "size_m": [
+     0.05,
+     0.037,
+     0.026
+    ]
+   },
+   "objects": [
+    "watch_black_leather_strap"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/195.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is recognisable as a watch, but the face is a flat, dark, featureless disc and the strap/strap hardware look oddly coloured and simplified, so the detail is off."
+  },
+  {
+   "type": "water bottle",
+   "looks": "clear ribbed",
+   "model": {
+    "source": "asked",
+    "id": "bottle_865a12da7eac",
+    "looks_like": "dark grey bottle with a blue cap and a blue-banded label",
+    "stand_in": false,
+    "scale": 0.01979,
+    "size_m": [
+     0.079,
+     0.25,
+     0.079
+    ]
+   },
+   "objects": [
+    "water_bottle_clear_ribbed",
+    "water_bottle_smoked_glass"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/196.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is recognizably a water bottle, but the body is a dark, opaque brown instead of the expected clear/transparent plastic, and the label is a plain blue band rather than a detailed label."
+  },
+  {
+   "type": "water bottle",
+   "looks": "clear steel",
+   "model": {
+    "source": "asked",
+    "id": "bottle_f51306c13cd1",
+    "looks_like": "bright blue and white bottle",
+    "stand_in": false,
+    "scale": 0.02513,
+    "size_m": [
+     0.093,
+     0.25,
+     0.093
+    ]
+   },
+   "objects": [
+    "water_bottle_clear_steel"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/197.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is clearly a water bottle, but it has an odd blue color and a solid, opaque label instead of the expected clear or transparent appearance."
+  },
+  {
+   "type": "water bottle",
+   "looks": "clear steel",
+   "model": {
+    "source": "props",
+    "id": "bottle_07b07f7292ed",
+    "looks_like": "clear plastic upright",
+    "stand_in": false,
+    "scale": 0.0665,
+    "size_m": [
+     0.09,
+     0.25,
+     0.09
+    ]
+   },
+   "objects": [
+    "water_bottle_clear_steel_stainless"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/198.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is clearly a water bottle, but the body is a dark, opaque brown instead of the expected clear or translucent plastic, and the label is a blurry, illegible smudge."
+  },
+  {
+   "type": "water glass",
+   "looks": "short clear tumbler",
+   "model": {
+    "source": "asked",
+    "id": "342e1b341104c33d7043365732480ff3a895c86e",
+    "looks_like": "lime green tumbler",
+    "stand_in": false,
+    "scale": 1.0,
+    "size_m": [
+     0.097,
+     0.155,
+     0.097
+    ]
+   },
+   "objects": [
+    "water_glass_short_clear_tumbler"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/199.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is a water glass, but it is a solid, opaque lime-green color instead of the expected clear or transparent material."
+  },
+  {
+   "type": "water glass",
+   "looks": "short green tumbler",
+   "model": {
+    "source": "asked",
+    "id": "08c7b32154bd2be6ca30acd3f36eef83f14093f6",
+    "looks_like": "cream tumbler with a navy and white 'Corona Extra' label",
+    "stand_in": false,
+    "scale": 1.0,
+    "size_m": [
+     0.058,
+     0.123,
+     0.058
+    ]
+   },
+   "objects": [
+    "water_glass_short_green_tumbler",
+    "water_glass_tall_amber_tumbler"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/200.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is a water glass, but the left view has a Corona beer label texture and the right view is a plain beige color, which are odd details for a water glass."
+  },
+  {
+   "type": "water glass",
+   "looks": "short smoky tumbler",
+   "model": {
+    "source": "asked",
+    "id": "57206ff682d16e45f0abb873010eef8b1b73d4f7",
+    "looks_like": "shiny pale-gold tumbler with a ridged band at the base",
+    "stand_in": false,
+    "scale": 1.0,
+    "size_m": [
+     0.081,
+     0.097,
+     0.081
+    ]
+   },
+   "objects": [
+    "water_glass_short_smoky_tumbler"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/201.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is clearly a short tumbler, but the material is a solid, opaque beige color rather than the transparent or smoky glass expected for a water glass."
+  },
+  {
+   "type": "water glass",
+   "looks": "tall clear fluted",
+   "model": {
+    "source": "hssd",
+    "id": "9428caf70c42e50bb3c3c604eba00c43b8efb58f",
+    "looks_like": "Plain Glass Tumbler - GREEN",
+    "stand_in": false,
+    "scale": 1.0,
+    "size_m": [
+     0.089,
+     0.14,
+     0.089
+    ]
+   },
+   "objects": [
+    "water_glass_tall_clear_fluted"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/202.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is clearly a fluted water glass, but it is rendered in a solid, opaque beige color instead of the expected clear or transparent material."
+  },
+  {
+   "type": "water glass",
+   "looks": "tall ribbed",
+   "model": {
+    "source": "hssd",
+    "id": "d0013d74e62fab22d3ebf6788dc6d7aacb13a6ae",
+    "looks_like": "Chocolattice Tooth Brush Holder",
+    "stand_in": false,
+    "scale": 1.0,
+    "size_m": [
+     0.076,
+     0.117,
+     0.076
+    ]
+   },
+   "objects": [
+    "water_glass_tall_ribbed"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/203.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The object is clearly a tall, ribbed glass, but its dark brown, patterned appearance is not typical for a normal water glass."
+  },
+  {
+   "type": "wine glass",
+   "looks": "thin green stem",
+   "model": {
+    "source": "hssd",
+    "id": "180b7d1568055fbd98a2beea6e4ebf87cc3cc13a",
+    "looks_like": "Acrylic Wine Glass",
+    "stand_in": false,
+    "scale": 1.0,
+    "size_m": [
+     0.074,
+     0.194,
+     0.074
+    ]
+   },
+   "objects": [
+    "wine_glass_thin_green_stem"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/204.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is clearly a wine glass, but it has a metallic, gold-like color instead of the expected transparent glass."
+  },
+  {
+   "type": "wooden spoon",
+   "looks": "walnut long",
+   "model": {
+    "source": "objaverse",
+    "id": "a1ee69e7687543aa8753ad054481d67f",
+    "looks_like": "Wood Spoon",
+    "stand_in": false,
+    "scale": 0.12131,
+    "size_m": [
+     0.3,
+     0.021,
+     0.244
+    ]
+   },
+   "objects": [
+    "wooden_spoon_walnut_long"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/205.jpg",
+   "verdict": "looks_right",
+   "reason": "The model clearly depicts a wooden spoon with a recognizable bowl and handle, and the brown color is appropriate for a wooden utensil."
+  },
+  {
+   "type": "wooden tray",
+   "looks": "rectangular walnut",
+   "model": {
+    "source": "objaverse",
+    "id": "398c1b3b8114409a89eb02f9b42f8064",
+    "looks_like": "Aluminum tray",
+    "stand_in": false,
+    "scale": 0.225,
+    "size_m": [
+     0.45,
+     0.146,
+     0.277
+    ]
+   },
+   "objects": [
+    "wooden_tray_rectangular_walnut"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/206.jpg",
+   "verdict": "broken_or_missing_texture",
+   "reason": "The model is missing its texture, appearing as a flat, dark, untextured surface on the left and a wireframe on the right, rather than a wooden tray."
+  },
+  {
+   "type": "wool socks",
+   "looks": "mustard ribbed pair",
+   "model": {
+    "source": "objaverse",
+    "id": "c58796860c764ae68082b4f752bfd84a",
+    "looks_like": "Women's 80's/90's Rainbow Ski Sock",
+    "stand_in": false,
+    "scale": 0.00077,
+    "size_m": [
+     0.242,
+     0.25,
+     0.085
+    ]
+   },
+   "objects": [
+    "wool_socks_mustard_ribbed_pair"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/207.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is clearly a pair of socks, but the texture is a chaotic, multi-colored pattern instead of the expected mustard ribbed wool."
+  },
+  {
+   "type": "work blouse",
+   "looks": "ivory linen",
+   "model": {
+    "source": "objaverse",
+    "id": "bb8962a66bfd4e8ebc0148c0f30922a8",
+    "looks_like": "Blouse Kaftan Batik 1",
+    "stand_in": false,
+    "scale": 0.00221,
+    "size_m": [
+     0.085,
+     0.35,
+     0.196
+    ]
+   },
+   "objects": [
+    "work_blouse_ivory_linen",
+    "work_blouse_sage_cotton_button_up"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/208.jpg",
+   "verdict": "broken_or_shredded_mesh",
+   "reason": "The geometry is severely distorted and shredded, with the fabric appearing as a crumpled, torn mass and the sleeves extending as thin, broken lines rather than forming a recognizable blouse shape."
+  },
+  {
+   "type": "work cardigan",
+   "looks": "rust merino",
+   "model": {
+    "source": "objaverse",
+    "id": "741eb08a5d3c4796b43ff726186acb77",
+    "looks_like": "Kimono Cardigan",
+    "stand_in": false,
+    "scale": 0.26112,
+    "size_m": [
+     0.097,
+     0.4,
+     0.161
+    ]
+   },
+   "objects": [
+    "work_cardigan_rust_merino"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/209.jpg",
+   "verdict": "broken_or_shredded_mesh",
+   "reason": "The geometry is severely distorted and shredded, with long, thin spikes and a mangled, unrecognizable shape that does not resemble a cardigan."
+  },
+  {
+   "type": "work loafers",
+   "looks": "brown leather",
+   "model": {
+    "source": "hssd",
+    "id": "394467b057310b24ee40affe51c79784d5d5ad76",
+    "looks_like": "Shoes - All Stars",
+    "stand_in": false,
+    "scale": 1.0,
+    "size_m": [
+     0.214,
+     0.133,
+     0.255
+    ]
+   },
+   "objects": [
+    "work_loafers_brown_leather"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/210.jpg",
+   "verdict": "wrong_kind_of_thing",
+   "reason": "The model is a pair of red high-top sneakers with laces, not a pair of work loafers."
+  },
+  {
+   "type": "work trousers",
+   "looks": "black relaxed fit",
+   "model": {
+    "source": "objaverse",
+    "id": "8877681a05c04e6082dd50e8abadb9a4",
+    "looks_like": "Trousers 1",
+    "stand_in": false,
+    "scale": 0.45505,
+    "size_m": [
+     0.208,
+     0.4,
+     0.126
+    ]
+   },
+   "objects": [
+    "work_trousers_black_relaxed_fit"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/211.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is clearly a pair of trousers, but the color is an unnatural, shiny metallic orange instead of the expected black."
+  },
+  {
+   "type": "work trousers",
+   "looks": "charcoal wide leg",
+   "model": {
+    "source": "objaverse",
+    "id": "92126e1aee8e423bade8def122e6c3bf",
+    "looks_like": "Survival Pants scifi",
+    "stand_in": false,
+    "scale": 0.53196,
+    "size_m": [
+     0.253,
+     0.4,
+     0.14
+    ]
+   },
+   "objects": [
+    "work_trousers_charcoal_wide_leg"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/212.jpg",
+   "verdict": "broken_or_shredded_mesh",
+   "reason": "The mesh is severely broken and shredded, with large holes and missing geometry, making it look like a fragmented, incomplete object rather than intact trousers."
+  },
+  {
+   "type": "yogurt",
+   "looks": "plain glass jar",
+   "model": {
+    "source": "objaverse",
+    "id": "25b3d02769a44d8fb653c5f89f03747d",
+    "looks_like": "Nuevo Yogurt Griego Plus - Dos Pinos",
+    "stand_in": false,
+    "scale": 0.00088,
+    "size_m": [
+     0.1,
+     0.049,
+     0.088
+    ]
+   },
+   "objects": [
+    "yogurt_plain_glass_jar"
+   ],
+   "picture": "/home/oliver/robot/dynamic_home_eqa/3d_rendering/results/vlm_night/render/run_v3/model_check/v2/213.jpg",
+   "verdict": "right_thing_odd_colour_or_detail",
+   "reason": "The model is recognisable as a yogurt cup, but the lid texture is stretched and distorted, and the base has an odd blue colour that doesn't match a typical yogurt container."
+  }
+ ]
+}

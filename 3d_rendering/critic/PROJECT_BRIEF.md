@@ -1,6 +1,6 @@
 # Brief: household generator with roleplaying residents (as given, 2026-10-07)
 
-Build `src/lived_home`: a generator where LLM agents roleplay the residents of a home over many days, and every object moves only because a resident carried it. A working draft is in `examples/lived_home_draft/`. Read it first, keep what works, change what this brief says.
+Build `src/lived_home`: a generator where LLM agents roleplay the residents of a home over many days, and every object moves only because a resident carried it. A working draft was in `examples/lived_home_draft/` (moved to `/home/oliver/robot/dynamic_home_eqa_archive/` on 2026-10-19). Read it first, keep what works, change what this brief says.
 
 ## Keep from the draft
 

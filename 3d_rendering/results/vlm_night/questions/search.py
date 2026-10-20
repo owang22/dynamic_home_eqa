@@ -5,16 +5,22 @@ saw on each piece of furniture. At 10, 14, 18 and 22 h it is asked where a thing
 look at up to 8 pieces of furniture; each look shows the pictures of that furniture's open
 spots at the question time. It stops at the first look where it judges the thing is there.
 
-Two things are varied separately, so the loss can be put where it happens:
-  notes   truth: every thing with >= NOTE_PX pixels in a patrol picture, by its type name
+An arm is ORDER:NOTES:JUDGE; each part is varied separately, so the loss can be put
+where it happens:
+  NOTES   truth: every thing with >= NOTE_PX pixels in a patrol picture, by its type name
           vlm:   the vision model's own list of what it sees in each patrol picture
-  judge   truth: the look succeeds when the thing has >= NOTE_PX pixels in the pictures
-          vlm:   the vision model is shown the pictures and asked whether the thing is there
-and the order of looks comes from
-  nearest      no memory, nearest furniture not yet looked at (from the entrance)
-  last seen    where the notes last had it, then nearest   (truth notes only)
-  most often   furniture by how often the notes had it, then nearest   (truth notes only)
-  llm          the model reads the last 7 days of notes and ranks up to 8 pieces of furniture
+          pics:  no notes; the model ranks from up to 40 recent patrol pictures themselves
+  JUDGE   truth:   the look succeeds when the thing has >= NOTE_PX pixels in the pictures
+          vlm:     the model is shown the pictures and asked by name whether the thing is there
+          lenient: by name, "could any object be a <type>, even if ... partly hidden?"
+          ref:     the model is shown a close-up of the thing cut from an earlier patrol picture
+                   with the renderer's true object mask (an oracle crop), "is this same thing here?"
+  ORDER   nearest      no memory, nearest furniture not yet looked at (from the entrance)
+          last seen    where the notes last had it, then nearest
+          most often   furniture by how often the notes had it, then nearest
+          llm          the model reads the notes of the last NOTE_DAYS + 1 days (both ends
+                       included) and ranks up to 8 pieces of furniture
+          llm-think    the same with the model's thinking on
 
 Questions name a thing by its type ("Where is the hand cream?") and accept any object of
 that type; only types with at most 2 objects in the house are asked. A question is asked only
@@ -25,6 +31,9 @@ question can be answered by looking.
     python search.py captions   captions every patrol picture (vlm notes)
     python search.py run ARM... e.g. 'llm:truth:truth' 'llm:vlm:vlm' 'last seen:truth:vlm'
     python search.py report
+
+Writes search/questions.json, search/captions.json and search/run_<arm>.json. Results and
+their reading: ../NIGHT_2026-10-13.md, section 1.
 """
 from __future__ import annotations
 

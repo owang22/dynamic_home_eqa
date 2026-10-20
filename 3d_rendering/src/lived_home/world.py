@@ -8,9 +8,13 @@ Every object is in exactly one spot:
   {"at": "pocket", "person": rid}
   {"at": "worn",   "person": rid}                              clothes, shoes, a watch, a backpack on
   {"at": "inside", "carrier": o}                              in a bag, box or basket
-Anything can go inside anything (a bookmark in a book, an infuser in a mug, a
-pouch in a backpack), except into itself or into something already inside it.
-An object's carrier kind only decides whether what is inside it can be seen:
+What may sit on or inside what, and what may go on a floor or into a basin, is
+set by lived_home.placement: a put_down that breaks those rules is carried out
+next to the thing named, or on the nearest table or counter, and the event keeps
+what was said (relation_as_said, ref_as_said, place_as_said, redirected).
+`world.rules = {"holding": False, "places": False}` turns the rules off (runs
+before 2026-10-13 had none). Nothing goes into itself or into something already
+inside it. An object's carrier kind only decides whether what is inside it can be seen:
 closed and pockets hide it; open and none do not. pocket puts a thing into the
 pockets of what the resident wears; taking those clothes off leaves it there. Moving a carrier
 moves what is inside it. A resident who leaves the house takes what they hold,
@@ -36,6 +40,7 @@ from dataclasses import dataclass, field
 from typing import Optional
 
 from lived_home.layout import CLOSED, OPEN, SURFACE, Layout
+from lived_home.placement import holding_problem, nearest_surface, place_problem
 
 HANDS = 2
 POCKET_SLOTS = 5
@@ -113,7 +118,7 @@ def _spot_words(place) -> str:
     """The spot's own words, without 'by the ottoman' or 'near the bed' (a
     nightstand by the bed is not a bed)."""
     import re
-    cut = lambda x: re.split(r"\b(?:by|near|next to|beside|under|across from)\b", x.lower())[0]
+    cut = lambda x: re.split(r"\b(?:by|near|next to|beside|under|beneath|below|above|across from)\b", x.lower())[0]
     return f" {cut(place.furniture)} {cut(place.name)} "
 
 
@@ -128,7 +133,7 @@ def _drop_kind(place, rel: str = "") -> str:
     is judged by the spot's own name: the drawers of a sink cabinet are not wet."""
     import re
     w = _spot_words(place)
-    own = " " + re.split(r"\b(?:by|near|next to|beside|under|across from)\b", place.name.lower())[0] + " "
+    own = " " + re.split(r"\b(?:by|near|next to|beside|under|beneath|below|above|across from)\b", place.name.lower())[0] + " "
     storage = any(_has(w, x) for x in STORAGE)
     if _has(w, "floor") or rel == "under":
         return "floor"
@@ -247,6 +252,9 @@ class World:
             person.belief = {oid: {"pos": dict(o["start"]), "day": -1, "minute": 0}
                              for oid, o in objects.items()}
         self.home = homes(objects, layout)     # where each thing is kept (None: nowhere known)
+        # lived_home.placement: what may hold what (holding), what may go on floors and
+        # into basins (places); a put_down that breaks one is redirected, not refused
+        self.rules = {"holding": True, "places": True}
         self.day, self.log = 0, []
         self.dirty: set = set()               # clothes worn and not yet washed
         self.worn_today: set = set()
@@ -797,6 +805,27 @@ class World:
             else:
                 act = dict(act, relation="next_to", relation_as_said="inside")
                 rel = "next_to"
+        if ref is not None and rel in ("on_top", "inside") and self.rules.get("holding", True):
+            why = holding_problem(self.objects[oid], self.objects[ref], rel)
+            if why:
+                # not a base or container for it: next to it, where it sits
+                act = dict(act, relation_as_said=act.get("relation_as_said", rel),
+                           ref_as_said=act.get("ref_as_said", ref), redirected=why)
+                outer = ref
+                while self.where[outer]["at"] == "inside":
+                    outer = self.where[outer]["carrier"]
+                w = self.where[outer]
+                if w["at"] == "place" and w["place"] != place and \
+                        self.layout.room_of(w["place"]) != self.room_of_person(rid):
+                    return False, f"{self.tag(ref, rid)} is not in this room.", 0
+                if w["at"] == "place" or (outer == ref and w == {"at": "hand", "person": rid}):
+                    if w["at"] == "place":
+                        place = w["place"]
+                    ref, rel = outer, "next_to"
+                else:                               # it is on someone: set it down here
+                    ref, rel = None, self.default_rel(place)
+                act.update(relation=rel, ref=ref, place=place)
+                kind = self.layout.places[place].kind
         if ref is not None and rel == "inside":
             # inside another thing: a bag, a basket, a mug
             steps = []
@@ -816,6 +845,21 @@ class World:
             self.where[oid] = {"at": "inside", "carrier": ref}
             self._touch(person, oid, minute)
             return self._done(rid, act, minute, source, self.where[oid], walked)
+
+        if self.rules.get("places", True):
+            eff_rel = rel or ("next_to" if ref is not None else self.default_rel(place))
+            why = place_problem(self.objects[oid], self.layout.places[place], eff_rel, ref)
+            if why:
+                alt = nearest_surface(self.layout, place, self.objects[oid], near=person.at,
+                                      full=lambda q: bool(self._full(q, oid, self.default_rel(q), None)))
+                if alt is None:
+                    return False, f"{oid} does not belong at {place} ({why}), and there is no table or shelf free nearby.", 0
+                act = dict(act, place_as_said=act.get("place_as_said", place),
+                           relation_as_said=act.get("relation_as_said", rel),
+                           ref_as_said=act.get("ref_as_said", ref), redirected=why,
+                           place=alt, relation="", ref=None)
+                place, rel, ref = alt, "", None
+                kind = self.layout.places[place].kind
 
         walked = 0
         if ref is not None and self.where[ref] == {"at": "hand", "person": rid}:
@@ -843,6 +887,10 @@ class World:
                 rel = self.default_rel(place)      # nothing goes under a floor
         full = self._full(place, oid, rel, ref)
         if full:
+            if act.get("redirected") and act.get("ref_as_said") and not act.get("place_as_said"):
+                return False, (f"{oid} cannot go {act.get('relation_as_said', 'on_top').replace('_', ' ')} "
+                               f"{act['ref_as_said']} ({act['redirected']}), and there is no room next to "
+                               f"it at {place}. Put it somewhere else."), 0
             return False, full, 0
         if place != person.at:
             walked += self._step(rid, place, minute)
@@ -938,7 +986,8 @@ class World:
                "person": act.get("person") or None, "why": act.get("why")}
         if act.get("verb") == "put_down":
             out["relation"], out["ref"] = act.get("relation") or None, act.get("ref") or None
-        for k in ("minutes_filled", "minutes_as_written", "relation_as_said", "ref_as_said"):
+        for k in ("minutes_filled", "minutes_as_written", "relation_as_said", "ref_as_said",
+                  "place_as_said", "redirected"):
             if k in act:
                 out[k] = act[k]
         out.update(extra)

@@ -10,7 +10,8 @@
              Arms: the vision model from the picture alone (common sense), and the text model
              given the household's usual places and the true list of things (the ceiling).
   usual      "Is the <thing> where it is usually kept?" The robot looks at the usual spot (one
-             picture at the question time). Yes when the thing is drawn there (>= 30 px).
+             picture at the question time). Yes when the thing is drawn there (>= FIND_PX, 500 px);
+           "not there" items have it elsewhere and 0 px in the picture.
              Half the questions are asked when it is there, half when it is not.
   presence   one picture, "Is there a <type> in this picture?", for things truly in view
              (by pixel size band) and for absent types, to give the recognition curve.

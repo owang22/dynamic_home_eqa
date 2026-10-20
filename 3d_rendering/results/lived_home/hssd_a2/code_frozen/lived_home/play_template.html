@@ -1,0 +1,470 @@
+<title>/*__TITLE__*/</title>
+<style>
+/* Layout: plan on the left, the question and evidence on the right; one column on phones. */
+:root {
+  --bg: #f3f5f2; --panel: #ffffff; --panel2: #eef1ec; --ink: #1d2420; --muted: #5d6a62;
+  --line: #d3dbd5; --accent: #1f6f5c; --accent-soft: #d6ebe4; --warn: #a2481c; --good: #2f7a3b;
+  --bad: #a3322b; --p0: #b0532f; --p1: #2f5fa3; --robot: #6b3fa0;
+  --display: "Fraunces", Georgia, serif; --body: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #141a17; --panel: #1c2420; --panel2: #232d28; --ink: #e5ece7; --muted: #9aa8a0;
+  --line: #34413a; --accent: #5cc0a2; --accent-soft: #1f3a32; --warn: #e08a5c; --good: #6cc27a;
+  --bad: #e0736b; --p0: #e08a65; --p1: #7fa6e0; --robot: #b48ce6; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #141a17; --panel: #1c2420; --panel2: #232d28; --ink: #e5ece7; --muted: #9aa8a0;
+  --line: #34413a; --accent: #5cc0a2; --accent-soft: #1f3a32; --warn: #e08a5c; --good: #6cc27a;
+  --bad: #e0736b; --p0: #e08a65; --p1: #7fa6e0; --robot: #b48ce6; color-scheme: dark }
+body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 15px; line-height: 1.45; margin: 0; }
+.wrap { padding-inline: 16px; padding-block: 14px 40px; max-width: 1500px; margin: 0 auto; }
+h1 { font-family: var(--display); font-weight: 600; font-size: 24px; margin: 0; text-wrap: balance; }
+h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 0 0 8px; }
+.top { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 16px; margin-bottom: 10px; }
+.small { font-size: 13px; color: var(--muted); }
+.mono { font-family: var(--mono); font-size: 12.5px; }
+.grid { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 14px; align-items: start; }
+@media (max-width: 900px) { .grid { grid-template-columns: minmax(0, 1fr); } }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; min-width: 0; }
+.stack { display: grid; gap: 14px; min-width: 0; }
+details.rules summary { cursor: pointer; font-weight: 600; }
+details.rules ul { margin: 6px 0 0; padding-left: 20px; }
+.planwrap { overflow-x: auto; }
+#plan { width: 100%; height: auto; display: block; }
+#plan .room { fill-opacity: .14; stroke-width: 1.5; }
+#plan .rlabel { font: 700 12px var(--body); fill: var(--ink); paint-order: stroke; stroke: var(--panel); stroke-width: 4px; stroke-linejoin: round; pointer-events: none; }
+#plan .f { cursor: pointer; fill: var(--panel); stroke: var(--muted); stroke-width: 1; }
+#plan .f:hover, #plan .f:focus { stroke: var(--ink); stroke-width: 2; outline: none; }
+#plan .f.looked { fill: var(--accent-soft); stroke: var(--accent); }
+#plan .f.guess { stroke: var(--warn); stroke-width: 2.5; }
+#plan .f.truth { stroke: var(--good); stroke-width: 3; fill: color-mix(in srgb, var(--good) 25%, var(--panel)); }
+#plan .gnum { font: 700 11px var(--body); fill: var(--warn); pointer-events: none; }
+#plan .robot { fill: var(--robot); stroke: var(--panel); stroke-width: 2; pointer-events: none; }
+#plan .path { stroke: var(--robot); stroke-width: 1.5; stroke-dasharray: 4 3; fill: none; pointer-events: none; }
+.hover { min-height: 22px; font-size: 13px; color: var(--muted); margin-top: 6px; }
+.q { font-family: var(--display); font-size: 22px; font-weight: 600; margin: 4px 0 2px; text-wrap: balance; }
+.meta { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 13px; color: var(--muted); }
+.meter { font-variant-numeric: tabular-nums; }
+.btns { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+button { font: inherit; font-size: 14px; border-radius: 7px; border: 1px solid var(--line); background: var(--panel2); color: var(--ink); padding: 6px 11px; cursor: pointer; }
+button:hover { border-color: var(--ink); }
+button:focus-visible, select:focus-visible, textarea:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+button.primary { background: var(--accent); color: var(--panel); border-color: var(--accent); font-weight: 600; }
+button.on { background: var(--accent-soft); border-color: var(--accent); }
+button:disabled { opacity: .45; cursor: default; }
+select, textarea, input[type=text] { font: inherit; font-size: 14px; color: var(--ink); background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 5px 7px; max-width: 100%; }
+textarea { width: 100%; box-sizing: border-box; min-height: 54px; }
+.guess { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 4px 8px; align-items: start; margin-top: 6px; }
+.guess .n { font-weight: 700; color: var(--warn); }
+.look { border-top: 1px solid var(--line); padding: 7px 0; }
+.look .h { font-weight: 600; }
+.thing { display: inline-block; margin: 3px 4px 0 0; padding: 2px 8px; border-radius: 12px; border: 1px solid var(--line); background: var(--panel2); font-size: 13px; cursor: pointer; }
+.thing:hover { border-color: var(--accent); }
+.thing.static { cursor: default; }
+.closed { color: var(--muted); font-style: italic; font-size: 13px; }
+.moves { margin-top: 8px; }
+.moves summary { cursor: pointer; font-weight: 600; }
+.mv { padding: 4px 0; border-bottom: 1px solid var(--line, rgba(127,127,127,.2)); }
+.verdict { padding: 8px 10px; border-radius: 8px; margin: 8px 0; font-weight: 600; }
+.verdict.good { background: color-mix(in srgb, var(--good) 18%, var(--panel)); }
+.verdict.bad { background: color-mix(in srgb, var(--bad) 15%, var(--panel)); }
+.verdict.part { background: color-mix(in srgb, var(--warn) 15%, var(--panel)); }
+.scale { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
+.log { max-height: 520px; overflow-y: auto; }
+.patrol { border-top: 1px solid var(--line); padding: 6px 0; }
+.patrol .h { font-weight: 600; font-size: 14px; }
+.fline { font-size: 13.5px; margin: 2px 0 0 10px; }
+.fline b { font-weight: 600; }
+mark { background: color-mix(in srgb, var(--warn) 30%, transparent); color: inherit; border-radius: 3px; }
+.owned { font-size: 13.5px; }
+table { border-collapse: collapse; font-size: 13.5px; width: 100%; }
+td, th { border-bottom: 1px solid var(--line); padding: 4px 6px; text-align: left; vertical-align: top; }
+th { color: var(--muted); font-weight: 600; }
+.status { font-size: 12.5px; color: var(--muted); }
+@media (prefers-reduced-motion: no-preference) { .look:last-child { animation: fade .25s ease-out; } @keyframes fade { from { opacity: .3 } to { opacity: 1 } } }
+</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono&display=swap">
+
+<div class="wrap">
+  <div class="top">
+    <h1 id="title"></h1>
+    <span class="small" id="sub"></span>
+    <span class="status" id="savestate"></span>
+  </div>
+  <div class="grid">
+    <div class="stack">
+      <div class="panel">
+        <h2>The home, seen from above</h2>
+        <div class="planwrap"><svg id="plan" role="img" aria-label="Floor plan; each small box is a piece of furniture you can look at"></svg></div>
+        <div class="hover" id="hover">Point at a box to see what it is. Click it to look (or to place a guess, when guessing).</div>
+      </div>
+      <div class="panel">
+        <div class="tabs" role="tablist">
+          <button id="tab-patrols" class="on" role="tab">Patrol notes</button>
+          <button id="tab-mine" role="tab">Your earlier looks</button>
+          <button id="tab-owned" role="tab">Who owns what</button>
+          <button id="tab-results" role="tab">Your results</button>
+        </div>
+        <input type="text" id="filter" placeholder="Filter by a word (mug, keys, kitchen...)" aria-label="Filter notes by a word">
+        <div class="log" id="log"></div>
+      </div>
+    </div>
+    <div class="stack">
+      <div class="panel">
+        <details class="rules" id="rules">
+          <summary>How this works</summary>
+          <ul>
+            <li>You are the robot. You know the floor plan and who owns what. You do not know where things are, except from the <b>patrol notes</b>: at 08:00, 12:00, 16:00 and 20:00 each day the robot walked through a few rooms (not all) and noted what it could see.</li>
+            <li>The robot cannot open drawers, cupboards, wardrobes or the fridge, does not see under things, and cannot see inside closed bags or boxes.</li>
+            <li>If you think a thing is out of sight, answer <b>Put away in...</b> and pick the piece of furniture (a drawer of it, or a bag or box lying on it: both count as put away there). <b>Has it (at home)</b> means a resident is holding, carrying or wearing it at home (a look shows what people in the room hold, not what they wear; what someone holds while standing at a piece of furniture also shows in a look at that furniture, and you can click it there); <b>Out of the house</b> means it went out with them.</li>
+            <li>Some things look alike (two identical phones, two clear steel water bottles): the notes cannot tell them apart, so a sighting may be either one. A question about one of them names its owner.</li>
+            <li>Each question is at a time between patrols. First, if you like, set up to three ranked guesses and a note on each (click <b>Place guess</b>, then a box on the plan).</li>
+            <li>Then <b>look</b>: click a box to walk there and see what is on it right now. You have up to <span id="maxlooks"></span> looks; a look that shows nothing means the surface really is empty. When you see the thing, click it in the list to say "that's it". If you think it is out of sight, answer without seeing it.</li>
+            <li>Everything you see in your looks is kept and shows up under <b>Your earlier looks</b> for later questions, so a look can be worth it even when it does not find the thing.</li>
+            <li>After each answer you see where it really was. Rate how clear the question was and how answerable, and write anything that seems off.</li>
+          </ul>
+        </details>
+      </div>
+      <div class="panel" id="qpanel"></div>
+    </div>
+  </div>
+</div>
+
+<script type="application/json" id="data">/*__DATA__*/</script>
+<script>
+(function () {
+"use strict";
+const D = JSON.parse(document.getElementById('data').textContent);
+const $ = id => document.getElementById(id);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const WD = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+const SESSION = D.session;
+const MAX = D.rules.max_looks;
+const RES = {}; D.residents.forEach((r, i) => RES[r.id] = Object.assign({ first: r.name.split(' ')[0], color: i % 2 ? 'var(--p1)' : 'var(--p0)' }, r));
+const F = {}; D.layout.furniture.forEach(f => F[f.key] = f);
+const SPOT = {}; D.layout.furniture.forEach(f => f.spots.forEach(s => SPOT[s.id] = Object.assign({ fkey: f.key }, s)));
+const pretty = s => String(s || '').replace(/_/g, ' ');
+const fname = k => F[k] ? `${F[k].name} (${pretty(F[k].room)})` : pretty(k);
+const when = (d, t) => `${WD[(d - 1) % 7]}, day ${d}, ${t}`;
+$('title').textContent = D.title;
+$('sub').textContent = `${D.residents.map(r => r.name).join(' and ')} · ${D.questions.length} questions · session ${SESSION}`;
+$('maxlooks').textContent = MAX;
+try { if (!localStorage.getItem('rules-seen-' + SESSION)) $('rules').open = true; localStorage.setItem('rules-seen-' + SESSION, '1'); } catch (e) { $('rules').open = true; }
+
+// ---------- floor plan ----------
+const PW = 760;
+const plan = (function () {
+  const pts = []; D.layout.rooms.forEach(r => (r.polygon || []).forEach(p => pts.push(p)));
+  D.layout.furniture.forEach(f => { if (f.x != null) pts.push([f.x, f.z]); });
+  const xs = pts.map(p => p[0]), zs = pts.map(p => p[1]);
+  const minX = Math.min(...xs), maxX = Math.max(...xs), minZ = Math.min(...zs), maxZ = Math.max(...zs);
+  const sc = (PW - 30) / Math.max(maxX - minX, 0.1);
+  const PH = Math.round((maxZ - minZ) * sc + 30);
+  const at = (x, z) => [15 + (x - minX) * sc, 15 + (z - minZ) * sc];
+  const hues = {}; D.layout.rooms.forEach((r, i) => hues[r.id] = Math.round(i * 360 / D.layout.rooms.length));
+  // furniture boxes: spread boxes that sit on the same point (stacked parts) a little
+  const boxes = {}; const taken = {};
+  D.layout.furniture.forEach(f => {
+    if (f.x == null) return;
+    let [x, y] = at(f.x, f.z); const key = Math.round(x / 6) + ',' + Math.round(y / 6);
+    const k = taken[key] || 0; taken[key] = k + 1; x += k * 9; y += k * 9;
+    const w = f.name === 'floor' ? 16 : Math.max(10, Math.min(22, 6 + f.spots.length * 2));
+    boxes[f.key] = { x: x - w / 2, y: y - w / 2, w, h: w, cx: x, cy: y };
+  });
+  return { at, PH, hues, boxes };
+})();
+const hue = r => `hsl(${plan.hues[r] || 0} 45% 45%)`;
+function drawPlan(state) {
+  let s = '';
+  D.layout.rooms.forEach(r => { if (!r.polygon) return;
+    const poly = r.polygon.map(p => plan.at(p[0], p[1]));
+    s += `<polygon class="room" points="${poly.map(p => p.map(v => v.toFixed(1)).join(',')).join(' ')}" style="fill:${hue(r.id)};stroke:${hue(r.id)}"></polygon>`; });
+  if (state && state.path.length > 1) s += `<polyline class="path" points="${state.path.map(p => p.join(',')).join(' ')}"></polyline>`;
+  Object.entries(plan.boxes).forEach(([k, b]) => {
+    const cls = ['f'];
+    if (state && state.looked.includes(k)) cls.push('looked');
+    const g = state ? state.guesses.findIndex(x => x && x.fkey === k) : -1;
+    if (g >= 0) cls.push('guess');
+    if (state && state.truthF && state.truthF.includes(k)) cls.push('truth');
+    s += `<rect class="${cls.join(' ')}" data-f="${esc(k)}" tabindex="0" role="button" aria-label="${esc(fname(k))}" x="${b.x.toFixed(1)}" y="${b.y.toFixed(1)}" width="${b.w}" height="${b.h}" rx="2"><title>${esc(fname(k))}</title></rect>`;
+    if (g >= 0) s += `<text class="gnum" x="${(b.x + b.w + 2).toFixed(1)}" y="${(b.y + 9).toFixed(1)}">${g + 1}</text>`;
+  });
+  const labels = {}; D.layout.rooms.forEach(r => { if (r.polygon) { const poly = r.polygon.map(p => plan.at(p[0], p[1])); labels[r.id] = [Math.min(...poly.map(p => p[0])) + 4, Math.min(...poly.map(p => p[1])) + 13]; } });
+  Object.entries(labels).forEach(([r, p]) => { s += `<text class="rlabel" x="${p[0].toFixed(1)}" y="${p[1].toFixed(1)}">${esc(pretty(r))}</text>`; });
+  if (state) { const p = state.path[state.path.length - 1]; s += `<circle class="robot" cx="${p[0]}" cy="${p[1]}" r="6"><title>The robot</title></circle>`; }
+  const svg = $('plan'); svg.setAttribute('viewBox', `0 0 ${PW} ${plan.PH}`); svg.innerHTML = s;
+}
+$('plan').addEventListener('mouseover', e => { const k = e.target.getAttribute && e.target.getAttribute('data-f'); if (k) $('hover').textContent = describeF(k); });
+$('plan').addEventListener('click', e => { const k = e.target.getAttribute && e.target.getAttribute('data-f'); if (k) clickF(k); });
+$('plan').addEventListener('keydown', e => { const k = e.target.getAttribute && e.target.getAttribute('data-f'); if (k && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); clickF(k); } });
+function describeF(k) { const f = F[k]; if (!f) return k; const sp = f.spots.map(s => s.name + (s.kind === 'closed' ? ' (closed)' : s.kind === 'open' ? ' (open)' : '')).join(', '); return `${fname(k)}: ${sp}`; }
+
+// ---------- state ----------
+const done = {};   // n -> saved answer
+let cur = null;    // the question in play
+let robotAt = null;
+let tab = 'patrols';
+let db = null;
+const dist = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1]);
+function metres(a, b) { // plan pixels back to metres
+  const pts = []; D.layout.rooms.forEach(r => (r.polygon || []).forEach(p => pts.push(p))); D.layout.furniture.forEach(f => { if (f.x != null) pts.push([f.x, f.z]); });
+  const xs = pts.map(p => p[0]); const sc = (PW - 30) / Math.max(Math.max(...xs) - Math.min(...xs), 0.1);
+  return dist(a, b) / sc;
+}
+function startPos() { const entry = SPOT[D.layout.entry]; const b = entry && plan.boxes[entry.fkey]; return b ? [b.cx, b.cy] : [PW / 2, plan.PH / 2]; }
+
+function nextQuestion() {
+  const q = D.questions.find(x => !done[x.n]);
+  if (!q) { cur = null; renderDone(); drawPlan(null); renderLog(); return; }
+  if (!robotAt) robotAt = startPos();
+  cur = { q, guesses: [null, null, null], guessMode: -1, looked: [], looks: [], picks: [], path: [robotAt.slice()], metres: 0,
+          started: Date.now(), answer: null, truthF: null };
+  renderQ(); drawPlan(cur); renderLog();
+}
+
+function clickF(k) {
+  if (!cur || cur.answer) return;
+  if (cur.guessMode >= 0) { cur.guesses[cur.guessMode] = { fkey: k, spot: '', note: (cur.guesses[cur.guessMode] || {}).note || '' }; cur.guessMode = -1; renderQ(); drawPlan(cur); return; }
+  if (cur.answerMode === 'putaway') { cur.putawayF = k; renderQ(); return; }
+  look(k);
+}
+
+function look(k) {
+  if (cur.looks.length >= MAX) { flash('No looks left: answer without seeing it.'); return; }
+  const b = plan.boxes[k]; const here = cur.path[cur.path.length - 1];
+  const to = b ? [b.cx, b.cy] : here;
+  cur.metres += metres(here, to); cur.path.push(to); robotAt = to.slice();
+  const things = (cur.q.looks[k] || []).map(t => ({ thing: t.thing, where: t.where, spot: t.spot, oid: t.oid }));
+  const room = F[k] ? F[k].room : '';
+  const people = (cur.q.people[room] || []).map(p => ({ who: p.who, holding: p.holding }));
+  cur.looks.push({ fkey: k, things, people, at: cur.looks.length + 1 });
+  if (!cur.looked.includes(k)) cur.looked.push(k);
+  renderQ(); drawPlan(cur);
+}
+
+function pick(i, j) { // "that's it" on a seen thing
+  const L = cur.looks[i]; const t = L.things[j];
+  const right = cur.q.accept.includes(t.oid);
+  cur.picks.push({ look: i + 1, thing: t.thing, right });
+  if (right) finish({ type: 'found', thing: t.thing, spot: t.spot });
+  else {
+    const twin = cur.q.accept.some(a => (D.names || {})[a] === t.thing);
+    flash(twin ? `That one looks the same, but it is not the one asked for. Keep looking, or answer.`
+               : `Not that one: the ${t.thing} is not what was asked for. Keep looking, or answer.`);
+    renderQ();
+  }
+}
+
+function finish(ans) {
+  cur.answer = ans; cur.answerMode = null;
+  cur.truthF = [];
+  Object.values(cur.q.answer).forEach(a => { if (a.furniture) cur.truthF.push(a.furniture); else if (a.spot && SPOT[a.spot]) cur.truthF.push(SPOT[a.spot].fkey); });
+  cur.verdict = judge(ans);
+  renderQ(); drawPlan(cur);
+}
+
+function judge(ans) {
+  const keys = Object.values(cur.q.answer);
+  if (ans.type === 'found') return { level: 'good', text: `Found it in ${cur.looks.length} look${cur.looks.length === 1 ? '' : 's'}.` };
+  if (ans.type === 'putaway') { const hit = keys.find(a => a.kind === 'put away' && a.furniture === ans.fkey); if (hit) return { level: 'good', text: ans.spot === hit.spot ? 'Right: it was put away there.' : 'Right piece of furniture (a different spot in it, which counts: the robot cannot tell drawers apart).' }; }
+  for (const a of keys) {
+    if (ans.type === 'putaway' && a.kind === 'put away') {
+      if (ans.spot && ans.spot === a.spot) return { level: 'good', text: 'Right: it was put away there.' };
+      if (ans.fkey && a.furniture === ans.fkey) return { level: 'good', text: 'Right piece of furniture (a different spot in it, which counts: the robot cannot tell drawers apart).' };
+      if (ans.fkey && F[ans.fkey] && F[ans.fkey].room === a.room) return { level: 'part', text: 'Right room, different furniture.' };
+    }
+    if (ans.type === 'someone' && a.kind === 'someone has it' && ans.who === a.who) return { level: 'good', text: `Right: ${RES[a.who].first} had it.` };
+    if (ans.type === 'someone' && a.kind === 'someone has it') return { level: 'part', text: 'Someone had it, but not that person.' };
+    if (ans.type === 'out' && a.kind === 'out of the house' && ans.who === a.who) return { level: 'good', text: `Right: it was out with ${RES[a.who].first}.` };
+    if (ans.type === 'out' && a.kind === 'out of the house') return { level: 'part', text: 'It was out of the house, with the other person.' };
+  }
+  if (ans.type === 'cant') return { level: 'part', text: 'You said you could not tell.' };
+  return { level: 'bad', text: 'Not right.' };
+}
+
+function truthText() {
+  return Object.entries(cur.q.answer).map(([oid, a]) => {
+    const name = (D.names || {})[oid] || oid;
+    if (a.kind === 'someone has it') return `the ${name}: ${RES[a.who].first} had it (${pretty(a.how)}${a.inside ? ', inside a bag' : ''}) in the ${pretty(a.room)}${a.spot && SPOT[a.spot] ? `, standing at the ${F[SPOT[a.spot].fkey].name}` : ''}`;
+    if (a.kind === 'out of the house') return `the ${name}: out of the house with ${RES[a.who].first}`;
+    const s = SPOT[a.spot];
+    const rel = a.reference_kind === 'object' ? `${pretty(a.relation)} the ${(D.names || {})[a.reference] || pretty(a.reference)}, ` : '';
+    const spotTxt = s ? (s.name.toLowerCase().includes(F[s.fkey].name.toLowerCase()) ? s.name + ` (${pretty(F[s.fkey].room)})` : s.name + ', ' + fname(s.fkey)) : pretty(a.spot);
+    return `the ${name}: ${rel}${spotTxt}${a.kind === 'put away' ? ' (out of sight)' : ''}`;
+  }).join('; ');
+}
+
+let flashMsg = '';
+function flash(m) { flashMsg = m; renderQ(); setTimeout(() => { if (flashMsg === m) { flashMsg = ''; renderQ(); } }, 4500); }
+
+function renderQ() {
+  const P = $('qpanel');
+  if (!cur) return;
+  const q = cur.q;
+  let h = `<div class="meta"><span>Question ${q.n} of ${D.questions.length}</span><span>${esc(when(q.day, q.time))}</span>
+    <span class="meter">looks ${cur.looks.length} / ${MAX}</span><span class="meter">walked ${cur.metres.toFixed(1)} m</span></div>
+    <div class="q">${esc(q.text)}</div>${q.type ? `<div class="btns" style="margin-top:4px"><button data-act="filt">Notes that mention "${esc(q.type)}"</button></div>` : ''}`;
+  if (flashMsg) h += `<div class="verdict part">${esc(flashMsg)}</div>`;
+  // guesses
+  h += `<h2 style="margin-top:12px">Your guesses (optional, before looking)</h2>`;
+  cur.guesses.forEach((g, i) => {
+    h += `<div class="guess"><span class="n">${i + 1}</span><div>
+      ${g ? `<b>${esc(fname(g.fkey))}</b> ` : '<span class="small">none</span> '}
+      ${cur.answer ? '' : `<button data-act="guess" data-i="${i}" class="${cur.guessMode === i ? 'on' : ''}">${cur.guessMode === i ? 'Now click a box on the plan' : (g ? 'Move' : 'Place guess')}</button>`}
+      ${g ? `<input type="text" data-act="gnote" data-i="${i}" value="${esc(g.note)}" placeholder="note: why here, or how close it was" style="width:100%;margin-top:4px" aria-label="Note on guess ${i + 1}">` : ''}
+    </div></div>`;
+  });
+  // looks
+  h += `<h2 style="margin-top:14px">Looks</h2>`;
+  if (!cur.looks.length) h += `<div class="small">Click a box on the plan to look at that piece of furniture.</div>`;
+  cur.looks.forEach((L, i) => {
+    const f = F[L.fkey];
+    const closed = f ? f.spots.filter(s => s.kind === 'closed').map(s => s.name) : [];
+    h += `<div class="look"><div class="h">${i + 1}. ${esc(fname(L.fkey))}</div>`;
+    h += L.things.length ? L.things.map((t, j) => `<span class="thing${cur.answer ? ' static' : ''}" ${cur.answer ? '' : `data-act="pick" data-i="${i}" data-j="${j}" role="button" tabindex="0" title="Click if this is the thing asked for"`}>${esc(t.thing)}${t.where ? ` <span class="small">(${esc(t.where)})</span>` : ''}${f && f.spots.length > 1 ? ` <span class="small">· ${esc((SPOT[t.spot] || {}).name || '')}</span>` : ''}</span>`).join('') : `<span class="small">${f && f.name === 'floor' ? 'the floor is clear: nothing on it' : 'nothing lying on it'}</span>`;
+    if (closed.length) h += `<div class="closed">closed, can't see inside: ${esc(closed.join(', '))}</div>`;
+    if (L.people.length) h += `<div class="small">${L.people.map(p => `${esc(RES[p.who].first)} is in the room${p.holding.length ? ', holding ' + esc(p.holding.join(', ')) : ''}`).join('; ')}</div>`;
+    h += `</div>`;
+  });
+  if (cur.picks.length) h += `<div class="small">Wrong picks: ${cur.picks.filter(p => !p.right).map(p => esc(p.thing)).join(', ') || 'none'}</div>`;
+  // answering without seeing
+  if (!cur.answer) {
+    h += `<h2 style="margin-top:14px">Answer without seeing it</h2><div class="btns">
+      <button data-act="mode" data-m="putaway" class="${cur.answerMode === 'putaway' ? 'on' : ''}">Put away in...</button>
+      ${D.residents.map(r => `<button data-act="someone" data-who="${r.id}">${esc(RES[r.id].first)} has it (at home)</button>`).join('')}
+      ${D.residents.map(r => `<button data-act="out" data-who="${r.id}">Out of the house with ${esc(RES[r.id].first)}</button>`).join('')}
+      <button data-act="cant">Can't tell</button></div>`;
+    if (cur.answerMode === 'putaway') {
+      const f = cur.putawayF && F[cur.putawayF];
+      h += `<div style="margin-top:8px">${f ? `<b>${esc(fname(cur.putawayF))}</b>: <select id="pspot" aria-label="Which spot"><option value="">anywhere in it, or in a bag or box on it</option>${f.spots.map(s => `<option value="${esc(s.id)}">${esc(s.name)}${s.kind === 'closed' ? ' (closed)' : ''}</option>`).join('')}</select> <button class="primary" data-act="putaway">Answer</button>` : '<span class="small">Click the piece of furniture on the plan.</span>'}</div>`;
+    }
+  } else {
+    const v = cur.verdict;
+    h += `<div class="verdict ${v.level}">${esc(v.text)}</div><div><b>Where it really was:</b> ${esc(truthText())}</div>`;
+    const mv = q.moves || [];
+    h += `<details class="moves"${mv.length ? ' open' : ''}><summary>How it got there (moves in the 24 hours before the question)</summary>${mv.length ? mv.map(m => `<div class="mv"><span class="small">${esc(when(m.day, m.time))}</span> <b style="color:${RES[m.who].color}">${esc(RES[m.who].first)}</b> ${esc(m.text)}${m.why ? ` <i>"${esc(m.why)}"</i>` : ''}${m.doing ? `<div class="small">during: ${esc(m.doing)}</div>` : ''}</div>`).join('') : '<div class="small">Nobody moved it in those 24 hours.</div>'}</details>`;
+    if (q.probe) h += `<div class="small" style="margin-top:4px">This question was meant to be ambiguous: more than one thing fits it, and any of them counted.</div>`;
+    h += `<h2 style="margin-top:14px">How was this question?</h2>
+      <div class="scale">Clear to understand: ${[1, 2, 3, 4, 5].map(v => `<button data-act="rate" data-k="clear" data-v="${v}" class="${cur.clear === v ? 'on' : ''}">${v}</button>`).join('')}</div>
+      <div class="scale" style="margin-top:6px">Answerable from what I knew: ${[1, 2, 3, 4, 5].map(v => `<button data-act="rate" data-k="fair" data-v="${v}" class="${cur.fair === v ? 'on' : ''}">${v}</button>`).join('')}</div>
+      <textarea id="comment" placeholder="Anything off? Was the description enough to recognise it? Were your guesses close?" aria-label="Comment">${esc(cur.comment || '')}</textarea>
+      <div class="btns"><button class="primary" data-act="next">Save and go to the next question</button></div>`;
+  }
+  P.innerHTML = h;
+}
+
+$('qpanel').addEventListener('click', e => {
+  const b = e.target.closest('[data-act]'); if (!b || !cur) return;
+  const a = b.dataset.act;
+  if (a === 'guess') { cur.guessMode = cur.guessMode === +b.dataset.i ? -1 : +b.dataset.i; cur.answerMode = null; renderQ(); }
+  else if (a === 'pick') pick(+b.dataset.i, +b.dataset.j);
+  else if (a === 'mode') { cur.answerMode = cur.answerMode === 'putaway' ? null : 'putaway'; cur.guessMode = -1; renderQ(); }
+  else if (a === 'putaway') { const s = $('pspot').value; finish({ type: 'putaway', spot: s || null, fkey: cur.putawayF }); }
+  else if (a === 'someone') finish({ type: 'someone', who: b.dataset.who });
+  else if (a === 'out') finish({ type: 'out', who: b.dataset.who });
+  else if (a === 'cant') finish({ type: 'cant' });
+  else if (a === 'rate') { const c = $('comment'); if (c) cur.comment = c.value; cur[b.dataset.k] = +b.dataset.v; renderQ(); }
+  else if (a === 'filt') { $('filter').value = q_type(); tab = 'patrols'; renderLog(); }
+  else if (a === 'next') { const c = $('comment'); if (c) cur.comment = c.value; save(); }
+});
+$('qpanel').addEventListener('keydown', e => { const b = e.target.closest('[data-act="pick"]'); if (b && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); pick(+b.dataset.i, +b.dataset.j); } });
+$('qpanel').addEventListener('input', e => { const t = e.target; if (t.dataset.act === 'gnote') cur.guesses[+t.dataset.i].note = t.value; if (t.id === 'comment') cur.comment = t.value; });
+
+function q_type() { return (cur && cur.q.type) || ''; }
+
+// ---------- saving ----------
+function record() {
+  const q = cur.q;
+  return { session: SESSION, run: D.run, n: q.n, day: q.day, time: q.time, text: q.text, kind: q.kind, probe: !!q.probe,
+    guesses: cur.guesses.map(g => g ? { furniture: g.fkey, note: g.note || '' } : null),
+    looks: cur.looks.map(L => ({ furniture: L.fkey, saw: L.things.map(t => t.thing) })),
+    wrong_picks: cur.picks.filter(p => !p.right).map(p => p.thing),
+    answer: cur.answer, verdict: cur.verdict.level, verdict_text: cur.verdict.text,
+    n_looks: cur.looks.length, metres: +cur.metres.toFixed(2),
+    clear: cur.clear || null, fair: cur.fair || null, comment: cur.comment || '',
+    seconds: Math.round((Date.now() - cur.started) / 1000), saved_at: new Date().toISOString() };
+}
+async function save() {
+  const r = record();
+  done[r.n] = r;
+  try { localStorage.setItem('play-' + SESSION, JSON.stringify(done)); } catch (e) {}
+  if (db) {
+    $('savestate').textContent = 'saving...';
+    try { await db.collection('answers').doc(`${SESSION}_q${String(r.n).padStart(2, '0')}`).set(r); $('savestate').textContent = `saved ${Object.keys(done).length} answers`; }
+    catch (e) { $('savestate').textContent = 'could not save to the shared store (kept in this browser; use Copy results)'; }
+  } else $('savestate').textContent = `kept in this browser (${Object.keys(done).length} answers); use Copy results to send them`;
+  nextQuestion();
+}
+
+// ---------- evidence log ----------
+function seenBefore(d, t) { return D.patrols.filter(p => p.day < d || (p.day === d && p.time < t)); }
+function hl(text, w) { if (!w) return esc(text); const i = text.toLowerCase().indexOf(w); if (i < 0) return esc(text); return esc(text.slice(0, i)) + '<mark>' + esc(text.slice(i, i + w.length)) + '</mark>' + esc(text.slice(i + w.length)); }
+function renderLog() {
+  ['patrols', 'mine', 'owned', 'results'].forEach(t => $('tab-' + t).classList.toggle('on', tab === t));
+  const w = $('filter').value.trim().toLowerCase();
+  let h = '';
+  if (tab === 'patrols') {
+    const ps = cur ? seenBefore(cur.q.day, cur.q.time) : D.patrols;
+    if (!ps.length) h = '<div class="small">No patrols before this question.</div>';
+    ps.slice().reverse().forEach(p => {
+      let lines = '';
+      p.seen.forEach(s => { const txt = s.things.map(t => t.thing + (t.where ? ` (${t.where})` : '')).join(', ');
+        const full = `${fname(s.furniture)}: ${txt || 'nothing'}`;
+        if (w && full.toLowerCase().indexOf(w) < 0) return;
+        if (!s.things.length && !w) return;
+        lines += `<div class="fline"><b>${hl(fname(s.furniture), w)}</b>: ${hl(txt, w)}</div>`; });
+      Object.entries(p.people || {}).forEach(([room, ps2]) => ps2.forEach(pp => { const t = `${RES[pp.who].first} was in the ${pretty(room)}${pp.holding.length ? ', holding ' + pp.holding.join(', ') : ''}`; if (!w || t.toLowerCase().indexOf(w) >= 0) lines += `<div class="fline">${hl(t, w)}</div>`; }));
+      if (lines || !w) h += `<div class="patrol"><div class="h">${esc(when(p.day, p.time))} · rooms: ${esc(p.rooms.map(pretty).join(', '))}</div>${lines || '<div class="fline small">nothing seen on any surface</div>'}</div>`;
+    });
+    h = `<div class="small">Patrols before this question, newest first. Rooms not listed were not visited; furniture with nothing on it is left out.</div>` + h;
+  } else if (tab === 'mine') {
+    const all = Object.values(done).sort((a, b) => a.n - b.n);
+    if (!all.length) h = '<div class="small">Nothing yet: what you see in your looks will be listed here for later questions.</div>';
+    all.slice().reverse().forEach(r => {
+      let lines = '';
+      r.looks.forEach(L => { const txt = `${fname(L.furniture)}: ${L.saw.join(', ') || 'nothing'}`; if (!w || txt.toLowerCase().indexOf(w) >= 0) lines += `<div class="fline">${hl(txt, w)}</div>`; });
+      if (lines) h += `<div class="patrol"><div class="h">${esc(when(r.day, r.time))} (question ${r.n})</div>${lines}</div>`;
+    });
+  } else if (tab === 'owned') {
+    D.residents.forEach(r => { const items = r.owns.filter(x => !w || x.indexOf(w) >= 0);
+      h += `<div class="patrol"><div class="h" style="color:${RES[r.id].color}">${esc(r.name)}, ${esc(r.job)}</div><div class="owned">${items.map(x => hl(x, w)).join(', ') || '<span class="small">nothing matches</span>'}</div></div>`; });
+    if (D.residents[0].household) h = `<div class="small">${esc(D.residents[0].household)}</div>` + h;
+  } else {
+    const all = Object.values(done).sort((a, b) => a.n - b.n);
+    const good = all.filter(r => r.verdict === 'good').length, part = all.filter(r => r.verdict === 'part').length;
+    const looks = all.length ? (all.reduce((s, r) => s + r.n_looks, 0) / all.length).toFixed(1) : '-';
+    h = `<div style="margin-bottom:6px"><b>${good}</b> right, <b>${part}</b> partly, of ${all.length} answered; ${looks} looks per question.</div>
+      <div class="btns" style="margin:0 0 8px"><button id="copy">Copy results</button></div>
+      <table><tr><th>#</th><th>question</th><th>result</th><th>looks</th><th>clear</th><th>answerable</th></tr>${all.map(r => `<tr><td>${r.n}</td><td>${esc(r.text)}</td><td>${esc(r.verdict_text)}</td><td>${r.n_looks}</td><td>${r.clear || ''}</td><td>${r.fair || ''}</td></tr>`).join('')}</table>`;
+  }
+  $('log').innerHTML = h;
+  const c = $('copy'); if (c) c.addEventListener('click', () => { const txt = JSON.stringify(Object.values(done), null, 1);
+    const ok = () => { c.textContent = 'Copied'; }; try { navigator.clipboard.writeText(txt).then(ok, () => fallbackCopy(txt)); } catch (e) { fallbackCopy(txt); } });
+}
+function fallbackCopy(txt) { const t = document.createElement('textarea'); t.value = txt; t.style.width = '100%'; t.rows = 8; $('log').prepend(t); t.select(); }
+['patrols', 'mine', 'owned', 'results'].forEach(t => $('tab-' + t).addEventListener('click', () => { tab = t; renderLog(); }));
+$('filter').addEventListener('input', renderLog);
+
+function renderDone() {
+  const all = Object.values(done);
+  $('qpanel').innerHTML = `<div class="q">All ${all.length} questions answered.</div><div class="small">Thank you. Your answers, ratings and comments are under "Your results"${db ? ' and in the shared store' : ''}.</div>`;
+  tab = 'results'; renderLog();
+}
+
+// ---------- start ----------
+try { const saved = JSON.parse(localStorage.getItem('play-' + SESSION) || '{}'); Object.assign(done, saved); } catch (e) {}
+nextQuestion();
+(async function () {
+  try {
+    if (!window.claude || !window.claude.use) return;
+    db = await window.claude.use('db');
+    if (!db) { $('savestate').textContent = 'answers are kept in this browser; use Copy results to send them'; return; }
+    const snap = await db.collection('answers').where('session', '==', SESSION).get();
+    snap.docs.forEach(d => { const r = d.data(); if (r && r.n) done[r.n] = r; });
+    $('savestate').textContent = `connected; ${Object.keys(done).length} answers saved so far`;
+    if (cur && done[cur.q.n] && !cur.looks.length) nextQuestion(); else renderLog();
+  } catch (e) { $('savestate').textContent = 'answers are kept in this browser; use Copy results to send them'; }
+})();
+})();
+</script>

@@ -332,15 +332,17 @@ def test_put_down_and_give_from_pocket_of_worn_clothes():
 
 def test_put_on_top_of_a_thing_still_in_hand_sets_it_down_first():
     w = make()
+    w.objects["tray_wood"] = dict(obj("wooden tray", "living_coffee_table"), size="large")
+    w.where["tray_wood"] = dict(w.objects["tray_wood"]["start"])
     w.apply("ana", A("go", place="kitchen_counter_by_sink"), 0)
     w.apply("ana", A("pick_up", object="mug_red"), 0)
     w.apply("ana", A("go", place="living_coffee_table"), 1)
-    w.apply("ana", A("pick_up", object="book_atlas"), 1)
+    w.apply("ana", A("pick_up", object="tray_wood"), 1)
     ok, msg, _ = w.apply("ana", A("put_down", object="mug_red", place="living_coffee_table",
-                                  relation="on_top", ref="book_atlas"), 2)
+                                  relation="on_top", ref="tray_wood"), 2)
     assert ok, msg
-    assert w.where["book_atlas"]["place"] == "living_coffee_table"
-    assert w.where["mug_red"] == at_place("living_coffee_table", "on_top", "book_atlas")
+    assert w.where["tray_wood"]["place"] == "living_coffee_table"
+    assert w.where["mug_red"] == at_place("living_coffee_table", "on_top", "tray_wood")
     assert w.people["ana"].hands == []
 
 
@@ -533,7 +535,8 @@ def test_stack_only_on_something_as_big_and_full_spots_marked():
     w.apply("ana", A("pick_up", object="towel_big"), 1)
     ok, msg, _ = w.apply("ana", A("put_down", object="towel_big", place="kitchen_counter_by_sink",
                                   relation="on_top", ref="coaster_cork"), 2)
-    assert not ok and "too big" in msg
+    # a coaster is no base for a towel: it would go next to it, and the counter is full
+    assert not ok and "no room" in msg
 
 
 def test_nothing_goes_under_a_floor():

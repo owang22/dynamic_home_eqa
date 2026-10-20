@@ -1,4 +1,6 @@
 """The play task's 'how it got there' list, on a small made-up history."""
+import collections
+import json
 import sys
 import pathlib
 
@@ -39,3 +41,66 @@ def test_spot_words():
     assert spot_words("glass desk", "desk top") == "glass desk top"
     assert spot_words("floor", "floor") == "floor"
     assert spot_words("king bed", "mattress") == "king bed mattress"
+
+
+# ------------------------------------------------------------------ simple methods (play_baselines)
+def _data(patrol_where="", truth_kind="put away", truth_who=None):
+    """One question about a mug: patrols saw it on the kitchen counter (or in Ana's
+    hands); now it is not visible anywhere."""
+    fur = [{"key": "kitchen|counter", "room": "kitchen", "name": "counter", "x": 0.0, "z": 0.0,
+            "spots": [{"id": "counter_top", "kind": "surface"}]},
+           {"key": "kitchen|cabinet", "room": "kitchen", "name": "cabinet", "x": 1.0, "z": 0.0,
+            "spots": [{"id": "cabinet_in", "kind": "closed"}]},
+           {"key": "hall|table", "room": "hall", "name": "table", "x": 5.0, "z": 0.0,
+            "spots": [{"id": "hall_table", "kind": "surface"}]}]
+    answer = ({"kind": truth_kind, "spot": "cabinet_in", "furniture": "kitchen|cabinet", "room": "kitchen"}
+              if truth_kind == "put away" else {"kind": truth_kind, "who": truth_who})
+    return {"session": "t", "residents": [{"id": "ana", "name": "Ana Lima"}],
+            "layout": {"entry": "hall_table", "furniture": fur},
+            "patrols": [{"day": 1, "time": "08:00", "rooms": ["kitchen"], "people": {},
+                         "seen": [{"furniture": "kitchen|counter", "oids": ["mug_red"],
+                                   "things": [{"spot": "counter_top", "thing": "red mug",
+                                               "where": patrol_where}]}]}],
+            "questions": [{"n": 1, "day": 1, "time": "10:00", "kind": "put away", "accept": ["mug_red"],
+                           "answer": {"mug_red": answer}, "looks": {}, "people": {}}],
+            "rules": {"max_looks": 2}}
+
+
+def test_memory_answers_put_away_and_someone_has_it():
+    from lived_home.play_baselines import play
+    # last seen on a counter with no drawers: put away in the nearest cabinet of that room
+    r = play(_data(), "last seen")[0]
+    assert r["answer"] == "putaway" and r["verdict"] == "good"
+    assert play(_data(), "last seen", memory_answers=False)[0]["verdict"] == "part"   # can't tell
+    assert play(_data(), "nearest")[0]["answer"] == "cant"                            # no memory
+    # last seen in Ana's hands: someone has it
+    d = _data("in Ana's hands", "someone has it", "ana")
+    r = play(d, "most often")[0]
+    assert r["answer"] == "someone" and r["verdict"] == "good"
+
+
+def test_judge_matches_the_play_page():
+    from lived_home.play_baselines import judge
+    F = {"kitchen|cabinet": {"room": "kitchen"}, "kitchen|counter": {"room": "kitchen"}}
+    q = {"answer": {"m": {"kind": "put away", "furniture": "kitchen|cabinet", "room": "kitchen"}}}
+    assert judge(q, {"type": "putaway", "fkey": "kitchen|cabinet"}, F) == "good"
+    assert judge(q, {"type": "putaway", "fkey": "kitchen|counter"}, F) == "part"
+    assert judge(q, {"type": "someone", "who": "ana"}, F) == "bad"
+    assert judge(q, {"type": "cant"}, F) == "part"
+
+
+def test_every_question_covers_each_askable_thing_at_each_question_time():
+    import pytest
+    run = pathlib.Path(__file__).resolve().parents[1] / "results" / "lived_home" / "hssd_b"
+    if not (run / "day_14").exists():
+        pytest.skip("run hssd_b not here")
+    from lived_home.play import QUESTION_TIMES, build_all
+    data = build_all(run, 2)
+    qs = data["questions"]
+    slots = {(q["day"], q["time"]) for q in qs}
+    assert len(slots) == 11 * len(QUESTION_TIMES)               # days 4-14
+    per_slot = collections.Counter((q["day"], q["time"]) for q in qs)
+    assert len(qs) > 4000 and max(per_slot.values()) - min(per_slot.values()) < 40
+    # the same patrols as the 30-question session with that seed
+    sess = json.loads((run / "play" / "play_data.json").read_text())
+    assert [p["rooms"] for p in sess["patrols"]] == [p["rooms"] for p in data["patrols"]]

@@ -7,8 +7,9 @@ someone standing at it). "Under the bed" is not a place: it is the relation
 under, with the bed's spot as reference. Each place has 2 to 4 plain
 descriptions a person might use for it.
 
-Layouts are generated per household (lived_home.household). PILOT_HOME, the
-draft's hand-written home, stays as the fallback for tests.
+Layouts are made per household (lived_home.household), from an HSSD scene
+(lived_home.hssd_home) or invented by the model. PILOT_HOME, the draft's
+hand-written home, stays as the fallback for tests.
 """
 from __future__ import annotations
 

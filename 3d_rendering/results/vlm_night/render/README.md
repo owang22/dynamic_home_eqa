@@ -8,7 +8,25 @@ and how many pixels each one covers.
 
 The 3D placement is the committed renderer in
 `3d_rendering/results/render_methods/habitat_hssd/scripts/` (read its `REPORT.md`). It is imported,
-not edited; `lib.py` subclasses its `Home` with three changes listed under "Changes to placement".
+not edited; `lib.py` subclasses its `Home` with four changes listed under "Changes to placement".
+
+## Picture sets and the code that made each
+
+All pictures are outside the repo, under `/mnt/nvme/oliver/robot/render_methods/vlm_night/`.
+Each set has the same folder layout and truth.json format (below).
+
+| set | snapshots | eye | placement | code | used by |
+|---|---|---|---|---|---|
+| `hssd_a` | all 112 | 1.0 m | v1 (`lib.SnapshotHome`) | `choose_views.py`, `render_snapshot.py`, `run_all.py` | every result in `../NIGHT_2026-10-13.md` and `../questions/` |
+| `hssd_a_1p4` | 44 (days 4-14, 10/14/18/22 h) | 1.4 m | v1 | `*_1p4.py`, `README_1p4.md` | camera-height bench in the night notes |
+| `hssd_a_0p4` | 40 (days 3-7, every 2 h) | 0.4 m | v1 | `*_0p4.py` (2026-10-19) | `go2/evidence_memory/` |
+| `hssd_a_v2` | all 112 | 1.0 m | v2 (`lib.SnapshotHomeV2`) | `*_v2.py`, `placement_check.py`, `before_after.py` | superseded by v3 |
+| `hssd_a_v3` | 5 (check snapshots) | 1.0 m | v3 (`lib_v3.SnapshotHomeV3`) | `*_v3.py`, `typical_sizes.py` | checks only |
+| `hssd_a2_v3` | all 112 of run `hssd_a2` | 1.0 m | v3 | `run_all_v3.py` with `RUN_V3` (below) | newest set; no question trial has used it yet |
+
+For new pictures use v3. `place_map.py` (which furniture each pixel of a view shows, from the
+empty home) is used by `../questions/placed_notes.py`. Logs: `logs/` (v1), `run_1p4/`, `run_0p4/`,
+`run_v2/`, `run_v3/`.
 
 ## How to run
 
@@ -94,9 +112,8 @@ To avoid unfair questions: ask about an object in a picture only when that pictu
 
 ## Changes to placement (lib.SnapshotHome)
 
-The first full run (moved to `/mnt/nvme/oliver/robot/render_methods/vlm_night/old_v1/`, delete
-when no longer wanted) had only changes 1-3; change 4 was found in the eye check and everything
-was rendered again.
+The first full run had only changes 1-3 (its pictures, `old_v1/`, have since been deleted);
+change 4 was found in the eye check and everything was rendered again.
 
 1. Objects whose place is None (out of the house) are not placed (the committed code would crash).
 2. Objects held by a person, and anything resting on or inside something a person wears, holds or
@@ -161,3 +178,138 @@ was rendered again.
   the bathroom-2 basin on a shampoo bottle, the shampoo on the toothbrush holder).
 - **People are not drawn**, and nothing worn, held or pocketed is drawn.
 - Lighting is flat with no shadows; dark things on dark wood lose their shape.
+
+## Second placement (hssd_a_v2, 2026-10-13)
+
+The same 112 snapshots, views, lens and file layout, placed again by `lib.SnapshotHomeV2`
+(a subclass of `SnapshotHome`; `scene.py` and `common.py` are still not edited). Pictures:
+`/mnt/nvme/oliver/robot/render_methods/vlm_night/hssd_a_v2/`. The `hssd_a` pictures are untouched.
+
+```
+python render_snapshot_v2.py 7 1800          # one snapshot into hssd_a_v2 (about 28 s)
+python run_all_v2.py --workers 2             # all 112; resumable; logs in run_v2/logs/
+python placement_check.py 7 1800 v1|v2       # counts for one placement, no pictures -> run_v2/checks/
+python before_after.py 7 1800                # hssd_a next to hssd_a_v2 -> hssd_a_v2/checks/
+```
+
+What changed (each rule is described in its method's docstring in `lib.py`):
+
+1. **Open containers** (laundry basket, bowl, tray) and **open places** (sinks, bathtub, fireplace
+   opening): the first placement dropped every content at the centre and each rested on the one
+   before, so contents stood in towers. Now the inside of a container is measured from above
+   (cells of its own mesh below its rim); each content goes on a free part of it, as low as it
+   goes, and rests on another content only when no free part fits. Cloth wider than the inside is
+   folded (footprint scaled down, thickness up by the same factor; a `folded_to_fit` repair) and,
+   when stacked, sinks 40% into the cloth below. In open places the flattest things go first
+   (plates at the bottom of a full sink), and the lower walls of a basin count as bottom.
+   Closed containers (bags, pockets): contents spread over the box bottom; one that would stick
+   out of the top is left out (`not_placed`, "no room left in its closed container").
+2. **Thing on thing**: the base's real upper surface is measured from above; the thing's centre
+   goes over it, where it rests lowest. A thing on a tray lies in the tray. When the base is much
+   smaller (its top under a quarter of the thing's footprint, a tenth for cloth, or a tall thing
+   on a narrower top), the thing goes beside the base on the same surface (`beside_small_base`).
+3. **Crowded surfaces**: when no spot keeps a thing's whole box on free cells, the thing is also
+   tried turned (30-150 degrees), and its resting height is worked out from its underside (seen
+   from below) against the surface and the boxes of things already there, so a vacuum cleaner's
+   hose may pass over the laundry basket instead of the cleaner standing on it. Spots where it
+   rests within 3 cm of the surface come first, then (next_to) within 15 cm of the reference.
+4. **Repairs are recorded.** `truth.json` gains `repairs` (one entry per change: `object`,
+   `kind`, `what`, `from` = what the snapshot asked, `to` = what was drawn), `objects[<id>].repairs`,
+   and in `summary`: `repairs`, `objects_repaired`, `repairs_by_kind`. Kinds: `overlap` /
+   `overhang` (no free room: overlaps neighbours, or hangs over the edge or blocked cells),
+   `next_to_a_place` (next_to names a place: put on it), `reference_not_drawn` (next to / on a
+   thing with no model or not drawn: put on the place), `far_from_reference`,
+   `beside_small_base`, `small_base_kept`, `on_neighbours`, `base_not_seen` (old box-top rule
+   used), `stacked_in_container`, `wider_than_container`, `sticks_out_of_container`,
+   `folded_to_fit`, `open_place_crowded`, `open_place_bottom_not_found`.
+5. **Not drawn, listed plainly.** Each `not_placed` entry has `reason` and `has_model`; `summary`
+   has `not_placed_by_reason`, `no_3d_model` (object, type) and `with_a_person_not_drawn`
+   (object, type, why: worn, held, pocketed, or in or on something a person has).
+
+`placement_check.py` counts per snapshot (definitions in its docstring): things more than 3 cm
+above anything under them (`floating`), more than 3 cm above what they are meant to rest on
+(`off_its_support`), contents more than 10 cm above their container's rim, and box overlaps.
+Box overlaps over-count where a hose or a handle passes over another thing, and clothes sunk
+into each other in the basket count as overlaps by design.
+
+## Third version (hssd_a_v3, hssd_a2_v3, 2026-10-13)
+
+Sharper pictures, corrected model sizes and kinds, garments as folded cloth, things spread out
+instead of stacked, and every thing on a surface held by it. All in new files; the v1/v2 code
+paths and pictures are not changed (`lib.py`, `render_snapshot.py`, `run_all_v2.py`,
+`placement_check.py`, `before_after.py` are as they were). Revised the same evening after an
+independent visual audit of 56 v3 pictures (clothes as hollow shells, overhangs, wrong kinds,
+moves to other furniture).
+
+```
+python typical_sizes.py                       # typical size per type (local Qwen, cached) -> typical_sizes_v3.json
+python make_meshes_v3.py                      # tinted folded cloth, groups, laid-flat models -> models_v3_built.json
+python model_sizes_v3.py v2|v3                # size check -> run_v3/size_check_<v>.json/.md
+python model_check_v3.py v2|v3 [--ask]        # every model alone, 2 views, Qwen verdict -> run_v3/model_check/<v>/
+python render_snapshot_v3.py 4 1000           # one snapshot into hssd_a_v3 (about 31 s)
+python run_all_v3.py --workers 2              # all snapshots; resumable; logs in run_v3/<run>/logs/
+python placement_check_v3.py 4 1000 v2|v3     # counts, what each thing rests on, overhangs -> run_v3/checks/<run>/
+python before_after_v3.py 4 1000 [7 1800 ..]  # v2 next to v3 -> hssd_a_v3/checks/v2_v3_day_XX_HHMM_<n>.jpg
+# household A2 (same residents, objects and home; re-run generator):
+RUN_V3=.../lived_home/hssd_a2 PICS_V3=/mnt/nvme/oliver/robot/render_methods/vlm_night/hssd_a2_v3 \
+  RUN_V3_LOGS=hssd_a2 python run_all_v3.py --workers 2      # same env for placement_check_v3.py
+```
+
+Settings live in `lib_v3.py` (imported first; it sets lib.W/H, lib.VISIBLE_PX, lib.PICS, lib.RUN,
+lib.CODE and lib.HOME_CLASS in that process only). Derived meshes are in
+`/mnt/nvme/oliver/robot/render_methods/vlm_night/meshes_v3/`.
+
+1. **Pictures 1280x960** (was 640x480), same 75 deg lens, same camera stands (`spot_views.json`).
+   The colour picture is drawn at 2560x1920 and reduced 2x2 -> 1 (smooth edges); the id picture is
+   drawn at 1280x960. Habitat's ambient occlusion (`enable_hbao`) is on. Lights unchanged.
+   **Pixel counts in truth.json are at 1280x960, 4x the old counts. "visible" is now >= 120 px
+   (= 30 px at 640x480).** truth.json records `image_size`, `visible_px_threshold`, `pixel_note`.
+   The eye-check bar of 300-1000 px at 640x480 becomes 1200-4000 px.
+   About 31 s per snapshot (v2 21 s on the same machine): placing 21-24 s, drawing 0.9 s (v2 0.4 s),
+   the rest writing the larger pictures. 15 MB per snapshot (v2 5.7 MB).
+2. **Models.** `models_v3.json` (by hand) and `models_v3_built.json` (make_meshes_v3.py) give, per
+   object, per type|model id or per type, a new longest side (rescale) or another model (scaled to a
+   longest side), each with the reason; table with old and new sizes: `run_v3/model_fixes_v3.md`.
+   - Size check: typical sizes from the local Qwen (`typical_sizes_v3.json`; four set by hand where
+     Qwen was wrong, each with why); a model is flagged when its longest or middle side is over
+     1.8x or under 1/1.8 of typical.
+   - Garments, napkins, pillowcase and throw are all one generic folded-cloth model (the plain
+     folded towel) with its texture recoloured to the object's `color` (garment meshes stood up as
+     stiff hollow shells). Several-in-one objects are one model holding several copies (three
+     lemons, three tins, a bunch of four carrots). Gloves and pruning shears are laid flat.
+   - Wrong kinds replaced (dish soap, cleaning spray, stain remover, magazine, kitchen roll,
+     candle, clogs, loafers, hand cream, sticky notes, plasters, serving platter, coffee, rice,
+     pasta, phones, knives, tongs, spatula, rolling pin, salt cellar, egg carton, honey bear,
+     umbrella, parcel, trays, sketchbook, shopping bags, herbs, laundry soap, water bottle).
+   truth.json gives each changed object `model_change` and `summary.models_changed`.
+3. **Where things go** (`SnapshotHomeV3`). A thing on a surface must have its box centre over the
+   surface, at least 80% of its own outline (seen from below, not its box) over the surface, and
+   its outline must not overlap another thing's turned rectangle. It rests on the scanned surface
+   under its outline (so a back cushion or a basin rim does not lift it). When v2's spot fails
+   this (overhang, or overlap when the surface was full), or when the snapshot puts it on top of a
+   thing that is not a carrier for it (`lib_v3.CARRIERS`, also in truth.json `stack_rule`: cloth on
+   cloth; anything on a tray, board, platter or in the laundry basket; plates, bowls, cutlery,
+   loose food or a napkin on a plate; bowls, cutlery or loose food in a bowl; books and papers on
+   a book; a cup on a coaster; cutlery on a napkin), a new spot is searched in this order:
+   its own place (near its base when it has one; repair `beside_not_a_carrier` or
+   `respaced_on_its_place`); another place of the same furniture (`moved_on_same_furniture`);
+   the nearest other furniture of the same room (`moved_to_other_furniture`, last resort; never a
+   floor unless the thing was on a floor; never into a sink). If nothing fits, the thing stays as
+   v2 put it. A thing more than 3 cm above its surface with nothing under it is set down
+   (`lowered_onto_surface`). Cloth overlapping only cloth (a heap of clothes) and piles in a sink
+   are left. On furniture tops v3 packs things against the edges and each other (v2 scattered
+   them over the middle). **When `drawn_on` is set, the thing is drawn on that place, not its
+   snapshot place; `summary.moved_to_other_furniture` lists these per snapshot.**
+4. `placement_check_v3.py` = placement_check.py plus, from the same 25 down samples per thing:
+   what it rests on (`resting_on_a_surface`, `resting_on_a_thing`, split into carrier pairs and the
+   rest) and overhang (centre sample not held, or under 80% of samples held within 3 cm of its
+   bottom). Pans on cooktop grates count as overhangs (samples fall between the bars).
+   `off_its_support` counts the things drawn on another place (gap null) as off support.
+
+Known faults left (not fixed): stand-in colours often differ from the snapshot (a blue thermos jug
+for a red thermos, a yellow washing-up bottle for a green pump, a red closed umbrella for a navy
+folding one); receipts and mail are scattered paper strips; untextured black pans and binders;
+book covers blurred at source; low-resolution rugs; glasses are opaque everywhere (habitat draws
+these materials opaque); some spot names do not describe what the camera sees
+(`laundryroom_toilet_by_the_bathroom_vanity_top` shows a laundry sink; the names come from the
+household's place list, not from the renderer); labels are not readable.

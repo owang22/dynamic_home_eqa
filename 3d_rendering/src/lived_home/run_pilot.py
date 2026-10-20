@@ -1,13 +1,24 @@
 """Generate one household and live through N days with roleplaying residents.
 
-    PYTHONPATH=3d_rendering/src python -m lived_home.run_pilot \
-        --model gpt-5.6-luna --effort medium --days 7 \
-        --out 3d_rendering/results/lived_home/pilot_luna
+From the repo root:
 
---create_only stops after household creation. A run can be read while it runs:
-calls.jsonl (every model call), responses.jsonl (every plan and activity
-answer, with what the engine did with each action) and events.jsonl (every
-action that happened, as it happens).
+    PYTHONPATH=3d_rendering/src python -m lived_home.run_pilot \
+        --scene 107734254_176000121 --days 14 --out 3d_rendering/results/lived_home/<run>
+
+Main options: --scene (home from an HSSD scene; without it the model invents the
+home), --household <household.json> (reuse a household, no creation calls),
+--create_only (stop after creation), --resume D (continue from the end-of-day-D
+save), --fake (scripted residents, no model, for tests). Model: --model
+(default gpt-5.6-luna) and --effort.
+
+At start the placement rules (lived_home.placement) are applied to a reused
+household's start positions (not on --resume), and spot areas are taken from the
+rendered scan where there is one (lived_home.measured_areas).
+
+A run can be read while it runs: calls.jsonl (every model call), responses.jsonl
+(every plan and activity answer, with what the engine did with each action) and
+events.jsonl (every action that happened). Day folders day_XX/ hold the
+positions every 2 hours (positions_HHMM.json) and the end-of-day state.
 """
 from __future__ import annotations
 
@@ -19,7 +30,7 @@ import pathlib
 import random
 from concurrent.futures import ThreadPoolExecutor
 
-from lived_home import director, prompts
+from lived_home import director, measured_areas, prompts
 from lived_home.calls import Caller, to_minute
 from lived_home.household import create
 from lived_home.layout import Layout
@@ -59,6 +70,9 @@ class Household:
         self.caller, self.spec, self.out = caller, spec, out
         self.days, self.variation, self.seed = days, variation, seed
         self.layout = Layout.from_json(spec["layout"])
+        # how much a spot holds: the area measured in the rendered empty home where
+        # there is a good scan, else the area assumed when the household was made
+        self.area_sources = measured_areas.apply(self.layout, spec.get("scene"))
         self.people = {r["id"]: r for r in spec["residents"]}
         self.rids = list(self.people)
         self.objects = {o["id"]: o for o in spec["objects"]}
@@ -609,6 +623,18 @@ def main() -> None:
         if fixed:
             spec["inside_read_as_next_to"] = spec.get("inside_read_as_next_to", []) + fixed
             print(f"read 'inside' as next to for {len(fixed)} things that hold nothing: {', '.join(fixed)}")
+        if not args.resume:
+            # start positions that break lived_home.placement's rules (an egg inside the milk
+            # carton, a phone charger on the hall floor), moved as a put_down would be; not on a
+            # resume, whose saved world already has its own positions
+            from lived_home.household import fix_start_placement
+            lay = Layout.from_json(spec["layout"])
+            measured_areas.apply(lay, spec.get("scene"))
+            moved = fix_start_placement(spec["objects"], lay)
+            if moved:
+                spec["moved_at_start"] = spec.get("moved_at_start", []) + moved
+                print(f"moved {len(moved)} start positions that break the placement rules: "
+                      f"{', '.join(m[0] for m in moved)}")
         (args.out / "household.json").write_text(json.dumps(spec, indent=1))
     else:
         spec = create(caller, args.seed, args.out, scene=args.scene)

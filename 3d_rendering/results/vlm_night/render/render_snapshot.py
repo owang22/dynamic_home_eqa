@@ -17,12 +17,30 @@ import argparse
 import json
 import sys
 import time
-from collections import defaultdict
+from collections import Counter, defaultdict
 
 import numpy as np
 from PIL import Image
 
 import lib
+
+
+def not_placed_reason(why):
+    """Short reason for an object that is not in the 3D scene."""
+    why = why or ""
+    for start, reason in (("no 3D model", "no 3D model"),
+                          ("with a person", "with a person (worn, held, pocketed, or in or on something a person has)"),
+                          ("worn by", "with a person (worn, held, pocketed, or in or on something a person has)"),
+                          ("in pocket of", "with a person (worn, held, pocketed, or in or on something a person has)"),
+                          ("out of the house", "out of the house"),
+                          ("larger than the box of its closed container", "larger than its closed container"),
+                          ("no room left inside its closed container", "no room left in its closed container"),
+                          ("its container", "its container is not drawn"),
+                          ("no free room", "no free room on its place"),
+                          ("no cells found", "drawer bottom not found")):
+        if why.startswith(start):
+            return reason
+    return "other"
 
 
 def main():
@@ -98,6 +116,7 @@ def main():
         }
 
     objects, not_placed, overlapping, open_unseen, hidden_seen = {}, [], [], [], []
+    repairs = getattr(home, "repairs", None)      # recorded by lib.SnapshotHomeV2 only
     hidden_unseen = 0
     for oid in sorted(objs):
         f = fact(oid)
@@ -105,11 +124,14 @@ def main():
         f.update(why_not_placed=None if f["placed"] else r.get("why"),
                  max_pixels=max_px.get(oid, 0), best_picture=best_pic.get(oid),
                  visible_in=visible_in.get(oid, []))
+        if repairs is not None:
+            f["repairs"] = [{k: x[k] for k in ("kind", "what", "from", "to")} for x in r.get("repairs", [])]
         objects[oid] = f
         short = {"object": oid, "type": f["type"], "place": f["place"], "relation": f["relation"],
                  "reference": f["reference"]}
         if not f["placed"]:
-            not_placed.append({**short, "why": r.get("why")})
+            not_placed.append({**short, "reason": not_placed_reason(r.get("why")), "why": r.get("why"),
+                               "has_model": oid in home.things})
             continue
         if f["did_not_fit"]:
             overlapping.append(short)
@@ -140,6 +162,12 @@ def main():
             "hidden_in_snapshot_in_no_picture": hidden_unseen,
             "hidden_in_snapshot_but_visible": len(hidden_seen),
             "visible_somewhere": sum(1 for f in objects.values() if f["max_pixels"] >= lib.VISIBLE_PX),
+            "not_placed_by_reason": dict(Counter(x["reason"] for x in not_placed).most_common()),
+            "no_3d_model": [{"object": x["object"], "type": x["type"]} for x in not_placed
+                            if x["reason"] == "no 3D model"],
+            "with_a_person_not_drawn": [{"object": x["object"], "type": x["type"], "why": x["why"]}
+                                        for x in not_placed if x["reason"] == "with a person (worn, held, "
+                                        "pocketed, or in or on something a person has)"],
         },
         "not_placed": not_placed,
         "placed_overlapping_or_overhanging": overlapping,
@@ -147,8 +175,16 @@ def main():
         "hidden_in_snapshot_but_visible": hidden_seen,
         "timings": timings,
     }
+    if repairs is not None:
+        truth["summary"].update(
+            repairs=len(repairs), objects_repaired=len({x["object"] for x in repairs}),
+            repairs_by_kind=dict(Counter(x["kind"] for x in repairs).most_common()))
+        truth["repairs"] = [{k: x[k] for k in ("object", "kind", "what", "from", "to")} for x in repairs]
+        truth["repairs_note"] = ("every change the renderer made to what the snapshot says, per object: "
+                                 "kind, what was done, from (what the snapshot asked), to (what was drawn)")
+    line_summary = {k: v for k, v in truth["summary"].items() if not isinstance(v, (list, dict))}
     lib.json_dump(truth, out / "truth.json")
-    line = {"day": a.day, "time": a.hhmm, **timings, **truth["summary"], "pictures": len(pictures),
+    line = {"day": a.day, "time": a.hhmm, **timings, **line_summary, "pictures": len(pictures),
             "finished": time.strftime("%Y-%m-%d %H:%M:%S")}
     with open(lib.CODE / "logs" / "render_times.jsonl", "a") as fh:
         fh.write(json.dumps(line) + "\n")

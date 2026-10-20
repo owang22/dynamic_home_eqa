@@ -20,6 +20,8 @@ them; the answer key accepts any thing that fits.
 
 Usage: python -m lived_home.play <run folder> [--questions 30] [--seed 0] [--out folder]
 writes <run>/play/play_data.json (everything the page needs) and index.html.
+build_all(run, seed) gives every question the task could ask, with the same
+fairness rules and patrols (used by lived_home.play_baselines on a run folder).
 """
 from __future__ import annotations
 
@@ -403,6 +405,82 @@ def questions(spec, states, patrol_log, layout, names, n, rng, settle=SETTLE_DAY
                               for f in shown},
                     "people": {r: v for r, v in people.items()}})
     return out
+
+
+def askable(spec: dict, states: dict, names: dict) -> tuple[list, dict, dict]:
+    """(movers, objects, first names): things that change place at least twice
+    between snapshots and that a question can name without ambiguity (by look, or by
+    owner when another thing looks the same), as questions() picks them."""
+    objects = {o["id"]: o for o in spec["objects"]}
+    keys = sorted(states)
+    moves = collections.Counter()
+    for a, b in zip(keys, keys[1:]):
+        for oid in objects:
+            if states[a]["objects"][oid].get("place") != states[b]["objects"][oid].get("place"):
+                moves[oid] += 1
+    first_names = {r["id"]: r["name"].split()[0] for r in spec["residents"]}
+    owned = tuple(f"{v}'s" for v in first_names.values())
+    out = []
+    for oid in objects:
+        if moves[oid] < 2:
+            continue
+        name = asked_name(oid, objects, names, first_names)
+        if name == f"the {names[oid]}" or name.startswith(owned):
+            out.append(oid)
+    return out, objects, first_names
+
+
+def all_questions(spec, states, patrol_log, names, settle=SETTLE_DAYS) -> list:
+    """Every question the task could ask: each askable thing at each question time
+    after the settling days, with the same fairness rules as questions() (no worn
+    clothes, no thing put away that no patrol has ever seen). Looks are shared per
+    time, not copied per question."""
+    movers, objects, first_names = askable(spec, states, names)
+    out = []
+    for slot in sorted(states):
+        if slot[0] <= settle or slot[1] not in QUESTION_TIMES:
+            continue
+        state = states[slot]
+        before = (slot[0], hhmm(slot[1]))
+        shown, people = visible_at(state, names, first_names)
+        looks = {f: list(v) for f, v in shown.items()}
+        for oid in movers:
+            key = answer_key(state, oid)
+            if key["kind"] in ("someone has it", "out of the house"):
+                if key["how"] == "worn_by" and objects[oid]["carrier"] in ("none", "pockets"):
+                    continue
+                kind = "someone has it"
+            elif key["kind"] == "put away":
+                if not last_patrol_sighting(patrol_log, oid, before):
+                    continue
+                kind = "put away"
+            else:
+                last = last_patrol_sighting(patrol_log, oid, before)
+                kind = ("never seen" if last is None else
+                        "seen where it is" if last == key["furniture"] else "moved since last seen")
+            out.append({"n": len(out) + 1, "day": slot[0], "time": hhmm(slot[1]),
+                        "text": where_is(asked_name(oid, objects, names, first_names), objects[oid]["type"]),
+                        "kind": kind, "probe": False, "accept": [oid], "answer": {oid: key},
+                        "type": objects[oid]["type"], "looks": looks, "people": dict(people)})
+    return out
+
+
+def build_all(run: pathlib.Path, seed: int, settle: int = SETTLE_DAYS) -> dict:
+    """Like build(), with every question instead of a sample of n (for scoring
+    methods, not for people: thousands of questions). Same seed, same patrols."""
+    spec, states = load(run)
+    rng = random.Random(seed)
+    objects = {o["id"]: o for o in spec["objects"]}
+    names = {oid: phrase(o) for oid, o in objects.items()}
+    layout = build_layout(spec, states)
+    first_names = {r["id"]: r["name"].split()[0] for r in spec["residents"]}
+    patrol_log = patrols(states, layout, names, rng, first_names)
+    return {"run": run.name, "session": f"{run.name}-s{seed}-all", "names": names,
+            "residents": [{"id": r["id"], "name": r["name"]} for r in spec["residents"]],
+            "layout": layout, "patrols": patrol_log,
+            "questions": all_questions(spec, states, patrol_log, names, settle),
+            "rules": {"patrol_times": [hhmm(t) for t in PATROL_TIMES], "max_looks": MAX_LOOKS,
+                      "settle_days": settle}}
 
 
 def build(run: pathlib.Path, n: int, seed: int, settle: int = SETTLE_DAYS) -> dict:

@@ -179,6 +179,11 @@ finish it. Actions:
     spot (a drawer, a sink); under the spot (under the bed); next_to
     toaster_silver; on_top of book_stack_blue; inside a bag, a basket, a mug
     or the pocket of a jacket lying here (relation inside, ref that thing).
+    Only some things hold others: on top of a tray, board, plate, book or a
+    pile of clothes; inside a bag, box, basket, bowl, folder or pocket that the
+    thing fits. Not on a mug, a laptop, a pan or food. Floors take shoes, bags
+    and baskets; sinks and the bathtub take dishes and toiletries. Otherwise the
+    thing ends up next to what you named, or on the nearest table or counter.
   pocket (object): put something small in a pocket of what you are wearing
   wear (object): put on clothes, shoes, a watch, glasses or a backpack, or
     clip something on (keys on a belt, a badge on a lanyard); to take it off,
@@ -233,7 +238,9 @@ FIELDS = """- n: number the things 1, 2, 3, ... in the order you list them.
   to the n of another thing in your list at the same spot, it is relative to
   that thing: on_top of the stack of books, next_to the kettle, under the
   newspaper, or inside another thing (a pen case in a backpack, a bookmark in
-  a book, a wallet in the pocket of jeans).
+  a book, a wallet in the pocket of jeans). A carton, jar, tin or packet holds
+  only what it is sold with (no egg inside the milk carton); only a tray, board,
+  plate, book or a pile of clothes has things on top of it.
 - Sink basins and the bathtub are for washing: at the start only a sponge,
   soap or dishes waiting to be washed are in them. Toothbrushes stand in a cup
   or holder (list it) on the counter beside the sink.

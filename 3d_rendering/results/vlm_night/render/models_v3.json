@@ -1,0 +1,482 @@
+{
+ "note": "v3 model rules (lib_v3.SnapshotHomeV3.choose_models). by_model keys are 'type|model id' and win over by_type. A rule with mesh replaces the model (scaled so its longest side is longest_m); a rule with only longest_m rescales the v2 model; drop removes the model (the object is then not drawn, listed under no_3d_model). Made from model_sizes_v3.py (size check) and model_check_v3.py (look check).",
+ "by_type": {
+  "eggs": {
+   "mesh": "/mnt/nvme/oliver/robot/render_methods/habitat_hssd/objaverse/hf-objaverse-v1/glbs/000-028/39fcb564613c45c1a2689410fb49c6f0.glb",
+   "id": "39fcb564613c45c1a2689410fb49c6f0",
+   "source": "objaverse",
+   "looks_like": "Egg box",
+   "longest_m": 0.16,
+   "stand_in": false,
+   "why": "a single egg scaled to 30 cm (looked like a melon); the object is a six-egg carton",
+   "found_by": "size check + look check"
+  },
+  "honey jar": {
+   "mesh": "/mnt/nvme/oliver/robot/render_methods/habitat_hssd/objaverse/hf-objaverse-v1/glbs/000-108/6f4c1566b9674a208d618b4a00d0343c.glb",
+   "id": "6f4c1566b9674a208d618b4a00d0343c",
+   "source": "objaverse",
+   "looks_like": "Honey bear bottle",
+   "longest_m": 0.13,
+   "stand_in": false,
+   "why": "a white 'formalin-filled jar' for an amber bear-shaped honey jar",
+   "found_by": "look check"
+  },
+  "spare umbrella": {
+   "mesh": "/mnt/nvme/oliver/robot/render_methods/habitat_hssd/objaverse/hf-objaverse-v1/glbs/000-006/3e304ccfc9c54fbaa737819f9fbc992f.glb",
+   "id": "3e304ccfc9c54fbaa737819f9fbc992f",
+   "source": "objaverse",
+   "looks_like": "Closed umbrella from Poly by Google",
+   "longest_m": 0.35,
+   "stand_in": false,
+   "why": "an open umbrella 60x60x48 cm for a folded spare umbrella; replaced by a closed umbrella (red, not navy)",
+   "found_by": "size check + look check"
+  },
+  "parcel": {
+   "mesh": "/mnt/nvme/oliver/robot/render_methods/habitat_hssd/objaverse/hf-objaverse-v1/glbs/000-004/c023cd16986445d880871174d7fe8623.glb",
+   "id": "c023cd16986445d880871174d7fe8623",
+   "source": "objaverse",
+   "looks_like": "Closed Cardboard Box (Free Download)",
+   "longest_m": 0.22,
+   "stand_in": false,
+   "why": "a 35 cm wooden crate for a small kraft parcel",
+   "found_by": "size check + look check"
+  },
+  "salt cellar": {
+   "mesh": "/mnt/nvme/oliver/robot/render_methods/habitat_hssd/objaverse/hf-objaverse-v1/glbs/000-091/e0b380d2819249ecbb75c2552bedd0a1.glb",
+   "id": "e0b380d2819249ecbb75c2552bedd0a1",
+   "source": "objaverse",
+   "looks_like": "Salt shaker",
+   "longest_m": 0.1,
+   "stand_in": false,
+   "why": "two salt pots with a spoon, 20 cm long, for one salt cellar",
+   "found_by": "size check + look check"
+  },
+  "laundry soap": {
+   "mesh": "/mnt/nvme/oliver/robot/datasets/moving-eqa/scene_datasets/hssd-hab/objects/6/6b21bd924df8f21c02fb8bb569de93bd887d8f1e.glb",
+   "id": "6b21bd924df8f21c02fb8bb569de93bd887d8f1e",
+   "source": "hssd",
+   "looks_like": "Soap",
+   "longest_m": 0.1,
+   "stand_in": false,
+   "why": "a 20 cm detergent bottle for a paper-wrapped bar of soap",
+   "found_by": "size check + look check"
+  },
+  "market herbs": {
+   "mesh": "/mnt/nvme/oliver/robot/datasets/moving-eqa/scene_datasets/hssd-hab/objects/e/ea233d6e83ef6d189dc92600b820430307b58cea.glb",
+   "id": "ea233d6e83ef6d189dc92600b820430307b58cea",
+   "source": "hssd",
+   "looks_like": "Herbs, Basil",
+   "longest_m": 0.25,
+   "stand_in": true,
+   "why": "'Grass' model drawn as shredded white strands; potted basil instead (the object is basil and mint in a glass)",
+   "found_by": "look check"
+  },
+  "table knives": {
+   "mesh": "/mnt/nvme/oliver/robot/render_methods/habitat_hssd/objaverse/hf-objaverse-v1/glbs/000-151/f44ca5eb44fe444d8ad1890cd5cfccf0.glb",
+   "id": "f44ca5eb44fe444d8ad1890cd5cfccf0",
+   "source": "objaverse",
+   "looks_like": "Butter Knife",
+   "longest_m": 0.22,
+   "stand_in": false,
+   "why": "a butcher's cleaver (and a thin black stick) for table knives",
+   "found_by": "look check"
+  },
+  "knives": {
+   "mesh": "/mnt/nvme/oliver/robot/render_methods/habitat_hssd/objaverse/hf-objaverse-v1/glbs/000-085/51c4cea668134b069c57150de870f5ec.glb",
+   "id": "51c4cea668134b069c57150de870f5ec",
+   "source": "objaverse",
+   "looks_like": "PBR - Kitchen Knife",
+   "longest_m": 0.25,
+   "stand_in": false,
+   "why": "a butcher's cleaver for kitchen knives",
+   "found_by": "look check"
+  },
+  "paring knife": {
+   "mesh": "/mnt/nvme/oliver/robot/render_methods/habitat_hssd/objaverse/hf-objaverse-v1/glbs/000-085/51c4cea668134b069c57150de870f5ec.glb",
+   "id": "51c4cea668134b069c57150de870f5ec",
+   "source": "objaverse",
+   "looks_like": "PBR - Kitchen Knife",
+   "longest_m": 0.18,
+   "stand_in": false,
+   "why": "a butcher's cleaver for a paring knife",
+   "found_by": "look check"
+  },
+  "rolling pin": {
+   "mesh": "/mnt/nvme/oliver/robot/render_methods/habitat_hssd/objaverse/hf-objaverse-v1/glbs/000-043/e5d077535f1241d39121d5c87c65bfaa.glb",
+   "id": "e5d077535f1241d39121d5c87c65bfaa",
+   "source": "objaverse",
+   "looks_like": "Wooden Rolling Pin",
+   "longest_m": 0.3,
+   "stand_in": false,
+   "why": "a blue 'sensor holder pin' rod for a beech rolling pin",
+   "found_by": "look check"
+  },
+  "silicone spatula": {
+   "mesh": "/mnt/nvme/oliver/robot/render_methods/habitat_hssd/objaverse/hf-objaverse-v1/glbs/000-139/4b27628be0804c0285d0b13dda025a0d.glb",
+   "id": "4b27628be0804c0285d0b13dda025a0d",
+   "source": "objaverse",
+   "looks_like": "Silicone Spatula \u25b3613",
+   "longest_m": 0.28,
+   "stand_in": false,
+   "why": "a metal fish slice (Spongebob) for a silicone spatula",
+   "found_by": "look check"
+  },
+  "tongs": {
+   "mesh": "/mnt/nvme/oliver/robot/render_methods/habitat_hssd/objaverse/hf-objaverse-v1/glbs/000-007/1d062ba6e66a4290a99bab6c34d4bbe7.glb",
+   "id": "1d062ba6e66a4290a99bab6c34d4bbe7",
+   "source": "objaverse",
+   "looks_like": "Tongs from Poly by Google",
+   "longest_m": 0.25,
+   "stand_in": false,
+   "why": "'tongue mites' model (blacksmith pincers) for kitchen tongs",
+   "found_by": "look check"
+  },
+  "mechanical pencil": {
+   "mesh": "/mnt/nvme/oliver/robot/render_methods/habitat_hssd/objaverse/hf-objaverse-v1/glbs/000-064/161815cc7ef54b47a8640122d20ae7ab.glb",
+   "id": "161815cc7ef54b47a8640122d20ae7ab",
+   "source": "objaverse",
+   "looks_like": "Mechanical pencil",
+   "longest_m": 0.15,
+   "stand_in": false,
+   "why": "a wooden pencil for a mechanical pencil",
+   "found_by": "look check"
+  },
+  "reusable shopping bags": {
+   "mesh": "/mnt/nvme/oliver/robot/render_methods/habitat_hssd/objaverse/hf-objaverse-v1/glbs/000-081/fce19791b3dc4cb0971a8441191283a3.glb",
+   "id": "fce19791b3dc4cb0971a8441191283a3",
+   "source": "objaverse",
+   "looks_like": "Renova Shopping Bag 03",
+   "longest_m": 0.35,
+   "stand_in": true,
+   "why": "a paper bag of bread rolls for folded canvas shopping bags; now an empty shopping bag",
+   "found_by": "look check"
+  },
+  "sketchbook": {
+   "mesh": "/mnt/nvme/oliver/robot/datasets/moving-eqa/scene_datasets/hssd-hab/objects/e/edf5a667080ed733fda55514ee18a8081f9dcf9c.collider.glb",
+   "id": "edf5a667080ed733fda55514ee18a8081f9dcf9c.collider",
+   "source": "hssd",
+   "looks_like": "Skyline A3 Sketchbook",
+   "longest_m": 0.3,
+   "stand_in": false,
+   "why": "a vinyl record for a sketchbook; now a plain A3 sketchbook (no cover print)",
+   "found_by": "look check"
+  },
+  "work blouse": {
+   "mesh": "/mnt/nvme/oliver/robot/render_methods/habitat_hssd/objaverse/hf-objaverse-v1/glbs/000-026/ca4932da28ea495db1f9969807d9c107.glb",
+   "id": "ca4932da28ea495db1f9969807d9c107",
+   "source": "objaverse",
+   "looks_like": "Folded clothes",
+   "longest_m": 0.3,
+   "stand_in": true,
+   "why": "a kaftan on a stick, drawn as a shredded grey shape; now a stack of folded shirts",
+   "found_by": "look check"
+  },
+  "work cardigan": {
+   "mesh": "/mnt/nvme/oliver/robot/render_methods/habitat_hssd/objaverse/hf-objaverse-v1/glbs/000-026/ca4932da28ea495db1f9969807d9c107.glb",
+   "id": "ca4932da28ea495db1f9969807d9c107",
+   "source": "objaverse",
+   "looks_like": "Folded clothes",
+   "longest_m": 0.33,
+   "stand_in": true,
+   "why": "a kimono on a stick, drawn as a broken white shape; now a stack of folded clothes",
+   "found_by": "look check"
+  },
+  "dress": {
+   "mesh": "/mnt/nvme/oliver/robot/render_methods/habitat_hssd/objaverse/hf-objaverse-v1/glbs/000-026/ca4932da28ea495db1f9969807d9c107.glb",
+   "id": "ca4932da28ea495db1f9969807d9c107",
+   "source": "objaverse",
+   "looks_like": "Folded clothes",
+   "longest_m": 0.33,
+   "stand_in": true,
+   "why": "'Night Dress' was a small figure of a girl wearing it; now a stack of folded clothes",
+   "found_by": "look check"
+  },
+  "linen scarf": {
+   "mesh": "/home/oliver/robot/dynamic_home_eqa_archive/data/objects/external_props/meshes/towel_35b76b90614d.glb",
+   "id": "towel_35b76b90614d",
+   "source": "asked",
+   "looks_like": "plain cream folded towel",
+   "longest_m": 0.3,
+   "stand_in": true,
+   "why": "'Scarf2' drawn as a white wisp; no scarf model in the library looked right; now a folded cream cloth",
+   "found_by": "look check"
+  },
+  "belt": {
+   "longest_m": 0.18,
+   "why": "Roman soldier's belt 30 cm, typical coiled belt 15 cm (1.96x)",
+   "found_by": "size check"
+  },
+  "wooden tray": {
+   "mesh": "/mnt/nvme/oliver/robot/datasets/moving-eqa/scene_datasets/hssd-hab/objects/8/84f9c27d36b878fb19042c0c9d4c3fa072689d7e.collider.glb",
+   "id": "84f9c27d36b878fb19042c0c9d4c3fa072689d7e.collider",
+   "source": "hssd",
+   "looks_like": "Solid oak rectangular tray",
+   "longest_m": 0.42,
+   "stand_in": false,
+   "why": "a deep aluminium baking tray 15 cm tall (looked like a black bucket from the counter) for a flat walnut serving tray",
+   "found_by": "look check (eye, day 4 island picture)"
+  },
+  "ceramic tray": {
+   "mesh": "/mnt/nvme/oliver/robot/datasets/moving-eqa/scene_datasets/hssd-hab/objects/e/ebe95e90df6cefd0e3af6dbc320b82323535a540.glb",
+   "id": "ebe95e90df6cefd0e3af6dbc320b82323535a540",
+   "source": "hssd",
+   "looks_like": "Ikan tray M - antique white",
+   "longest_m": 0.32,
+   "stand_in": false,
+   "why": "a brown wooden box tray for a white oval ceramic tray",
+   "found_by": "look check"
+  },
+  "dish towel": {
+   "longest_m": 0.28,
+   "why": "folded towel models are 40 x 35-38 cm (typical folded towel 30 x 20 cm, middle side 1.9x); a dish towel moved to a free counter in front of a camera looked like a pillow, and a dish towel folded into the wooden tray stood up like a vase",
+   "found_by": "size check (middle side) + look check (eye, day 4 and day 7 sheets)"
+  },
+  "kitchen towel": {
+   "longest_m": 0.28,
+   "why": "folded towel models are 40 x 35-38 cm (typical folded towel 30 x 20 cm, middle side 1.9x); a dish towel moved to a free counter in front of a camera looked like a pillow, and a dish towel folded into the wooden tray stood up like a vase",
+   "found_by": "size check (middle side) + look check (eye, day 4 and day 7 sheets)"
+  },
+  "tea towels": {
+   "longest_m": 0.28,
+   "why": "folded towel models are 40 x 35-38 cm (typical folded towel 30 x 20 cm, middle side 1.9x); a dish towel moved to a free counter in front of a camera looked like a pillow, and a dish towel folded into the wooden tray stood up like a vase",
+   "found_by": "size check (middle side) + look check (eye, day 4 and day 7 sheets)"
+  },
+  "towel": {
+   "longest_m": 0.32,
+   "why": "folded towel models are 40 x 35-38 cm (typical folded towel 30 x 20 cm, middle side 1.9x); a dish towel moved to a free counter in front of a camera looked like a pillow, and a dish towel folded into the wooden tray stood up like a vase",
+   "found_by": "size check (middle side) + look check (eye, day 4 and day 7 sheets)"
+  },
+  "dish soap": {
+   "mesh": "/mnt/nvme/oliver/robot/render_methods/habitat_hssd/objaverse/hf-objaverse-v1/glbs/000-063/176b4fd5021d4454994cd22153c20ee7.glb",
+   "id": "176b4fd5021d4454994cd22153c20ee7",
+   "source": "objaverse",
+   "looks_like": "Bottle Washing-up Liquid",
+   "longest_m": 0.22,
+   "stand_in": false,
+   "why": "an orange 'Ace' laundry-detergent jug for a bottle of dish soap; now a washing-up liquid bottle (yellow, not green)",
+   "found_by": "independent visual audit + same check over every type"
+  },
+  "cleaning spray": {
+   "mesh": "/mnt/nvme/oliver/robot/render_methods/habitat_hssd/objaverse/hf-objaverse-v1/glbs/000-113/1611833f3eaa41bbba2b6944269429ab.glb",
+   "id": "1611833f3eaa41bbba2b6944269429ab",
+   "source": "objaverse",
+   "looks_like": "Spray Bottle",
+   "longest_m": 0.25,
+   "stand_in": false,
+   "why": "a Krylon spray-paint can for a cleaning spray bottle; now a trigger spray bottle",
+   "found_by": "independent visual audit + same check over every type"
+  },
+  "stain remover": {
+   "mesh": "/mnt/nvme/oliver/robot/render_methods/habitat_hssd/objaverse/hf-objaverse-v1/glbs/000-043/7441b159f92e469d96401bbe1756f8b9.glb",
+   "id": "7441b159f92e469d96401bbe1756f8b9",
+   "source": "objaverse",
+   "looks_like": "Sprayer bottle",
+   "longest_m": 0.22,
+   "stand_in": false,
+   "why": "a stoppered medicine jar for an orange spray bottle; now a trigger spray bottle (green and yellow)",
+   "found_by": "independent visual audit + same check over every type"
+  },
+  "landscape magazine": {
+   "mesh": "/mnt/nvme/oliver/robot/render_methods/habitat_hssd/objaverse/hf-objaverse-v1/glbs/000-158/dae37cc4869a4155b6999efe26df710c.glb",
+   "id": "dae37cc4869a4155b6999efe26df710c",
+   "source": "objaverse",
+   "looks_like": "Closed Magazine",
+   "longest_m": 0.28,
+   "stand_in": false,
+   "why": "two stacks of about 30 magazines for one magazine; now one closed magazine",
+   "found_by": "independent visual audit + same check over every type"
+  },
+  "paper towels": {
+   "mesh": "/mnt/nvme/oliver/robot/render_methods/habitat_hssd/objaverse/hf-objaverse-v1/glbs/000-044/e10eb527561048b6bc1786c8c44cd0f5.glb",
+   "id": "e10eb527561048b6bc1786c8c44cd0f5",
+   "source": "objaverse",
+   "looks_like": "Paper Towel Roll",
+   "longest_m": 0.25,
+   "stand_in": false,
+   "why": "a 29 cm woven kitchen-roll holder that could not be recognised; now a paper towel roll on a small stand",
+   "found_by": "independent visual audit + same check over every type"
+  },
+  "candle": {
+   "mesh": "/mnt/nvme/oliver/robot/render_methods/habitat_hssd/objaverse/hf-objaverse-v1/glbs/000-061/71384b2fafc84a1d86b97c87b185be42.glb",
+   "id": "71384b2fafc84a1d86b97c87b185be42",
+   "source": "objaverse",
+   "looks_like": "Scented Candle",
+   "longest_m": 0.1,
+   "stand_in": false,
+   "why": "a tall bronze candlestick for a short amber jar candle; now a candle in a jar (white)",
+   "found_by": "independent visual audit + same check over every type"
+  },
+  "kitchen clogs": {
+   "mesh": "/mnt/nvme/oliver/robot/render_methods/habitat_hssd/objaverse/hf-objaverse-v1/glbs/000-150/9d6a54392fd14a6a8633abfe41dfe554.glb",
+   "id": "9d6a54392fd14a6a8633abfe41dfe554",
+   "source": "objaverse",
+   "looks_like": "Crocsss",
+   "longest_m": 0.28,
+   "stand_in": false,
+   "why": "a white Nike trainer for black rubber kitchen clogs; now a rubber clog (purple, not black)",
+   "found_by": "independent visual audit + same check over every type"
+  },
+  "work loafers": {
+   "mesh": "/mnt/nvme/oliver/robot/render_methods/habitat_hssd/objaverse/hf-objaverse-v1/glbs/000-002/50b7cf68173541c1a16b0dfaf39911af.glb",
+   "id": "50b7cf68173541c1a16b0dfaf39911af",
+   "source": "objaverse",
+   "looks_like": "Shoes loafers",
+   "longest_m": 0.28,
+   "stand_in": false,
+   "why": "red high-top canvas trainers for brown leather loafers; now a pair of loafers",
+   "found_by": "independent visual audit + same check over every type"
+  },
+  "hand cream": {
+   "mesh": "/mnt/nvme/oliver/robot/render_methods/habitat_hssd/objaverse/hf-objaverse-v1/glbs/000-105/dc7e282d733a49778139f044b1fa3918.glb",
+   "id": "dc7e282d733a49778139f044b1fa3918",
+   "source": "objaverse",
+   "looks_like": "CC0 - Cream Tube",
+   "longest_m": 0.15,
+   "stand_in": false,
+   "why": "a pump bottle for a tube of hand cream; now a cream tube",
+   "found_by": "independent visual audit + same check over every type"
+  },
+  "sticky notes": {
+   "mesh": "/mnt/nvme/oliver/robot/render_methods/habitat_hssd/objaverse/hf-objaverse-v1/glbs/000-033/0c89c545d39d43b28c9ce60cedfc0fb8.glb",
+   "id": "0c89c545d39d43b28c9ce60cedfc0fb8",
+   "source": "objaverse",
+   "looks_like": "Post It Note",
+   "longest_m": 0.08,
+   "stand_in": false,
+   "why": "a spiral notebook for a sticky-notes pad; now a yellow sticky note",
+   "found_by": "independent visual audit + same check over every type"
+  },
+  "plasters": {
+   "mesh": "/mnt/nvme/oliver/robot/render_methods/habitat_hssd/objaverse/hf-objaverse-v1/glbs/000-020/cf8c1c21c5254dd7a3038ccf23d14a41.glb",
+   "id": "cf8c1c21c5254dd7a3038ccf23d14a41",
+   "source": "objaverse",
+   "looks_like": "Modern Combat Bandage Packaging",
+   "longest_m": 0.1,
+   "stand_in": true,
+   "why": "a single blood-stained plaster for a tin of plasters; now a plaster packet",
+   "found_by": "independent visual audit + same check over every type"
+  },
+  "serving platter": {
+   "mesh": "/mnt/nvme/oliver/robot/datasets/moving-eqa/scene_datasets/hssd-hab/objects/b/b599eb548442db2690265de15d2bf8aa549acd02.glb",
+   "id": "b599eb548442db2690265de15d2bf8aa549acd02",
+   "source": "hssd",
+   "looks_like": "Lacquer plate (HSSD)",
+   "longest_m": 0.36,
+   "stand_in": false,
+   "why": "a cheese board with cheese on it for an oval white serving platter; now a large plain white plate",
+   "found_by": "independent visual audit + same check over every type"
+  },
+  "coffee beans": {
+   "mesh": "/mnt/nvme/oliver/robot/render_methods/habitat_hssd/objaverse/hf-objaverse-v1/glbs/000-007/62e5f2ddf6f1437db4da89791a3200eb.glb",
+   "id": "62e5f2ddf6f1437db4da89791a3200eb",
+   "source": "objaverse",
+   "looks_like": "Coffee Packaging",
+   "longest_m": 0.22,
+   "stand_in": false,
+   "why": "a Lay's crisp packet for a pouch of coffee beans; now a coffee bag",
+   "found_by": "independent visual audit + same check over every type"
+  },
+  "rice": {
+   "mesh": "/mnt/nvme/oliver/robot/render_methods/habitat_hssd/objaverse/hf-objaverse-v1/glbs/000-013/71b5a90668ea408bbeec5d971d978e0a.glb",
+   "id": "71b5a90668ea408bbeec5d971d978e0a",
+   "source": "objaverse",
+   "looks_like": "Rice Bag",
+   "longest_m": 0.3,
+   "stand_in": false,
+   "why": "a Lay's crisp packet for a sack of rice; now a rice bag",
+   "found_by": "independent visual audit + same check over every type"
+  },
+  "pasta": {
+   "mesh": "/mnt/nvme/oliver/robot/render_methods/habitat_hssd/objaverse/hf-objaverse-v1/glbs/000-016/1ce4008472b240c483f777da1a1cfd7c.glb",
+   "id": "1ce4008472b240c483f777da1a1cfd7c",
+   "source": "objaverse",
+   "looks_like": "USSR Coffee Bag",
+   "longest_m": 0.25,
+   "stand_in": true,
+   "why": "a Lay's crisp packet for a paper bag of rigatoni; now a plain paper bag (a coffee bag model)",
+   "found_by": "independent visual audit + same check over every type"
+  }
+ },
+ "by_model": {
+  "cloth napkin|4681d7a50b9f9a12acaaeeb06349203ac7235303": {
+   "longest_m": 0.25,
+   "why": "stack '8 White Napkins' 40 cm long for one napkin (typical folded 20 cm, 2.0x)",
+   "found_by": "size check"
+  },
+  "wallet|wallet_4eb66e5c0b4f": {
+   "longest_m": 0.12,
+   "why": "16 cm wallet (typical 11 cm)",
+   "found_by": "size check (middle side 1.8x)"
+  },
+  "wallet|wallet_4bc4176c10b9": {
+   "longest_m": 0.12,
+   "why": "15 cm wallet (typical 11 cm)",
+   "found_by": "size check"
+  },
+  "pen|48de5fd3726d4792a474cb9781549155": {
+   "mesh": "/mnt/nvme/oliver/robot/render_methods/habitat_hssd/objaverse/hf-objaverse-v1/glbs/000-140/ca13bdd67bb14e0a9f9579ae3152d1d3.glb",
+   "id": "ca13bdd67bb14e0a9f9579ae3152d1d3",
+   "source": "objaverse",
+   "looks_like": "Ballpoint pen",
+   "longest_m": 0.14,
+   "stand_in": false,
+   "why": "'Fountain Pens': two pens lying on a brown board",
+   "found_by": "look check"
+  },
+  "pen|9e0dba29de734ac4b20060ec873dc36c": {
+   "mesh": "/mnt/nvme/oliver/robot/render_methods/habitat_hssd/objaverse/hf-objaverse-v1/glbs/000-015/c2e55652305c490ba71b0aae216f22bb.glb",
+   "id": "c2e55652305c490ba71b0aae216f22bb",
+   "source": "objaverse",
+   "looks_like": "Pen",
+   "longest_m": 0.14,
+   "stand_in": false,
+   "why": "a wooden pencil for a gel / felt-tip pen",
+   "found_by": "look check"
+  },
+  "phone|phone_223b376823b5": {
+   "mesh": "/mnt/nvme/oliver/robot/render_methods/habitat_hssd/objaverse/hf-objaverse-v1/glbs/000-133/793b092deff04d9fae3a368230bbc06f.glb",
+   "id": "793b092deff04d9fae3a368230bbc06f",
+   "source": "objaverse",
+   "looks_like": "Cell Phone",
+   "longest_m": 0.15,
+   "stand_in": false,
+   "why": "a 1980s brick phone for a black glass smartphone",
+   "found_by": "look check"
+  },
+  "phone|phone_7f658554a385": {
+   "mesh": "/mnt/nvme/oliver/robot/datasets/moving-eqa/scene_datasets/hssd-hab/objects/7/77a9494c79e0cbc30ab49127f456c7d7f4a53e64.glb",
+   "id": "77a9494c79e0cbc30ab49127f456c7d7f4a53e64",
+   "source": "hssd",
+   "looks_like": "IPHONE",
+   "longest_m": 0.15,
+   "stand_in": false,
+   "why": "an old grey flip phone for a black glass and aluminium smartphone (now a silver smartphone)",
+   "found_by": "look check"
+  },
+  "phone|phone_708c7214aa7f": {
+   "mesh": "/mnt/nvme/oliver/robot/render_methods/habitat_hssd/objaverse/hf-objaverse-v1/glbs/000-124/c89817ce138040c4936854b83507aa3d.glb",
+   "id": "c89817ce138040c4936854b83507aa3d",
+   "source": "objaverse",
+   "looks_like": "Mobile Phone (Free / Game Ready)",
+   "longest_m": 0.15,
+   "stand_in": false,
+   "why": "a purple and green toy brick phone for a green glass smartphone (now a red smartphone)",
+   "found_by": "look check"
+  },
+  "phone charger|charger_9735f27518fa": {
+   "longest_m": 0.14,
+   "why": "plug with its cable laid in a loop 20 x 17 cm took half a nightstand top (680 cm2 turned); coiled smaller, 14 cm",
+   "found_by": "v3 placement (cross-furniture moves from the nightstand)"
+  },
+  "water bottle|bottle_f51306c13cd1": {
+   "mesh": "/mnt/nvme/oliver/robot/datasets/moving-eqa/scene_datasets/hssd-hab/objects/6/6559f3e7b5325e7981d153d288fbb8e54659584a.glb",
+   "id": "6559f3e7b5325e7981d153d288fbb8e54659584a",
+   "source": "hssd",
+   "looks_like": "Thermos Everyday Flask (steel)",
+   "longest_m": 0.25,
+   "stand_in": false,
+   "why": "a coarse low-poly blue and white bottle (flat facets, looked huge near the camera) for a clear steel water bottle; now a steel flask",
+   "found_by": "independent visual audit + v3 sheets"
+  }
+ }
+}

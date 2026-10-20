@@ -1,6 +1,12 @@
 """Household creation in several calls: layout, residents, objects room by room,
 then situations. References between calls are checked in code, and a failed
-check is retried with the problem named."""
+check is retried with the problem named.
+
+With an HSSD scene the layout comes from lived_home.hssd_home; otherwise the
+model invents it. After creation, spot areas are set from the rendered scan where
+there is one (lived_home.measured_areas), and fix_start_placement moves start
+positions that break lived_home.placement's rules (also used by run_pilot on a
+reused household)."""
 from __future__ import annotations
 
 import collections
@@ -9,11 +15,12 @@ import pathlib
 import random
 import re
 
-from lived_home import prompts
+from lived_home import measured_areas, prompts
 from lived_home.calls import Caller, to_minute
 from lived_home.layout import CLOSED, SURFACE, Layout
 from lived_home.schemas import (fixtures_schema, gaps_schema, layout_schema, residents_schema, room_objects_schema,
                                 situations_schema)
+from lived_home.placement import holding_problem, nearest_surface, place_problem
 from lived_home.world import at_place
 
 ID = re.compile(r"^[a-z0-9]+(_[a-z0-9]+)*$")
@@ -290,6 +297,60 @@ def fix_inside_non_holders(objects: list) -> list:
     return changed
 
 
+def fix_start_placement(objects: list, layout: Layout) -> list:
+    """Start positions that break lived_home.placement's rules, moved the way a
+    put_down that breaks them is: something on or in a thing that is no base or
+    container for it goes next to that thing (an egg inside the milk carton goes
+    next to the carton); something on a floor or in a basin where it does not
+    belong goes to a surface of the same furniture, else the nearest table, counter
+    or shelf in the room. Returns [(id, reason)]."""
+    from lived_home.world import DEPTH, FOOTPRINT
+    by_id = {o["id"]: o for o in objects}
+    changed = []
+
+    def full(pid, o) -> bool:
+        """No room at pid for o (only spots with an area have a limit)."""
+        pl = layout.places[pid]
+        area = (pl.geometry or {}).get("area")
+        if not area:
+            return False
+        used = sum(FOOTPRINT.get(x.get("size"), FOOTPRINT["medium"]) for x in objects
+                   if x["start"].get("at") == "place" and x["start"].get("place") == pid
+                   and x["start"].get("rel") != "under"
+                   and (not x["start"].get("ref") or x["start"].get("rel") == "next_to"))
+        room = area * (DEPTH if pl.kind != SURFACE else 1.0)
+        return used + FOOTPRINT.get(o.get("size"), FOOTPRINT["medium"]) > room
+    for o in objects:
+        st = o["start"]
+        why = ""
+        if st.get("at") == "inside" and st.get("carrier") in by_id:
+            why = holding_problem(o, by_id[st["carrier"]], "inside")
+            if why:
+                outer, seen = by_id[st["carrier"]], set()
+                while outer["start"].get("at") == "inside" and outer["start"]["carrier"] in by_id \
+                        and outer["id"] not in seen:
+                    seen.add(outer["id"])
+                    outer = by_id[outer["start"]["carrier"]]
+                if outer["start"].get("at") != "place":
+                    continue                       # in a bag someone wears: leave it
+                o["start"] = at_place(outer["start"]["place"], "next_to", outer["id"])
+        elif st.get("at") == "place" and st.get("ref") in by_id and st.get("rel") == "on_top":
+            why = holding_problem(o, by_id[st["ref"]], "on_top")
+            if why:
+                o["start"] = at_place(st["place"], "next_to", st["ref"])
+        st = o["start"]
+        if st.get("at") == "place" and st.get("place") in layout.places:
+            pwhy = place_problem(o, layout.places[st["place"]], st.get("rel") or "", st.get("ref"))
+            alt = nearest_surface(layout, st["place"], o, full=lambda q: full(q, o)) if pwhy else None
+            if alt:
+                o["start"] = at_place(alt, "on_top", None)
+                why = "; ".join(x for x in (why, pwhy) if x)
+        if why:
+            o["start_moved"] = why
+            changed.append((o["id"], why))
+    return changed
+
+
 def residents_text(residents: list[dict]) -> str:
     out = [residents[0]["household"]] if residents and residents[0].get("household") else []
     for r in residents:
@@ -488,8 +549,10 @@ def create(caller: Caller, seed: int, out: pathlib.Path, effort_note: str = "",
                       situations_schema(rids), check_situations, max_tokens=40000)
 
     fixed_inside = fix_inside_non_holders(objects)
+    measured_areas.apply(layout, scene)          # room on each spot: scanned area where good
+    moved_at_start = fix_start_placement(objects, layout)
     spec = {"seed": seed, "home": home, "scene": scene, "layout_thinking": lay["thinking"],
-            "inside_read_as_next_to": fixed_inside,
+            "inside_read_as_next_to": fixed_inside, "moved_at_start": moved_at_start,
             "layout": layout.to_json(), "residents": residents, "objects": objects,
             "situations": sit["situations"], "small_disturbances": sit["small_disturbances"],
             "dropped_duplicates": [{"id": o["id"], "owner": o["owner"], "place": o["place"]}
