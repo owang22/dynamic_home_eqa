@@ -1,0 +1,18 @@
+12000 (instance, covering picture) pairs from 478 instances; shown in 2815 (0.23)
+  constant (base rate)                 AUC 0.500  Brier 0.180
+  time decay only                      AUC 0.805  Brier 0.572
+  misses only (no time)                AUC 0.838  Brier 0.146
+  persistence model (time + misses)    AUC 0.816  Brier 0.515
+  same day: 8498 pairs, shown 0.32; model AUC 0.753
+  later day: 3502 pairs, shown 0.04; model AUC 0.634
+  after 0 misses: 3163 pairs, shown next 0.63
+  after 1 misses: 3320 pairs, shown next 0.17
+  after 2 misses: 1609 pairs, shown next 0.10
+  after 3+ misses: 3908 pairs, shown next 0.03
+static kinds, shown rate when covered (they do not move):
+  same day: 838 pairs, shown 0.44, mean recall 0.92 -> cover factor 0.48
+  later day: 188 pairs, shown 0.07, mean recall 0.88 -> cover factor 0.08
+predicting 'shown' as p_still * COVER_TRUE * recall: Brier 0.163 (constant 0.180), AUC 0.778
+movable kinds: 6051 pairs, shown 0.21; AUC time decay only 0.819, misses only (no time) 0.851, persistence model (time + misses) 0.832
+static kinds: 1026 pairs, shown 0.37; AUC time decay only 0.789, misses only (no time) 0.813, persistence model (time + misses) 0.801
+static instances at the end: 37, p_still < 0.3 for 2 (these do not move, so every one is a false 'gone')

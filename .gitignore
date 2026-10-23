@@ -290,3 +290,27 @@ robot_brain/vlm.log
 3d_rendering/results/vlm_night/render/run_v3/model_check/*/[0-9]*.jpg
 3d_rendering/results/lived_home/spend_ledger.lock
 3d_rendering/results/lived_home/*/pid
+
+# go2 lab agent + localization (2026-10-23): caches, arrays, weights, server logs and backups stay on cheetah
+*.bak_*
+go2/localization/cache/
+go2/localization/visual/cache/
+go2/localization/visual/.pylib/
+go2/**/*.npy
+go2/**/*.npz
+go2/**/logs/*.log
+*.safetensors
+*.gguf
+*.pt
+*.pth
+*.onnx
+*.ckpt
+# larger than ~5 MB each; regenerable from the cached runs (see go2/localization/REPORT.md)
+go2/localization/results/online_logs*/
+go2/localization/results/v2_pgo_gauge_savedmap/
+go2/localization/results/v3_before_irls_and_bounded_refine/
+go2/localization/visual/results/v1_vlm_with_errors/
+# camera frames and contact sheets from the dog (robot pictures stay local, like go2/data/)
+go2/lab_agent/**/*.jpg
+go2/localization/**/*.jpg
+go2/localization/visual/figs/map_pictures.png

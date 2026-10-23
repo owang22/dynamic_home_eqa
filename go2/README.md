@@ -5,7 +5,8 @@ studies that decide how its memory should work.
 
 | folder | what |
 |---|---|
-| `console/` | **current**: clients of the control PC's console API (rounds, viewpoints, object anchors, logger) |
+| `lab_agent/` | **current**: talk to the dog (phone page or terminal): Opus answers from the picture memory or drives the dog |
+| `console/` | clients of the control PC's console API (rounds, viewpoints, object anchors, logger) |
 | `evidence_memory/` | which memory keeps the right scenes and can look back at them; simulation + the lab tool `lab.py` |
 | `lab_routine_sim/` | can a model learn the lab's hidden routines (simulation, 2026-10-17) |
 | `go2_patrol/`, `docker/`, `patches/`, `run.sh`, `check_connection.py`, `tests/` | the earlier route: the lab's ROS driver in Docker on cheetah (not used since 2026-10-14; see the end) |
@@ -56,7 +57,7 @@ The logger: `systemctl --user status go2-logger`; test with `bash tests/test_log
 
 ## Safety rules (Oliver's)
 
-A person stays next to the dog whenever it moves. Obstacle avoidance stays on (the console turns it on at start).
+No one needs to stay next to the dog (Oliver's call, 2026-10-22, replacing his earlier rule). Obstacle avoidance stays on (the console turns it on at start).
 Nothing stays connected while the dog is off. Never handle the Unitree account password.
 
 ## The earlier route: the ROS driver in Docker on cheetah (2026-10-13)

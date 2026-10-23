@@ -1,0 +1,716 @@
+<title>Lab Dog Memory</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@500;600;700&family=Source+Sans+3:wght@400;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: a survey console. Layer ladder + browser on the left, the lab map in the middle, the inspector on the right;
+   other views (traces, comparison, ask) share the same frame. */
+:root {
+  --bg: #f1f3f2; --panel: #ffffff; --ink: #18211f; --mute: #5d6966; --line: #d5dbd8; --soft: #e6ebe9;
+  --accent: #1d6a85; --accent-ink: #ffffff; --obj: #b2346a; --good: #2f7d4f; --warn: #b7791f; --bad: #b3362f;
+  --day0: #3b78a8; --day1: #c7832a; --day2: #4d8f4a; --day3: #7a5aa6;
+  --f-display: "Barlow Semi Condensed", "Arial Narrow", system-ui, sans-serif;
+  --f-body: "Source Sans 3", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --r: 6px;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #121716; --panel: #1a211f; --ink: #e4ebe8; --mute: #9aa7a3; --line: #2e3836; --soft: #232c2a;
+  --accent: #5fb3d1; --accent-ink: #0d1514; --obj: #e0699c; --good: #5cbf83; --warn: #e0a64a; --bad: #e46c63;
+  --day0: #6aa8d8; --day1: #e2a554; --day2: #7cc078; --day3: #a98bd6; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #121716; --panel: #1a211f; --ink: #e4ebe8; --mute: #9aa7a3; --line: #2e3836; --soft: #232c2a;
+  --accent: #5fb3d1; --accent-ink: #0d1514; --obj: #e0699c; --good: #5cbf83; --warn: #e0a64a; --bad: #e46c63;
+  --day0: #6aa8d8; --day1: #e2a554; --day2: #7cc078; --day3: #a98bd6; color-scheme: dark }
+* { box-sizing: border-box }
+body { background: var(--bg); color: var(--ink); font: 15px/1.45 var(--f-body); }
+.wrap { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 14px 28px; max-width: 1640px; margin: 0 auto; }
+h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; margin: 0; letter-spacing: .01em }
+h1 { font-size: 26px; font-weight: 700 }
+h2 { font-size: 18px; font-weight: 600 }
+h3 { font-size: 15px; font-weight: 600 }
+.mono, code { font-family: var(--f-mono); font-size: 12px }
+.mute { color: var(--mute) }
+.lbl { font: 600 11px/1 var(--f-display); letter-spacing: .08em; text-transform: uppercase; color: var(--mute) }
+button { font: inherit; color: inherit; cursor: pointer }
+button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible, .thumb:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px }
+header.top { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 18px; margin-bottom: 12px }
+header.top .stats { font-family: var(--f-mono); font-size: 12px; color: var(--mute); font-variant-numeric: tabular-nums }
+nav.tabs { display: flex; flex-wrap: wrap; gap: 4px; margin-left: auto }
+nav.tabs button { border: 1px solid var(--line); background: var(--panel); padding: 6px 12px; border-radius: 999px; font-weight: 600; font-size: 14px }
+nav.tabs button[aria-selected="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent) }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); padding: 12px; min-width: 0 }
+.grid3 { display: grid; grid-template-columns: minmax(250px, 300px) minmax(0, 1fr) minmax(300px, 400px); gap: 12px; align-items: start }
+@media (max-width: 1150px) { .grid3 { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) } .grid3 > .left { grid-column: 1 / -1 } }
+@media (max-width: 760px) { .grid3 { grid-template-columns: minmax(0, 1fr) } }
+.view[hidden] { display: none }
+/* layer ladder */
+.ladder { display: flex; flex-direction: column; gap: 0; margin: 8px 0 12px }
+.rung { display: grid; grid-template-columns: 1fr auto; gap: 2px 8px; padding: 7px 9px; border: 1px solid var(--line); border-radius: var(--r); background: var(--panel); text-align: left; }
+.rung:hover { border-color: var(--accent) }
+.rung b { font: 600 15px var(--f-display) }
+.rung .n { font: 600 15px var(--f-mono); font-variant-numeric: tabular-nums; text-align: right }
+.rung .d { grid-column: 1 / -1; font-size: 12.5px; color: var(--mute) }
+.rung[aria-pressed="true"] { border-color: var(--accent); box-shadow: inset 3px 0 0 var(--accent) }
+.arrow { height: 14px; margin-left: 18px; border-left: 2px solid var(--line); position: relative }
+.arrow::after { content: ""; position: absolute; left: -5px; bottom: -1px; border: 4px solid transparent; border-top: 5px solid var(--line) }
+.seg { display: flex; gap: 0; border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; margin: 6px 0 8px }
+.seg button { flex: 1; border: 0; background: transparent; padding: 6px 8px; font-weight: 600; font-size: 13px }
+.seg button[aria-pressed="true"] { background: var(--soft) }
+.browse { max-height: 640px; overflow: auto; display: flex; flex-direction: column; gap: 2px }
+.dayhead { display: flex; align-items: center; gap: 8px; padding: 6px 4px 2px; font: 600 14px var(--f-display) }
+.dot { width: 10px; height: 10px; border-radius: 50%; flex: none }
+.row { display: grid; grid-template-columns: 1fr auto; gap: 6px; padding: 4px 6px; border-radius: 4px; border: 0; background: transparent; text-align: left; width: 100% }
+.row:hover { background: var(--soft) }
+.row[aria-pressed="true"] { background: var(--soft); box-shadow: inset 3px 0 0 var(--accent) }
+.row .n { font-family: var(--f-mono); font-size: 12px; color: var(--mute); font-variant-numeric: tabular-nums }
+.row small { grid-column: 1 / -1; color: var(--mute); font-size: 12px; margin-top: -2px }
+input[type="search"], textarea, select { width: 100%; border: 1px solid var(--line); border-radius: var(--r); padding: 7px 9px; background: var(--panel); color: var(--ink); font: inherit }
+/* map */
+.mapbox { position: relative; width: 100%; aspect-ratio: 283 / 289; max-width: 100%; background: var(--soft); border-radius: var(--r); overflow: hidden }
+.mapbox canvas { width: 100%; height: 100%; display: block; cursor: crosshair }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 12.5px; color: var(--mute); margin-top: 8px }
+.legend span { display: inline-flex; align-items: center; gap: 5px }
+.diamond { width: 9px; height: 9px; transform: rotate(45deg); background: var(--obj); display: inline-block }
+/* inspector */
+.big { width: 100%; border-radius: var(--r); display: block; aspect-ratio: 16 / 9; object-fit: cover; background: var(--soft) }
+.imgwrap { position: relative }
+.across { position: absolute; left: 0; right: 0; bottom: 0; height: 22px }
+.across i { position: absolute; bottom: 4px; transform: translateX(-50%); font: 600 10px var(--f-mono); background: color-mix(in srgb, var(--panel) 85%, transparent); color: var(--ink); padding: 1px 4px; border-radius: 3px; white-space: nowrap; border: 1px solid var(--line) }
+.kv { display: grid; grid-template-columns: auto 1fr; gap: 2px 10px; font-size: 13px; margin: 8px 0 }
+.kv dt { color: var(--mute) }
+.kv dd { margin: 0; min-width: 0; overflow-wrap: anywhere }
+.chips { display: flex; flex-wrap: wrap; gap: 4px; margin: 6px 0 }
+.chip { border: 1px solid var(--line); background: var(--panel); border-radius: 999px; padding: 2px 9px; font-size: 12.5px; line-height: 1.5 }
+.chip.obj { border-color: color-mix(in srgb, var(--obj) 55%, var(--line)); }
+.chip.tool { font-family: var(--f-mono); font-size: 11.5px; background: var(--soft) }
+.thumbs { display: grid; grid-template-columns: repeat(auto-fill, minmax(84px, 1fr)); gap: 5px }
+.thumb { position: relative; border: 2px solid transparent; border-radius: 4px; padding: 0; background: var(--soft); overflow: hidden; aspect-ratio: 16 / 9; display: block; width: 100% }
+.thumb img { width: 100%; height: 100%; object-fit: cover; display: block }
+.thumb .t { position: absolute; left: 2px; bottom: 2px; font: 600 9.5px var(--f-mono); background: color-mix(in srgb, var(--panel) 80%, transparent); color: var(--ink); padding: 0 3px; border-radius: 2px }
+.thumb.rel { border-color: var(--good) }
+.thumb.opened { border-color: var(--accent) }
+.thumb.missed { opacity: .55; border-style: dashed; border-color: var(--mute) }
+.bar { height: 6px; border-radius: 3px; background: var(--soft); overflow: hidden }
+.bar i { display: block; height: 100% }
+section.block { display: flex; flex-direction: column; gap: 6px; margin-top: 12px }
+p { margin: 0 }
+.empty { color: var(--mute); font-size: 13.5px; padding: 18px 4px }
+/* traces */
+.convlist { display: flex; flex-direction: column; gap: 4px }
+.turn { border-top: 1px solid var(--line); padding: 14px 0 }
+.turn:first-child { border-top: 0; padding-top: 4px }
+.q { font: 600 17px var(--f-display) }
+.steps { display: flex; flex-direction: column; gap: 8px; margin: 10px 0; padding-left: 14px; border-left: 2px solid var(--line) }
+.step { display: grid; grid-template-columns: 62px minmax(0, 1fr); gap: 8px }
+.step .tm { font: 11px var(--f-mono); color: var(--mute); padding-top: 3px; font-variant-numeric: tabular-nums }
+.step .thumbs { grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); margin-top: 4px }
+.pattern { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; font-size: 12.5px }
+.pattern .sep { color: var(--mute) }
+.answer { background: var(--soft); border-radius: var(--r); padding: 10px 12px; font-size: 14px; white-space: pre-wrap; overflow-wrap: anywhere }
+/* comparison */
+.cmp { overflow-x: auto }
+.cmp table { border-collapse: collapse; width: 100%; min-width: 860px }
+.cmp th, .cmp td { border-bottom: 1px solid var(--line); padding: 6px 6px; vertical-align: top; text-align: left }
+.cmp th { font: 600 12px var(--f-display); letter-spacing: .06em; text-transform: uppercase; color: var(--mute) }
+.cmp td.num { font-family: var(--f-mono); font-size: 12px; font-variant-numeric: tabular-nums; white-space: nowrap }
+.strip { display: grid; grid-template-columns: repeat(5, 54px); gap: 3px }
+.strip .thumb { border-width: 2px }
+.win { color: var(--good); font-weight: 600 }
+/* ask */
+.askgrid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 12px; align-items: start }
+@media (max-width: 900px) { .askgrid { grid-template-columns: minmax(0, 1fr) } }
+.chat { display: flex; flex-direction: column; gap: 10px; min-height: 260px; max-height: 620px; overflow: auto; padding-right: 2px }
+.msg { padding: 9px 12px; border-radius: var(--r); max-width: 100%; overflow-wrap: anywhere; font-size: 14.5px }
+.msg.me { background: var(--accent); color: var(--accent-ink); align-self: flex-end; max-width: 85% }
+.msg.ai { background: var(--soft) }
+.msg.ai .chk { margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--line) }
+.idref { font: 600 11.5px var(--f-mono); color: var(--accent); background: transparent; border: 0; padding: 0; text-decoration: underline; text-underline-offset: 2px }
+.composer { display: grid; grid-template-columns: 1fr auto; gap: 6px; margin-top: 10px }
+.composer textarea { resize: vertical; min-height: 44px }
+.btn { border: 1px solid var(--accent); background: var(--accent); color: var(--accent-ink); border-radius: var(--r); padding: 7px 14px; font-weight: 600 }
+.btn.ghost { background: transparent; color: var(--accent) }
+.btn:disabled { opacity: .5; cursor: default }
+.examples { display: flex; flex-wrap: wrap; gap: 5px; margin: 8px 0 }
+.examples button { border: 1px dashed var(--line); background: transparent; border-radius: 999px; padding: 3px 10px; font-size: 13px }
+.calls { display: flex; flex-direction: column; gap: 8px; max-height: 640px; overflow: auto }
+.call { border-left: 3px solid var(--obj); padding: 4px 0 4px 10px }
+.call .thumbs { grid-template-columns: repeat(auto-fill, minmax(64px, 1fr)) }
+.note { font-size: 12.5px; color: var(--mute) }
+.status { font-size: 13px; color: var(--mute); min-height: 1.4em }
+label.inline { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--mute) }
+@media (prefers-reduced-motion: no-preference) { .rung, .row, .thumb { transition: border-color .12s, background-color .12s } }
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <h1>Lab Dog Memory</h1>
+    <div class="stats" id="stats">loading the memory…</div>
+    <nav class="tabs" role="tablist" aria-label="Views">
+      <button role="tab" id="tab-explore" aria-selected="true" data-view="explore">Explore</button>
+      <button role="tab" id="tab-traces" aria-selected="false" data-view="traces">Search traces</button>
+      <button role="tab" id="tab-compare" aria-selected="false" data-view="compare">Search comparison</button>
+      <button role="tab" id="tab-ask" aria-selected="false" data-view="ask">Ask the memory</button>
+    </nav>
+  </header>
+
+  <!-- EXPLORE -->
+  <div class="view" id="view-explore">
+    <div class="grid3">
+      <div class="panel left">
+        <div class="lbl">How the memory is organised</div>
+        <div class="ladder" id="ladder"></div>
+        <div class="lbl">Browse</div>
+        <div class="seg" role="group" aria-label="Browse by">
+          <button id="b-days" aria-pressed="true">Days and places</button>
+          <button id="b-objs" aria-pressed="false">Objects</button>
+        </div>
+        <input type="search" id="objfilter" placeholder="Filter objects: backpack, tower, grey…" hidden>
+        <div class="browse" id="browse"></div>
+      </div>
+      <div class="panel">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap">
+          <h2 id="maptitle">The lab map</h2>
+          <span class="note" id="maphint">Click a dot to open that picture.</span>
+        </div>
+        <div class="mapbox" style="margin-top:8px"><canvas id="map" aria-label="Map of the lab with picture poses and objects"></canvas></div>
+        <div class="legend" id="legend"></div>
+      </div>
+      <div class="panel" id="inspector"><div class="empty">Pick a day, a place, an object or a dot on the map.</div></div>
+    </div>
+  </div>
+
+  <!-- TRACES -->
+  <div class="view" id="view-traces" hidden>
+    <div class="grid3" style="grid-template-columns: minmax(230px, 280px) minmax(0, 1fr)">
+      <div class="panel left">
+        <div class="lbl">Conversations, 2026-10-22</div>
+        <p class="note" style="margin:6px 0 10px">Every question Oliver asked the agent (Opus) yesterday, with each tool call it made and the pictures each call returned. Blue borders mark pictures the agent then opened with <code>show_pictures</code>.</p>
+        <div class="convlist" id="convlist"></div>
+      </div>
+      <div class="panel" id="convview"></div>
+    </div>
+  </div>
+
+  <!-- COMPARE -->
+  <div class="view" id="view-compare" hidden>
+    <div class="panel">
+      <h2>Word search, picture similarity, and the two combined</h2>
+      <p class="note" style="margin:6px 0 10px;max-width:72ch">Forty queries labelled by hand overnight. Each strip is that search's top 5; a green border means the picture really shows the thing. Recall@5 is the share of the top 5 that is right (or of all right pictures, when there are fewer than 5). The combined weight was tuned on these same labels, so its column is optimistic; on 20 held-out queries the gain over words was 0.67 to 0.70.</p>
+      <div class="cmp" id="cmp"></div>
+    </div>
+  </div>
+
+  <!-- ASK -->
+  <div class="view" id="view-ask" hidden>
+    <div class="askgrid">
+      <div class="panel">
+        <h2>Ask the memory</h2>
+        <p class="note" style="margin:6px 0">Claude answers from the stored memory only (Mon 10-19 to Thu 10-22, ending 16:37). It has six search tools that run in this page: word search with picture similarity, where-is over the object graph, opening picture descriptions, people counts, places, and similar pictures. Each call appears on the right as it happens.</p>
+        <div class="examples" id="examples"></div>
+        <div class="chat" id="chat" aria-live="polite"></div>
+        <div class="composer">
+          <textarea id="askbox" rows="2" placeholder="Where was the grey backpack last seen?"></textarea>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <button class="btn" id="askbtn">Ask</button>
+            <button class="btn ghost" id="stopbtn" hidden>Stop</button>
+          </div>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-top:8px">
+          <label class="inline" id="lookwrap" hidden><input type="checkbox" id="lookchk" checked> Then let Claude look at up to 4 cited pictures to check its answer</label>
+          <button class="btn ghost" id="clearbtn" style="padding:4px 10px">New conversation</button>
+        </div>
+        <div class="status" id="askstatus"></div>
+      </div>
+      <div class="panel">
+        <h2>Retrieval trace</h2>
+        <p class="note" style="margin:6px 0 8px">What Claude looked up, in order. Click a picture to open it in Explore.</p>
+        <div class="calls" id="calls"><div class="empty">No calls yet.</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+"use strict";
+const $ = (s, el = document) => el.querySelector(s);
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const fmt = (n) => Number(n).toLocaleString("en-US");
+const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+
+let G = null, TR = [], EV = [], TH = {}, FULLIX = {};
+const fullCache = {}, fullLoading = {};
+let PIC = {}, INST = [], INSTBY = {}, DAYS = [], DAYCOL = {}, PIC_INST = {};
+
+// ---------- loading ----------
+async function getJSON(name) { const r = await fetch(name); if (!r.ok) throw new Error(name + " " + r.status); return r.json(); }
+async function boot() {
+  try {
+    [G, TR, EV] = await Promise.all([getJSON("graph.json"), getJSON("traces.json"), getJSON("evals.json")]);
+  } catch (e) { $("#stats").textContent = "Could not load the memory files (" + e.message + ")."; return; }
+  for (const p of G.pictures) PIC[p.id] = p;
+  INST = G.instances; for (const i of INST) { INSTBY[i.key] = i; for (const id of i.pictures) (PIC_INST[id] ||= []).push(i.key); }
+  DAYS = [...new Set(G.pictures.map((p) => p.day))].sort((a, b) => a.slice(4).localeCompare(b.slice(4)));
+  DAYS.forEach((d, n) => DAYCOL[d] = "--day" + Math.min(n, 3));
+  const nS = G.instances_meta.n_sightings, chains = new Set(INST.map((i) => i.chain)).size;
+  const multi = INST.filter((i) => (i.chain_days || []).length > 1).length;
+  $("#stats").textContent = `${fmt(G.pictures.length)} pictures · ${DAYS.length} days · ${fmt(nS)} sightings → ${fmt(INST.length)} objects · built ${G.built}`;
+  LAYERS = [
+    { k: "days", b: "Days", n: DAYS.length, d: "Walks of the dog, Mon 10-19 to Thu 10-22." },
+    { k: "places", b: "Places", n: Object.keys(G.places).length, d: "Saved spots; a picture belongs to the one nearest where the dog stood." },
+    { k: "pictures", b: "Pictures", n: G.pictures.length, d: "Camera frames with time and map pose, each described once by the local Qwen 27B." },
+    { k: "sightings", b: "Sightings", n: nS, d: "One object in one picture, with a bearing from where it sits across the frame and a distance guess." },
+    { k: "objects", b: "Objects", n: INST.length, d: "Sightings of the same thing grouped within a day: a position, last seen, and P(still there)." },
+    { k: "chains", b: "Linked across days", n: multi, d: `Objects matched to the same thing on another day (${fmt(chains)} chains in all).` },
+  ];
+  renderLadder(); renderLegend(); renderBrowse(); initMap(); renderTraces(); renderCompare(); initAsk();
+  setMode("days");
+  const start = INST.filter((i) => i.name === "backpack" && i.colour === "grey").sort((x, y) => y.n_pictures - x.n_pictures)[0];
+  if (start) select({ type: "instance", id: start.key });
+  getJSON("thumbs.json").then((t) => { TH = t; document.querySelectorAll("img[data-id]").forEach((im) => { if (!im.src || im.src.endsWith("#")) im.src = TH[im.dataset.id] || ""; }); renderCompare(); }).catch(() => {});
+  getJSON("full_index.json").then((x) => FULLIX = x).catch(() => {});
+}
+function thumbSrc(id) { return TH[id] || ""; }
+async function fullSrc(id) {
+  if (fullCache[id]) return fullCache[id];
+  const f = FULLIX[id]; if (!f) return thumbSrc(id);
+  fullLoading[f] ||= getJSON(f).then((d) => Object.assign(fullCache, d));
+  await fullLoading[f]; return fullCache[id] || thumbSrc(id);
+}
+function thumbHTML(id, cls = "", label = true) {
+  const p = PIC[id]; const t = p ? p.time.slice(15) : "";
+  return `<button class="thumb ${cls}" data-pic="${esc(id)}" title="${esc(id)} ${esc(p ? p.time : "")}"><img data-id="${esc(id)}" src="${thumbSrc(id) || "#"}" alt="Picture ${esc(id)}" loading="lazy">${label ? `<span class="t">${esc(t)}</span>` : ""}</button>`;
+}
+document.addEventListener("click", (e) => {
+  const b = e.target.closest("[data-pic]"); if (b) { e.preventDefault(); showView("explore"); select({ type: "picture", id: b.dataset.pic }); return; }
+  const o = e.target.closest("[data-inst]"); if (o) { e.preventDefault(); showView("explore"); select({ type: "instance", id: o.dataset.inst }); }
+});
+
+// ---------- tabs ----------
+function showView(v) {
+  for (const b of document.querySelectorAll("nav.tabs button")) b.setAttribute("aria-selected", String(b.dataset.view === v));
+  for (const el of document.querySelectorAll(".view")) el.hidden = el.id !== "view-" + v;
+  if (v === "explore") drawMap();
+  try { localStorage.setItem("ldm-view", v); } catch (e) {}
+}
+for (const b of document.querySelectorAll("nav.tabs button")) b.addEventListener("click", () => showView(b.dataset.view));
+
+// ---------- ladder & browse ----------
+let LAYERS = [], MODE = "days", SEL = null;
+function renderLadder() {
+  const el = $("#ladder"); el.innerHTML = "";
+  LAYERS.forEach((L, n) => {
+    if (n) el.insertAdjacentHTML("beforeend", '<div class="arrow" aria-hidden="true"></div>');
+    el.insertAdjacentHTML("beforeend", `<button class="rung" data-layer="${L.k}" aria-pressed="false"><b>${L.b}</b><span class="n">${fmt(L.n)}</span><span class="d">${esc(L.d)}</span></button>`);
+  });
+  el.addEventListener("click", (e) => {
+    const r = e.target.closest(".rung"); if (!r) return;
+    const k = r.dataset.layer;
+    if (k === "objects" || k === "chains" || k === "sightings") { setMode("objs", k); } else { setMode("days"); }
+    if (k === "pictures") select({ type: "all" });
+    el.querySelectorAll(".rung").forEach((x) => x.setAttribute("aria-pressed", String(x === r)));
+  });
+}
+function setMode(m, layer) {
+  MODE = m === "objs" ? "objs" : "days";
+  $("#b-days").setAttribute("aria-pressed", String(MODE === "days")); $("#b-objs").setAttribute("aria-pressed", String(MODE === "objs"));
+  $("#objfilter").hidden = MODE !== "objs";
+  OBJSORT = layer === "chains" ? "chains" : "pics";
+  renderBrowse(); drawMap();
+}
+$("#b-days").addEventListener("click", () => setMode("days"));
+$("#b-objs").addEventListener("click", () => setMode("objs"));
+$("#objfilter").addEventListener("input", () => renderBrowse());
+let OBJSORT = "pics";
+function renderBrowse() {
+  const el = $("#browse"); if (!G) return;
+  if (MODE === "days") {
+    let h = "";
+    for (const d of DAYS) {
+      const ps = G.pictures.filter((p) => p.day === d);
+      const byPlace = {}; for (const p of ps) (byPlace[p.place || "unknown"] ||= []).push(p);
+      h += `<div class="dayhead"><span class="dot" style="background:var(${DAYCOL[d]})"></span>${esc(d)}<span class="mute mono" style="margin-left:auto">${ps.length}</span></div>`;
+      for (const [pl, arr] of Object.entries(byPlace).sort((a, b) => b[1].length - a[1].length)) {
+        const ppl = arr.filter((p) => p.people > 0).length;
+        const sel = SEL && SEL.type === "placeday" && SEL.day === d && SEL.place === pl;
+        h += `<button class="row" data-pd="${esc(d)}|${esc(pl)}" aria-pressed="${sel}"><span>${esc(pl.replace(/_/g, " "))}</span><span class="n">${arr.length}</span>${ppl ? `<small>${ppl} with people</small>` : ""}</button>`;
+      }
+    }
+    el.innerHTML = h;
+  } else {
+    const f = $("#objfilter").value.trim().toLowerCase();
+    let list = INST.filter((i) => !f || `${i.colour} ${i.name} ${i.on} ${i.near_place}`.toLowerCase().includes(f));
+    if (OBJSORT === "chains") list = list.filter((i) => (i.chain_days || []).length > 1);
+    list.sort((a, b) => b.n_pictures - a.n_pictures || b.last_seen - a.last_seen);
+    el.innerHTML = list.slice(0, 250).map((i) => {
+      const sel = SEL && SEL.type === "instance" && SEL.id === i.key;
+      return `<button class="row" data-inst-row="${esc(i.key)}" aria-pressed="${sel}"><span>${esc(i.colour)} ${esc(i.name)} <span class="mute">on ${esc(i.on)}</span></span><span class="n">${i.n_pictures}</span><small>near ${esc((i.near_place || "").replace(/_/g, " "))} · last ${esc(i.last_time.slice(0, 3))} ${esc(i.last_time.slice(15))} · P(still) ${i.p_still.toFixed(2)}${(i.chain_days || []).length > 1 ? " · " + i.chain_days.length + " days" : ""}</small></button>`;
+    }).join("") + (list.length > 250 ? `<div class="note" style="padding:6px">${list.length - 250} more; filter to narrow.</div>` : "") + (list.length ? "" : '<div class="empty">No object matches.</div>');
+  }
+}
+$("#browse").addEventListener("click", (e) => {
+  const pd = e.target.closest("[data-pd]"); if (pd) { const [day, place] = pd.dataset.pd.split("|"); select({ type: "placeday", day, place }); return; }
+  const ir = e.target.closest("[data-inst-row]"); if (ir) select({ type: "instance", id: ir.dataset.instRow });
+});
+
+// ---------- selection & inspector ----------
+function select(s) {
+  SEL = s; renderBrowse(); drawMap(); renderInspector();
+}
+function pStillBar(p) {
+  const col = p > 0.6 ? "--good" : p > 0.3 ? "--warn" : "--bad";
+  return `<div style="display:flex;align-items:center;gap:8px"><div class="bar" style="flex:1"><i style="width:${Math.round(p * 100)}%;background:var(${col})"></i></div><span class="mono">${p.toFixed(2)}</span></div>`;
+}
+async function renderInspector() {
+  const el = $("#inspector");
+  if (!SEL) { el.innerHTML = '<div class="empty">Pick a day, a place, an object or a dot on the map.</div>'; return; }
+  if (SEL.type === "picture") {
+    const p = PIC[SEL.id]; if (!p) { el.innerHTML = '<div class="empty">That picture is not in this memory.</div>'; return; }
+    const insts = (PIC_INST[p.id] || []).map((k) => INSTBY[k]);
+    const marks = p.objects.filter((o) => o.across != null).map((o) => `<i style="left:${Math.min(96, Math.max(4, o.across * 100))}%">${esc(o.canon)}</i>`).join("");
+    el.innerHTML = `<div class="lbl">Picture</div>
+      <div class="imgwrap" style="margin-top:6px"><img class="big" id="bigimg" src="${thumbSrc(p.id) || "#"}" alt="Picture ${esc(p.id)}"><div class="across" aria-hidden="true">${marks}</div></div>
+      <dl class="kv"><dt>id</dt><dd class="mono">${esc(p.id)}</dd><dt>time</dt><dd>${esc(p.time)} · ${esc(p.source)}</dd>
+      <dt>dog stood</dt><dd>${p.x == null ? "no pose" : `(${p.x.toFixed(2)}, ${p.y.toFixed(2)}) facing ${Math.round(p.yaw)}°`}${p.look ? `, camera tilt ${p.look}°` : ""}</dd>
+      <dt>place</dt><dd>${esc((p.place || "?").replace(/_/g, " "))} <span class="mute">(${p.place_m} m away)</span></dd>
+      <dt>people</dt><dd>${p.people || 0}${p.people_notes ? ` · ${esc(p.people_notes)}` : ""}</dd></dl>
+      <p style="font-size:14px">${esc(p.summary)}</p>
+      <section class="block"><div class="lbl">Objects the vision model listed (labels sit where each was across the frame)</div>
+      <div class="chips">${p.objects.map((o) => `<span class="chip">${esc(o.colour)} ${esc(o.name)}${o.canon !== o.name ? ` <span class="mute">→ ${esc(o.canon)}</span>` : ""} <span class="mute">on ${esc(o.on)}</span></span>`).join("")}</div>
+      ${p.states.length ? `<p class="note">${p.states.map(esc).join(" · ")}</p>` : ""}</section>
+      <section class="block"><div class="lbl">Part of ${insts.length} object${insts.length === 1 ? "" : "s"}</div>
+      <div class="chips">${insts.map((i) => `<button class="chip obj" data-inst="${esc(i.key)}">${esc(i.colour)} ${esc(i.name)} · ${i.n_pictures} pics</button>`).join("") || '<span class="note">None tracked (furniture and clutter are not made into objects).</span>'}</div></section>
+      <section class="block"><div class="lbl">Looks most like (picture similarity)</div><div class="thumbs">${p.similar.map(([id, s]) => thumbHTML(id)).join("")}</div></section>`;
+    fullSrc(p.id).then((u) => { const im = $("#bigimg"); if (im && SEL && SEL.id === p.id) im.src = u; });
+    return;
+  }
+  if (SEL.type === "instance") {
+    const i = INSTBY[SEL.id];
+    const chainSibs = INST.filter((x) => x.chain === i.chain && x.key !== i.key);
+    el.innerHTML = `<div class="lbl">Object</div><h2 style="margin-top:4px">${esc(i.colour)} ${esc(i.name)} <span class="mute" style="font-weight:500">on ${esc(i.on)}</span></h2>
+      <dl class="kv"><dt>position</dt><dd>(${i.x}, ${i.y}) ± ${i.uncertainty_m} m · ${esc(i.how)}</dd>
+      <dt>near</dt><dd>${esc((i.near_place || "").replace(/_/g, " "))} (${i.near_place_m} m)</dd>
+      <dt>seen</dt><dd>${i.n_pictures} pictures, ${esc(i.first_time)} to ${esc(i.last_time.slice(15))}</dd>
+      <dt>poses</dt><dd>${esc(i.pose_quality || "")}</dd>
+      <dt>other days</dt><dd>${(i.chain_days || []).length > 1 ? esc(i.chain_days.join(", ")) : "only this day"}</dd></dl>
+      <div class="lbl">P(still there) at the end of the log</div>${pStillBar(i.p_still)}
+      <section class="block"><div class="lbl">Seen in</div><div class="thumbs">${i.pictures.map((id) => thumbHTML(id)).join("")}</div></section>
+      <section class="block"><div class="lbl">Looked at the spot later, not seen (${i.n_missed_after})</div>
+      ${i.missed.length ? `<div class="thumbs">${i.missed.map((id) => thumbHTML(id, "missed")).join("")}</div>` : '<p class="note">No later picture covered this spot.</p>'}</section>
+      ${chainSibs.length ? `<section class="block"><div class="lbl">Same thing on other days</div><div class="chips">${chainSibs.map((x) => `<button class="chip obj" data-inst="${esc(x.key)}">${esc(x.first_time.slice(0, 3))} · ${esc(x.colour)} ${esc(x.name)} · ${x.n_pictures} pics</button>`).join("")}</div></section>` : ""}`;
+    return;
+  }
+  if (SEL.type === "placeday" || SEL.type === "all") {
+    const ps = SEL.type === "all" ? G.pictures : G.pictures.filter((p) => p.day === SEL.day && (p.place || "unknown") === SEL.place);
+    const objs = {}; for (const p of ps) for (const o of p.objects) objs[o.canon] = (objs[o.canon] || 0) + 1;
+    const top = Object.entries(objs).sort((a, b) => b[1] - a[1]).slice(0, 14);
+    el.innerHTML = `<div class="lbl">${SEL.type === "all" ? "All pictures" : "Place on a day"}</div><h2 style="margin-top:4px">${SEL.type === "all" ? fmt(ps.length) + " pictures" : esc(SEL.place.replace(/_/g, " ")) + " · " + esc(SEL.day)}</h2>
+      <p class="note" style="margin:4px 0 8px">${ps.length} pictures · ${ps.filter((p) => p.people > 0).length} with people · ${ps.length ? esc(ps[0].time.slice(15)) + " to " + esc(ps[ps.length - 1].time.slice(15)) : ""}</p>
+      <div class="lbl">Most listed things</div><div class="chips">${top.map(([n, c]) => `<span class="chip">${esc(n)} <span class="mute">${c}</span></span>`).join("")}</div>
+      <section class="block"><div class="lbl">Pictures</div><div class="thumbs">${ps.slice(0, 120).map((p) => thumbHTML(p.id)).join("")}</div>${ps.length > 120 ? `<p class="note">First 120 of ${ps.length}.</p>` : ""}</section>`;
+  }
+}
+
+// ---------- map ----------
+let mapImg = null, cvs, ctx, scale = 1, MAPPTS = [];
+function initMap() {
+  cvs = $("#map"); ctx = cvs.getContext("2d");
+  mapImg = new Image(); mapImg.onload = drawMap; mapImg.src = G.map.png;
+  new ResizeObserver(drawMap).observe(cvs);
+  cvs.addEventListener("click", onMapClick);
+}
+function w2c(x, y) { const m = G.map; const u = (x - m.origin[0]) / m.resolution, v = m.height - (y - m.origin[1]) / m.resolution; return [u * scale, v * scale]; }
+function drawMap() {
+  if (!cvs || !G || !mapImg || !mapImg.complete) return;
+  const r = cvs.getBoundingClientRect(); if (!r.width) return;
+  const dpr = window.devicePixelRatio || 1;
+  cvs.width = Math.round(r.width * dpr); cvs.height = Math.round(r.height * dpr);
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  scale = r.width / G.map.width;
+  ctx.imageSmoothingEnabled = false;
+  ctx.globalAlpha = document.documentElement.matches('[data-theme="dark"]') || (matchMedia("(prefers-color-scheme: dark)").matches && !document.documentElement.matches('[data-theme="light"]')) ? 0.55 : 0.8;
+  ctx.drawImage(mapImg, 0, 0, r.width, r.height); ctx.globalAlpha = 1;
+  const hl = new Set(), hlI = new Set();
+  let title = "The lab map";
+  if (SEL?.type === "placeday") { G.pictures.forEach((p) => { if (p.day === SEL.day && (p.place || "unknown") === SEL.place) hl.add(p.id); }); title = `${SEL.place.replace(/_/g, " ")}, ${SEL.day}`; }
+  if (SEL?.type === "picture") { hl.add(SEL.id); title = `Picture ${SEL.id}`; }
+  if (SEL?.type === "instance") { const i = INSTBY[SEL.id]; i.pictures.forEach((id) => hl.add(id)); hlI.add(i.key); title = `${i.colour} ${i.name}`; }
+  if (ASKHL.size) { ASKHL.forEach((id) => hl.add(id)); }
+  $("#maptitle").textContent = title;
+  MAPPTS = [];
+  const dim = hl.size > 0;
+  for (const p of G.pictures) {
+    if (p.x == null) continue;
+    const [u, v] = w2c(p.x, p.y);
+    const on = hl.has(p.id);
+    ctx.fillStyle = css(DAYCOL[p.day]); ctx.globalAlpha = dim && !on ? 0.18 : on ? 1 : 0.55;
+    ctx.beginPath(); ctx.arc(u, v, on ? 3.2 : 1.9, 0, 6.283); ctx.fill();
+    MAPPTS.push([u, v, p.id]);
+  }
+  ctx.globalAlpha = 1;
+  // places
+  ctx.font = `600 11px ${css("--f-display")}`; ctx.textBaseline = "middle";
+  for (const [id, pl] of Object.entries(G.places)) {
+    const [u, v] = w2c(pl.x, pl.y);
+    ctx.strokeStyle = css("--ink"); ctx.lineWidth = 1.2; ctx.strokeRect(u - 3, v - 3, 6, 6);
+    ctx.fillStyle = css("--ink"); ctx.globalAlpha = 0.85; ctx.fillText(id.replace(/_/g, " "), u + 6, v); ctx.globalAlpha = 1;
+  }
+  // objects
+  if (MODE === "objs" || SEL?.type === "instance") {
+    for (const i of INST) {
+      const [u, v] = w2c(i.x, i.y); const on = hlI.has(i.key);
+      if (MODE !== "objs" && !on) continue;
+      ctx.save(); ctx.translate(u, v); ctx.rotate(Math.PI / 4); ctx.fillStyle = css("--obj"); ctx.globalAlpha = on ? 1 : 0.5;
+      const s = on ? 5 : 2.6; ctx.fillRect(-s, -s, 2 * s, 2 * s); ctx.restore();
+    }
+    ctx.globalAlpha = 1;
+  }
+  // selected picture: camera wedge
+  if (SEL?.type === "picture") {
+    const p = PIC[SEL.id]; if (p && p.x != null) wedge(p, css("--accent"));
+  }
+  // selected object: sight lines from each picture + uncertainty + missed
+  if (SEL?.type === "instance") {
+    const i = INSTBY[SEL.id]; const [cu, cv] = w2c(i.x, i.y);
+    ctx.strokeStyle = css("--obj"); ctx.lineWidth = 1; ctx.globalAlpha = 0.75;
+    for (const id of i.pictures) { const p = PIC[id]; if (!p || p.x == null) continue; const [u, v] = w2c(p.x, p.y); ctx.beginPath(); ctx.moveTo(u, v); ctx.lineTo(cu, cv); ctx.stroke(); }
+    ctx.globalAlpha = 1; ctx.setLineDash([3, 3]); ctx.beginPath(); ctx.arc(cu, cv, i.uncertainty_m / G.map.resolution * scale, 0, 6.283); ctx.stroke(); ctx.setLineDash([]);
+    ctx.strokeStyle = css("--mute"); ctx.lineWidth = 1.2;
+    for (const id of i.missed) { const p = PIC[id]; if (!p || p.x == null) continue; const [u, v] = w2c(p.x, p.y); ctx.beginPath(); ctx.arc(u, v, 3.4, 0, 6.283); ctx.stroke(); }
+  }
+}
+function wedge(p, col) {
+  const [u, v] = w2c(p.x, p.y); const L = 1.6 / G.map.resolution * scale, h = (G.search.hfov / 2) * Math.PI / 180, a = -p.yaw * Math.PI / 180;
+  ctx.fillStyle = col; ctx.globalAlpha = 0.22; ctx.beginPath(); ctx.moveTo(u, v); ctx.arc(u, v, L, a - h, a + h); ctx.closePath(); ctx.fill();
+  ctx.globalAlpha = 1; ctx.strokeStyle = col; ctx.lineWidth = 1.5; ctx.stroke();
+}
+function onMapClick(e) {
+  const r = cvs.getBoundingClientRect(); const x = e.clientX - r.left, y = e.clientY - r.top;
+  if (MODE === "objs") {
+    let best = null, bd = 64;
+    for (const i of INST) { const [u, v] = w2c(i.x, i.y); const d = (u - x) ** 2 + (v - y) ** 2; if (d < bd) { bd = d; best = i; } }
+    if (best) return select({ type: "instance", id: best.key });
+  }
+  let best = null, bd = 100;
+  for (const [u, v, id] of MAPPTS) { const d = (u - x) ** 2 + (v - y) ** 2; if (d < bd) { bd = d; best = id; } }
+  if (best) select({ type: "picture", id: best });
+}
+function renderLegend() {
+  $("#legend").innerHTML = DAYS.map((d) => `<span><i class="dot" style="background:var(${DAYCOL[d]})"></i>${esc(d)}</span>`).join("") +
+    `<span><i class="diamond"></i>object (Objects view)</span><span><i style="width:9px;height:9px;border:1.3px solid var(--ink);display:inline-block"></i>saved place</span><span>wedge = camera view (73°)</span>`;
+}
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", drawMap);
+new MutationObserver(drawMap).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+
+// ---------- traces ----------
+let CONV = 0;
+function patternOf(turn) {
+  const names = turn.steps.map((s) => s.tool);
+  const out = []; for (const n of names) { if (out.length && out[out.length - 1][0] === n) out[out.length - 1][1]++; else out.push([n, 1]); }
+  return out.map(([n, c]) => `<span class="chip tool">${esc(n)}${c > 1 ? " ×" + c : ""}</span>`).join('<span class="sep">→</span>');
+}
+function argText(a) {
+  return Object.entries(a || {}).map(([k, v]) => `${k}: ${Array.isArray(v) ? v.join(", ") : typeof v === "object" ? JSON.stringify(v) : v}`).join(" · ");
+}
+function renderTraces() {
+  $("#convlist").innerHTML = TR.map((c, n) => `<button class="row" data-conv="${n}" aria-pressed="${n === CONV}"><span>${esc(c.turns[0]?.q.slice(0, 60) || c.id)}</span><span class="n">${c.turns.length}</span><small>${esc(c.start.slice(11, 16))} · ${c.turns.reduce((a, t) => a + t.steps.length, 0)} tool calls</small></button>`).join("");
+  const c = TR[CONV]; if (!c) return;
+  let h = `<div class="lbl">Conversation ${esc(c.id)}</div>`;
+  for (const t of c.turns) {
+    const opened = new Set(t.steps.filter((s) => s.tool === "show_pictures").flatMap((s) => s.args.ids || []));
+    h += `<div class="turn"><div class="mono mute">${esc(t.t.slice(11, 19))}</div><div class="q">${esc(t.q)}</div>
+      <div class="pattern" style="margin-top:6px"><span class="lbl" style="margin-right:4px">pattern</span>${patternOf(t) || '<span class="note">answered without tools</span>'}</div><div class="steps">`;
+    for (const s of t.steps) {
+      const ids = s.tool === "show_pictures" ? (s.args.ids || []) : s.ids;
+      h += `<div class="step"><div class="tm">${esc(s.t.slice(11, 19))}</div><div><span class="chip tool">${esc(s.tool)}</span> <span class="note">${esc(argText(s.args))}</span>
+        ${ids.length ? `<div class="thumbs">${ids.slice(0, 12).map((id) => PIC[id] ? thumbHTML(id, s.tool !== "show_pictures" && opened.has(id) ? "opened" : "") : `<span class="note mono">${esc(id)}</span>`).join("")}</div>${ids.length > 12 ? `<div class="note">${ids.length - 12} more returned</div>` : ""}` : (s.out ? `<div class="note" style="margin-top:3px">${esc(s.out.replace(/^\{"result":"?/, "").slice(0, 220))}</div>` : "")}</div></div>`;
+    }
+    h += `</div>${t.answers.length ? `<div class="answer">${linkIds(esc(t.answers[t.answers.length - 1].text))}</div>` : ""}</div>`;
+  }
+  $("#convview").innerHTML = h;
+}
+$("#convlist").addEventListener("click", (e) => { const b = e.target.closest("[data-conv]"); if (b) { CONV = +b.dataset.conv; renderTraces(); } });
+function linkIds(html) { return html.replace(/\b([tp]\d{9,}(?:_\d+)?)\b/g, (m) => PIC[m] ? `<button class="idref" data-pic="${m}">${m}</button>` : m); }
+
+// ---------- comparison ----------
+function recall(list, rel) { const R = new Set(rel); if (!R.size) return null; const k = Math.min(5, R.size); return list.slice(0, 5).filter((id) => R.has(id)).length / k; }
+function renderCompare() {
+  if (!EV.length) return;
+  const modes = [["words", "Words"], ["images", "Picture similarity"], ["fused", "Combined"]];
+  const rows = EV.filter((e) => e.relevant.length);
+  const mean = (m) => rows.reduce((a, e) => a + recall(e[m], e.relevant), 0) / rows.length;
+  let h = `<table><thead><tr><th>Query</th><th>Right pictures</th>${modes.map(([m, n]) => `<th>${n} · R@5</th><th>${n}: top 5</th>`).join("")}</tr></thead><tbody>`;
+  h += `<tr><td><b>Mean over ${rows.length}</b></td><td></td>${modes.map(([m]) => `<td class="num"><b>${mean(m).toFixed(2)}</b></td><td></td>`).join("")}</tr>`;
+  for (const e of EV) {
+    const R = new Set(e.relevant); const rs = modes.map(([m]) => recall(e[m], e.relevant)); const best = Math.max(...rs.map((x) => x ?? -1));
+    h += `<tr><td>${esc(e.q)}</td><td class="num">${e.relevant.length || "none"}</td>${modes.map(([m], n) => `<td class="num ${rs[n] === best && rs[n] != null && rs.filter((x) => x === best).length < 3 ? "win" : ""}">${rs[n] == null ? "–" : rs[n].toFixed(2)}</td><td><div class="strip">${e[m].slice(0, 5).map((id) => thumbHTML(id, R.has(id) ? "rel" : "", false)).join("")}</div></td>`).join("")}</tr>`;
+  }
+  $("#cmp").innerHTML = h + "</tbody></table>";
+}
+
+// ---------- word search (port of memory.py) ----------
+function words(s) {
+  const S = G.search, stop = new Set(S.stop);
+  return (String(s).toLowerCase().match(/[a-z0-9]+/g) || []).filter((x) => !stop.has(x)).map((x) => S.same[x] || x)
+    .map((x) => (x.length > 3 && x.endsWith("s") && !x.endsWith("ss") ? x.slice(0, -1) : x));
+}
+function canon(n) { const k = n.toLowerCase().replace(/_/g, " ").trim().replace(/\s+/g, " "); return G.search.canon[k] || k; }
+function objWords(o) { const c = canon(o.name); return new Set(words(`${o.colour} ${o.name} ${c} ${G.search.kind[c] || ""}`)); }
+function recText(p) { return [p.summary, p.people_notes, (p.states || []).join(" "), ...p.objects.map((o) => `${o.colour} ${o.name} on ${o.on}`)].join(" "); }
+function wordHits(query, pool) {
+  const q = new Set(words(query)); const out = [];
+  for (const p of pool) {
+    let best = null, hits = 0;
+    for (const o of p.objects) { const ow = objWords(o); let h = 0; q.forEach((w) => { if (ow.has(w)) h++; }); if (h > hits) { hits = h; best = o; } }
+    const rw = new Set(words(recText(p))); let rest = 0; q.forEach((w) => { if (rw.has(w)) rest++; });
+    const score = 2 * hits + rest; if (score > 0) out.push({ score, p, obj: best });
+  }
+  return out.sort((a, b) => b.score - a.score || b.p.t - a.p.t);
+}
+function bankFor(query) {
+  const q = words(query).join(" "); const B = G.bank;
+  if (B[query.toLowerCase().trim()]) return { phrase: query.toLowerCase().trim(), hits: B[query.toLowerCase().trim()] };
+  const qs = new Set(words(query)); let best = null, bs = 0;
+  for (const ph of Object.keys(B)) { const ps = new Set(words(ph)); if (!ps.size) continue; let inter = 0; ps.forEach((w) => { if (qs.has(w)) inter++; }); const s = inter / (ps.size + qs.size - inter); if (inter === ps.size && s > bs) { bs = s; best = ph; } }
+  return best && bs >= 0.34 ? { phrase: best, hits: B[best] } : null;
+}
+function parseWhen(s, end) {
+  if (!s) return null; s = String(s).trim().toLowerCase();
+  const day = { mon: "Mon", monday: "Mon", tue: "Tue", tuesday: "Tue", thu: "Thu", thursday: "Thu", today: "Thu", yesterday: "Tue" }[s];
+  if (day) { const ps = G.pictures.filter((p) => p.day.startsWith(day)); if (!ps.length) return null; return end ? Math.max(...ps.map((p) => p.t)) : Math.min(...ps.map((p) => p.t)); }
+  const m = s.match(/(\d{4}-\d{2}-\d{2})?\s*(\d{1,2}):(\d{2})/); const d = s.match(/\d{4}-\d{2}-\d{2}/);
+  const date = d ? d[0] : "2026-10-22";
+  if (m) return Date.parse(`${date}T${m[2].padStart(2, "0")}:${m[3]}:00-07:00`) / 1000;
+  if (d) return Date.parse(`${date}T${end ? "23:59:59" : "00:00:00"}-07:00`) / 1000;
+  return null;
+}
+function searchMemory({ query, since, until, place, mode = "combined", limit = 10 }) {
+  const t0 = parseWhen(since, false), t1 = parseWhen(until, true);
+  const pool = G.pictures.filter((p) => (t0 == null || p.t >= t0) && (t1 == null || p.t <= t1) && (!place || p.place === place));
+  const okId = new Set(pool.map((p) => p.id));
+  const wh = mode === "pictures" ? [] : wordHits(query, pool);
+  const bank = mode === "words" ? null : bankFor(query);
+  const best = Math.max(1, ...wh.map((x) => x.score)); const wmap = new Map(wh.map((x) => [x.p.id, x]));
+  const scored = new Map();
+  if (bank) for (const [id, s] of bank.hits) if (okId.has(id)) scored.set(id, { id, img: s, score: s + (wmap.has(id) ? G.search.word_boost * wmap.get(id).score / best : 0) });
+  for (const x of wh.slice(0, 40)) if (!scored.has(x.p.id)) scored.set(x.p.id, { id: x.p.id, img: null, score: (bank ? 0.12 : 0) + G.search.word_boost * x.score / best + (bank ? 0 : x.score) });
+  const top = [...scored.values()].sort((a, b) => b.score - a.score).slice(0, Math.min(15, limit));
+  return {
+    searched: `${pool.length} pictures${since || until ? " in that time" : ""}${place ? " near " + place : ""}`,
+    picture_similarity: bank ? `used the stored phrase "${bank.phrase}"` : "no stored phrase matched; words only",
+    results: top.map((r) => { const p = PIC[r.id]; const w = wmap.get(r.id); return { id: p.id, time: p.time, near_place: p.place, people: p.people, summary: p.summary.slice(0, 160), matched_object: w?.obj ? `${w.obj.colour} ${w.obj.name} on ${w.obj.on}` : null, picture_similarity: r.img }; }),
+  };
+}
+function whereIs({ thing }) {
+  const q = new Set(words(thing));
+  const scoreI = (i) => { const iw = objWords({ name: i.name, colour: i.colour }); let n = 0; q.forEach((w) => { if (iw.has(w)) n++; }); return n; };
+  const nameQ = words(thing).filter((w) => !["grey", "black", "white", "blue", "red", "green", "brown", "beige", "yellow", "orange", "silver", "pink", "purple", "teal"].includes(w));
+  const cands = INST.map((i) => ({ i, s: scoreI(i), nameHit: nameQ.some((w) => objWords({ name: i.name, colour: "" }).has(w)) })).filter((x) => x.nameHit && x.s > 0)
+    .sort((a, b) => b.s - a.s || b.i.last_seen - a.i.last_seen).slice(0, 5);
+  if (!cands.length) return { found: 0, note: "No tracked object matches. Furniture and clutter are not tracked; try search_memory." };
+  return { found: cands.length, objects: cands.map(({ i }) => ({ key: i.key, what: `${i.colour} ${i.name} on ${i.on}`, position: [i.x, i.y], uncertainty_m: i.uncertainty_m, how: i.how, near_place: i.near_place, first_seen: i.first_time, last_seen: i.last_time, n_pictures: i.n_pictures, latest_pictures: i.pictures.slice(-3), looked_later_not_seen: i.n_missed_after, not_seen_examples: i.missed.slice(0, 3), p_still_there: i.p_still, other_days: i.chain_days })) };
+}
+function showPictures({ ids }) {
+  return (Array.isArray(ids) ? ids : [ids]).slice(0, 6).map(String).map((id) => {
+    const p = PIC[id]; if (!p) return { id, error: "not in memory" };
+    return { id, time: p.time, dog_at: p.x == null ? null : [p.x, p.y], facing_deg: p.yaw, near_place: p.place, summary: p.summary, people: p.people, people_notes: p.people_notes, objects: p.objects.map((o) => `${o.colour} ${o.name} on ${o.on} (across ${o.across})`), states: p.states };
+  });
+}
+function peopleSeen({ day }) {
+  const d = day ? String(day).slice(0, 3).toLowerCase() : null;
+  const ps = G.pictures.filter((p) => !d || p.day.toLowerCase().startsWith(d));
+  const byHour = {};
+  for (const p of ps) { const h = p.day + " " + p.time.slice(15, 17) + ":00"; const b = (byHour[h] ||= { pictures: 0, with_people: 0, max_people: 0, notes: [], ids: [] }); b.pictures++; if (p.people > 0) { b.with_people++; b.max_people = Math.max(b.max_people, p.people); if (b.notes.length < 4 && p.people_notes) { b.notes.push(p.people_notes.slice(0, 110)); b.ids.push(p.id); } } }
+  return { note: "Counts are per picture; the same person appears in many pictures. Pictures per hour shows how much was looked at.", hours: byHour };
+}
+function listPlaces() { const c = {}; for (const p of G.pictures) c[p.place] = (c[p.place] || 0) + 1; return Object.entries(G.places).map(([id, p]) => ({ id, at: [p.x, p.y], pictures_nearest: c[id] || 0 })); }
+function similarPictures({ id }) { const p = PIC[String(id)]; if (!p) return { error: "not in memory" }; return p.similar.map(([i, s]) => ({ id: i, similarity: s, time: PIC[i]?.time, summary: PIC[i]?.summary.slice(0, 120) })); }
+
+// ---------- ask ----------
+let sample = null, turns = [], ctl = null, ASKHL = new Set(), canImages = false, askBlocked = false;
+const RULES = () => `You answer Oliver's questions about what a Unitree Go2 robot dog has seen in a university robotics lab. You can only use the memory through the tools; never invent a sighting.
+Memory: ${G.pictures.length} pictures from ${DAYS.join(", ")} (it ends Thu 2026-10-22 16:37; treat "now" as Thu 16:40). Each picture has a time, the dog's map pose and a description written by a smaller vision model that can be wrong. ${INST.length} objects were built by grouping sightings; each has a position, last seen, and P(still there).
+Rules:
+- Search two or three wordings ("grey backpack", "backpack", "bag"). For where a thing is now, also call where_is. Open the best pictures with show_pictures before answering.
+- Always say when and where, and cite picture ids in square brackets like [t1792711168_8]. "near <place>" is where the dog stood, not where the thing is; for the thing's position use where_is.
+- If nothing matches, say what you searched and the span covered. "I have not seen it" is a good answer when true.
+- Counting people: the same person appears in many pictures; count distinct people by where they sit and what they wear.
+- Keep answers short and plain.`;
+const TOOLS = [
+  { name: "search_memory", description: "Search all pictures by words in their descriptions, plus picture similarity (SigLIP) when the query matches a stored phrase. Returns up to 10 pictures with id, time, place, summary and the matched object. since/until accept 'HH:MM', 'YYYY-MM-DD HH:MM', 'Mon', 'Tue', 'Thu'.", inputSchema: { type: "object", properties: { query: { type: "string" }, since: { type: "string" }, until: { type: "string" }, place: { type: "string", description: "a place id from list_places" }, mode: { type: "string", enum: ["combined", "words", "pictures"] } }, required: ["query"] }, run: searchMemory },
+  { name: "where_is", description: "Where a thing probably is now, from the object graph: matching objects with map position, last seen, pictures, how many later pictures looked at the spot without seeing it, and P(still there).", inputSchema: { type: "object", properties: { thing: { type: "string" } }, required: ["thing"] }, run: whereIs },
+  { name: "show_pictures", description: "Full stored descriptions of up to 6 pictures by id: objects with colour, surface and position across the frame, people notes, states.", inputSchema: { type: "object", properties: { ids: { type: "array", items: { type: "string" } } }, required: ["ids"] }, run: showPictures },
+  { name: "people_seen", description: "Per hour: how many pictures were taken, how many show people, the most people in one picture, and short notes. Optional day: Mon, Tue or Thu.", inputSchema: { type: "object", properties: { day: { type: "string" } } }, run: peopleSeen },
+  { name: "list_places", description: "The lab's saved places (ids) with map positions and how many pictures were taken nearest each.", run: listPlaces },
+  { name: "similar_pictures", description: "The 6 pictures that look most like the given picture (picture similarity), e.g. to find other views of the same spot.", inputSchema: { type: "object", properties: { id: { type: "string" } }, required: ["id"] }, run: similarPictures },
+];
+const EXAMPLES = ["Where was the grey backpack last seen, and is it still there?", "Did you see a blue roll of tape? Where?", "How many people were in the lab on Thursday afternoon?", "Is there a computer tower with coloured lights?", "What is near the sofa?", "Is there a microwave anywhere?"];
+async function initAsk() {
+  $("#examples").innerHTML = EXAMPLES.map((q) => `<button>${esc(q)}</button>`).join("");
+  $("#examples").addEventListener("click", (e) => { const b = e.target.closest("button"); if (b) { $("#askbox").value = b.textContent; ask(); } });
+  $("#askbtn").addEventListener("click", ask);
+  $("#askbox").addEventListener("keydown", (e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); ask(); } });
+  $("#stopbtn").addEventListener("click", () => ctl?.abort());
+  $("#clearbtn").addEventListener("click", () => { turns = []; ASKHL.clear(); $("#chat").innerHTML = ""; $("#calls").innerHTML = '<div class="empty">No calls yet.</div>'; $("#askstatus").textContent = ""; });
+  sample = window.claude ? await window.claude.use("sample").catch(() => null) : null;
+  if (!sample) { $("#askstatus").textContent = "Asking needs this page open in Claude; everything else works without it."; askBlocked = true; $("#askbtn").disabled = true; return; }
+  const lim = await sample.limits().catch(() => null);
+  canImages = !!lim?.images; $("#lookwrap").hidden = !canImages;
+  if (lim && !lim.tools) { $("#askstatus").textContent = "This view can't run page tools, so asking is off here."; askBlocked = true; $("#askbtn").disabled = true; }
+}
+function uriToBlob(uri) {
+  const [head, b64] = uri.split(","); const bin = atob(b64); const a = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) a[i] = bin.charCodeAt(i);
+  return new Blob([a], { type: head.slice(5, head.indexOf(";")) });
+}
+function addMsg(cls, html) { const d = document.createElement("div"); d.className = "msg " + cls; d.innerHTML = html; $("#chat").append(d); $("#chat").scrollTop = 1e9; return d; }
+function fmtAnswer(t) { return linkIds(esc(t)).replace(/\*\*(.+?)\*\*/g, "<b>$1</b>").replace(/\n/g, "<br>"); }
+function logCall(name, input, out) {
+  const el = $("#calls"); if (el.querySelector(".empty")) el.innerHTML = "";
+  const ids = [...new Set(JSON.stringify(out).match(/\b[tp]\d{9,}(?:_\d+)?\b/g) || [])].filter((i) => PIC[i]).slice(0, 12);
+  ids.forEach((i) => ASKHL.add(i));
+  const summary = name === "where_is" ? `${out.found || 0} object(s)` : name === "search_memory" ? `${out.results?.length || 0} pictures · ${out.picture_similarity}` : Array.isArray(out) ? `${out.length} items` : "";
+  el.insertAdjacentHTML("beforeend", `<div class="call"><span class="chip tool">${esc(name)}</span> <span class="note">${esc(argText(input))}</span><div class="note">${esc(summary)}</div>${ids.length ? `<div class="thumbs" style="margin-top:4px">${ids.map((i) => thumbHTML(i)).join("")}</div>` : ""}</div>`);
+  el.scrollTop = 1e9;
+}
+async function ask() {
+  const q = $("#askbox").value.trim(); if (!q || !sample || $("#askbtn").disabled) return;
+  $("#askbox").value = ""; addMsg("me", esc(q)); turns.push({ role: "user", content: q });
+  const out = addMsg("ai", '<span class="mute">Thinking…</span>');
+  ctl = new AbortController(); $("#askbtn").disabled = true; $("#stopbtn").hidden = false; $("#askstatus").textContent = "";
+  const tools = TOOLS.map((t) => ({ name: t.name, description: t.description, ...(t.inputSchema ? { inputSchema: t.inputSchema } : {}),
+    execute: (input) => { const r = t.run(input || {}); logCall(t.name, input, r); const s = JSON.stringify(r); return s.length > 30000 ? s.slice(0, 30000) : r; } }));
+  let answer = "";
+  try {
+    const msgs = [{ role: "user", content: RULES() }, ...turns.slice(-8)];
+    const res = await sample(msgs, { tools, cache: false, signal: ctl.signal, onText: ({ text }) => { out.innerHTML = fmtAnswer(text); $("#chat").scrollTop = 1e9; } });
+    answer = res.text; out.innerHTML = fmtAnswer(answer) + (res.truncated ? '<div class="note">Cut short; ask for less at a time.</div>' : "");
+    turns.push({ role: "assistant", content: answer });
+    if (canImages && $("#lookchk").checked) await lookCheck(q, answer, out);
+  } catch (e) {
+    out.innerHTML = e.text ? fmtAnswer(e.text) : "";
+    const msg = { cancelled: "Stopped.", not_granted: "Claude was not allowed for this page.", rate_limited: "Too many requests just now; try again in a minute.", tools_unavailable: "This view can't run page tools.", sampling_disabled: "Claude isn't available for this account here." }[e.code] || "Something went wrong (" + (e.code || "error") + "). Try again.";
+    if (e.code !== "cancelled" || !e.text) out.insertAdjacentHTML("beforeend", `<div class="note">${esc(msg)}</div>`);
+    if (e.code === "not_granted" || e.code === "sampling_disabled") askBlocked = true;
+  } finally {
+    $("#askbtn").disabled = !sample || askBlocked; $("#stopbtn").hidden = true; drawMap();
+  }
+}
+async function lookCheck(q, answer, out) {
+  const ids = [...new Set(answer.match(/\b[tp]\d{9,}(?:_\d+)?\b/g) || [])].filter((i) => PIC[i]).slice(0, 4);
+  if (!ids.length) return;
+  const box = document.createElement("div"); box.className = "chk"; box.innerHTML = `<span class="mute">Looking at ${ids.join(", ")}…</span>`; out.append(box);
+  try {
+    const blobs = await Promise.all(ids.map(async (id) => uriToBlob(await fullSrc(id))));
+    const prompt = `A robot dog's memory agent answered a question from stored text descriptions. Now look at the pictures it cited (in this order: ${ids.join(", ")}) and check the answer against them.
+Question: ${q}
+Answer: ${answer}
+Reply in 1-3 short sentences: say whether the pictures support the answer, and correct anything they contradict. Cite ids in square brackets.`;
+    const r = await sample(prompt, { images: blobs, cache: false, signal: ctl.signal, onText: ({ text }) => { box.innerHTML = '<div class="lbl" style="margin-bottom:4px">Checked against the pictures</div>' + fmtAnswer(text); } });
+    box.innerHTML = '<div class="lbl" style="margin-bottom:4px">Checked against the pictures</div>' + fmtAnswer(r.text);
+  } catch (e) { box.innerHTML = `<span class="note">Picture check skipped (${esc(e.code || "error")}).</span>`; }
+}
+
+try { const v = localStorage.getItem("ldm-view"); if (v && document.getElementById("view-" + v)) showView(v); } catch (e) {}
+boot();
+</script>
