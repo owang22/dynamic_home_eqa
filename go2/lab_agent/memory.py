@@ -102,14 +102,57 @@ def nearest_place(x, y, P=None):
     return (best[1], round(best[0], 2)) if best else (None, None)
 
 
-def ask_vlm(prompt, jpgs, schema, max_tokens):
+# Vision model servers, tried in order (2026-10-23). The 27B on cheetah has been off since 01:50 (its GPU is gaofeng's).
+# The H100 machine is the backup runner for the same 27B: its address goes in vlm_backends.json next to this file
+# ({"h100": "http://<host>:<port>/v1/chat/completions"}), or env VLM_H100_URL. The 8B on the control PC takes only
+# short questions (locate: one picture, a small answer), not describing every picture: it also serves watch_go_to,
+# scan_for and skills, and a description takes it about 70 s.
+BACKENDS_FILE = Path(__file__).with_name("vlm_backends.json")
+_UP: dict[str, tuple[float, bool]] = {}          # url -> (checked at, answering)
+
+
+def backends(short):
+    import os
+    cfg = json.loads(BACKENDS_FILE.read_text()) if BACKENDS_FILE.exists() else {}
+    out = [("cheetah-27b", VLM, "Qwen/Qwen3.8-27B", True)]
+    h100 = os.environ.get("VLM_H100_URL") or cfg.get("h100")
+    if h100:
+        out.append(("h100-27b", h100, cfg.get("h100_model", "Qwen/Qwen3.8-27B"), True))
+    if short:
+        out.append(("z690-8b", cfg.get("z690", "http://172.17.40.64:8000/v1/chat/completions"), "qwen3-vl-8b", False))
+    return out
+
+
+def answering(url):
+    """Is this server up? Cached 30 s (a dead one answers 'connection refused' at once; a live one in ms)."""
+    t, ok = _UP.get(url, (0.0, False))
+    if time.time() - t < 30:
+        return ok
+    try:
+        urllib.request.urlopen(url.replace("/chat/completions", "/models"), timeout=3).read()
+        ok = True
+    except Exception:  # noqa: BLE001
+        ok = False
+    _UP[url] = (time.time(), ok)
+    return ok
+
+
+def ask_vlm(prompt, jpgs, schema, max_tokens, fallback=False):
+    """fallback=True: a short question, which may also go to the 8B if both 27Bs are down."""
     content = [{"type": "image_url", "image_url": {"url": "data:image/jpeg;base64," + base64.b64encode(b).decode()}}
                for b in jpgs]
     content.append({"type": "text", "text": prompt})
-    body = {"model": "Qwen/Qwen3.8-27B", "temperature": 0, "max_tokens": max_tokens,
-            "messages": [{"role": "user", "content": content}], "chat_template_kwargs": {"enable_thinking": False},
+    chain = backends(short=fallback)
+    up = [b for b in chain if answering(b[1])]
+    if not up:
+        raise ConnectionError("no vision model server is answering (tried " + ", ".join(b[0] for b in chain) + ")")
+    name, url, model, qwen38 = up[0]
+    body = {"model": model, "temperature": 0, "max_tokens": max_tokens,
+            "messages": [{"role": "user", "content": content}],
             "response_format": {"type": "json_schema", "json_schema": {"name": "a", "schema": schema}}}
-    req = urllib.request.Request(VLM, json.dumps(body).encode(), {"Content-Type": "application/json"})
+    if qwen38:
+        body["chat_template_kwargs"] = {"enable_thinking": False}
+    req = urllib.request.Request(url, json.dumps(body).encode(), {"Content-Type": "application/json"})
     with urllib.request.urlopen(req, timeout=300) as r:
         ch = json.loads(r.read())["choices"][0]
     if ch.get("finish_reason") == "length":

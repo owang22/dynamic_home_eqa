@@ -90,9 +90,16 @@ def try_login(h, pw):
     return False, "Wrong password."
 
 # path -> (seconds to keep, timeout)
-PROXY = {"/frame.jpg": (0.25, 2.5), "/map.png": (20, 5), "/state.json": (0.3, 2.5), "/places": (15, 5)}
+PROXY = {"/frame.jpg": (0.25, 2.5), "/map.png": (20, 5), "/state.json": (0.3, 2.5), "/places": (15, 5),
+         "/map/objects": (15, 5), "/map/layer.png?layer=mid": (30, 5), "/map/layer.png?layer=high": (30, 5)}
 _cache: dict[str, tuple[float, bytes, str]] = {}
 _locks = {p: threading.Lock() for p in PROXY}
+
+
+def proxy_key(u):
+    """/c/<path> on this page -> the console path; height layers keep their ?layer= (only mid and high)."""
+    layer = parse_qs(u.query).get("layer", [""])[0]
+    return "/" + u.path[3:] + (f"?layer={layer}" if layer else "")
 
 
 def fetch(path):
@@ -119,8 +126,12 @@ def fetch(path):
 def trim(s):
     """Only what the page draws (the full state carries the lidar cloud: tens of kB at 3 Hz)."""
     a = s.get("agents") or {}
+    lv = s.get("live") or {}
     return {"t": time.time(), "map": {k: (s.get("map") or {}).get(k) for k in
-                                      ("resolution", "origin", "width", "height", "mode", "status", "saved_at")},
+                                      ("resolution", "origin", "width", "height", "mode", "status", "saved_at", "t",
+                                       "room_deg")},
+            "live": {"new": lv.get("new") or [], "cleared": lv.get("cleared") or []},   # changes vs the saved map
+            "markers": (s.get("markers") or {}).get("list") or [],
             "map_pose": s.get("map_pose"), "nav": s.get("nav"), "owner": a.get("owner"), "current": a.get("current"),
             "notes": a.get("notes"), "log": (a.get("log") or [])[-6:], "control": s.get("control"),
             "age": s.get("age"), "body_height": (s.get("state") or {}).get("body_height"),
@@ -204,8 +215,8 @@ class H(W.H):
             return
         if u.path == "/":
             self.send(200, PAGE().encode(), "text/html; charset=utf-8")
-        elif u.path.startswith("/c/") and "/" + u.path[3:] in PROXY:
-            body, ctype, stale = fetch("/" + u.path[3:])
+        elif u.path.startswith("/c/") and proxy_key(u) in PROXY:
+            body, ctype, stale = fetch(proxy_key(u))
             self.send(200, body, ctype, [("X-Stale", "1" if stale else "0")])
         elif u.path.startswith("/pic/"):
             super().do_GET()                  # web.H checks its own key in ok(): ours, via this override

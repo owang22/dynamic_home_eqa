@@ -11,7 +11,7 @@ html,body{height:100%}
 body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif}
 header{position:sticky;top:0;z-index:5;display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;
  padding:10px 16px;background:var(--bg);border-bottom:1px solid var(--line)}
-header h1{font-size:16px;margin:0;flex:1 1 auto;letter-spacing:.01em}
+header h1{font-size:16px;margin:0;flex:1 1 auto;letter-spacing:.01em;min-width:0}
 .chips{display:flex;flex-wrap:wrap;gap:6px;flex:1 1 100%;order:3}
 .chip{font-size:12px;padding:3px 8px;border-radius:999px;border:1px solid var(--line);background:var(--card);
  font-variant-numeric:tabular-nums;white-space:nowrap}
@@ -29,7 +29,11 @@ section h2 span{text-transform:none;letter-spacing:0;font-variant-numeric:tabula
 #left{display:flex;flex-direction:column;gap:14px;min-width:0}
 #cam{display:block;width:100%;aspect-ratio:16/9;object-fit:contain;background:#000;max-width:100%}
 #mapbox{position:relative;width:100%}
-#map{display:block;width:100%;height:auto;max-width:100%;touch-action:manipulation}
+#map{display:block;width:100%;max-width:100%;touch-action:none;background:#cdcdcd}
+.mapctl{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:8px 12px;border-bottom:1px solid var(--line);font-size:13px}
+.mapctl button{font:inherit;font-size:13px;padding:5px 9px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--fg);cursor:pointer}
+.mapctl button.on{background:var(--accent);color:var(--accent-fg);border-color:var(--accent)}
+.mapctl label{display:inline-flex;gap:4px;align-items:center;color:var(--mute)}
 #places{display:flex;flex-wrap:wrap;gap:6px;padding:10px 12px}
 #places button{font:inherit;font-size:13px;padding:6px 10px;border-radius:8px;border:1px solid var(--line);
  background:var(--bg);color:var(--fg);cursor:pointer}
@@ -86,8 +90,12 @@ button.send{background:var(--accent);color:var(--accent-fg);border:0;border-radi
 <main>
  <div id="left">
   <section><h2>Camera <span id="camt">…</span></h2><img id="cam" alt="front camera"></section>
-  <section><h2>Map <span id="mapt">dog = orange arrow · route = blue · places = purple</span></h2>
-   <div id="mapbox"><canvas id="map" width="566" height="578"></canvas></div>
+  <section><h2>Map <span id="mapt">dog = orange arrow · route = blue dashes · places = purple</span></h2>
+   <div class="mapctl"><button id="mrot" title="Turn the drawing so the room's walls are square, like the control PC console">Room view</button>
+    <button id="mzo" title="Zoom out">−</button><button id="mzi" title="Zoom in">+</button><button id="mfol" title="Keep the dog in the middle">Follow dog</button>
+    <label><input type="checkbox" id="lobj" checked>Furniture</label><label><input type="checkbox" id="lmid" checked>Desk tops</label>
+    <label><input type="checkbox" id="lhigh">Shelves</label><label><input type="checkbox" id="llive" checked>Changes</label></div>
+   <div id="mapbox"><canvas id="map"></canvas></div>
    <div id="places"></div><div id="goinfo">Tap a place twice to walk there.</div></section>
   <section><h2>Recent calls <span></span></h2><div id="calls">…</div></section>
  </div>
@@ -130,24 +138,70 @@ async function cam(){if(camBusy||document.hidden)return;camBusy=true;
    $('camt').textContent=(stale?'STALE · ':'')+new Date().toLocaleTimeString()}}
  catch(e){$('camt').textContent='camera unreachable'}finally{camBusy=false}}
 
+// map: same drawing as the control PC console (go2_dashboard): /map.png turned by the room angle so walls are square,
+// height layers (desk tops, shelves), furniture outlines from /map/objects, places with their targets, changes against
+// the saved map (red = new obstacle, green = cleared), the route, markers in view and the dog
+let OBJS=[],LAYIMG={},MV={rot:'room',z:1,follow:false,on:{obj:true,mid:true,high:false,live:true}};
+try{Object.assign(MV,JSON.parse(localStorage.getItem('mapview')||'{}'))}catch(e){}
+const saveMV=()=>{try{localStorage.setItem('mapview',JSON.stringify(MV))}catch(e){}};
+let mapT=null,mapLoaded=0;
 async function loadMap(){
- try{const r=await fetch('/c/map.png?k='+K);const b=await r.blob();const im=new Image();
-  im.onload=()=>{mapImg=im;const c=$('map');c.width=im.width*2;c.height=im.height*2;draw()};im.src=URL.createObjectURL(b)}catch(e){}
- try{places=await (await fetch('/c/places?k='+K)).json();if(places.error)places={};placeButtons();draw()}catch(e){}}
+ try{const r=await fetch('/c/map.png?k='+K+'&_='+(meta&&meta.t||Date.now()));const b=await r.blob();const im=new Image();
+  im.onload=()=>{mapImg=im;draw()};im.src=URL.createObjectURL(b)}catch(e){}
+ try{places=await (await fetch('/c/places?k='+K)).json();if(places.error)places={};placeButtons();draw()}catch(e){}
+ try{const j=await (await fetch('/c/map/objects?k='+K)).json();OBJS=j.objects||[];draw()}catch(e){}
+ for(const [n,tint] of [['mid',[230,140,40]],['high',[160,90,220]]]){
+  try{const b=await (await fetch('/c/map/layer.png?layer='+n+'&k='+K)).blob();const im=new Image();im.onload=()=>{
+   const c=document.createElement('canvas');c.width=im.naturalWidth;c.height=im.naturalHeight;const g=c.getContext('2d');g.drawImage(im,0,0);
+   const d=g.getImageData(0,0,c.width,c.height),a=d.data;for(let i=0;i<a.length;i+=4){if(a[i]<100){a[i]=tint[0];a[i+1]=tint[1];a[i+2]=tint[2];a[i+3]=255}else a[i+3]=0}
+   g.putImageData(d,0,0);LAYIMG[n]=c;draw()};im.src=URL.createObjectURL(b)}catch(e){}}}
 
-function px(x,y){const [ox,oy]=meta.origin,r=meta.resolution;return [((x-ox)/r)*2,((meta.height-1-(y-oy)/r))*2]}
-function draw(){const c=$('map'),g=c.getContext('2d');g.clearRect(0,0,c.width,c.height);
- if(mapImg){g.imageSmoothingEnabled=false;g.drawImage(mapImg,0,0,c.width,c.height)}
- if(!meta)return;
- g.font='11px system-ui,sans-serif';
- for(const [id,p] of Object.entries(places)){const [u,v]=px(p.x,p.y);g.fillStyle=css('--place');
-  g.beginPath();g.arc(u,v,4,0,7);g.fill();g.fillText(id.replace('_',' '),u+6,v-5)}
- const s=lastState||{},nav=s.nav||{};
- const path=nav.path||nav.route||null;
- if(Array.isArray(path)&&path.length>1){g.strokeStyle=css('--route');g.lineWidth=3;g.beginPath();
-  path.forEach((q,i)=>{const [u,v]=px(q[0]??q.x,q[1]??q.y);i?g.lineTo(u,v):g.moveTo(u,v)});g.stroke()}
- const mp=s.map_pose;if(mp){const [u,v]=px(mp.x,mp.y);const a=-mp.yaw;g.save();g.translate(u,v);g.rotate(a);
-  g.fillStyle=css('--dog');g.strokeStyle='#000';g.lineWidth=1;g.beginPath();g.moveTo(14,0);g.lineTo(-8,-8);g.lineTo(-4,0);g.lineTo(-8,8);g.closePath();g.fill();g.stroke();g.restore()}}
+function xf(){const c=$('map'),dpr=window.devicePixelRatio||1,W=Math.max(200,$('mapbox').clientWidth);
+ // the size comes from the box width only (never from the canvas itself, which grew on every redraw on hi-dpi screens)
+ const H=Math.round(Math.min(W*0.9,window.innerHeight*0.62));
+ if(c.style.height!==H+'px')c.style.height=H+'px';
+ if(c.width!==Math.round(W*dpr)||c.height!==Math.round(H*dpr)){c.width=Math.round(W*dpr);c.height=Math.round(H*dpr)}
+ const m=meta,RD=MV.rot==='room'&&m.room_deg!=null?m.room_deg:0,RR=RD*Math.PI/180,rc=Math.abs(Math.cos(RR)),rs=Math.abs(Math.sin(RR));
+ let u=m.width/2,v=m.height/2;const p=lastState&&lastState.map_pose;
+ if(MV.follow&&p){u=(p.x-m.origin[0])/m.resolution;v=m.height-(p.y-m.origin[1])/m.resolution}
+ const s=Math.min(W/(m.width*rc+m.height*rs),H/(m.width*rs+m.height*rc))*MV.z;
+ const M=new DOMMatrix().scale(dpr).translate(W/2,H/2).rotate(RD).scale(s).translate(-u,-v);
+ const mp=(x,y)=>{const a=(x-m.origin[0])/m.resolution,b=m.height-(y-m.origin[1])/m.resolution;return [M.a*a+M.c*b+M.e,M.b*a+M.d*b+M.f]};
+ return {c,M,mp,RR,ppm:s*dpr/m.resolution,dpr}}
+function px(x,y){return xf().mp(x,y)}
+function draw(){if(!meta||!meta.resolution)return;const {c,M,mp,RR,ppm,dpr}=xf(),g=c.getContext('2d');
+ g.setTransform(1,0,0,1,0,0);g.clearRect(0,0,c.width,c.height);
+ if(mapImg){g.save();g.setTransform(M);g.imageSmoothingEnabled=false;g.drawImage(mapImg,0,0,meta.width,meta.height);
+  for(const n of ['mid','high'])if(MV.on[n]&&LAYIMG[n]){g.globalAlpha=.75;g.drawImage(LAYIMG[n],0,0,meta.width,meta.height);g.globalAlpha=1}g.restore()}
+ const s=lastState||{},F=Math.round(12*dpr);g.font=F+'px system-ui,sans-serif';g.lineJoin='round';
+ const label=(t,x,y,col)=>{g.lineWidth=3*dpr;g.strokeStyle='rgba(15,18,20,.85)';g.strokeText(t,x,y);g.fillStyle=col;g.fillText(t,x,y)};
+ const arrow=(x,y,yaw,col,sz)=>{g.save();g.translate(x,y);g.rotate(RR-yaw);g.scale(sz*dpr,sz*dpr);g.fillStyle=col;g.strokeStyle='#000';g.lineWidth=1/sz;
+  g.beginPath();g.moveTo(12,0);g.lineTo(-8,6);g.lineTo(-4,0);g.lineTo(-8,-6);g.closePath();g.fill();g.stroke();g.restore()};
+ if(MV.on.live&&s.live){const q=Math.max(2*dpr,0.1*ppm);g.globalAlpha=.55;
+  g.fillStyle='#2fa84f';(s.live.cleared||[]).forEach(([x,y])=>{const [a,b]=mp(x,y);g.fillRect(a-q/2,b-q/2,q,q)});
+  g.fillStyle='#e0362c';(s.live.new||[]).forEach(([x,y])=>{const [a,b]=mp(x,y);g.fillRect(a-q/2,b-q/2,q,q)});g.globalAlpha=1}
+ if(MV.on.obj)for(const o of OBJS){const cs=Math.cos(o.yaw||0),sn=Math.sin(o.yaw||0),hw=o.w/2,hh=o.h/2;g.save();g.strokeStyle='#5b6bd8';g.lineWidth=1.5*dpr;
+  if(!o.confirmed_by)g.setLineDash([4*dpr,4*dpr]);g.beginPath();[[hw,hh],[-hw,hh],[-hw,-hh],[hw,-hh]].forEach(([a,b],i)=>{const [X,Y]=mp(o.x+a*cs-b*sn,o.y+a*sn+b*cs);i?g.lineTo(X,Y):g.moveTo(X,Y)});
+  g.closePath();g.stroke();g.restore();if(Math.max(o.w,o.h)*ppm>=30){const t=o.name||o.label,[X,Y]=mp(o.x,o.y);label(t.replace(/_/g,' '),X-g.measureText(t).width/2,Y+4*dpr,'#9fb0ff')}}
+ const nav=s.nav||{},path=nav.path||nav.route||null;
+ if(Array.isArray(path)&&path.length>1){g.save();g.strokeStyle=css('--route');g.lineWidth=3*dpr;g.setLineDash([7*dpr,5*dpr]);g.beginPath();
+  path.forEach((q,i)=>{const [a,b]=mp(q[0]??q.x,q[1]??q.y);i?g.lineTo(a,b):g.moveTo(a,b)});g.stroke();g.restore()}
+ for(const [id,p] of Object.entries(places)){const [sx,sy]=mp(p.x,p.y),t=p.target;g.fillStyle=css('--place');
+  if(t){const [tx,ty]=mp(t.x,t.y);g.strokeStyle=css('--place');g.globalAlpha=.5;g.lineWidth=1*dpr;g.beginPath();g.moveTo(sx,sy);g.lineTo(tx,ty);g.stroke();g.globalAlpha=1;
+   if(p.yaw_deg!=null)arrow(sx,sy,p.yaw_deg*Math.PI/180,css('--place'),.6);g.fillStyle=css('--place');g.beginPath();g.arc(tx,ty,4*dpr,0,7);g.fill();label(id.replace(/_/g,' '),tx+6*dpr,ty-5*dpr,'#e9c8ff')}
+  else{g.beginPath();g.arc(sx,sy,4*dpr,0,7);g.fill();label(id.replace(/_/g,' '),sx+6*dpr,sy-5*dpr,'#e9c8ff')}}
+ const p=s.map_pose;
+ if(p&&(s.markers||[]).length){const cx=p.x+0.33*Math.cos(p.yaw),cy=p.y+0.33*Math.sin(p.yaw),q=6*dpr;   // camera 0.33 m ahead of the pose point
+  for(const k of s.markers){const r=Math.hypot(k.z,k.x||0),a=p.yaw-k.bearing_deg*Math.PI/180,[X,Y]=mp(cx+r*Math.cos(a),cy+r*Math.sin(a));
+   g.fillStyle='#ffd23f';g.strokeStyle='#000';g.lineWidth=1.5*dpr;g.fillRect(X-q,Y-q,2*q,2*q);g.strokeRect(X-q,Y-q,2*q,2*q);label(String(k.mark),X+q+3*dpr,Y-q,'#ffd23f')}}
+ if(p){const [a,b]=mp(p.x,p.y);arrow(a,b,p.yaw,css('--dog'),1.3)}}
+$('mrot').onclick=()=>{MV.rot=MV.rot==='room'?'north':'room';saveMV();mapCtl();draw()};
+$('mzi').onclick=()=>{MV.z=Math.min(6,MV.z*1.5);saveMV();mapCtl();draw()};$('mzo').onclick=()=>{MV.z=Math.max(1,MV.z/1.5);saveMV();mapCtl();draw()};
+$('mfol').onclick=()=>{MV.follow=!MV.follow;saveMV();mapCtl();draw()};
+for(const [id,k] of [['lobj','obj'],['lmid','mid'],['lhigh','high'],['llive','live']])$(id).onchange=e=>{MV.on[k]=e.target.checked;saveMV();draw()};
+function mapCtl(){$('mrot').textContent=MV.rot==='room'?'Room view':'North up';$('mrot').classList.toggle('on',MV.rot==='room');$('mfol').classList.toggle('on',MV.follow);
+ $('mzo').disabled=MV.z<=1;for(const [id,k] of [['lobj','obj'],['lmid','mid'],['lhigh','high'],['llive','live']])$(id).checked=!!MV.on[k]}
+mapCtl();window.addEventListener('resize',draw);
 
 function placeButtons(){const box=$('places');box.innerHTML='';
  Object.keys(places).sort().forEach(id=>{const b=document.createElement('button');b.textContent=id.replace(/_/g,' ');
@@ -164,7 +218,8 @@ async function armGo(b,id){
 async function state(){if(document.hidden)return;
  try{const r=await fetch('/c/state.json?k='+K);const stale=r.headers.get('X-Stale')==='1';const s=await r.json();
   if(s.error){chip('c-map','console off','bad');return}
-  lastState=s;if(s.map&&s.map.resolution){const first=!meta;meta=s.map;if(first)loadMap()}
+  lastState=s;if(s.map&&s.map.resolution){const first=!meta,changed=meta&&meta.t!==s.map.t;meta=s.map;
+   if(first||(changed&&Date.now()-mapLoaded>20000)){mapLoaded=Date.now();loadMap()}}
   const m=s.map||{};const unsure=/unsure/.test(m.status||'');
   chip('c-map',(m.mode||'?')+(unsure?' (unsure)':'')+(stale?' · stale':''),m.mode==='localized'&&!unsure?'ok':m.mode==='localized'?'warn':'bad');
   $('c-map').title=m.status||'';
@@ -253,6 +308,6 @@ $('epnew').onclick=()=>{S=uuid();EP=null;try{localStorage.removeItem('ep')}catch
 setMode(MODE);
 
 state();cam();
-setInterval(state,700);setInterval(cam,450);setInterval(loadMap,30000);
+setInterval(state,700);setInterval(cam,450);setInterval(loadMap,60000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden){state();cam()}});
 </script></body></html>

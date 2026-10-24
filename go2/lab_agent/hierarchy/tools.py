@@ -46,7 +46,7 @@ def watch_go_to(console: str, small: LLM, query: str, place: str = "", x: float 
                 b = pj(jpg)
                 a = dict(a, yes=b["yes"], p_person=b["p_yes"], secs=a["secs"] + b["secs"])
             return a
-    out = watch_for(console, judge, during=move, k=k, n=n, hz=hz, max_s=max_s)
+    out = watch_for(console, judge, during=move, k=k, n=n, hz=hz, max_s=max_s, allow_real=allow_real)
     res = {"query": query, "go_to": args, "stopped_on_sight": out["hit"], "stop_sent_at_s": out["stop_sent_at"],
            "move_result": out["move"]["result"],
            "frames_checked": sum("error" not in f for f in out["frames"]),     # judged by the small VLM

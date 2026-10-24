@@ -402,26 +402,38 @@ def locate(thing: str, ids: list[str]) -> str:
     vision model finds it in each picture; each sighting is a line from the camera pose; two or more lines from
     different directions give a position. Also suggests where to stand to see it (for go_to)."""
     by = {r["id"]: r for r in M.load()}
-    sch = {"type": "object", "properties": {"why": {"type": "string", "maxLength": 160},
+    # (2026-10-23) no maxLength on why: cutting it mid-sentence made the 8B pad with whitespace to max_tokens
+    sch = {"type": "object", "additionalProperties": False, "properties": {"why": {"type": "string"},
                                             "present": {"type": "string", "enum": ["yes", "no"]},
                                             "across": {"type": "number", "minimum": 0, "maximum": 1},
                                             "metres_away": {"type": "number", "minimum": 0.2, "maximum": 8}},
            "required": ["why", "present", "across", "metres_away"]}
-    sights = []
+    sights, unread = [], []
     for i in ids[:12]:
         r = by.get(i)
         if not r or r.get("x") is None:
             continue
-        a = M.ask_vlm(f"A robot dog's camera picture (camera 0.4 m above the floor, about 73 degrees wide). Is {thing} "
-                      f"in it? If yes: where is its centre across the picture (0 = left edge, 1 = right edge), and about "
-                      f"how many metres from the camera is it? If no, across 0.5 and metres 1. Reason first.",
-                      [Path(r["path"]).read_bytes()], sch, 300)
+        a = None
+        for _ in range(2):                 # one bad answer skips that picture, not the whole call
+            try:
+                a = M.ask_vlm(f"A robot dog's camera picture (camera 0.4 m above the floor, about 73 degrees wide). Is "
+                              f"{thing} in it? If yes: where is its centre across the picture (0 = left edge, 1 = right "
+                              f"edge), and about how many metres from the camera is it? If no, across 0.5 and metres 1. "
+                              f"First give your reason in one short sentence.",
+                              [Path(r["path"]).read_bytes()], sch, 400, fallback=True)
+                break
+            except Exception as e:  # noqa: BLE001
+                err = f"{i}: {type(e).__name__}: {e}"
+        if a is None:
+            unread.append(err)
+            continue
         if a["present"] == "yes" and r.get("yaw_deg") is not None:
             b = math.radians(M.bearing_line(r, a["across"]))
             sights.append({"id": i, "t": r["t"], "time": r["time"], "x": r["x"], "y": r["y"], "b": b,
                            "d": a["metres_away"], "why": a["why"]})
     if not sights:
-        return f"the vision model did not find {thing} in any of {ids}"
+        return (f"the vision model did not find {thing} in any of {ids}"
+                + (f" ({len(unread)} could not be read: {'; '.join(unread)[:300]})" if unread else ""))
     sights.sort(key=lambda s: s["t"])
     days = {datetime.fromtimestamp(s["t"]).date() for s in sights}
     import numpy as np
@@ -461,6 +473,8 @@ def locate(thing: str, ids: list[str]) -> str:
     if len(days) > 1:
         lines.append(f"  WARNING: sightings span {len(days)} days; the thing may have moved, or these may be different things")
     lines += [f"  seen in [{s['id']}] {s['time']}: {s['why']}" for s in sights]
+    if unread:
+        lines.append(f"  {len(unread)} picture(s) could not be read by the vision model: {'; '.join(unread)[:300]}")
     lines.append(f"  stand to see it: {stand}" if stand else
                  "  stand to see it: no route found (console off, or no reachable spot 0.7-1.5 m from it)")
     return "\n".join(lines)
@@ -547,6 +561,17 @@ sys.path.insert(0, str(Path(__file__).parent / "hierarchy"))
 import integration  # noqa: E402
 
 integration.register(mcp, sys.modules[__name__])
+
+# Skills the agent writes for itself (skills.py, Oliver 2026-10-23): write_skill, test_skill, run_skill, note_skill,
+# list_skills, read_skill.
+import skills  # noqa: E402
+
+skills.register(mcp, sys.modules[__name__])
+
+# Read-only views of the console's map, route planner and sensors (console_view.py, Oliver 2026-10-23).
+import console_view  # noqa: E402
+
+console_view.register(mcp, sys.modules[__name__])
 
 if __name__ == "__main__":
     if "--selftest" in sys.argv or "--selftest-memory" in sys.argv:
