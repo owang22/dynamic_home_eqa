@@ -3,6 +3,7 @@ missed ("blue roll of tape" was never written down, but it is in the picture).
 
     python3 go2/lab_agent/embeddings.py update            # embed every picture not embedded yet
     python3 go2/lab_agent/embeddings.py search "blue roll of tape"
+    python3 go2/lab_agent/embeddings.py serve             # keep the model loaded for text queries (127.0.0.1:8311)
 
 Each picture is embedded three times: the whole picture squashed to a square (SigLIP was trained that way), and a
 square crop of its left and right part (a 16:9 frame holds a lot; a small thing is easier to match in a crop).
@@ -101,7 +102,29 @@ def embed_crops(items, batch=16):
     return np.concatenate(out).astype(np.float16) if out else np.zeros((0, 1152), np.float16)
 
 
+TEXT_SERVER = "http://127.0.0.1:8311/text"     # `embeddings.py serve`: each agent turn starts a new server.py, and
+                                               # loading the model on the CPU takes about 20 s there
+
+
+def server_up():
+    """Is `embeddings.py serve` running? It then also embeds new pictures, so agent processes need not."""
+    try:
+        import urllib.request
+        with urllib.request.urlopen(TEXT_SERVER.rsplit("/", 1)[0] + "/ping", timeout=0.5) as r:
+            return r.status == 200
+    except Exception:  # noqa: BLE001
+        return False
+
+
 def embed_text(texts):
+    try:
+        import urllib.request
+        req = urllib.request.Request(TEXT_SERVER, json.dumps({"texts": list(texts)}).encode(),
+                                     {"Content-Type": "application/json"})
+        with urllib.request.urlopen(req, timeout=20) as r:
+            return np.array(json.loads(r.read())["vecs"], dtype=np.float32)
+    except Exception:  # noqa: BLE001 - no server: load the model here
+        pass
     import torch
     m, _, tok, dev = model()
     with torch.no_grad():
@@ -158,10 +181,50 @@ def search(query, k=12, recs=None):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("cmd", choices=["update", "search"])
+    ap.add_argument("cmd", choices=["update", "search", "serve"])
     ap.add_argument("query", nargs="?")
     a = ap.parse_args()
-    if a.cmd == "update":
+    if a.cmd == "serve":
+        from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+        global TEXT_SERVER
+        TEXT_SERVER = ""                        # this process embeds itself
+        import time
+        import torch
+        torch.set_num_threads(6)                # the CPU is shared with the agent and other users
+        model()
+        SERVE_LOCK = threading.Lock()
+
+        def keep_up():                          # embed new pictures here, once, instead of in every agent process
+            while True:
+                try:
+                    n = update()
+                    if n:
+                        print(f"{time.strftime('%H:%M')} embedded {n} new pictures", flush=True)
+                except Exception as e:  # noqa: BLE001
+                    print("update failed:", e, flush=True)
+                time.sleep(60)
+        threading.Thread(target=keep_up, daemon=True).start()
+
+        class H(BaseHTTPRequestHandler):
+            def log_message(self, *x):
+                pass
+
+            def do_GET(self):
+                self.send_response(200 if self.path == "/ping" else 404)
+                self.end_headers()
+
+            def do_POST(self):
+                texts = json.loads(self.rfile.read(int(self.headers["Content-Length"])))["texts"][:64]
+                with SERVE_LOCK:                 # model() takes _LOCK itself
+                    v = embed_text(texts)
+                body = json.dumps({"vecs": v.tolist()}).encode()
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.end_headers()
+                self.wfile.write(body)
+        print(f"text embeddings on {model()[3]}, http://127.0.0.1:8311/text", flush=True)
+        ThreadingHTTPServer(("127.0.0.1", 8311), H).serve_forever()
+    elif a.cmd == "update":
         import time
         t0 = time.time()
         n = update()

@@ -46,6 +46,8 @@ Driving the dog
 - The lab map was rebuilt on 2026-10-23 at 15:15 and the places were re-surveyed. Positions of pictures taken
   before then are approximate (off by up to about 1.5 m), so treat an old picture's position as "around there"
   and confirm with a photo before saying exactly where something is.
+- Before each tool call, write one short sentence saying what you are about to do and why (for example
+  "Checking memory for the backpack before walking anywhere."). Oliver sees these as your working notes.
 - Every photo you take is added to the memory automatically, with its time and place.
 - "Find <a person or thing> and stop": use watch_go_to (walking toward where it probably is) or scan_for
   (turning in place), not a chain of short moves. They stop the dog themselves when the small vision model sees

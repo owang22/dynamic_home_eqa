@@ -369,7 +369,8 @@ def search(query, since=None, until=None, place=None, source=None, k=12, recs=No
         return [brief(r, obj, score) for score, _, r, obj in wh[:k]]
     try:
         import embeddings as E
-        E.update(pool)
+        if not E.server_up():                    # the embedding server embeds new pictures itself, once
+            E.update(pool)
         img = E.scores(query, [r["id"] for r in pool])
     except Exception as e:  # noqa: BLE001 - no GPU/torch: the word search still works
         if mode == "images":

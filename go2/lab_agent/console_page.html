@@ -50,6 +50,7 @@ form{display:flex;gap:8px;padding:10px 12px;border-top:1px solid var(--line)}
 textarea{flex:1;min-width:0;font:inherit;padding:10px;border-radius:10px;border:1px solid var(--line);
  background:var(--bg);color:var(--fg);resize:none}
 button.send{background:var(--accent);color:var(--accent-fg);border:0;border-radius:10px;padding:0 18px;font-weight:600;font-size:15px}
+.d{font-size:14px;padding:6px 10px;border-radius:10px;border:1px solid var(--line)}.d.good{color:var(--accent)}.d.bad{color:var(--stop,#c62828);border-color:currentColor}.n{font-size:14px;color:var(--mute);font-style:italic;padding:0 4px;white-space:pre-wrap}details.t summary{cursor:pointer;list-style:none}details.t summary::-webkit-details-marker{display:none}details.t[open] summary{color:var(--fg)}details.t pre{white-space:pre-wrap;overflow-wrap:anywhere;margin:6px 0 0;max-height:320px;overflow:auto;font:12px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--fg)}select.mdl{font:inherit;font-size:13px;border:1px solid var(--line);border-radius:8px;padding:4px 6px;background:var(--card,var(--bg));color:var(--fg)}
 .hint{font-size:12px;color:var(--mute);padding:0 12px 10px}
 .stale{opacity:.55}
 </style></head><body>
@@ -74,7 +75,7 @@ button.send{background:var(--accent);color:var(--accent-fg);border:0;border-radi
   <section><h2>Recent calls <span></span></h2><div id="calls">…</div></section>
  </div>
  <div id="right">
-  <section id="chat"><h2>Ask the lab agent <span id="st">ready</span></h2>
+  <section id="chat"><h2>Ask the lab agent <select id="mdl" class="mdl" title="Model for the next message; the conversation carries over"><option value="opus:high">Opus · thorough</option><option value="opus:medium">Opus · quicker</option><option value="sonnet:medium">Sonnet · fast</option><option value="sonnet:low">Sonnet · fastest</option></select> <span id="st">ready</span></h2>
    <div id="log"></div>
    <form id="f"><textarea id="q" rows="2" placeholder="Where is the grey backpack? · Walk to the sofa · How busy is the lab today?"></textarea>
     <button class="send">Send</button></form>
@@ -157,17 +158,31 @@ const log=$('log');
 function add(cls,text){const d=document.createElement('div');d.className='m '+cls;d.textContent=text;log.appendChild(d);log.scrollTop=1e9;return d}
 function pics(el,ids){if(!ids||!ids.length)return;const p=document.createElement('div');p.className='pics';
  ids.forEach(i=>{const im=document.createElement('img');im.src='/pic/'+i+'?k='+K;im.alt=i;im.onclick=()=>window.open(im.src);p.appendChild(im)});el.appendChild(p);log.scrollTop=1e9}
+const calls={};
+function detail(sum,body){const d=document.createElement('details');d.className='m t';const s=document.createElement('summary');s.textContent=sum;
+ const b=document.createElement('pre');b.textContent=body;d.append(s,b);log.appendChild(d);log.scrollTop=1e9;return b}
+const mdl=document.getElementById('mdl');try{mdl.value=localStorage.getItem('mdl')||'opus:high'}catch(e){}
+mdl.onchange=()=>{try{localStorage.setItem('mdl',mdl.value)}catch(e){}};
+function onev(ev,setst){
+ if(ev.kind==='text'){pics(add('a',ev.text),ev.pics)}
+ else if(ev.kind==='note'){pics(add('n',ev.text),ev.pics)}
+ else if(ev.kind==='tool'){lastTool=ev.text.split('(')[0];calls[ev.id]=detail('▸ '+ev.text,'(running…)')}
+ else if(ev.kind==='result'){const extra=ev.images?'\n['+ev.images+' picture'+(ev.images>1?'s':'')+' given to the agent]':'';
+  if(calls[ev.id]){calls[ev.id].textContent=(ev.text||'(empty)')+extra}else{detail('▸ result',(ev.text||'')+extra)}}
+ else if(ev.kind==='pics'){pics(add('t','new photos'),ev.pics)}
+ else if(ev.kind==='done'){gotDone=true;const bad=ev.ok===false;add('d '+(bad?'bad':'good'),(bad?'✗ ':'✓ ')+ev.text);setst(ev.text);try{navigator.vibrate&&navigator.vibrate(bad?[90,60,90]:60)}catch(e){}if(document.hidden){document.title=(bad?'✗ ':'✓ ')+'Lab dog'}}}
+let T0=0,lastTool='',gotDone=false,timer=null;
+function begin(setst){T0=Date.now();gotDone=false;lastTool='';clearInterval(timer);timer=setInterval(()=>setst('working… '+Math.round((Date.now()-T0)/1000)+' s'+(lastTool?' · '+lastTool:'')),1000)}
+function finish(setst){clearInterval(timer);if(!gotDone){add('d bad','✗ The connection closed before the agent finished. It may still be running: press STOP if the dog is moving, or ask again.');setst('connection lost')}}
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)document.title='Lab dog'});
 $('q').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();$('f').requestSubmit()}});
 $('f').onsubmit=async e=>{e.preventDefault();const q=$('q');const text=q.value.trim();if(!text)return;q.value='';
- add('u',text);$('st').textContent='working…';
- try{const r=await fetch('/ask?k='+K,{method:'POST',body:JSON.stringify({session:S,text})});const rd=r.body.getReader(),dec=new TextDecoder();let buf='';
+ add('u',text);begin(x=>$('st').textContent=x);
+ try{const r=await fetch('/ask?k='+K,{method:'POST',body:JSON.stringify({session:S,text,model:mdl.value})});const rd=r.body.getReader(),dec=new TextDecoder();let buf='';
   for(;;){const {value,done}=await rd.read();if(done)break;buf+=dec.decode(value,{stream:true});let i;
    while((i=buf.indexOf('\n'))>=0){const line=buf.slice(0,i);buf=buf.slice(i+1);if(!line)continue;const ev=JSON.parse(line);
-    if(ev.kind==='text'){pics(add('a',ev.text),ev.pics)}
-    else if(ev.kind==='tool'){add('t','· '+ev.text)}
-    else if(ev.kind==='pics'){pics(add('t','new photos'),ev.pics)}
-    else if(ev.kind==='done'){$('st').textContent=ev.text}}}}
- catch(err){add('t','error: '+err);$('st').textContent='error'}};
+    onev(ev,x=>$('st').textContent=x)}}}
+ catch(err){gotDone=true;clearInterval(timer);add('d bad','✗ Lost the connection: '+err);$('st').textContent='error'}finish(x=>$('st').textContent=x)};
 
 state();cam();
 setInterval(state,700);setInterval(cam,450);setInterval(loadMap,30000);
