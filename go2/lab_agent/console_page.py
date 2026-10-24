@@ -124,7 +124,9 @@ def trim(s):
             "map_pose": s.get("map_pose"), "nav": s.get("nav"), "owner": a.get("owner"), "current": a.get("current"),
             "notes": a.get("notes"), "log": (a.get("log") or [])[-6:], "control": s.get("control"),
             "age": s.get("age"), "body_height": (s.get("state") or {}).get("body_height"),
-            "agent_turn": W.LOCK.locked(), "stop_flag": W.STOP_FLAG.exists()}
+            "agent_turn": W.LOCK.locked(), "stop_flag": W.STOP_FLAG.exists(),
+            "loc": {k: (s.get("loc") or {}).get(k) for k in ("status", "seq", "fit", "runner_up", "unsure")},
+            "battery": (s.get("battery") or {}).get("soc")}
 
 
 def console(method, path, body=None, timeout=150):
@@ -226,6 +228,25 @@ class H(W.H):
             self.send_header("Set-Cookie", f"dogs={tok}; HttpOnly; SameSite=Strict; Path=/; Max-Age=43200{secure}")
             self.send_header("Location", "/")
             self.end_headers()
+            return
+        if u.path == "/note":                  # Collect mode: a hidden note, grade or page action; never reaches the agent
+            if not self.ok():
+                return
+            n = min(int(self.headers.get("Content-Length") or 0), 20000)
+            body = json.loads(self.rfile.read(n) or b"{}")
+            ep = W.collect.clean_id(body.get("episode"))
+            if not ep:
+                self.send(400, b'{"error": "no episode"}', "application/json")
+                return
+            frame = state = None
+            if body.get("kind", "note") == "note":
+                jpg, ctype, stale = fetch("/frame.jpg")
+                frame = jpg if ctype.startswith("image") else None
+                st = json.loads(fetch("/state.json")[0] or b"{}")
+                state = {k: st.get(k) for k in ("map_pose", "loc", "battery", "owner", "current", "nav", "control", "age")}
+                state["camera_stale"] = stale
+            ev = W.collect.note(ep, body, frame, state)
+            self.send(200, json.dumps({"ok": True, "t": ev["t"], "frame": ev.get("frame")}).encode(), "application/json")
             return
         if u.path == "/go":
             if not self.ok():

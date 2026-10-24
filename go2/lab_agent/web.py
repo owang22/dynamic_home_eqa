@@ -27,6 +27,7 @@ from urllib.parse import parse_qs, urlparse
 HERE = Path(__file__).parent
 sys.path.insert(0, str(HERE))
 import memory as M  # noqa: E402
+import collect  # noqa: E402
 
 PORT = 8410
 KEYF = M.DATA / "web_key"
@@ -243,8 +244,21 @@ class H(BaseHTTPRequestHandler):
         self.end_headers()
 
         wlock = threading.Lock()
+        ep = body.get("episode")          # Collect mode on the console page: record the turn in collect.py's log
+        rec = {"answer": [], "tools": [], "t0": __import__("time").time()}
+        if ep:
+            collect.log("prompt", ep, session=session, turn=body.get("turn"), text=text, model=body.get("model"),
+                        expected=str(body.get("expected") or "")[:4000] or None)
 
         def emit(kind, text, pics=(), **extra):
+            if ep and kind == "text":
+                rec["answer"].append(text)
+            elif ep and kind == "tool":
+                rec["tools"].append(text[:300])
+            elif ep and kind == "done":
+                collect.log("done", ep, session=session, turn=body.get("turn"), ok=extra.get("ok"), text=text,
+                            answer="\n\n".join(rec["answer"]), tools=rec["tools"],
+                            secs=round(__import__("time").time() - rec["t0"], 1))
             with wlock:
                 self.wfile.write((json.dumps({"kind": kind, "text": text, "pics": list(pics), **extra}) + "\n").encode())
                 self.wfile.flush()
@@ -339,6 +353,10 @@ class H(BaseHTTPRequestHandler):
                 emit("done", "ended without a result from the agent (no reply, no error)", ok=False)
         except (BrokenPipeError, ConnectionResetError):
             # the phone locked or left the page: end the turn rather than let it drive on unseen
+            if ep:
+                collect.log("done", ep, session=session, turn=body.get("turn"), ok=False,
+                            text="the page disconnected mid-turn; the turn was ended",
+                            answer="\n\n".join(rec["answer"]), tools=rec["tools"])
             if p and p.poll() is None:
                 p.kill()
                 http_stop = console_stop("cheetah-lab-page-disconnect")

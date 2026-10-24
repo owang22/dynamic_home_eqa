@@ -3,9 +3,9 @@
 <title>Lab dog console</title>
 <style>
 :root{--bg:#f4f3ee;--fg:#1c1c1a;--mute:#6f6c64;--card:#ffffff;--line:#dcd9cf;--accent:#2f5d50;--accent-fg:#ffffff;
- --stop:#c62828;--ok:#2e7d32;--warn:#b26a00;--bad:#c62828;--route:#1565c0;--dog:#d84315;--place:#6a1b9a;color-scheme:light}
+ --stop:#c62828;--ok:#2e7d32;--warn:#b26a00;--bad:#c62828;--route:#1565c0;--dog:#d84315;--place:#6a1b9a;--note-bg:#fff4d6;--note-line:#e3c77a;--note-fg:#5a4500;color-scheme:light}
 @media (prefers-color-scheme:dark){:root{--bg:#151513;--fg:#ebeae5;--mute:#9a978e;--card:#20201d;--line:#37362f;
- --accent:#7fb8a5;--accent-fg:#0f1f1a;--stop:#e53935;--ok:#81c784;--warn:#ffb74d;--bad:#ef5350;--route:#64b5f6;--dog:#ff8a65;--place:#ce93d8;color-scheme:dark}}
+ --accent:#7fb8a5;--accent-fg:#0f1f1a;--stop:#e53935;--ok:#81c784;--warn:#ffb74d;--bad:#ef5350;--route:#64b5f6;--dog:#ff8a65;--place:#ce93d8;--note-bg:#2e2817;--note-line:#6b5a2a;--note-fg:#f0dca0;color-scheme:dark}}
 *{box-sizing:border-box}
 html,body{height:100%}
 body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif}
@@ -52,10 +52,26 @@ textarea{flex:1;min-width:0;font:inherit;padding:10px;border-radius:10px;border:
 button.send{background:var(--accent);color:var(--accent-fg);border:0;border-radius:10px;padding:0 18px;font-weight:600;font-size:15px}
 .d{font-size:14px;padding:6px 10px;border-radius:10px;border:1px solid var(--line)}.d.good{color:var(--accent)}.d.bad{color:var(--stop,#c62828);border-color:currentColor}.n{font-size:14px;color:var(--mute);font-style:italic;padding:0 4px;white-space:pre-wrap}details.t summary{cursor:pointer;list-style:none}details.t summary::-webkit-details-marker{display:none}details.t[open] summary{color:var(--fg)}details.t pre{white-space:pre-wrap;overflow-wrap:anywhere;margin:6px 0 0;max-height:320px;overflow:auto;font:12px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--fg)}select.mdl{font:inherit;font-size:13px;border:1px solid var(--line);border-radius:8px;padding:4px 6px;background:var(--card,var(--bg));color:var(--fg)}
 .hint{font-size:12px;color:var(--mute);padding:0 12px 10px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.seg button{font:inherit;font-size:13px;border:0;padding:7px 12px;background:var(--card);color:var(--fg);cursor:pointer}
+.seg button.on{background:var(--accent);color:var(--accent-fg);font-weight:600}
+.co{display:none}body.collect .co{display:flex}body.collect .dm{display:none}
+.epbar{flex-wrap:wrap;gap:6px;align-items:center;padding:8px 12px;border-bottom:1px solid var(--line);background:var(--note-bg);font-size:13px;color:var(--note-fg)}
+.epbar input{flex:1 1 160px;min-width:0}
+.co input,.co select,.co textarea{font:inherit;font-size:14px;padding:7px 9px;border-radius:8px;border:1px solid var(--note-line);background:var(--card);color:var(--fg)}
+.co button,.vd button{font:inherit;font-size:13px;padding:6px 10px;border-radius:8px;border:1px solid var(--note-line);background:var(--card);color:var(--fg);cursor:pointer}
+.exp{padding:0 12px 8px;gap:8px}.exp textarea{flex:1;min-width:0;resize:none}
+.notebar{flex-direction:column;gap:6px;padding:8px 12px 10px;border-top:1px dashed var(--note-line);background:var(--note-bg)}
+.notebar .row{display:flex;gap:6px;flex-wrap:wrap;align-items:center}.notebar .row input{flex:1 1 180px;min-width:0}
+.notebar .lbl{font-size:12px;color:var(--note-fg)}
+.hn{background:var(--note-bg);border:1px dashed var(--note-line);color:var(--note-fg);font-size:14px}
+.hn small{display:block;opacity:.8;font-size:11px;text-transform:uppercase;letter-spacing:.06em}
+.vd{display:flex;gap:6px;flex-wrap:wrap;align-items:center;font-size:12px;color:var(--mute)}.vd button.on{background:var(--accent);color:var(--accent-fg);border-color:var(--accent)}
 .stale{opacity:.55}
 </style></head><body>
 <header>
  <h1>Lab dog console</h1>
+ <div class="seg" title="Collect records your prompts, hidden notes and grades to go2/data/collection/"><button id="m-demo">Demo</button><button id="m-col">Collect</button></div>
  <button id="stop" title="Stop the dog and end the agent's turn">STOP</button>
  <div class="chips">
   <span class="chip" id="c-map">map <b>…</b></span>
@@ -64,6 +80,7 @@ button.send{background:var(--accent);color:var(--accent-fg);border:0;border-radi
   <span class="chip" id="c-pose">pose <b>…</b></span>
   <span class="chip" id="c-agent">agent <b>…</b></span>
   <span class="chip" id="c-age">camera <b>…</b></span>
+  <span class="chip" id="c-bat">battery <b>…</b></span>
  </div>
 </header>
 <main>
@@ -76,16 +93,27 @@ button.send{background:var(--accent);color:var(--accent-fg);border:0;border-radi
  </div>
  <div id="right">
   <section id="chat"><h2>Ask the lab agent <select id="mdl" class="mdl" title="Model for the next message; the conversation carries over"><option value="opus:high">Opus · thorough</option><option value="opus:medium">Opus · quicker</option><option value="sonnet:medium">Sonnet · fast</option><option value="sonnet:low">Sonnet · fastest</option></select> <span id="st">ready</span></h2>
+   <div class="co epbar"><b>Recording</b><span id="epinfo">no episode yet</span>
+    <input id="eptitle" placeholder="Scenario name (optional), e.g. mug moved to bench">
+    <button id="epnew" title="Starts a fresh agent conversation and a new episode in the log">New episode</button></div>
    <div id="log"></div>
    <form id="f"><textarea id="q" rows="2" placeholder="Where is the grey backpack? · Walk to the sofa · How busy is the lab today?"></textarea>
     <button class="send">Send</button></form>
-   <div class="hint">Answers come from the dog's pictures (times and picture ids given). STOP also ends the agent's turn.</div>
+   <div class="co exp"><textarea id="exp" rows="1" placeholder="Expected answer or behavior for this prompt (hidden from the agent, sent with it)"></textarea></div>
+   <div class="co notebar">
+    <div class="lbl">Side note: recorded with the camera frame and pose, never shown to the agent. Works while the agent is working.</div>
+    <div class="row"><select id="nk"><option value="fact">Fact (ground truth)</option><option value="expected">Expected behavior</option><option value="behavior">Robot behavior</option><option value="other">Other</option></select>
+     <input id="nt" placeholder="e.g. I moved the red mug to the workbench at 18:10"><button id="ns">Save note</button></div>
+    <div class="row" id="tags"><span class="lbl">Quick robot notes:</span></div>
+   </div>
+   <div class="hint dm">Answers come from the dog's pictures (times and picture ids given). STOP also ends the agent's turn.</div>
   </section>
  </div>
 </main>
 <script>
 const K=new URLSearchParams(location.search).get('k');
-const S=crypto.randomUUID?crypto.randomUUID():'00000000-0000-4000-8000-'+String(Date.now()).padStart(12,'0').slice(-12);
+const uuid=()=>crypto.randomUUID?crypto.randomUUID():'00000000-0000-4000-8000-'+String(Date.now()).padStart(12,'0').slice(-12);
+let S=uuid();
 const $=id=>document.getElementById(id);
 const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 let meta=null,places={},mapImg=null,lastState=null;
@@ -129,7 +157,8 @@ async function armGo(b,id){
  if(armed!==b){if(armed)armed.classList.remove('arm');armed=b;b.classList.add('arm');$('goinfo').textContent='Tap "'+id.replace(/_/g,' ')+'" again to walk there.';
   clearTimeout(armT);armT=setTimeout(()=>{b.classList.remove('arm');armed=null;$('goinfo').textContent='Tap a place twice to walk there.'},4000);return}
  clearTimeout(armT);b.classList.remove('arm');armed=null;$('goinfo').textContent='walking to '+id+'…';
- try{const r=await fetch('/go?k='+K,{method:'POST',body:JSON.stringify({place:id})});$('goinfo').textContent=await r.text()}
+ rec('action',{text:'place button: go to '+id});
+ try{const r=await fetch('/go?k='+K,{method:'POST',body:JSON.stringify({place:id})});const t=await r.text();$('goinfo').textContent=t;rec('action',{text:'place button result: '+t})}
  catch(e){$('goinfo').textContent='failed: '+e}}
 
 async function state(){if(document.hidden)return;
@@ -144,13 +173,14 @@ async function state(){if(document.hidden)return;
   const mp=s.map_pose;chip('c-pose',mp?`(${mp.x.toFixed(2)}, ${mp.y.toFixed(2)}) ${Math.round(mp.yaw*180/Math.PI)}°`:'unknown',mp?'':'warn');
   chip('c-agent',s.stop_flag?'STOP pressed':s.agent_turn?'working':'idle',s.stop_flag?'bad':s.agent_turn?'warn':'');
   const ca=(s.age||{}).camera;chip('c-age',fmtAgo(ca),ca!=null&&ca<2?'ok':'warn');
+  const bt=s.battery;chip('c-bat',bt==null?'?':Math.round(bt)+'%',bt==null?'':bt<20?'bad':bt<35?'warn':'ok');
   $('calls').textContent=(s.log||[]).slice().reverse().map(e=>{const t=new Date(e.t*1000).toLocaleTimeString();
    const a=e.args&&Object.keys(e.args).length?' '+JSON.stringify(e.args):'';return `${t}  ${e.client}  ${e.call}${a} → ${e.result||''} ${e.reason||''}`}).join('\n')||'none';
   draw()}catch(e){chip('c-map','page error','bad')}}
 
 // STOP: always available, reports what the console said
 $('stop').onclick=async()=>{const st=$('st');st.textContent='sending stop…';
- try{const r=await fetch('/stop?k='+K,{method:'POST'});const t=await r.text();add('t',t);st.textContent=t.startsWith('STOPPED')?'stopped':'STOP FAILED'}
+ try{const r=await fetch('/stop?k='+K,{method:'POST'});const t=await r.text();add('t',t);st.textContent=t.startsWith('STOPPED')?'stopped':'STOP FAILED';rec('action',{text:'STOP pressed: '+t})}
  catch(e){add('t','STOP FAILED: '+e+' — use the control PC console');st.textContent='STOP FAILED'}};
 
 // chat (same stream format as web.py)
@@ -170,19 +200,57 @@ function onev(ev,setst){
  else if(ev.kind==='result'){const extra=ev.images?'\n['+ev.images+' picture'+(ev.images>1?'s':'')+' given to the agent]':'';
   if(calls[ev.id]){calls[ev.id].textContent=(ev.text||'(empty)')+extra}else{detail('▸ result',(ev.text||'')+extra)}}
  else if(ev.kind==='pics'){pics(add('t','new photos'),ev.pics)}
- else if(ev.kind==='done'){gotDone=true;const bad=ev.ok===false;add('d '+(bad?'bad':'good'),(bad?'✗ ':'✓ ')+ev.text);setst(ev.text);try{navigator.vibrate&&navigator.vibrate(bad?[90,60,90]:60)}catch(e){}if(document.hidden){document.title=(bad?'✗ ':'✓ ')+'Lab dog'}}}
+ else if(ev.kind==='done'){gotDone=true;const bad=ev.ok===false;add('d '+(bad?'bad':'good'),(bad?'✗ ':'✓ ')+ev.text);if(curTurn)verdict(curTurn);setst(ev.text);try{navigator.vibrate&&navigator.vibrate(bad?[90,60,90]:60)}catch(e){}if(document.hidden){document.title=(bad?'✗ ':'✓ ')+'Lab dog'}}}
 let T0=0,lastTool='',gotDone=false,timer=null;
 function begin(setst){T0=Date.now();gotDone=false;lastTool='';clearInterval(timer);timer=setInterval(()=>setst('working… '+Math.round((Date.now()-T0)/1000)+' s'+(lastTool?' · '+lastTool:'')),1000)}
 function finish(setst){clearInterval(timer);if(!gotDone){add('d bad','✗ The connection closed before the agent finished. It may still be running: press STOP if the dog is moving, or ask again.');setst('connection lost')}}
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)document.title='Lab dog'});
 $('q').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();$('f').requestSubmit()}});
 $('f').onsubmit=async e=>{e.preventDefault();const q=$('q');const text=q.value.trim();if(!text)return;q.value='';
- add('u',text);begin(x=>$('st').textContent=x);
- try{const r=await fetch('/ask?k='+K,{method:'POST',body:JSON.stringify({session:S,text,model:mdl.value})});const rd=r.body.getReader(),dec=new TextDecoder();let buf='';
+ add('u',text);const extra={};curTurn=0;
+ if(collecting()){ensureEp();EP.turns++;curTurn=EP.turns;extra.episode=EP.id;extra.turn=curTurn;const x=$('exp').value.trim();
+  if(x){extra.expected=x;hidden('expected for prompt '+curTurn,x)}$('exp').value='';epInfo()}
+ begin(x=>$('st').textContent=x);
+ try{const r=await fetch('/ask?k='+K,{method:'POST',body:JSON.stringify({session:S,text,model:mdl.value,...extra})});const rd=r.body.getReader(),dec=new TextDecoder();let buf='';
   for(;;){const {value,done}=await rd.read();if(done)break;buf+=dec.decode(value,{stream:true});let i;
    while((i=buf.indexOf('\n'))>=0){const line=buf.slice(0,i);buf=buf.slice(i+1);if(!line)continue;const ev=JSON.parse(line);
     onev(ev,x=>$('st').textContent=x)}}}
  catch(err){gotDone=true;clearInterval(timer);add('d bad','✗ Lost the connection: '+err);$('st').textContent='error'}finish(x=>$('st').textContent=x)};
+
+// Collect mode: prompts, hidden notes, grades and page actions go to go2/data/collection/events.jsonl
+let MODE='demo',EP=null,curTurn=0;
+try{MODE=localStorage.getItem('mode')||'demo';EP=JSON.parse(localStorage.getItem('ep')||'null')}catch(e){}
+if(EP&&EP.session)S=EP.session;   // a reload in Collect mode continues the same episode and agent conversation
+const collecting=()=>MODE==='collect';
+function saveEp(){try{localStorage.setItem('ep',JSON.stringify(EP))}catch(e){}}
+function setMode(m){MODE=m;document.body.classList.toggle('collect',m==='collect');$('m-demo').classList.toggle('on',m!=='collect');
+ $('m-col').classList.toggle('on',m==='collect');try{localStorage.setItem('mode',m)}catch(e){}epInfo()}
+$('m-demo').onclick=()=>setMode('demo');$('m-col').onclick=()=>setMode('collect');
+function stamp(){const d=new Date(),p=n=>String(n).padStart(2,'0');return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+'_'+p(d.getHours())+p(d.getMinutes())+p(d.getSeconds())}
+function epInfo(){$('epinfo').textContent=EP?`episode ${EP.id}${EP.title?' · '+EP.title:''} · ${EP.turns} prompt${EP.turns==1?'':'s'} · ${EP.notes} note${EP.notes==1?'':'s'}`:'no episode yet: one starts with your first prompt or note'}
+function ensureEp(){if(EP&&EP.session===S)return;EP={id:stamp(),title:$('eptitle').value.trim(),session:S,turns:0,notes:0};saveEp();
+ rec('episode',{title:EP.title||null});epInfo()}
+async function rec(kind,body){if(!collecting())return null;if(kind!=='episode')ensureEp();
+ try{const r=await fetch('/note?k='+K,{method:'POST',body:JSON.stringify({kind,episode:EP.id,session:S,...body})});
+  if(!r.ok)throw new Error(r.status);return await r.json()}catch(e){add('d bad','✗ Not recorded ('+kind+'): '+e);return null}}
+function hidden(label,text){const d=add('hn','');const s=document.createElement('small');s.textContent='🔒 '+label+' · hidden from agent';
+ d.append(s,document.createTextNode(text));return d}
+async function saveNote(nk,text){if(!text)return;ensureEp();const turn=EP.turns;EP.notes++;saveEp();epInfo();
+ const d=hidden({fact:'fact',expected:'expected behavior',behavior:'robot behavior',other:'note'}[nk]+(turn?' (after prompt '+turn+')':''),text);
+ const r=await rec('note',{note_kind:nk,text,turn});if(r){const s=d.querySelector('small');s.textContent+=' · saved '+new Date(r.t*1000).toLocaleTimeString()}}
+$('ns').onclick=()=>{const t=$('nt').value.trim();$('nt').value='';saveNote($('nk').value,t)};
+$('nt').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();$('ns').click()}});
+['stuck','bumped something','hesitated / dithered','wrong place','took a long detour','turned the wrong way','camera view blocked','did well'].forEach(t=>{
+ const b=document.createElement('button');b.textContent=t;b.onclick=()=>saveNote('behavior',t);$('tags').appendChild(b)});
+function verdict(turn){if(!collecting())return;const v=document.createElement('div');v.className='m vd';v.append('Grade prompt '+turn+':');
+ [['right','✓ right'],['partly','~ partly'],['wrong','✗ wrong']].forEach(([k,l])=>{const b=document.createElement('button');b.textContent=l;
+  b.onclick=async()=>{const c=$('nt').value.trim();if(c)$('nt').value='';v.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));
+   await rec('verdict',{turn,text:k,comment:c||null})};v.appendChild(b)});
+ v.append(' (type in the note box first to add a comment)');log.appendChild(v);log.scrollTop=1e9}
+$('eptitle').addEventListener('change',()=>{if(EP&&collecting()){EP.title=$('eptitle').value.trim();saveEp();epInfo();rec('episode',{title:EP.title||null,comment:'renamed'})}});
+$('epnew').onclick=()=>{S=uuid();EP=null;try{localStorage.removeItem('ep')}catch(e){}log.innerHTML='';
+ if(collecting()){ensureEp();add('t','New episode '+EP.id+(EP.title?' · '+EP.title:'')+': fresh agent conversation.')}else epInfo()};
+setMode(MODE);
 
 state();cam();
 setInterval(state,700);setInterval(cam,450);setInterval(loadMap,30000);
