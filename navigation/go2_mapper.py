@@ -44,6 +44,14 @@ TRACK_MIN_FIT = 0.35       # mean wall likelihood at the best fit
 TRACK_MIN_GAIN = 0.03      # best fit must beat "no correction" by this much
 TRACK_GAIN = 0.6           # apply this fraction of each correction (smooths noise)
 TRACK_MAX_PTS = 700
+# The dog's /point_cloud2 is its own persistent voxel map: a view is mostly voxels placed tens of seconds to
+# minutes ago, each with the (drifting) heading the dog had then. The drift tracker therefore matches only
+# voxels that first appeared within TRACK_FRESH_S (replay of the 10-23 drive: holds 0.07 m median at
+# +6 deg/min extra gyro drift where all voxels end 1.9 m off). Falls back to all voxels when fewer than
+# TRACK_FRESH_MIN fresh obstacle points. TRACK_FRESH_S = 0 turns it off.
+TRACK_FRESH_S = 20.0
+TRACK_FRESH_MIN = 200
+VOXEL_KEEP_S = 120.0       # forget a voxel's birth time after it has been out of view this long
 MISMATCH_KNOWN = 0.6       # a view whose points mostly fall on mapped area (this fraction)...
 MISMATCH_FIT = 0.25        # ...but sit this poorly on its walls even after correcting is off: don't map it
 LOST_FIT = 0.65            # "lost": the drift tracker's fit stays under this...
@@ -92,6 +100,7 @@ class Mapper:
         self._next = ("unknown", {})        # (kind, extra) set where T is changed
         self._low = None                    # [since, last robot xy, metres walked] while the track fit is low
         self.lost_since = None              # time the dog was judged lost (see LOST_*), else None
+        self._vox = (np.empty(0, np.int64), np.empty(0), np.empty(0))   # sorted voxel keys, birth, last seen
         if self.load_unsaved():
             self.status = "restored the unsaved map from before the console restarted; lining up with it"
         elif self.load():
@@ -179,7 +188,7 @@ class Mapper:
         self.recent = (self.recent + [obs[::2].copy()])[-4:]
         ok = True
         if self.T is not None and robot is not None and self.tracking and not self._aligning:
-            ok = self.track(obs, robot)
+            ok = self.track(self._fresh(pts[(h > MIN_H) & (h < MAX_H)], obs), robot)
         if not self.mapping or self.T is None:
             return
         if not ok:
@@ -480,6 +489,28 @@ class Mapper:
         d = cv2.distanceTransform((~sub).astype(np.uint8), cv2.DIST_L2, 5) * RES
         self.field = (np.exp(-d * d / (2 * TRACK_SIGMA ** 2)).astype(np.float32), r0, c0, key)
         return self.field
+
+    def _fresh(self, pts3, obs):
+        """obs (pts3[:, :2]) limited to voxels that first appeared within TRACK_FRESH_S, or all of obs when
+        too few are fresh. Keeps first-seen times per 5 cm voxel of the dog's cloud (pts3: odom-frame xyz)."""
+        if TRACK_FRESH_S <= 0 or len(pts3) == 0:
+            return obs
+        now = time.monotonic()
+        k = np.floor(pts3 / RES).astype(np.int64) + 2 ** 20
+        key = (k[:, 0] << 42) | (k[:, 1] << 21) | k[:, 2]
+        uk, inv = np.unique(key, return_inverse=True)
+        keys, born, seen = self._vox
+        i = np.minimum(np.searchsorted(keys, uk), max(len(keys) - 1, 0))
+        known = (keys[i] == uk) if len(keys) else np.zeros(len(uk), bool)
+        b = np.where(known, born[i] if len(keys) else now, now)
+        old = np.ones(len(keys), bool)
+        old[i[known]] = False
+        old &= now - seen < VOXEL_KEEP_S
+        keys, born, seen = np.r_[keys[old], uk], np.r_[born[old], b], np.r_[seen[old], np.full(len(uk), now)]
+        o = np.argsort(keys, kind="stable")
+        self._vox = (keys[o], born[o], seen[o])
+        fresh = now - b[inv] <= TRACK_FRESH_S
+        return obs[fresh] if fresh.sum() >= TRACK_FRESH_MIN else obs
 
     def track(self, obs, robot):
         """Nudge T so this lidar view's obstacles sit on the map's walls (odometry drifts, the walls don't).
