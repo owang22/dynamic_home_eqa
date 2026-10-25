@@ -35,7 +35,7 @@ from rclpy.qos import qos_profile_sensor_data
 from sensor_msgs.msg import Image, JointState, PointCloud2
 from sensor_msgs_py import point_cloud2
 
-from go2_agent import AGENT_LEASE_S, Agents
+from go2_agent import AGENT_LEASE_S, BUMP_H, UNDER_TOP_MAX, Agents
 from go2_mapper import Mapper
 from go2_nav import Planner
 from go2_trail import Trail
@@ -374,11 +374,21 @@ class Collector(Node):
         cells = np.c_[(ij[top] + 0.5) * CELL, near[top, 2] - floor]
         obs = cells[(cells[:, 2] > OBSTACLE_MIN_H) & (cells[:, 2] < 2.0)]
         flat = cells[cells[:, 2] <= OBSTACLE_MIN_H]
+        # A cell whose top is a desk, table or chair back (BUMP_H[1]..UNDER_TOP_MAX) hides what is under it when only
+        # the highest point is kept. Look at all its points: something at bump height under the top -> under_obs
+        # (an obstacle), else under (open floor under a top). go2_agent._update_live passes both to the planner.
+        hs = near[order, 2] - floor
+        starts = np.r_[0, np.nonzero(last)[0][:-1] + 1]      # first sorted point of each cell (top = its last)
+        bump = np.logical_or.reduceat((hs > BUMP_H[0]) & (hs < BUMP_H[1]), starts)
+        topped = (cells[:, 2] >= BUMP_H[1]) & (cells[:, 2] < UNDER_TOP_MAX)
+        under_obs, under = cells[topped & bump, :2], cells[topped & ~bump, :2]
         with lock:
             latest["cloud"] = {"frame": m.header.frame_id, "n_total": int(len(pts)), "cell": CELL,
                                "floor_z": r(floor, 2),
                                "obs": np.round(obs.astype(np.float64), 2).tolist(),
-                               "flat": np.round(flat[:, :2].astype(np.float64), 2).tolist()}
+                               "flat": np.round(flat[:, :2].astype(np.float64), 2).tolist(),
+                               "under_obs": np.round(under_obs.astype(np.float64), 2).tolist(),
+                               "under": np.round(under.astype(np.float64), 2).tolist()}
         if AG and AG.planner:
             AG.update_live()     # the route planner's view of what's around the dog now
             self.stamp("cloud")
@@ -539,6 +549,8 @@ def snapshot():
     with lock:
         now = time.time()
         snap = {k: v for k, v in latest.items() if k != "stamps"}
+        if snap.get("cloud"):          # the under-top cells are for the planner only; keep /events the size it was
+            snap["cloud"] = {k: v for k, v in snap["cloud"].items() if k not in ("under", "under_obs")}
         snap["age"] = {k: r(now - t, 2) for k, t in latest["stamps"].items()}
     mono = time.monotonic()
     snap["rec"] = REC.status()

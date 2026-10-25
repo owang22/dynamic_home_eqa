@@ -35,9 +35,14 @@ BUMP_H = (0.18, 0.60)                      # heights above the floor the dog can
                                            # reports the floor itself in ~10 cm steps, and the dog fits under
                                            # desk and table tops, so neither counts.
 LIVE_KEEP, LIVE_MIN_SEEN = 3, 2              # go_to: a live obstacle cell counts if seen in this many of the last clouds
-OVERHEAD_MAX = 0.6                         # m: tops between BUMP_H[1] and this would block the route. Equal to
-                                           # BUMP_H[1], so desk and table tops (~0.7 m) do NOT block: 1.0 closed every
-                                           # route to B on 10-23 and was reverted. Open: routes can pass under desks
+UNDER_TOP_MAX = 1.0                        # m: a cell whose highest point is between BUMP_H[1] and this has a top over
+                                           # it (desk, table, chair back). The console looks at every point in such a
+                                           # cell, not just the highest: anything at bump height under the top (legs,
+                                           # drawers, a chair seat) is an obstacle like any other; otherwise it is open
+                                           # floor under a top, which the planner avoids by cost (go2_nav UNDER_COST),
+                                           # not as a block (blocking tops closed every route to B on 10-23).
+                                           # Before 10-25 these cells were dropped: chairs with backs, and whatever
+                                           # stood under a desk, were invisible to the live view.
 LIVE_R = 3.0                               # go_to: within this of the dog, plan on what the lidar sees now
 STALL_S, STALL_M = 2.0, 0.03               # blocked if moved less than this in this long
 TILT_LIMIT = 0.6                           # rad of roll/pitch that counts as fallen
@@ -628,20 +633,23 @@ class Agents:
     def _update_live(self, cloud, odom):
         if cloud is not self._live_cloud:
             self._live_cloud = cloud
-            obs, free, over = [], [], []
+            obs, free, under, hard = [], [], [], []
             # each cell of the cloud holds its highest point: bump height is an obstacle, floor height
-            # is open floor. A desk or table top (up to OVERHEAD_MAX) blocks the route too: the dog would
-            # fit under a desk, but must not go there (Oliver, 10-23: a go_to took a "shortcut" under one).
-            # The saved map only has 0.2-0.6 m, so this comes from the live lidar.
+            # is open floor. Cells with a top over them (BUMP_H[1]..UNDER_TOP_MAX: desk, table, chair back) come
+            # sorted by the console (on_cloud): under_obs = something at bump height under the top (an obstacle,
+            # kept hard in the planner's fallback tiers), under = open floor under a top (a routing cost).
             for x, y, h in cloud["obs"]:
                 if BUMP_H[0] < h < BUMP_H[1]:
                     obs.append(self.mapper.to_map(x, y)[:2])
                 elif h <= BUMP_H[0]:
                     free.append(self.mapper.to_map(x, y)[:2])
-                elif h < OVERHEAD_MAX:
-                    over.append(self.mapper.to_map(x, y)[:2])
+            for x, y in cloud.get("under_obs", ()):
+                p = self.mapper.to_map(x, y)[:2]
+                obs.append(p)
+                hard.append(p)
+            under = [self.mapper.to_map(x, y)[:2] for x, y in cloud.get("under", ())]
             free += [self.mapper.to_map(x, y)[:2] for x, y in cloud["flat"]]
-            self.live_hist.append((obs, free, over))
+            self.live_hist.append((obs, free, under, hard))
         # an obstacle cell counts once it shows up in a few clouds in a row (cuts flicker)
         need = min(LIVE_MIN_SEEN, len(self.live_hist))
 
@@ -653,7 +661,7 @@ class Agents:
             return [k for k, n in seen.items() if n >= need]
         free_now = self.live_hist[-1][1]
         mp = self.mapper.to_map(odom["pos"][0], odom["pos"][1])
-        self.planner.set_live(steady(0), free_now, mp[0], mp[1], LIVE_R, over=steady(2))
+        self.planner.set_live(steady(0), free_now, mp[0], mp[1], LIVE_R, under=steady(2), hard=steady(3))
 
     def _goal(self, args):
         """(x, y, yaw or None, place or None) for a go_to: a saved place, or x/y[/yaw_deg] on the map."""
@@ -677,6 +685,10 @@ class Agents:
             raise RuntimeError("no planner")
         deadline = time.monotonic() + timeout_s
         moved, replans, first_plan, squeezes = 0.0, 0, None, 0
+        fallback = None                    # the planner's fallback tier, if any plan of this drive needed one
+
+        def fb(out):
+            return dict(out, fallback=fallback) if fallback else out
         while True:
             mp = self.map_pose_now()
             if mp is None:
@@ -689,10 +701,11 @@ class Agents:
             if "error" in plan:
                 why = {"why": plan["why"]} if plan.get("why") else {}
                 if replans:
-                    return {"result": "blocked", "moved_m": round(moved, 2), "replans": replans,
-                            "reason": "something not on the map blocks the way, and there is no other route", **why}
-                return {"result": "no_route", "reason": plan["error"], "moved_m": round(moved, 2), "replans": replans, **why}
+                    return fb({"result": "blocked", "moved_m": round(moved, 2), "replans": replans,
+                               "reason": "something not on the map blocks the way, and there is no other route", **why})
+                return fb({"result": "no_route", "reason": plan["error"], "moved_m": round(moved, 2), "replans": replans, **why})
             first_plan = first_plan or plan
+            fallback = plan.get("fallback") or fallback
             gx, gy = plan["goal"]          # may have moved off furniture onto open floor
             path = plan["path"]
             if plan.get("squeeze_along_m") is not None:
@@ -701,8 +714,8 @@ class Agents:
                 path = cut_path(path, plan["squeeze_along_m"] - SQUEEZE_STOP_M)
                 squeezes += 1
                 if len(path) < 2 or squeezes > 8:
-                    return {"result": "no_route", "moved_m": round(moved, 2), "replans": replans,
-                            "reason": f"the way looks too narrow near {plan['squeeze_at']} even up close"}
+                    return fb({"result": "no_route", "moved_m": round(moved, 2), "replans": replans,
+                               "reason": f"the way looks too narrow near {plan['squeeze_at']} even up close"})
             r = self._follow(path[1:], deadline)
             moved += r.pop("moved_m", 0.0)
             if r["result"] == "done":
@@ -712,19 +725,19 @@ class Agents:
                 self.planner.block(*r["at"], r=0.15)
                 self._settle(0.5)
                 continue
-            return dict(r, moved_m=round(moved, 2), replans=replans)
+            return fb(dict(r, moved_m=round(moved, 2), replans=replans))
         if gyaw is not None:
             mp = self.map_pose_now()
             d = math.degrees(wrap(gyaw - mp["yaw"]))
             if abs(d) > 5:
                 r = self._turn(d, max(1.0, deadline - time.monotonic()))
                 if r["result"] != "done":
-                    return dict(r, moved_m=round(moved, 2), replans=replans)
+                    return fb(dict(r, moved_m=round(moved, 2), replans=replans))
         out = {"result": "done", "moved_m": round(moved, 2), "replans": replans,
                "route_m": first_plan["length_m"] if first_plan else 0.0}
         if place and place.get("target"):
             out["target"] = place["target"]
-        return out
+        return fb(out)
 
     def _follow(self, path, deadline):
         """Drive the legs of a planned route. Returns result, moved_m and, when blocked, `at`: the

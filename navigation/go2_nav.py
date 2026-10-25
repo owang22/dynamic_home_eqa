@@ -39,6 +39,19 @@ BLOCK_S = 120.0            # temporary obstacles last this long
 FOOTPRINT_R = 0.35         # m around the dog that is always open floor (it is standing there)
 LIVE_NEW_R = 1.2           # live obstacles that aren't on the saved map count only this close to the dog
 MID_BLOCKS = False         # use the map's desk/table-top layer as obstacles (see _grid)
+# Under desks and tables. The live lidar marks open floor under a desk or table top ("under" cells, go2_agent
+# _update_live); routes may cross them, but each 10 cm cell costs UNDER_COST extra (a 1 m stretch under a desk counts
+# as 1 + 10 * UNDER_COST m), so the planner goes under a desk only when the other ways are much longer. Not a block:
+# blocking desk tops closed every route to marker B on 10-23 (the aisle there runs under desk-top edges). What stands
+# under a desk (legs, drawers, chair seats) is a normal live obstacle (go2_agent BUMP_H).
+UNDER_COST = 3.0           # extra cost per cell under a desk top seen live (0 = off)
+MID_COST = 3.0             # the same for the saved map's desk-top layer, anywhere: the live view only covers LIVE_R, and
+                           # past it a map that shows a desk's underside open (chairs moved out while mapping) would
+                           # otherwise invite a route under it (0 = off)
+MID_FILL = 0.6             # ... only where the layer is a solid surface (>= this fraction of a 0.35 m window): thin or
+                           # scattered layer cells are chair backs, people and smear, not desk or table tops
+UNDER_GROW = 0.15          # the dog's half width: cells this close to an under cell count too (its body would be under)
+UNDER_HARD = False         # testing only: block under cells instead (what OVERHEAD_MAX 1.0 did on 10-23)
 SPECK_CELLS = 2            # obstacle specks this small (5 cm map cells, nothing touching) are lidar smear, not furniture
 # Fallback tiers, tried in order only when the normal plan (tier 0, all three radii) finds nothing and there are
 # live obstacles or temporary blocks (route_planning/deploy/TIERS.md). Each: (name, clearance bonus for live
@@ -65,6 +78,9 @@ class Planner:
         self.live_view = None      # {"new": cells it added, "cleared": map cells it cleared, "t"}
         self.last_fail = None      # why the last failed plan failed (see _why_failed)
         self.live_over = []        # overhead cells (desk/table tops) from the live lidar
+        self.live_under = []       # open floor under a desk/table top, from the live lidar (a cost, see UNDER_COST)
+        self.live_hard = []        # live obstacles under a top (legs, chair seats): never relaxed by the fallback tiers
+        self.under_cost = None     # per planning cell extra cost from live_under / the mid layer
         self.fail_log = None       # jsonl file for failed plans, set by the agent
         self.trail = []            # recent map xy where the dog walked (set_trail), for squeezing out of a pocket
         self.tier = 0              # fallback tier the grid is built for (0 = normal)
@@ -74,7 +90,7 @@ class Planner:
         """Rebuild the planning grid when the map or the temporary obstacles changed."""
         now = time.time()
         self.blocks = [b for b in self.blocks if b[0] > now]
-        key = (self.mapper.version, self.mapper.saved_at, tuple(self.blocks), self.live and self.live[5])
+        key = (self.mapper.version, self.mapper.saved_at, tuple(self.blocks), self.live and self.live[5], len(self.live_under))
         if key == self.key:
             return
         from go2_mapper import LAYER_OCC, OCC_SCORE, RES
@@ -83,6 +99,15 @@ class Planner:
             # desk and table tops: never route under them. Off for now: the first map with layers (10-23) had
             # them smeared over half the room, because the dog's accumulated cloud re-counts smears every frame.
             top = (self.mapper.mid >= LAYER_OCC) if MID_BLOCKS else np.zeros_like(seen)
+            mid = None
+            if MID_COST > 0:     # the solid desk-top cells change only with the map: cache them
+                mkey = (self.mapper.version, self.mapper.saved_at)
+                if getattr(self, "_mid_key", None) != mkey:
+                    m = self.mapper.mid >= LAYER_OCC
+                    if MID_FILL > 0:
+                        m &= cv2.blur(m.astype(np.float32), (7, 7)) >= MID_FILL
+                    self._mid_cache, self._mid_key = m, mkey
+                mid = self._mid_cache
         k = int(round(CELL / RES))
         rows, cols = np.nonzero(seen)
         if len(rows) == 0:
@@ -142,6 +167,21 @@ class Planner:
             self.live_view = {"t": lt,
                               "new": np.c_[cx[occ & ~saved & near], cy[occ & ~saved & near]].round(2).tolist(),
                               "cleared": np.c_[cx[saved & ~occ & near], cy[saved & ~occ & near]].round(2).tolist()}
+        # under desks and tables: a routing cost (or, UNDER_HARD, a block), grown by the dog's half width
+        under = np.zeros((h, w), np.float32)
+        if self.live is not None and self.live_under:
+            rr, cc, _ = cells(self.live_under, rad)
+            under[rr, cc] = UNDER_COST
+        if mid is not None:
+            m5 = mid[r0:r1, c0:c1]
+            under = np.maximum(under, (m5[:h * k, :w * k].reshape(h, k, w, k).any(axis=(1, 3)) & ~occ) * np.float32(MID_COST))
+        if UNDER_GROW > 0 and under.any():
+            g = 2 * int(round(UNDER_GROW / CELL)) + 1
+            under = cv2.dilate(under, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (g, g)))
+        if UNDER_HARD:
+            occ |= under > 0
+            under[:] = 0
+        self.under_cost = under if under.any() else None
         # Split the tier-0 obstacles for the fallback tiers. This never ADDS an obstacle: new_m and hard are both
         # subsets of occ. new_m = live obstacles not on the saved map (relaxable in later tiers); a cell that is an
         # obstacle here because of an overhead (desk/table-top) point in live_over is excluded from new_m, so it
@@ -155,6 +195,15 @@ class Planner:
             over_m = np.zeros_like(occ)
             over_m[orr[ok], oc[ok]] = True
             new_m &= ~over_m
+        if self.live is not None and len(self.live_hard):
+            # live obstacles under a desk/table top or chair back stay hard in every tier too
+            a = np.asarray(self.live_hard, dtype=np.float64).reshape(-1, 2)
+            hc = np.floor((a[:, 0] - self.origin[0]) / CELL).astype(int)
+            hr = np.floor((a[:, 1] - self.origin[1]) / CELL).astype(int)
+            ok = (hr >= 0) & (hr < h) & (hc >= 0) & (hc < w)
+            hard_m = np.zeros_like(occ)
+            hard_m[hr[ok], hc[ok]] = True
+            new_m &= ~hard_m
         hard = occ & ~new_m
         blk = np.zeros_like(occ)
         for _, bx, by, br in self.blocks:
@@ -280,12 +329,14 @@ class Planner:
             _, x, y = best
             return x, y, math.atan2(ty - y, tx - x)
 
-    def set_live(self, obs, free, rx, ry, radius, over=()):
+    def set_live(self, obs, free, rx, ry, radius, over=(), under=(), hard=()):
         """The lidar's current view around the robot, map-frame xy: obstacle cells (seen in recent
         clouds), open-floor cells, and overhead cells (desk/table tops) that block anywhere in radius."""
         with self.lock:
             self.live = (obs, free, rx, ry, radius, time.time())
             self.live_over = list(over)
+            self.live_under = list(under)
+            self.live_hard = list(hard)
 
     def overlay(self):
         """What the live lidar changed on the planning grid, for the console (never waits on a plan)."""
@@ -391,6 +442,8 @@ class Planner:
         # within half a metre, even if that cell is tighter than rr
         start_ok = self.dist >= min(rr, 0.12)
         cost_near = NEAR_COST * np.clip((CLEAR_PREF - self.dist) / (CLEAR_PREF - rr), 0, 1)
+        if self.under_cost is not None:
+            cost_near = cost_near + self.under_cost
         H, W = free.shape
         INF = float("inf")
         best = np.full((H, W), INF)
