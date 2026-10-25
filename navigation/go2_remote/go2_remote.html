@@ -1,0 +1,328 @@
+<title>Go2 Remote</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a control strip (who drives + STOP) over two camera panes, then map and activity. Telemetry console, lab-instrument greys. */
+:root{
+  --bg:#eef1f3;--panel:#ffffff;--line:#d5dce1;--fg:#172026;--dim:#5d6b75;
+  --accent:#1f7a8c;--agent:#b8730a;--human:#1f7a8c;--bad:#c2412d;--ok:#2f8a4f;
+  --cam:#0c1114;
+  --sans:"Archivo",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0f1417;--panel:#161d21;--line:#263239;--fg:#dce4e8;--dim:#86959e;
+  --accent:#4fb3c4;--agent:#e0a84a;--human:#4fb3c4;--bad:#e06a5a;--ok:#6cc48a;--cam:#05080a;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1417;--panel:#161d21;--line:#263239;--fg:#dce4e8;--dim:#86959e;
+  --accent:#4fb3c4;--agent:#e0a84a;--human:#4fb3c4;--bad:#e06a5a;--ok:#6cc48a;--cam:#05080a;color-scheme:dark}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{background:var(--bg);color:var(--fg);font:14px/1.45 var(--sans);margin:0}
+.wrap{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:14px 28px;max-width:1280px;margin:0 auto;display:grid;gap:12px}
+header{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center}
+h1{font-size:19px;margin:0;font-weight:700;letter-spacing:.01em}
+.sub{color:var(--dim);font:12px var(--mono)}
+.spacer{flex:1}
+button{font:600 13px var(--sans);color:var(--fg);background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:8px 12px;cursor:pointer}
+button:hover:not(:disabled){border-color:var(--dim)}
+button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button:disabled{opacity:.45;cursor:not-allowed}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px;min-width:0}
+h2{margin:0 0 8px;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--dim);font-weight:600;display:flex;justify-content:space-between;gap:8px}
+h2 span{font:11px var(--mono);letter-spacing:0;text-transform:none}
+.notice{border:1px solid var(--line);border-left:4px solid var(--agent);background:var(--panel);border-radius:6px;padding:10px 12px}
+.notice.bad{border-left-color:var(--bad)}
+.notice code{font:12px var(--mono);background:var(--bg);padding:1px 5px;border-radius:4px;word-break:break-all}
+.ctl{display:flex;flex-wrap:wrap;gap:12px;align-items:center;border-left:5px solid var(--line)}
+.ctl.agent{border-left-color:var(--agent)}.ctl.human{border-left-color:var(--human)}
+.who{flex:1 1 280px;min-width:0}
+.who b{font-size:16px}.who small{display:block;color:var(--dim);font:12px var(--mono);margin-top:2px;overflow-wrap:anywhere}
+.pill{display:inline-block;font:600 11px var(--mono);padding:2px 8px;border-radius:99px;border:1px solid currentColor;margin-right:6px;vertical-align:2px}
+.pill.agent{color:var(--agent)}.pill.human{color:var(--human)}.pill.free{color:var(--dim)}
+#stop{background:var(--bad);border-color:var(--bad);color:#fff;font-size:15px;padding:12px 22px;letter-spacing:.04em}
+#takeover{border-color:var(--agent);color:var(--agent)}
+.cams{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}
+.frame{position:relative;width:100%;max-width:100%;aspect-ratio:16/9;background:var(--cam);border-radius:4px;overflow:hidden}
+.frame img{width:100%;height:100%;object-fit:contain;display:block}
+.frame .empty{position:absolute;inset:0;display:grid;place-items:center;color:#8b979e;font:12px var(--mono);text-align:center;padding:12px}
+.cap{font:12px var(--mono);color:var(--dim);margin-top:6px;overflow-wrap:anywhere}
+.note{font-size:13px;margin-top:6px}.note b{font-weight:600}
+.row2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
+@media (max-width:820px){.row2{grid-template-columns:1fr}}
+.drive{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start}
+.pad{display:grid;grid-template-columns:repeat(3,58px);grid-template-rows:repeat(2,48px);gap:6px}
+.pad button{padding:0;font-size:17px;line-height:1.1}
+.pad button small{display:block;font:10px var(--mono);color:var(--dim)}
+.pad button.on{background:var(--accent);border-color:var(--accent);color:var(--panel)}.pad button.on small{color:var(--panel)}
+.arm{font-weight:600}.arm input{width:16px;height:16px}
+.opts{display:grid;gap:8px;font-size:13px}
+.opts label{display:flex;gap:6px;align-items:center}
+select{font:13px var(--sans);background:var(--panel);color:var(--fg);border:1px solid var(--line);border-radius:5px;padding:4px 6px}
+.hint{font-size:12px;color:var(--dim);max-width:46ch}
+canvas{width:100%;max-width:100%;display:block;background:var(--bg);border-radius:4px}
+.legend{font:11px var(--mono);color:var(--dim);margin-top:6px}
+.tablewrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font:12px var(--mono);font-variant-numeric:tabular-nums}
+td{padding:4px 6px;border-top:1px solid var(--line);white-space:nowrap;vertical-align:top}
+td.r-done{color:var(--ok)}td.r-bad{color:var(--bad)}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;font:12px var(--mono);font-variant-numeric:tabular-nums}
+.kv dt{color:var(--dim)}.kv dd{margin:0;text-align:right}
+.stale{color:var(--agent)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+<header>
+  <h1>Go2 Remote</h1>
+  <span class="sub" id="fresh">connecting to the lab…</span>
+  <span class="spacer"></span>
+  <button id="refresh" disabled>Refresh now</button>
+</header>
+
+<div class="notice" id="notice" hidden></div>
+
+<section class="panel ctl" id="ctl" aria-live="polite">
+  <div class="who" id="who"><b>Waiting for the robot…</b><small>Status refreshes about every 30 s, and right after anything you press here.</small></div>
+  <button id="takeover" disabled>Take over</button>
+  <button id="handback" disabled hidden>Hand back to agents</button>
+  <button id="stop" disabled>STOP</button>
+</section>
+
+<div class="cams">
+  <section class="panel">
+    <h2>Front camera <span id="camage"></span></h2>
+    <div class="frame"><img id="cam" alt="Front camera" hidden><div class="empty" id="camempty">No frame yet</div></div>
+  </section>
+  <section class="panel">
+    <h2>What the agent saw <span id="phage"></span></h2>
+    <div class="frame"><img id="agph" alt="Latest photo taken by an agent" hidden><div class="empty" id="phempty">No agent photos yet. They appear when an agent calls photo or look_around.</div></div>
+    <div class="cap" id="phcap"></div>
+    <div id="notes"></div>
+  </section>
+</div>
+
+<div class="row2">
+  <section class="panel">
+    <h2>Drive a step <span id="drivenote"></span></h2>
+    <div class="drive">
+      <div class="pad" role="group" aria-label="Step direction">
+        <button data-d="turn_left" data-k="q" title="Turn left" disabled>↺<small>Q</small></button>
+        <button data-d="forward" data-k="w" title="Forward" disabled>↑<small>W</small></button>
+        <button data-d="turn_right" data-k="e" title="Turn right" disabled>↻<small>E</small></button>
+        <button data-d="left" data-k="a" title="Sideways left" disabled>←<small>A</small></button>
+        <button data-d="back" data-k="s" title="Back" disabled>↓<small>S</small></button>
+        <button data-d="right" data-k="d" title="Sideways right" disabled>→<small>D</small></button>
+      </div>
+      <div class="opts">
+        <label class="arm" for="armed"><input type="checkbox" id="armed"> Enable driving</label>
+        <label for="secs">Step length
+          <select id="secs"><option value="0.5">0.5 s</option><option value="1" selected>1 s</option><option value="2">2 s</option></select></label>
+        <div style="display:flex;gap:6px"><button id="stand" disabled>Stand up</button><button id="lie" disabled>Lie down</button></div>
+      </div>
+      <p class="hint">Same keys as the lab console: W/S forward and back, A/D sideways, Q/E turn, space to stop. Tick Enable driving first. Each press moves one step and then shows a fresh frame; hold a key to keep stepping. Forward 1 s is about 0.3 m and a 1 s turn about 35°. Driving takes control from any agent. For smooth driving, use the console in the lab.</p>
+    </div>
+  </section>
+  <section class="panel">
+    <h2>Robot <span id="safe"></span></h2>
+    <dl class="kv" id="kv"><dt>position, posture, sensors</dt><dd>appear once connected</dd></dl>
+  </section>
+</div>
+
+<div class="row2">
+  <section class="panel">
+    <h2>Lab map <span id="mapinfo"></span></h2>
+    <canvas id="map" width="640" height="560" aria-label="Lab map with the robot and saved places"></canvas>
+    <div class="legend">white floor · dark walls and furniture · grey not seen yet · red arrow robot · dots saved places</div>
+  </section>
+  <section class="panel">
+    <h2>Agent activity <span id="logn"></span></h2>
+    <div class="tablewrap"><table id="log"><tr><td class="sub" style="white-space:normal">Agent tool calls and their results appear here.</td></tr></table></div>
+  </section>
+</div>
+</div>
+
+<script>
+const SERVER = "Go2 Robot";
+const $ = id => document.getElementById(id);
+const esc = t => String(t ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const deg = r => (r * 180 / Math.PI).toFixed(0);
+const ago = t => { const s = Date.now() / 1000 - t; return s < 60 ? `${Math.max(0, Math.round(s))} s ago` : s < 3600 ? `${Math.round(s / 60)} min ago` : `${Math.round(s / 3600)} h ago`; };
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+let mcp = null, snap = null, mapData = null, busy = false, lastT = 0;
+const mapImg = new Image();
+
+function notice(html, bad) { const n = $("notice"); n.hidden = !html; n.className = "notice" + (bad ? " bad" : ""); n.innerHTML = html || ""; }
+
+function explain(err) {
+  const c = err && err.code;
+  if (c === "server_not_connected" || c === "selection_required" || c === "server_not_found")
+    return [`Add the <b>${SERVER}</b> connector in claude.ai: Settings → Connectors → Add custom connector, named <code>${SERVER}</code>. Its URL comes from <code>~/oliver/go2_remote/go2_remote.sh start</code> on the lab control PC.`, true];
+  if (c === "needs_reauth") return [`Reconnect <b>${SERVER}</b> in claude.ai Settings → Connectors.`, true];
+  if (c === "not_in_manifest" || c === "approval_required" || c === "consent_required")
+    return [`This page needs your permission to use the <b>${SERVER}</b> connector. Press Refresh now to be asked again.`, true];
+  if (c === "server_unavailable" || c === "upstream_error")
+    return [`Can't reach the lab control PC right now. The tunnel or the connector may be stopped; run <code>~/oliver/go2_remote/go2_remote.sh status</code> there. Showing the last data received.`, false];
+  if (c === "tool_error") return [`The robot connector reported an error: ${esc(err.message)}`, true];
+  return [`Connector problem (${esc(c || "unknown")}): ${esc(err && err.message)}`, true];
+}
+
+function setEnabled(on) {
+  document.querySelectorAll("button").forEach(b => { if (b.id !== "refresh") b.disabled = !on || busy; });
+  $("stop").disabled = !mcp;   // STOP works even while another command is running
+  const armed = $("armed").checked;
+  document.querySelectorAll("[data-d],#stand,#lie").forEach(b => { b.disabled = b.disabled || !armed; });
+  $("armed").disabled = !snap;
+  $("refresh").disabled = !mcp || busy;
+}
+
+function render(d) {
+  if (!d) return;
+  if (d.error === "console_down") { notice("The robot is reachable, but the console on the control PC is not running. Start it with <code>~/oliver/run_go2_keys.sh</code>.", true); setEnabled(false); return; }
+  snap = d; lastT = d.t;
+  if (d.error && typeof d.error === "string") notice(`Last command: ${esc(d.error)}`, true); else notice("");
+  const o = d.owner, cur = d.current, ctl = $("ctl");
+  ctl.className = "panel ctl" + (o ? " " + o.kind : "");
+  let who;
+  if (!o) who = `<span class="pill free">FREE</span><b>No one is driving</b><small>Agents can claim the dog. Take over to lock them out.</small>`;
+  else if (o.kind === "agent") {
+    const args = cur ? Object.entries(cur.args || {}).filter(([k]) => !["client", "note", "inline"].includes(k)).map(([k, v]) => `${k} ${JSON.stringify(v)}`).join(", ") : "";
+    who = `<span class="pill agent">AGENT</span><b>${esc(o.client)} is driving</b><small>${cur ? `running ${esc(cur.call)}${args ? " (" + esc(args) + ")" : ""} for ${cur.secs.toFixed(0)} s` : `between steps, idle ${o.idle_s.toFixed(0)} s (its claim lapses at 60 s)`} · from ${esc(o.ip)}</small>`;
+  } else who = `<span class="pill human">PERSON</span><b>${o.client === "claude.ai remote" ? "You took over from here" : "A person at the lab console has control"}</b><small>Agents are locked out until Hand back, or after 5 min with no driving.</small>`;
+  $("who").innerHTML = who;
+  const human = o && o.kind === "human";
+  $("takeover").hidden = human; $("handback").hidden = !human;
+
+  if (d.camera_jpeg_b64) { $("cam").src = "data:image/jpeg;base64," + d.camera_jpeg_b64; $("cam").hidden = false; $("camempty").hidden = true; }
+  $("camage").textContent = d.camera_jpeg_b64 ? `taken ${ago(d.t)}` : "no camera";
+  const ph = (d.agent_photos || []).at(-1);
+  if (ph && d.latest_agent_photo_b64) {
+    $("agph").src = "data:image/jpeg;base64," + d.latest_agent_photo_b64; $("agph").hidden = false; $("phempty").hidden = true;
+    $("phage").textContent = ago(ph.t);
+    const mp = ph.map_pose;
+    $("phcap").textContent = `${ph.client} · ${new Date(ph.t * 1000).toLocaleTimeString()} · ${mp ? `map ${mp.x.toFixed(2)}, ${mp.y.toFixed(2)}, heading ${deg(mp.yaw)}°` : "no map position"}`;
+  }
+  $("notes").innerHTML = Object.entries(d.notes || {}).map(([c, n]) => `<div class="note"><b>${esc(c)}</b>: ${esc(n.text)} <span class="sub">${ago(n.t)}</span></div>`).join("");
+
+  const rpy = d.rpy, mp = d.map_pose, ages = d.ages || {};
+  const tilt = rpy ? Math.max(Math.abs(rpy[0]), Math.abs(rpy[1])) : null;
+  $("safe").innerHTML = tilt == null ? "" : tilt > 0.6 ? '<span class="stale">tilted or fallen</span>' : d.body_height < 0.18 ? "lying down" : "standing";
+  const rows = [
+    ["map position", mp ? `${mp.x.toFixed(2)}, ${mp.y.toFixed(2)} m` : "no map running"],
+    ["heading", mp ? `${deg(mp.yaw)}°` : "—"],
+    ["body height", d.body_height != null ? `${d.body_height.toFixed(2)} m` : "—"],
+    ["roll / pitch", rpy ? `${deg(rpy[0])}° / ${deg(rpy[1])}°` : "—"],
+    ["obstacle avoidance", d.avoid ? "on" : "off"],
+    ["recording", d.recording ? "yes" : "no"],
+    ["sensor age (odom / camera)", `${ages.odom ?? "—"} s / ${ages.camera ?? "—"} s`],
+  ];
+  $("kv").innerHTML = rows.map(([k, v]) => `<dt>${k}</dt><dd>${esc(v)}</dd>`).join("");
+
+  const log = (d.log || []).slice().reverse();
+  $("logn").textContent = log.length ? `last ${log.length} calls` : "";
+  $("log").innerHTML = log.length ? log.map(e => `<tr><td>${new Date(e.t * 1000).toLocaleTimeString()}</td><td>${esc(e.client)}</td><td>${esc(e.call)} ${esc(JSON.stringify(e.args))}</td><td class="${e.result === "done" ? "r-done" : "r-bad"}">${esc(e.result)}${e.reason ? ": " + esc(e.reason) : ""}</td></tr>`).join("")
+    : `<tr><td class="sub" style="white-space:normal">No agent tool calls yet. Calls from agents on cheetah show up here with their results.</td></tr>`;
+  drawMap();
+  tickFresh();
+  setEnabled(true);
+}
+
+function tickFresh() { if (lastT) { const s = Date.now() / 1000 - lastT; $("fresh").textContent = `updated ${ago(lastT)}`; $("fresh").className = "sub" + (s > 75 ? " stale" : ""); } }
+setInterval(tickFresh, 1000);
+
+function drawMap() {
+  const c = $("map"), g = c.getContext("2d"), W = c.width, H = c.height;
+  g.clearRect(0, 0, W, H);
+  const m = mapData && mapData.map;
+  if (!m || !mapData.png_b64) { g.fillStyle = css("--dim"); g.font = "13px sans-serif"; g.fillText("No map yet: mapping or localization is not running.", 12, 24); $("mapinfo").textContent = ""; return; }
+  if (!mapImg.complete || !mapImg.naturalWidth) return;
+  const s = Math.min(W / m.width, H / m.height), ox = (W - m.width * s) / 2, oy = (H - m.height * s) / 2;
+  g.imageSmoothingEnabled = false; g.drawImage(mapImg, ox, oy, m.width * s, m.height * s);
+  const px = (x, y) => [ox + (x - m.origin[0]) / m.resolution * s, oy + (m.height - (y - m.origin[1]) / m.resolution) * s];
+  g.font = "11px 'JetBrains Mono', monospace";
+  for (const q of Object.values(mapData.places || {})) { const [x, y] = px(q.x, q.y); g.fillStyle = css("--accent"); g.beginPath(); g.arc(x, y, 3.5, 0, 7); g.fill(); g.fillText(q.id, x + 5, y - 4); }
+  const p = (snap && snap.map_pose) || mapData.map_pose;
+  if (p) { const [x, y] = px(p.x, p.y); g.save(); g.translate(x, y); g.rotate(-p.yaw); g.fillStyle = css("--bad"); g.beginPath(); g.moveTo(13, 0); g.lineTo(-8, 7); g.lineTo(-4, 0); g.lineTo(-8, -7); g.closePath(); g.fill(); g.restore(); }
+  $("mapinfo").textContent = `${(m.width * m.resolution).toFixed(0)} × ${(m.height * m.resolution).toFixed(0)} m · ${Object.keys(mapData.places || {}).length} places`;
+}
+mapImg.onload = drawMap;
+
+async function act(tool, input, label) {
+  if (!mcp || (busy && tool !== "go2_stop")) return;
+  busy = true; setEnabled(true); $("drivenote").textContent = label + "…";
+  try {
+    const r = await mcp.callTool(SERVER, tool, input, { cache: false });
+    render(r.payload);
+    $("drivenote").textContent = label + ": done";
+  } catch (e) {
+    const [msg, bad] = explain(e); notice(msg, bad);
+    $("drivenote").textContent = label + ": may not have finished; check the camera";
+  } finally { busy = false; setEnabled(!!snap); }
+}
+
+$("stop").onclick = () => act("go2_stop", {}, "Stop");
+$("takeover").onclick = () => act("go2_take_over", {}, "Take over");
+$("handback").onclick = () => act("go2_hand_back", {}, "Hand back");
+$("stand").onclick = () => act("go2_posture", { posture: "stand" }, "Stand up");
+$("lie").onclick = () => act("go2_posture", { posture: "lie" }, "Lie down");
+const step = b => act("go2_step", { direction: b.dataset.d, seconds: Number($("secs").value) }, b.title);
+document.querySelectorAll("[data-d]").forEach(b => b.onclick = () => step(b));
+// Keyboard, as on the lab console. A held key repeats a step each time the last one finishes.
+const held = new Set();
+const keyBtn = k => document.querySelector(`[data-k="${k}"]`);
+function paintKeys() { document.querySelectorAll("[data-k]").forEach(b => b.classList.toggle("on", held.has(b.dataset.k))); }
+async function keyLoop(k) {
+  while (held.has(k) && $("armed").checked) {
+    if (!busy) await step(keyBtn(k)); else await new Promise(r => setTimeout(r, 100));
+  }
+}
+addEventListener("keydown", e => {
+  if (e.target.tagName === "SELECT" || e.metaKey || e.ctrlKey || e.altKey) return;
+  const k = e.key.toLowerCase();
+  if (k === " ") { e.preventDefault(); held.clear(); paintKeys(); if (mcp) act("go2_stop", {}, "Stop"); return; }
+  if (!keyBtn(k) || !$("armed").checked || !snap) return;
+  e.preventDefault();
+  if (e.repeat || held.has(k)) return;
+  held.clear(); held.add(k); paintKeys(); keyLoop(k);
+});
+addEventListener("keyup", e => { if (held.delete(e.key.toLowerCase())) paintKeys(); });
+addEventListener("blur", () => { held.clear(); paintKeys(); });
+$("armed").addEventListener("change", () => { held.clear(); paintKeys(); setEnabled(!!snap); });
+$("refresh").onclick = async () => {
+  if (!mcp || busy) return;
+  busy = true; setEnabled(!!snap); $("fresh").textContent = "refreshing…";
+  try { render((await mcp.callTool(SERVER, "go2_snapshot")).payload); notice(""); }
+  catch (e) { const [msg, bad] = explain(e); notice(msg, bad); }
+  try { const m = (await mcp.callTool(SERVER, "go2_map")).payload; if (m && m.map) { mapData = m; mapImg.src = "data:image/png;base64," + m.png_b64; } } catch (e) {}
+  busy = false; setEnabled(!!snap);
+};
+
+function onWatch(kind) {
+  return ev => {
+    if (ev.type === "data") {
+      const d = ev.result.payload;
+      if (kind === "snap") render(d);
+      else if (d && d.map) { mapData = d; if (d.png_b64) mapImg.src = "data:image/png;base64," + d.png_b64; else drawMap(); }
+    } else {
+      const c = ev.error.code, [msg, bad] = explain(ev.error);
+      notice(msg, bad);
+      if (["needs_reauth", "server_not_connected", "blocked_by_policy", "approval_required", "not_in_manifest"].includes(c) && kind === "snap") { snap = null; setEnabled(false); }
+      $("refresh").disabled = !mcp;
+    }
+  };
+}
+
+(async () => {
+  mcp = window.claude && window.claude.use ? await window.claude.use("mcp").catch(() => null) : null;
+  if (!mcp) {
+    notice(`Live robot data appears when this page is opened in claude.ai with the <b>${SERVER}</b> connector added. The connector's URL comes from <code>~/oliver/go2_remote/go2_remote.sh start</code> on the lab control PC.`, false);
+    $("fresh").textContent = "not connected";
+    drawMap();
+    return;
+  }
+  $("refresh").disabled = false;
+  mcp.watchTool(SERVER, "go2_snapshot", null, onWatch("snap"), { refetchInterval: 30000 });
+  mcp.watchTool(SERVER, "go2_map", null, onWatch("map"), { refetchInterval: 60000 });
+})();
+drawMap();
+</script>

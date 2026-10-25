@@ -16,11 +16,9 @@ What goes here: how the dog chooses and carries out a route, and the records of 
   closed the route, #28), with summaries and any fixes. Commit summaries and small samples; keep large or
   raw logs on Z690.
 
-As of 2026-10-23 this code lives only on Z690, in `~/oliver/`. The Z690 agent will add it.
-
-**The split is unclear and is the Z690 agent's to settle.** `go2_agent.py` holds both the agent API
-(`navigation/`) and the gait and `go_to` logic (here). Put each file where it fits best, or keep `go2_agent.py`
-in one place and point to it from the other README.
+**The code itself is in `../navigation/`** (`go2_nav.py`, `go2_agent.py`, `go2_tidy.py`): the console modules
+import each other and are deployed as one flat folder, so they stay together. This folder holds planning notes,
+failure summaries and offline studies.
 
 Related on cheetah: `go2/console/nav_proto.py` is cheetah's offline prototype of a graded-clearance planner and
 stand selection (proposed in board #18), not the control PC's code.
