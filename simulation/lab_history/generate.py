@@ -1,0 +1,205 @@
+"""Write one synthetic lab history: the dog's events, the ground truth, the routines and questions. See ../README.md.
+
+    python -m simulation.lab_history.generate --days 60 --seed 0 --out /data/oliver/simulation_out/lab_history/d60_s0
+
+Output files:
+    events.jsonl         one per place the dog looked at: id, t, place, x, y, text
+    events_truth.jsonl   per event: what was really there, and what the camera missed, misnamed or invented
+    truth.jsonl          every person's and object's place as intervals: entity, kind, place, t_start, t_end
+    routines.json        places, people, each object's routine(s) in words, the shift log, off-routine days
+    questions.jsonl      questions with answers from the truth, and the dog's last sighting before each one
+"""
+from __future__ import annotations
+
+import argparse
+import dataclasses
+import json
+import random
+from collections import Counter
+from pathlib import Path
+
+from .world import Config, World, WEEKDAYS
+
+TICK = 600                       # truth is sampled every 10 minutes
+PATROL_HOURS = [9.5, 13.5, 17.5]  # workdays; weekends get one patrol at noon
+PATROL_STOPS = 6                 # places per patrol besides the dock
+EXTRA_VISIT = 0.3                # per workday: an unplanned look at 2 places
+MISS_OBJECT, MISS_PERSON = 0.12, 0.05
+ALIAS, INVENT = 0.15, 0.03
+
+
+def visits(world: World, rng: random.Random):
+    """(t, place) for every look the dog takes, in time order."""
+    route = [p for p in world.places if p != "dock"]
+    rng.shuffle(route)
+    k, out = 0, []
+    for day in range(world.cfg.days):
+        hours = PATROL_HOURS if world.is_workday(day) else [12.0]
+        for h in hours:
+            t = world.day_start(day) + (h + rng.gauss(0, 0.15)) * 3600
+            stops = ["dock"] + [route[(k + i) % len(route)] for i in range(PATROL_STOPS)]
+            k += PATROL_STOPS
+            out += [(t + 60 * i, p) for i, p in enumerate(stops)]
+        if world.is_workday(day) and rng.random() < EXTRA_VISIT:
+            t = world.day_start(day) + rng.uniform(8, 19) * 3600
+            out += [(t + 60 * i, p) for i, p in enumerate(rng.sample(route, 2))]
+    return sorted(out)
+
+
+def observe(world: World, t, place, rng: random.Random):
+    """What the camera reports at a place: text, plus what was really there and what went wrong."""
+    objs = [o for o in world.objects if world.object_place(o.name, t) == place]
+    people = [p for p in world.people if world.person_place(p.name, t) == place]
+    seen, missed, aliased, invented = [], [], [], []
+    for p in people:
+        if rng.random() < MISS_PERSON:
+            missed.append(p.name)
+        else:
+            seen.append(p.look)
+    for o in objs:
+        if rng.random() < MISS_OBJECT:
+            missed.append(o.name)
+        elif rng.random() < ALIAS:
+            seen.append(rng.choice(o.aliases))
+            aliased.append(o.name)
+        else:
+            seen.append(o.desc)
+    if rng.random() < INVENT:
+        fake = rng.choice([o for o in world.objects if o not in objs])
+        seen.append(fake.desc)
+        invented.append(fake.name)
+    rng.shuffle(seen)
+    desc = world.places[place]["desc"]
+    text = f"{desc}: {', '.join(seen)}." if seen else f"{desc}: nothing besides the usual furniture."
+    return text, {"objects": [o.name for o in objs], "people": [p.name for p in people],
+                  "missed": missed, "misnamed": aliased, "invented": invented}
+
+
+def truth_intervals(world: World):
+    end = world.day_start(world.cfg.days)
+    entities = [("person", p.name, world.person_place) for p in world.people] + \
+               [("object", o.name, world.object_place) for o in world.objects]
+    rows = []
+    for kind, name, where in entities:
+        t, cur, since = world.day_start(0), None, None
+        while t < end:
+            place = where(name, t)
+            if since is None or place != cur:
+                if since is not None:
+                    rows.append({"entity": name, "kind": kind, "place": cur, "t_start": since, "t_end": t})
+                cur, since = place, t
+            t += TICK
+        rows.append({"entity": name, "kind": kind, "place": cur, "t_start": since, "t_end": end})
+    return rows
+
+
+def questions(world: World, events, intervals, n, rng: random.Random):
+    """Questions at random lab-hour times in the last two thirds of the run."""
+    sightings = {}                # object name -> [(t, place)] of correct-name sightings (misnamed ones don't count)
+    for ev, tr in events:
+        for name in tr["objects"]:
+            if name not in tr["missed"] and name not in tr["misnamed"]:
+                sightings.setdefault(name, []).append((ev["t"], ev["place"]))
+    by_entity = {}
+    for r in intervals:
+        by_entity.setdefault(r["entity"], []).append(r)
+
+    def last_sighting(name, t):
+        s = [x for x in sightings.get(name, []) if x[0] <= t]
+        return {"t": s[-1][0], "place": s[-1][1]} if s else None
+
+    workdays = [d for d in range(world.cfg.days // 3, world.cfg.days) if world.is_workday(d)]
+    out = []
+    kinds = ["where_now"] * 5 + ["last_in_lab"] * 2 + ["desk_now", "usual_place"]
+    while len(out) < n:
+        day = rng.choice(workdays)
+        t = round(world.day_start(day) + rng.uniform(9, 18) * 3600)
+        kind = rng.choice(kinds)
+        q = {"id": f"q{len(out):04d}", "t": t, "kind": kind}
+        if kind == "where_now":
+            o = rng.choice(world.objects)
+            ans = world.object_place(o.name, t)
+            ls = last_sighting(o.name, t)
+            q.update(entity=o.name, question=f"Where is the {o.desc} now?", answer=ans or "not in the lab",
+                     last_sighting=ls, stale=bool(ls and ls["place"] != ans))
+        elif kind == "last_in_lab":
+            o = rng.choice(world.objects)
+            if world.object_place(o.name, t) is not None:
+                continue
+            past = [r for r in by_entity[o.name] if r["place"] is not None and r["t_end"] <= t]
+            if not past:
+                continue
+            q.update(entity=o.name, question=f"The {o.desc} isn't here now. When and where was it last in the lab?",
+                     answer={"t": past[-1]["t_end"], "place": past[-1]["place"]},
+                     last_sighting=last_sighting(o.name, t))
+        elif kind == "desk_now":
+            p = rng.choice(world.people)
+            q.update(entity=p.name, question=f"Which desk does {p.name} ({p.look}) use now?",
+                     answer=world.desk_of(p, day))
+        else:
+            cands = [o for o in world.objects if world.regime(o, day)["type"] in ("weekday", "away_days", "fixed")]
+            o = rng.choice(cands)
+            wd = rng.randrange(5)
+            r = world.regime(o, day)
+            usual = {"fixed": lambda: r["places"][0],
+                     "weekday": lambda: r["places"][1] if wd in r["days"] else r["places"][0],
+                     "away_days": lambda: "not in the lab" if wd in r["days"] else r["places"][0]}[r["type"]]()
+            q.update(entity=o.name, question=f"Where is the {o.desc} usually on a {WEEKDAYS[wd]} these days?",
+                     answer=usual, routine=world.describe(r))
+        out.append(q)
+    return out
+
+
+def generate(cfg: Config, out: Path, n_questions=300):
+    world = World(cfg)
+    rng = random.Random(f"lab-history-obs-{cfg.seed}")
+    events = []
+    for i, (t, place) in enumerate(visits(world, rng)):
+        text, tr = observe(world, t, place, rng)
+        pv = world.places[place]
+        ev = {"id": f"sim{cfg.seed}_{i:06d}", "t": round(t, 1), "place": place,
+              "x": round(pv["x"] + rng.gauss(0, 0.15), 2), "y": round(pv["y"] + rng.gauss(0, 0.15), 2), "text": text}
+        events.append((ev, {"id": ev["id"], **tr}))
+    intervals = truth_intervals(world)
+    qs = questions(world, events, intervals, n_questions, rng)
+
+    out.mkdir(parents=True, exist_ok=True)
+    with open(out / "events.jsonl", "w") as f:
+        f.writelines(json.dumps(ev) + "\n" for ev, _ in events)
+    with open(out / "events_truth.jsonl", "w") as f:
+        f.writelines(json.dumps(tr) + "\n" for _, tr in events)
+    with open(out / "truth.jsonl", "w") as f:
+        f.writelines(json.dumps(r) + "\n" for r in intervals)
+    with open(out / "questions.jsonl", "w") as f:
+        f.writelines(json.dumps(q) + "\n" for q in qs)
+    (out / "routines.json").write_text(json.dumps(
+        {"config": dataclasses.asdict(cfg), **world.routines()}, indent=1, default=str))
+    return world, events, qs
+
+
+def main():
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("--days", type=int, default=60)
+    ap.add_argument("--seed", type=int, default=0)
+    ap.add_argument("--people", type=int, default=5)
+    ap.add_argument("--objects", type=int, default=20)
+    ap.add_argument("--shifts", type=int, default=2)
+    ap.add_argument("--places", default=None, help="places.json; default: the stand-in 16 places")
+    ap.add_argument("--questions", type=int, default=300)
+    ap.add_argument("--out", required=True)
+    a = ap.parse_args()
+    cfg = Config(days=a.days, seed=a.seed, n_people=a.people, n_objects=a.objects, shifts=a.shifts,
+                 places_file=a.places)
+    world, events, qs = generate(cfg, Path(a.out), a.questions)
+    types = Counter(world.regime(o, 0)["type"] for o in world.objects)
+    errs = Counter(k for _, tr in events for k in ("missed", "misnamed", "invented") for _ in tr[k])
+    stale = [q for q in qs if q.get("stale")]
+    print(f"{len(events)} events over {cfg.days} days; camera errors {dict(errs)}")
+    print(f"routines: {dict(types)}; shift days {world.shift_days}")
+    print(f"{len(qs)} questions {dict(Counter(q['kind'] for q in qs))}; "
+          f"where_now with a stale last sighting: {len(stale)}")
+    print(f"written to {a.out}")
+
+
+if __name__ == "__main__":
+    main()

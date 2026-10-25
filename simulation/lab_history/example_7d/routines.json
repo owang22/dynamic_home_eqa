@@ -1,0 +1,577 @@
+{
+ "config": {
+  "days": 7,
+  "seed": 0,
+  "start": "2026-11-02",
+  "n_people": 5,
+  "n_objects": 20,
+  "shifts": 1,
+  "off_routine": 0.05,
+  "out_of_lab": 0.02,
+  "absent": 0.05,
+  "places_file": null
+ },
+ "places": {
+  "dock": {
+   "x": 0.0,
+   "y": 0.0,
+   "kind": "entry",
+   "desc": "floor by the lab door, where the dog starts"
+  },
+  "desk_1": {
+   "x": 2.0,
+   "y": 1.5,
+   "kind": "desk",
+   "desc": "desk 1, by the window"
+  },
+  "desk_2": {
+   "x": 2.0,
+   "y": 3.5,
+   "kind": "desk",
+   "desc": "desk 2"
+  },
+  "desk_3": {
+   "x": 4.5,
+   "y": 1.5,
+   "kind": "desk",
+   "desc": "desk 3, by the printer"
+  },
+  "desk_4": {
+   "x": 4.5,
+   "y": 3.5,
+   "kind": "desk",
+   "desc": "desk 4"
+  },
+  "desk_5": {
+   "x": 7.0,
+   "y": 1.5,
+   "kind": "desk",
+   "desc": "desk 5, by the whiteboard"
+  },
+  "desk_6": {
+   "x": 7.0,
+   "y": 3.5,
+   "kind": "desk",
+   "desc": "desk 6, the spare desk"
+  },
+  "meeting_table": {
+   "x": 9.5,
+   "y": 2.5,
+   "kind": "meeting",
+   "desc": "the round meeting table"
+  },
+  "sink": {
+   "x": 1.0,
+   "y": 5.5,
+   "kind": "sink",
+   "desc": "the sink and drying rack"
+  },
+  "kitchen_counter": {
+   "x": 2.5,
+   "y": 5.8,
+   "kind": "common",
+   "desc": "the kitchen counter by the fridge"
+  },
+  "sofa": {
+   "x": 5.0,
+   "y": 6.0,
+   "kind": "common",
+   "desc": "the small sofa by the wall"
+  },
+  "shelf_A": {
+   "x": 8.0,
+   "y": 6.0,
+   "kind": "storage",
+   "desc": "bookcase A"
+  },
+  "rack_B": {
+   "x": 10.0,
+   "y": 5.5,
+   "kind": "storage",
+   "desc": "the metal rack B"
+  },
+  "workbench": {
+   "x": 11.5,
+   "y": 1.0,
+   "kind": "common",
+   "desc": "the workbench with the soldering station"
+  },
+  "cart": {
+   "x": 11.5,
+   "y": 3.5,
+   "kind": "storage",
+   "desc": "the rolling cart"
+  },
+  "coat_rack": {
+   "x": 0.5,
+   "y": 1.0,
+   "kind": "entry",
+   "desc": "the coat rack by the door"
+  }
+ },
+ "people": [
+  {
+   "name": "Alice",
+   "look": "a person in a red hoodie",
+   "desks": [
+    [
+     0,
+     "desk_2"
+    ]
+   ],
+   "arrive_h": 8.06,
+   "leave_h": 17.4,
+   "wfh": [
+    "Tuesday"
+   ]
+  },
+  {
+   "name": "Bob",
+   "look": "a tall person in a grey sweater",
+   "desks": [
+    [
+     0,
+     "desk_3"
+    ]
+   ],
+   "arrive_h": 10.08,
+   "leave_h": 18.34,
+   "wfh": [
+    "Friday"
+   ]
+  },
+  {
+   "name": "Chen",
+   "look": "a person with glasses and a green jacket",
+   "desks": [
+    [
+     0,
+     "desk_4"
+    ],
+    [
+     4,
+     "desk_6"
+    ]
+   ],
+   "arrive_h": 9.93,
+   "leave_h": 18.59,
+   "wfh": [
+    "Wednesday",
+    "Tuesday"
+   ]
+  },
+  {
+   "name": "Dana",
+   "look": "a person in a denim jacket",
+   "desks": [
+    [
+     0,
+     "desk_1"
+    ]
+   ],
+   "arrive_h": 10.03,
+   "leave_h": 18.46,
+   "wfh": [
+    "Thursday"
+   ]
+  },
+  {
+   "name": "Eli",
+   "look": "a person in a black t-shirt",
+   "desks": [
+    [
+     0,
+     "desk_5"
+    ]
+   ],
+   "arrive_h": 9.28,
+   "leave_h": 17.74,
+   "wfh": [
+    "Thursday",
+    "Monday"
+   ]
+  }
+ ],
+ "objects": [
+  {
+   "name": "backpack_green",
+   "desc": "green backpack",
+   "regimes": [
+    {
+     "from_day": 0,
+     "type": "follows_owner",
+     "owner": "Dana",
+     "text": "comes and goes with Dana; at Dana's desk while they are in"
+    }
+   ]
+  },
+  {
+   "name": "headphones",
+   "desc": "black over-ear headphones",
+   "regimes": [
+    {
+     "from_day": 0,
+     "type": "follows_owner",
+     "owner": "Dana",
+     "text": "comes and goes with Dana; at Dana's desk while they are in"
+    }
+   ]
+  },
+  {
+   "name": "backpack_black",
+   "desc": "black backpack",
+   "regimes": [
+    {
+     "from_day": 0,
+     "type": "follows_owner",
+     "owner": "Eli",
+     "text": "comes and goes with Eli; at Eli's desk while they are in"
+    }
+   ]
+  },
+  {
+   "name": "mug_red",
+   "desc": "red mug",
+   "regimes": [
+    {
+     "from_day": 0,
+     "type": "use_return",
+     "owner": "Eli",
+     "places": [
+      "sink"
+     ],
+     "text": "at Eli's desk in the morning, at sink from after lunch until Eli comes in next"
+    }
+   ]
+  },
+  {
+   "name": "bottle_green",
+   "desc": "green water bottle",
+   "regimes": [
+    {
+     "from_day": 0,
+     "type": "use_return",
+     "owner": "Bob",
+     "places": [
+      "sink"
+     ],
+     "text": "at Bob's desk in the morning, at sink from after lunch until Bob comes in next"
+    }
+   ]
+  },
+  {
+   "name": "speaker",
+   "desc": "small bluetooth speaker",
+   "regimes": [
+    {
+     "from_day": 0,
+     "type": "meeting",
+     "places": [
+      "desk_1",
+      "meeting_table"
+     ],
+     "text": "at desk_1, taken to meeting_table for the Tuesday 14:00 group meeting"
+    }
+   ]
+  },
+  {
+   "name": "cables_box",
+   "desc": "cardboard box labelled CABLES",
+   "regimes": [
+    {
+     "from_day": 0,
+     "type": "away_days",
+     "places": [
+      "desk_1"
+     ],
+     "days": [
+      2,
+      3
+     ],
+     "text": "out of the lab on Wednesday, Thursday; otherwise at desk_1"
+    }
+   ]
+  },
+  {
+   "name": "tripod",
+   "desc": "camera tripod",
+   "regimes": [
+    {
+     "from_day": 0,
+     "type": "weekday",
+     "places": [
+      "rack_B",
+      "desk_2"
+     ],
+     "days": [
+      1,
+      3
+     ],
+     "text": "at desk_2 on Tuesday, Thursday; otherwise at rack_B"
+    }
+   ]
+  },
+  {
+   "name": "tape_roll",
+   "desc": "roll of blue tape",
+   "regimes": [
+    {
+     "from_day": 0,
+     "type": "random",
+     "places": [
+      "desk_1",
+      "sink",
+      "cart"
+     ],
+     "text": "at one of desk_1, sink, cart at random each workday"
+    }
+   ]
+  },
+  {
+   "name": "lunchbox",
+   "desc": "orange lunch box",
+   "regimes": [
+    {
+     "from_day": 0,
+     "type": "drift",
+     "places": [
+      "sofa"
+     ],
+     "p": 0.3,
+     "text": "starts at sofa and moves to a nearby place on about 30% of workdays"
+    }
+   ]
+  },
+  {
+   "name": "kettle",
+   "desc": "electric kettle",
+   "regimes": [
+    {
+     "from_day": 0,
+     "type": "random",
+     "places": [
+      "shelf_A",
+      "workbench",
+      "cart"
+     ],
+     "text": "at one of shelf_A, workbench, cart at random each workday"
+    }
+   ]
+  },
+  {
+   "name": "umbrella_red",
+   "desc": "red umbrella",
+   "regimes": [
+    {
+     "from_day": 0,
+     "type": "drift",
+     "places": [
+      "desk_5"
+     ],
+     "p": 0.3,
+     "text": "starts at desk_5 and moves to a nearby place on about 30% of workdays"
+    }
+   ]
+  },
+  {
+   "name": "drill",
+   "desc": "cordless drill",
+   "regimes": [
+    {
+     "from_day": 0,
+     "type": "away_days",
+     "places": [
+      "desk_6"
+     ],
+     "days": [
+      0,
+      2
+     ],
+     "text": "out of the lab on Monday, Wednesday; otherwise at desk_6"
+    }
+   ]
+  },
+  {
+   "name": "multimeter",
+   "desc": "yellow multimeter",
+   "regimes": [
+    {
+     "from_day": 0,
+     "type": "fixed",
+     "places": [
+      "desk_4"
+     ],
+     "text": "always at desk_4"
+    }
+   ]
+  },
+  {
+   "name": "helmet",
+   "desc": "bike helmet",
+   "regimes": [
+    {
+     "from_day": 0,
+     "type": "fixed",
+     "places": [
+      "sink"
+     ],
+     "text": "always at sink"
+    }
+   ]
+  },
+  {
+   "name": "laptop_silver",
+   "desc": "silver laptop",
+   "regimes": [
+    {
+     "from_day": 0,
+     "type": "rotation",
+     "places": [
+      "desk_3",
+      "kitchen_counter",
+      "shelf_A"
+     ],
+     "text": "rotates desk_3 -> kitchen_counter -> shelf_A, one step each workday"
+    }
+   ]
+  },
+  {
+   "name": "mug_blue",
+   "desc": "white mug with a blue stripe",
+   "regimes": [
+    {
+     "from_day": 0,
+     "type": "rotation",
+     "places": [
+      "desk_3",
+      "cart",
+      "sink"
+     ],
+     "text": "rotates desk_3 -> cart -> sink, one step each workday"
+    },
+    {
+     "from_day": 4,
+     "type": "rotation",
+     "places": [
+      "sofa",
+      "desk_2",
+      "desk_6"
+     ],
+     "text": "rotates sofa -> desk_2 -> desk_6, one step each workday"
+    }
+   ]
+  },
+  {
+   "name": "toy_dog",
+   "desc": "stuffed toy dog",
+   "regimes": [
+    {
+     "from_day": 0,
+     "type": "fixed",
+     "places": [
+      "kitchen_counter"
+     ],
+     "text": "always at kitchen_counter"
+    }
+   ]
+  },
+  {
+   "name": "notebook_stack",
+   "desc": "stack of lab notebooks",
+   "regimes": [
+    {
+     "from_day": 0,
+     "type": "drift",
+     "places": [
+      "workbench"
+     ],
+     "p": 0.3,
+     "text": "starts at workbench and moves to a nearby place on about 30% of workdays"
+    }
+   ]
+  },
+  {
+   "name": "whiteboard_markers",
+   "desc": "cup of whiteboard markers",
+   "regimes": [
+    {
+     "from_day": 0,
+     "type": "weekday",
+     "places": [
+      "desk_2",
+      "workbench"
+     ],
+     "days": [
+      1,
+      2
+     ],
+     "text": "at workbench on Tuesday, Wednesday; otherwise at desk_2"
+    },
+    {
+     "from_day": 4,
+     "type": "weekday",
+     "places": [
+      "meeting_table",
+      "kitchen_counter"
+     ],
+     "days": [
+      1,
+      2
+     ],
+     "text": "at kitchen_counter on Tuesday, Wednesday; otherwise at meeting_table"
+    }
+   ]
+  }
+ ],
+ "shift_days": [
+  4
+ ],
+ "shifts": [
+  {
+   "day": 4,
+   "who": "Chen",
+   "kind": "desk",
+   "text": "Chen moves from desk_4 to desk_6"
+  },
+  {
+   "day": 4,
+   "who": "whiteboard_markers",
+   "kind": "routine",
+   "text": "whiteboard_markers: was at workbench on Tuesday, Wednesday; otherwise at desk_2; now at kitchen_counter on Tuesday, Wednesday; otherwise at meeting_table"
+  },
+  {
+   "day": 4,
+   "who": "mug_blue",
+   "kind": "routine",
+   "text": "mug_blue: was rotates desk_3 -> cart -> sink, one step each workday; now rotates sofa -> desk_2 -> desk_6, one step each workday"
+  }
+ ],
+ "noise_days": {
+  "backpack_green": {},
+  "headphones": {},
+  "backpack_black": {},
+  "mug_red": {},
+  "bottle_green": {},
+  "speaker": {},
+  "cables_box": {},
+  "tripod": {
+   "1": "moved"
+  },
+  "tape_roll": {},
+  "lunchbox": {},
+  "kettle": {
+   "2": "moved"
+  },
+  "umbrella_red": {},
+  "drill": {},
+  "multimeter": {
+   "3": "moved"
+  },
+  "helmet": {},
+  "laptop_silver": {},
+  "mug_blue": {},
+  "toy_dog": {},
+  "notebook_stack": {},
+  "whiteboard_markers": {}
+ }
+}
