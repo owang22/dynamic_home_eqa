@@ -83,11 +83,12 @@ COMMON_TOOL_RETURNS = {
     "map_pose": "object|null: {x, y, yaw (rad)} on the map at the end (5 Hz copy)",
     "fit": "number|null: loc.track_fit at the end (about 0.75-0.9 when placed right)",
     "lost": "bool: loc.lost at the end",
+    "suspect": "bool: loc.suspect at the end (advisory, see notes.localization)",
     "t": "number: unix time of the reply",
     "localization_notice?": "object: line-up events since this client's previous call (see notes.localization_notice)",
 }
 TOOL_TYPES = {"result": "string", "stop_reason": "string", "reason?": "string", "odom": "object|null",
-              "map_pose": "object|null", "fit": "number|null", "lost": "bool", "t": "number",
+              "map_pose": "object|null", "fit": "number|null", "lost": "bool", "suspect": "bool", "t": "number",
               "localization_notice?": "object"}
 CLIENT = {"type": "string", "required": True, "text": "who you are; owner and log use it. Use the same one for every call"}
 NOTE = {"type": "string", "text": "what you are doing and why (shown on the console, kept with photos, 2000 chars)"}
@@ -164,11 +165,12 @@ ENDPOINTS = [
     tool("/agent/go_to", "Drive to a saved place or a map point along a planned route around furniture, then face "
          "the place's target (or yaw_deg). Re-plans up to {MAX_REPLANS} times around obstacles not on the map. "
          "Narrow ('squeeze') routes: drives to {SQUEEZE_STOP_M} m before the narrow part, then re-plans with the "
-         "live lidar. Desk and table tops (~0.7 m) do NOT block, so a route may pass under a desk: the live view "
-         "drops cells whose highest point is a desk top, and only saved-map points (legs, drawers, chairs) block "
-         "there. Blocking them (OVERHEAD_MAX 1.0) closed real routes on 10-23 and was reverted to {OVERHEAD_MAX}, "
-         "which turns the overhead rule off; open problem. Preview with /nav/plan and be suspicious of routes "
-         "under desks. "
+         "live lidar. Under tops (since 10-25): for a live cell whose top is {BUMP_H} .. {UNDER_TOP_MAX} m (desk, table, "
+         "chair back), anything at bump height under it (chair seat, legs, drawers) is a live obstacle that the "
+         "fallback tiers never relax; open floor under a top costs UNDER_COST ({UNDER_COST}) extra per 10 cm cell, "
+         "and so does the saved map's solid desk-top layer anywhere (MID_COST {MID_COST}, fill >= {MID_FILL}), grown "
+         "by {UNDER_GROW} m. So routes pass under desks only when every other way is much longer. A cost, not a "
+         "block: blocking desk tops closed every route to marker B on 10-23. "
          "Stops with stop_reason lost if loc.lost comes on ({GO_TO_STOP_WHEN_LOST}). Close enough "
          "within {GOAL_TOL_M} m. Preview the route first with GET /nav/plan.",
          {"place": {"type": "string", "text": "id of a saved place (GET /places); or give x, y"},
@@ -177,12 +179,14 @@ ENDPOINTS = [
                       "text": "heading to end at (x, y goals only; a place uses its target or yaw_deg)"},
           "timeout_s": TIMEOUT},
          {"moved_m": "number", "replans": "integer", "route_m?": "number", "target?": "object|null", "why?": "object",
+          "fallback?": "string",
           "side?": "string", "at?": "array"}, True, "route_m / ~0.4 m/s + turns; set timeout_s to fit (default 30 s is short)",
          {"fields": {"route_m": "length of the first planned route (done only)",
                      "target": "the place's target {x, y} (done, place goals with a target)",
                      "why": "on a failed plan: {saved_map_has_route, cause: 'saved map' | 'live lidar or temporary blocks', "
                             "live_new_cells, blocks}",
-                     "at": "map spot [x, y] where it was blocked"}}),
+                     "at": "map spot [x, y] where it was blocked",
+                     "fallback": "the planner's fallback tier (live_noblocks) if any plan of this drive needed one"}}),
     tool("/agent/posture", "Stand up or lie down, as the console buttons do; waits until the body height shows it "
          "(stand: >= {STAND_H} m, lie: < {MIN_BODY_H} m; at most {POSTURE_S} s). The dog is not stopped afterwards. "
          "Anything but pose stand|lie (or a body_height field) is a 400 bad arguments.",
@@ -415,7 +419,8 @@ NOTES = {
                     "of the voxels placed in the last {SUSPECT_FRESH_S} s at the current pose; suspect comes on when it "
                     "stays under {SUSPECT_FIT} for {SUSPECT_S} s while the dog walks {SUSPECT_MOVE_M} m, and clears at "
                     "{SUSPECT_CLEAR} or a placement. It can't tell a wrong pose from a changed room: on suspect take a "
-                    "fix_ok marker or a relocalize search before a long go_to. Only in /state.json loc. The lost and "
+                    "fix_ok marker or a relocalize search before a long go_to. In /state.json loc and (suspect) in every tool "
+                    "reply; not in /history. The lost and "
                     "suspect timers restart after a gap > {LOST_GAP_S} s between judged views.",
     "localization_notice": "Agent replies (and GET /agent/status?client=) carry localization_notice when line-up "
                            "events happened since your previous call: {events, status, fit, runner_up, unsure, summary}. "
@@ -431,6 +436,8 @@ NOTES = {
         "turned_deg short of deg with result done: within the 5 degree tolerance after one correction.",
         "a marker in /markers with held: true is a sighting up to 0.5 s old, not a live one; use fix_ok items for "
         "positions (a single-frame sighting is unconfirmed).",
+        "no_route in a desk aisle that worked before: chairs are now seen live (10-25); a chair at the aisle edge "
+        "can leave a gap narrower than the dog. Check a photo before forcing another way.",
         "an expected marker missing: markers read reliably from the open room, not from under or next to dark "
         "furniture (auto-exposure blows out the bright room; patches brighter than ~230/255 are mostly missed). "
         "Back out into the open or turn so the camera isn't looking from dark into bright.",
