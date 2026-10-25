@@ -2,7 +2,7 @@
 
 Everything here ran offline on Z690. I sent nothing to the dog and used only read-only GETs on the console
 (one `GET /state.json` to confirm the loaded map: `saved_at 2026-10-23 15:15:52`). I didn't edit `~/oliver`.
-The prototypes are copies in `proto/` on Z690 (`~/go2_overnight/route_planning/`); their diffs are in `proposed/` here. **Proposed, not deployed.**
+The prototypes are copies in `proto/` on Z690 (`~/go2_overnight/route_planning/`); their diffs are in `proposed/` here. Variant B was deployed in `b458894e` (see TIERS.md, ablation/).
 
 ## TL;DR
 
@@ -275,6 +275,17 @@ records: 26 of 30 fixes, **0 of 15 harms**. That assumes the flag is set in thos
 * a planner version (file mtime or hash).
 
 Also include squeeze in `_why_failed`'s saved-map check.
+
+## 5b. Deploy review (10-25 02:30)
+
+See `deploy/TIERS.md`. The diffs against the live files (`deploy/go2_nav.diff`, `deploy/go2_agent.diff`) reuse the live
+lost gate (`mapper.lost_since`) instead of `fallback=False`, and drop the lost `no_route` branch and `SNAP_REACHABLE`.
+Results: 26 of 30 non-lost fixed, 0 routes in the lost windows, 0 of 480 normal routes changed.
+
+**Update after the ablation:** the deploy default is now variant B: trail squeeze plus a tier that ignores stall
+blocks, with live cells at full clearance. Against the live files it fixes 21 of 30 non-lost records, returns 0
+routes in the lost windows and changes 0 of 480 normal plans. The thin tiers are off: 3 of their 5 extra fixes pass
+0.07 m from a real wooden panel. See `deploy/ablation/ABLATION.md` and `frames.md`.
 
 ## 6. What I tested and what I didn't
 

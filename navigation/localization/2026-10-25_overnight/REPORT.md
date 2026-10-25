@@ -165,3 +165,33 @@ order: fresh first, as it changes only what `track()` sees; then the hold. On th
 
 `replay.py` (harness), `mechanism.py`, `poselog_bias.py`, `go2_mapper_fresh.py`, `go2_mapper_fresh_hold.py`,
 `fresh_patch.diff`, `fresh_hold_patch.diff`, `runs/*.npy` (per-run logs), `replay_*.png`.
+
+## Addendum (03:00-03:30): results after the first deploys
+
+- **Deployed:** fresh-voxel tracking (`b2bf76ab`); suspect advisory + lost-timer gap fix (`b458894e`). See `SUMMARY.md`.
+- **Heading hold, re-tested with realistic drift** (rate redrawn at each of the drive's 36 still periods from the
+  95 real still-period rates; 10 seeds). Means, fresh vs fresh+hold:
+  - heading median 2.11 -> 1.66 deg; heading p90 4.27 -> 3.62;
+  - position median 0.08 -> 0.07 m; position max 0.39 -> 0.44 (worse in 8/10 seeds).
+
+  Not worth deploying; withdrawn. The constant-rate test had favoured it by construction.
+- **Odom distance scale** (`odom_scale.py`, `lidar_scale.py`):
+  - Markers, gated sightings of A and B 1-15 s apart: odom displacement / camera displacement = 0.865 (IQR
+    0.84-0.89) with the tape-checked 79 deg camera model, 0.78 with the bag's calibration. Directions agree within
+    2 deg.
+  - Lidar only: structure re-placed after 30 straight ~1.1 m legs lands 0.10 m back, so s = 0.91 (IQR 0.88-0.95).
+    Caveat: it uses only newly placed voxels.
+  - The reference trajectory and the map share odom's scale, so a scale correction can't be scored by this
+    replay.
+- **Relocalize** (`Mapper.candidates`, whole map, every 30 s along the drive):
+  - all voxels: true pose top-1 in 36/36 at +0 extra drift (median margin 0.23), 31/36 at +4 (margin 0.14);
+  - fresh-only views are worse (25/36, 22/36), so candidates() should keep all voxels.
+- **Lost / suspect** (deployed fresh tracker; seeded replays):
+  - The fit of voxels < 10 s old at the current T caught 11/11 bad-start episodes within 11 s, vs 4/11 (median
+    32 s) for the old rule.
+  - On 10-24 (a changed room) a well-placed dog sat at 0.63-0.72, right on the 0.65 threshold, so it ships as
+    advisory `suspect`, not a go_to stop.
+  - The episodes it flags at t ~687 s of the drive (near marker A, after a ~70 deg turn in place) are a real
+    7-10 deg heading lag, not a map defect: at the reference pose the fresh voxels fit the map at 0.89-0.92.
+- **Repeatability:** track() subsamples with an unseeded RNG. `replay.py` now seeds it (`SEED`), and seeded runs are
+  bit-identical.
