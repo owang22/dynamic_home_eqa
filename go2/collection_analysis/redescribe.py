@@ -7,9 +7,16 @@ The live index (data/lab_agent/index.jsonl) is not touched: descriptions go to
 data/lab_agent/descriptions_<model>.jsonl, one line per picture {"id", "seen", "seconds", "at"} or {"id", "error"}.
 Pictures already in that file are skipped, so a stopped run picks up where it left off.
 
-It talks to the control PC's 8B (Qwen3-VL-8B, z690:8000) with the same prompt and schema as memory.describe. It pauses
-while the dog is online or an agent holds control, since the 8B also serves the live tools (watch_go_to, scan_for,
-skills), and it ends at the stop time Z690 gave (2026-10-25 request in coordination/inbox/z690/).
+Backends (--backend):
+  z690-8b   the control PC's Qwen3-VL-8B (z690:8000). Pauses while the dog is online or an agent holds control, since
+            the 8B also serves the live tools (watch_go_to, scan_for, skills); ends at the stop time Z690 gave (08:00 PT
+            on 2026-10-25, coordination/inbox/cheetah/).
+  h100-27b  the H100's Qwen3.8-27B (172.17.45.79:8300), the same model that wrote the 27B descriptions in the live
+            index. On demand: the first request starts it (about 90 s), so one goes alone before the rest; 8 at a time.
+
+Same prompt as memory.describe. The schema is DESCRIBE_SCHEMA without its maxItems/maxLength/minimum/maximum caps,
+clamped in Python after parsing: Z690 measured the caps making xgrammar about 10x slower on the 8B (one CPU core
+computing token masks while the GPU idles), with the same answers without them (2026-10-25 01:51 message).
 """
 import argparse
 import base64
@@ -26,9 +33,29 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parent / "lab_agent"))
 import memory as M  # noqa: E402
 
-URL = "http://172.17.40.64:8000/v1/chat/completions"
-MODEL = "qwen3-vl-8b"
-OUT = M.DATA / f"descriptions_{MODEL}.jsonl"
+BACKENDS = {"z690-8b": ("http://172.17.40.64:8000/v1/chat/completions", "qwen3-vl-8b", "qwen3-vl-8b", False),
+            "h100-27b": ("http://172.17.45.79:8300/v1/chat/completions", "Qwen/Qwen3.8-27B", "qwen3.8-27b-h100", True)}
+URL, MODEL, OUT, QWEN38 = None, None, None, False
+
+
+def uncapped(schema):
+    if isinstance(schema, dict):
+        return {k: uncapped(v) for k, v in schema.items() if k not in ("maxItems", "maxLength", "minimum", "maximum")}
+    return schema
+
+
+SCHEMA = uncapped(M.DESCRIBE_SCHEMA)
+
+
+def clamp(seen):
+    s = lambda v, n: str(v)[:n]  # noqa: E731
+    seen["summary"] = s(seen.get("summary", ""), 300)
+    seen["objects"] = [{"name": s(o.get("name", ""), 60), "colour": s(o.get("colour", ""), 30), "on": s(o.get("on", ""), 40),
+                        "across": min(1.0, max(0.0, float(o.get("across") or 0)))} for o in seen.get("objects", [])[:30]]
+    seen["people"] = min(30, max(0, int(seen.get("people") or 0)))
+    seen["people_notes"] = s(seen.get("people_notes", ""), 200)
+    seen["states"] = [s(x, 80) for x in seen.get("states", [])[:8]]
+    return seen
 PT = dt.timezone(dt.timedelta(hours=-7))           # PDT until 2026-11-01
 _LOCK = threading.Lock()
 
@@ -70,6 +97,8 @@ def done_ids():
 
 def busy():
     """The dog is online (fresh state) or an agent holds control: leave the 8B to the live tools."""
+    if not URL.startswith("http://172.17.40.64"):
+        return False          # only the control PC's 8B is shared with the live tools
     try:
         s = M.get_json("/state.json", 10)
     except Exception:  # noqa: BLE001
@@ -83,15 +112,17 @@ def describe(rec):
             "messages": [{"role": "user", "content": [
                 {"type": "image_url", "image_url": {"url": "data:image/jpeg;base64," + base64.b64encode(jpg).decode()}},
                 {"type": "text", "text": M.DESCRIBE_ASK}]}],
-            "response_format": {"type": "json_schema", "json_schema": {"name": "a", "schema": M.DESCRIBE_SCHEMA}}}
+            "response_format": {"type": "json_schema", "json_schema": {"name": "a", "schema": SCHEMA}}}
+    if QWEN38:
+        body["chat_template_kwargs"] = {"enable_thinking": False}
     t0 = time.time()
     req = urllib.request.Request(URL, json.dumps(body).encode(), {"Content-Type": "application/json"})
     try:
-        with urllib.request.urlopen(req, timeout=600) as r:
+        with urllib.request.urlopen(req, timeout=900) as r:
             ch = json.loads(r.read())["choices"][0]
         if ch.get("finish_reason") == "length":
             raise RuntimeError("cut off at max_tokens")
-        row = {"id": rec["id"], "seen": json.loads(ch["message"]["content"]), "seconds": round(time.time() - t0, 1)}
+        row = {"id": rec["id"], "seen": clamp(json.loads(ch["message"]["content"])), "seconds": round(time.time() - t0, 1)}
     except Exception as e:  # noqa: BLE001
         row = {"id": rec["id"], "error": f"{type(e).__name__}: {e}"[:200], "seconds": round(time.time() - t0, 1)}
     row["at"] = round(time.time(), 1)
@@ -105,9 +136,13 @@ def main():
     ap.add_argument("--probe", type=int, help="describe this many pictures and report the rate, then stop")
     ap.add_argument("--stop-at", help="HH:MM Pacific; required for a full run")
     ap.add_argument("--workers", type=int, default=4)
+    ap.add_argument("--backend", choices=BACKENDS, default="z690-8b")
     a = ap.parse_args()
-    if not a.probe and not a.stop_at:
-        sys.exit("give --stop-at HH:MM (the time Z690 agreed to) or --probe N")
+    global URL, MODEL, OUT, QWEN38
+    URL, MODEL, name, QWEN38 = BACKENDS[a.backend]
+    OUT = M.DATA / f"descriptions_{name}.jsonl"
+    if a.backend == "z690-8b" and not a.stop_at and not a.probe:
+        sys.exit("z690-8b needs --stop-at (08:00, as agreed with Z690)")
     stop = None
     if a.stop_at:
         h, m = map(int, a.stop_at.split(":"))
@@ -122,6 +157,8 @@ def main():
         todo = todo[:a.probe]
     print(f"{len(have)} already described, {len(todo)} to go, {a.workers} in flight", flush=True)
     t0, n, errs = time.time(), 0, 0
+    if a.backend == "h100-27b" and todo:          # wake the on-demand server with one request first
+        print("warm-up:", describe(todo.pop(0)).get("seconds"), "s", flush=True)
     it = iter(todo)
 
     def worker():
