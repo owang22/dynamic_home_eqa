@@ -63,6 +63,8 @@ For Oliver. The work was offline: recorded bags, pose logs and the failure log. 
 | `243ec2ce` | Marker detector: rejects false and tiny decodes, keeps both pose solutions, 0.5 s hold, `fix_ok` gate |
 | `f0cc8b4a` | `go_to` stops with `stop_reason: "lost"` when `loc.lost` is set (coordinator) |
 | `b458894e` | Planner fallback: if no route, try again ignoring stall blocks (live obstacles keep full clearance); the dog may leave a narrow spot the way it came in. Also: `loc.fresh_fit` + `loc.suspect` (advice only), and a fix so a long stand doesn't make the lost timer fire at once |
+| `0d6dc6d3` | After a turn in place over 45 deg, the next 3 lidar views search heading ±5 deg instead of ±2. The tracker had lagged 7-10 deg after turns when drift was high. Tool replies now carry `suspect` |
+| `b4c9bccf` | (nav-planner) The live view now sees office chairs and things under desk tops; before, it dropped any cell topped at 0.6-1.0 m. Those are hard obstacles; open floor under a desk top gets an extra cost instead of a block. In the 10-23 replay, routes crossing hidden obstacles went from 7 to 0 |
 
 Replay and offline checks on the deployed code:
 - 21 of the 30 recent failures not caused by a lost pose now plan;
@@ -81,26 +83,38 @@ Replay and offline checks on the deployed code:
   marker fix or run a relocalize search before a long go_to.
 - **"Overexposed" flag on markers:** the data doesn't support one (see the table above).
 
-## Known open issue
+## Morning test plan
 
-After a turn in place the tracker can lag 7-10 deg in heading for ~30 s, because it skips views while turning and
-then corrects at most ~1 deg per view. Being tested now; see the next commit if it pans out.
+Everything below is untested on the dog. Before you start, turn on **Record** in the console, so `/point_cloud2` +
+odom are saved for later replays. `GET /history?keys=loc,map_pose,odom&since=<unix t>` returns the once-a-second
+log for any window, with `loc_events` and `agent_calls`; note the start time of each step.
 
-## What to test on the dog this morning
+1. **Distance scale (5 min).** Lay a tape 3 m straight. Note odom `x, y` from `/state.json`, walk the dog along the
+   tape at normal speed, note them again, then repeat the other way.
+   - *Look at:* the odom distance. About 2.6 m (scale 0.86) confirms that odom reads ~14% short; 3.0 m means it's fine.
+2. **Marker range (5 min).** Dog standing still; marker A at 1, 2 and 3 m, straight ahead and then ~30 deg to the
+   side. Measure the printed black square (should be 18.0 cm).
+   - *Look at:* `/markers` `dist` and `fix_ok` against the tape. The two camera models differ by 9%.
+3. **Line-up and a short drive (5 min).** Start the console and let it line up, or place the dog by hand. Drive
+   about 10 m with a couple of turns.
+   - *Look at:* `loc.track_fit` (around 0.8-0.9 when placed right) and `loc.fresh_fit` on the console.
+   - In `/history`, `loc.lost` should stay off. Compare the map arrow with the camera.
+4. **Turns in place (5 min).** Turn 90 deg in place four times, pausing between turns, then walk 2 m.
+   - *Look at:* `loc.track` entries with `"wide": true` right after each turn, and whether the map arrow lines up
+     with the walls within a few seconds. Check for `loc.suspect` coming on.
+5. **door_outside (5 min).** `go_to` into `door_outside`, then `go_to` back out to any place.
+   - *Look at:* it should now plan out; it used to say `no_route`.
+   - The reply has `fallback` if the stall-block retry was used. `stop_reason` tells why a drive stopped.
+6. **Chairs and desks (10 min).** `go_to` a place across the desk rows, with chairs pushed out into the aisle.
+   - *Look at:* the route on the map should go around the chairs, not under a desk.
+   - Watch the dog's own avoidance. If it stalls, note `stop_reason` and the time.
+7. **Long drive with suspect on screen (10+ min).** Several places in a row, one stop of a few minutes.
+   - *Look at:* when `suspect` comes on (tool replies, or `loc.suspect` on the console). Check against the camera
+     or a marker whether the dog was really off.
+   - Note what was in view: a moved object, or right after a turn.
+8. **Relocalize (5 min).** Place the dog wrong by hand by about 1.5 m, then call `/agent/relocalize`.
+   - *Look at:* whether it puts the dog back on the right spot, and the candidates' scores.
+   - In replays the right pose came first in 31-36 of 36 tries.
 
-1. **Distance scale (5 min).**
-   - Lay a tape measure on the floor, 3 m straight.
-   - Note `/state.json` odom x, y, walk the dog along the tape at normal speed, and note them again.
-   - Repeat both ways. If odom reads about 2.6-2.7 m, the ~10% scale is real.
-2. **Marker range (5 min).** With the dog still, put marker A at 1, 2 and 3 m, centred and then about 30 deg to the
-   side. Note `/markers` `dist` each time. Also measure the printed black square (should be 18.0 cm). This settles
-   which camera model is right; they differ by 9%, about 27 cm at 3 m.
-3. **Record lidar every session.** Turn on Record so `/point_cloud2` + odom are saved. Only 13 minutes of lidar exist
-   after the map was made, and changed-room days are exactly what we lack.
-4. **door_outside.** `go_to` into `door_outside`, then `go_to` back out to any place. It should now plan out (it
-   used to report `no_route`).
-5. **A long drive with `loc` on screen.** Drive 10+ min, including several turns in place and a stop of a few
-   minutes. Watch `loc.track_fit`, `loc.fresh_fit` and `loc.suspect`. Note the times when suspect comes on, and
-   whether the dog was really off: check against a marker or the camera.
-6. **Relocalize.** Once, place the dog wrong by hand by about 1.5 m, then call `/agent/relocalize` and see if it
-   finds the right spot.
+Afterwards, stop recording and note the bag name. That recording is what lets us re-tune `suspect` and check the
+chair/under-desk change against real data.
