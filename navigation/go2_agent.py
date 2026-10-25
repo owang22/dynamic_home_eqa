@@ -41,6 +41,9 @@ STALL_S, STALL_M = 2.0, 0.03               # blocked if moved less than this in 
 TILT_LIMIT = 0.6                           # rad of roll/pitch that counts as fallen
 MIN_BODY_H = 0.18                          # m; lower means lying down
 STALE_S = 1.0                              # sensors older than this: refuse to move
+STAND_H = 0.24                             # m; posture stand is done once the body is at least this high (untested)
+POSTURE_S = 8.0                            # posture: give up waiting for the body height after this long
+RELOC_R = (0.5, 10.0)                      # relocalize search radius limits (m)
 STILL_S = 1.0                              # photos are taken after standing still this long
 GOAL_TOL_M = 0.20                          # go_to: close enough to the goal
 WAYPOINT_TOL_M = 0.15                      # go_to: move on to the next leg this close to a corner
@@ -162,7 +165,7 @@ class Agents:
         if abs(imu["rpy"][0]) > TILT_LIMIT or abs(imu["rpy"][1]) > TILT_LIMIT:
             return "fallen"
         if state and state["body_height"] < MIN_BODY_H:
-            return "not_standing"
+            return "not_standing: the dog is lying down; call posture {\"pose\": \"stand\"} first"
         return None
 
     def obstacle(self, direction):
@@ -219,7 +222,7 @@ class Agents:
             raise RuntimeError(bad)
 
     # ---------- tool runner ----------
-    def run(self, client, call, args, fn):
+    def run(self, client, call, args, fn, stop=True):
         if not self.busy.acquire(blocking=False):
             return 409, {"result": "error", "reason": "busy: another tool is running"}
         self.abort.clear()
@@ -238,7 +241,8 @@ class Agents:
             out = {"result": "error", "reason": str(e)}
         finally:
             self.node.moving = False
-            self.node.stop()
+            if stop:             # not after a posture change: StopMove could undo lying down
+                self.node.stop()
             self.current = None
             self.busy.release()
             if self.owner and self.owner["kind"] == "agent" and self.owner["client"] == client:
@@ -466,7 +470,70 @@ class Agents:
             return self.run(client, call, args, lambda: self._go_to(args, timeout_s))
         if call == "look":
             return self.run(client, call, args, lambda: self._look(float(args["deg"])))
+        if call == "posture":
+            return self.run(client, call, args, lambda: self._posture(args), stop=False)
+        if call == "relocalize":
+            return self.run(client, call, args, lambda: self._relocalize(client, args))
         raise KeyError(call)
+
+    def _posture(self, args):
+        """Lie down or stand up, as the console's buttons do; waits until the body height shows it."""
+        pose = str(args.get("pose", ""))
+        if pose not in ("stand", "lie") or "body_height" in args:
+            raise ValueError("pose must be stand or lie (crouch and body_height are not supported yet)")
+        odom, imu, state, _, _, ages = self.snap()
+        if (odom is None or state is None or ages.get("imu", 99) > STALE_S or ages.get("state", 99) > STALE_S):
+            raise RuntimeError("stale_sensors")
+        if abs(imu["rpy"][0]) > TILT_LIMIT or abs(imu["rpy"][1]) > TILT_LIMIT:
+            raise RuntimeError("fallen: a person must right the dog")
+        self.node.action(pose)
+        end = time.monotonic() + POSTURE_S
+        while True:
+            self._settle(0.1)
+            _, _, state, _, _, ages = self.snap()
+            h = state["body_height"] if state and ages.get("state", 99) < STALE_S else None
+            if h is not None and (h >= STAND_H if pose == "stand" else h < MIN_BODY_H):
+                if pose == "stand":
+                    self._settle(0.5)     # let the balance stand settle before the next move
+                return {"result": "done", "pose": pose, "body_height": round(h, 3)}
+            if time.monotonic() > end:
+                return {"result": "error", "pose": pose, "body_height": h,
+                        "reason": f"the body height did not show {pose} within {POSTURE_S:.0f} s"}
+
+    def _relocalize(self, client, args):
+        """search / global: where the dog could be on the map (not applied). set: put it at x, y, yaw."""
+        m = self.mapper
+        if m is None:
+            raise RuntimeError("no map")
+        odom = self.snap()[0]
+        mode = str(args.get("mode", "search"))
+        cur = m.pose(odom)
+        cur_fit = m.view_fit(m.T) if m.T is not None else None
+        here = {"pose": cur, "fit": cur_fit, "lost": m.lost_since is not None, "lost_since": m.lost_since}
+        if mode in ("search", "global"):
+            centre = radius = None
+            if mode == "search":
+                if "x" in args and "y" in args:
+                    centre = (float(args["x"]), float(args["y"]))
+                elif cur:
+                    centre = (cur["x"], cur["y"])
+                else:
+                    return {"result": "error", "reason": "no current map pose to search around; send x, y or mode global"}
+                radius = max(RELOC_R[0], min(RELOC_R[1], float(args.get("radius_m", 3.0))))
+            top = max(1, min(10, int(args.get("top", 5))))
+            cands, err = m.candidates(odom, centre, radius, top)
+            if err:
+                return {"result": "error", "reason": err, "current": here}
+            return {"result": "done", "mode": mode, "candidates": cands, "current": here,
+                    "searched": None if centre is None else {"x": centre[0], "y": centre[1], "radius_m": radius}}
+        if mode == "set":
+            yaw = math.radians(float(args["yaw_deg"])) if "yaw_deg" in args else float(args["yaw"])
+            info, err = m.set_pose(odom, float(args["x"]), float(args["y"]), yaw, by=client,
+                                   force=bool(args.get("force")))
+            if err:
+                return {"result": "refused", "reason": err, **info, "current": here}
+            return {"result": "done", **info, "pose": m.pose(odom)}
+        raise ValueError("mode must be search, global or set")
 
     def _look(self, deg):
         """Tilt the camera up (+) or down (-) by pitching the body while standing; 0 levels it.

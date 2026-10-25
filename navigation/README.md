@@ -63,16 +63,22 @@ Base `http://172.17.40.64:8080`. A person at the console always wins; one agent 
 | `GET /trail/near`, `/trail/since`, `/trail/coverage`, `/trail/<day>/<ms>.jpg` | camera frames with map poses |
 | `GET /markers` | live ArUco detections: id, label, distance `z`, bearing |
 | `/label/detect`, `/label/example(s)`, `/label/remove` | labelling by example |
-| `POST /agent/<call>` | `claim`, `release`, `stop`, `say`, `status`, `move {m}`, `turn {deg}`, `look {deg}`, `photo`, `look_around {n}`, `go_to {place \| x, y}`; body needs `client` |
+| `POST /agent/<call>` | `claim`, `release`, `stop`, `say`, `status`, `move {m}`, `turn {deg}`, `look {deg}`, `photo`, `look_around {n}`, `go_to {place \| x, y}`, `posture`, `relocalize`; body needs `client` |
+| `POST /agent/posture {pose}` | `stand` or `lie`, as the console's buttons do; waits until `/go2_states` body height shows it (stand at 0.24 m or more, lie under 0.18 m; thresholds not yet checked on the dog) and returns `body_height`. `crouch` / `body_height` are not supported yet. While lying, `move`, `turn` and `go_to` fail with `not_standing` |
+| `POST /agent/relocalize {mode}` | `search` (around the current pose or `x, y`, `radius_m` 3, clamped 0.5–10) or `global`: the top `top` (5) line-ups of the recent lidar views with the saved map, `[{x, y, yaw, yaw_deg, score, fit}]`, not applied; takes about 4–9 s. `set {x, y, yaw \| yaw_deg, force?}`: applies that pose exactly; refused if its `fit` is more than 0.02 below the current one unless `force`; logs a `loc` event `agent_relocalize`. Every reply has `current {pose, fit, lost, lost_since}` |
 | `GET /agent/status?client=<you>` | owner, running tool, `safe`, `battery`, notes, `localization_notice` |
 
 - Results: `done`, `blocked`, `timeout`, `aborted`, `error`, `no_route`, `refused`; `no_route` and `blocked`
   carry `why`.
-- `loc`: `{status, seq, fit, runner_up, unsure, events, track}`; event kinds `hand_placement`, `auto_align`,
-  `session_restore`, `new_map`, `drift_correction`, `unknown`.
+- `loc`: `{status, seq, fit, runner_up, unsure, lost, lost_since, track_fit, events, track}`; event kinds
+  `hand_placement`, `auto_align`, `session_restore`, `new_map`, `drift_correction`, `agent_relocalize`, `unknown`.
+  - `fit` / `runner_up` / `unsure` describe the last line-up only (`unsure`: score under 0.3, or less than 0.05
+    ahead of the best different heading).
+  - `track_fit` is the drift tracker's latest fit: mean wall likelihood of the lidar view, about 0.75–0.9 when
+    placed right. Relocalize's `fit` is the same measure.
+  - `lost` turns on when `track_fit` stays under 0.65 for 10 s while the dog walks at least 0.3 m. It clears at
+    0.70 or on any new placement or line-up.
 - Qwen3-VL-8B: `POST http://172.17.40.64:8000/v1/chat/completions`, model `qwen3-vl-8b` (Docker `go2_vlm`,
   GPU 1), lab LAN only.
-- Requested, not built yet: `POST /agent/posture`, `POST /agent/relocalize` and `loc.lost`
-  (`coordination/inbox/z690/`).
 
 Full board history: `../coordination/board_archive_2026-10-23.md`.

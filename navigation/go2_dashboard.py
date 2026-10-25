@@ -72,7 +72,8 @@ MAPPER = None              # lab map built from the lidar clouds (go2_mapper.py)
 EXAMPLES = None            # objects labelled by example from camera frames (go2_examples.py)
 MARKERS = None             # printed ArUco markers in view (go2_markers.py)
 TRAIL = None               # camera frames along the way, with map poses (go2_trail.py)
-AGENT_CALLS = ("claim", "release", "stop", "say", "status", "move", "turn", "photo", "look_around", "go_to", "look")
+AGENT_CALLS = ("claim", "release", "stop", "say", "status", "move", "turn", "photo", "look_around", "go_to", "look",
+               "posture", "relocalize")
 
 REC_DIR = "/recordings"
 REC_TOPICS = {"camera": ["/camera/image_raw", "/camera/camera_info"],

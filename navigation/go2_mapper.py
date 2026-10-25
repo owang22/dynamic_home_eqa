@@ -46,6 +46,11 @@ TRACK_GAIN = 0.6           # apply this fraction of each correction (smooths noi
 TRACK_MAX_PTS = 700
 MISMATCH_KNOWN = 0.6       # a view whose points mostly fall on mapped area (this fraction)...
 MISMATCH_FIT = 0.25        # ...but sit this poorly on its walls even after correcting is off: don't map it
+LOST_FIT = 0.65            # "lost": the drift tracker's fit stays under this...
+LOST_S = 10.0              # ...for this long...
+LOST_MOVE_M = 0.3          # ...while the dog walks at least this far (odom); cleared at LOST_CLEAR or a new placement
+LOST_CLEAR = 0.70
+CAND_SEP_M, CAND_SEP_DEG = 0.5, 20.0   # relocalize search: candidates must differ by this much
 HOST_UID = 1000
 
 
@@ -85,6 +90,8 @@ class Mapper:
         self.event_seq = 0
         self._ev_T = None
         self._next = ("unknown", {})        # (kind, extra) set where T is changed
+        self._low = None                    # [since, last robot xy, metres walked] while the track fit is low
+        self.lost_since = None              # time the dog was judged lost (see LOST_*), else None
         if self.load_unsaved():
             self.status = "restored the unsaved map from before the console restarted; lining up with it"
         elif self.load():
@@ -102,6 +109,8 @@ class Mapper:
     def _set_T(self, T, kind, **extra):
         self._next = (kind, extra)
         self.T = T
+        if kind != "drift_correction":     # a new placement or line-up: judge lost afresh
+            self._low, self.lost_since = None, None
 
     def _note_T(self, odom):
         """Record a change of T as an event: where the dog was on the map before and after."""
@@ -141,7 +150,9 @@ class Mapper:
         sc, ru = al.get("score"), al.get("runner_up")
         return {"status": self.status, "seq": self.event_seq, "events": list(self.events),
                 "track": list(self.track_log)[-track_n:], "fit": sc, "runner_up": ru,
-                "unsure": sc is not None and (sc < 0.3 or sc - (ru or 0) < 0.05)}
+                "unsure": sc is not None and (sc < 0.3 or sc - (ru or 0) < 0.05),
+                "lost": self.lost_since is not None, "lost_since": self.lost_since,
+                "track_fit": (self.track_info or {}).get("fit")}
 
     def pose(self, odom):
         if odom is not None:
@@ -516,6 +527,7 @@ class Mapper:
         info = {"fit": round(fit, 2), "fit_before": round(zero, 2), "points": int(len(pts)),
                 "known": round(known, 2), "at": time.strftime("%H:%M:%S")}
         matches = not (known >= MISMATCH_KNOWN and fit < MISMATCH_FIT)
+        self._judge_lost(fit, robot)
         if fit < TRACK_MIN_FIT or fit - zero < TRACK_MIN_GAIN or (a == 0 and dx == 0 and dy == 0):
             self.track_info = dict(info, applied=False, matches=matches)
             self.track_log.append(dict(self.track_info, t=round(time.time(), 2), best_dx=round(dx, 3),
@@ -579,6 +591,108 @@ class Mapper:
         return True
 
     # ---------- lining up a new session with the saved map ----------
+    def _judge_lost(self, fit, robot):
+        now = time.time()
+        if fit >= LOST_CLEAR:
+            self._low, self.lost_since = None, None
+            return
+        if fit >= LOST_FIT:
+            return
+        rx, ry = float(robot[0]), float(robot[1])
+        if self._low is None:
+            self._low = [now, (rx, ry), 0.0]
+            return
+        self._low[2] += math.hypot(rx - self._low[1][0], ry - self._low[1][1])
+        self._low[1] = (rx, ry)
+        if self.lost_since is None and now - self._low[0] >= LOST_S and self._low[2] >= LOST_MOVE_M:
+            self.lost_since = round(now, 2)
+
+    def view_fit(self, T):
+        """How well the recent lidar views sit on the map's walls if the odom-to-map transform were T: the
+        drift tracker's fit (mean wall likelihood, about 0.75-0.9 when placed right), or None."""
+        L, r0, c0, _ = self._wall_field()
+        if L is None or not self.recent:
+            return None
+        pts = np.unique(np.floor(np.concatenate(self.recent) / RES), axis=0) * RES + RES / 2
+        if len(pts) < TRACK_MIN_PTS:
+            return None
+        tx, ty, th = T
+        c, s = math.cos(th), math.sin(th)
+        q = pts @ np.array([[c, s], [-s, c]]) + (tx, ty)
+        cc = np.floor((q[:, 0] - self.origin[0]) / RES).astype(np.int64) - c0
+        rr = np.floor((q[:, 1] - self.origin[1]) / RES).astype(np.int64) - r0
+        H, W = L.shape
+        ok = (rr >= 0) & (rr < H) & (cc >= 0) & (cc < W)
+        return round(float(np.where(ok, L[np.clip(rr, 0, H - 1), np.clip(cc, 0, W - 1)], 0.0).mean()), 3)
+
+    def T_for(self, odom, x, y, yaw):
+        """The odom-to-map transform that puts the dog (at odom) at map pose (x, y, yaw)."""
+        th = wrap(yaw - odom["yaw"])
+        c, s = math.cos(th), math.sin(th)
+        ox, oy = odom["pos"][0], odom["pos"][1]
+        return (x - (c * ox - s * oy), y - (s * ox + c * oy), th)
+
+    def candidates(self, odom, centre=None, radius=None, top=5):
+        """Where the dog could be: the best line-ups of the recent lidar views with the saved map, without
+        applying any. centre=(x, y) with radius (m) searches only there; None searches the whole map.
+        Returns ([{x, y, yaw, score, fit}], None) best first, or (None, reason)."""
+        if self.mapping:
+            return None, "stop mapping first"
+        if not (self.score >= OCC_SCORE).any():
+            return None, "no saved map to line up with"
+        if odom is None or len(self.recent) < 2:
+            return None, "no lidar data yet"
+        if self._aligning:
+            return None, "a line-up is already running; try again in a few seconds"
+        self._aligning = True
+        try:
+            found = self._search(odom, None if centre is None else (centre[0], centre[1], None), radius, keep_all=True)
+        finally:
+            self._aligning = False
+        if isinstance(found, str):
+            return None, found
+        out = []
+        for score, deg, T in found:
+            p = self.T_for_pose(T, odom)
+            if any(math.hypot(p[0] - o["x"], p[1] - o["y"]) < CAND_SEP_M
+                   and abs(math.degrees(wrap(p[2] - o["yaw"]))) < CAND_SEP_DEG for o in out):
+                continue
+            out.append({"x": round(p[0], 3), "y": round(p[1], 3), "yaw": round(p[2], 3),
+                        "yaw_deg": round(math.degrees(p[2]), 1), "score": round(score, 3), "_T": T})
+            if len(out) >= top:
+                break
+        for o in out:
+            o["fit"] = self.view_fit(o.pop("_T"))
+        return out, None
+
+    @staticmethod
+    def T_for_pose(T, odom):
+        tx, ty, th = T
+        c, s = math.cos(th), math.sin(th)
+        x, y = odom["pos"][0], odom["pos"][1]
+        return tx + c * x - s * y, ty + s * x + c * y, wrap(odom["yaw"] + th)
+
+    def set_pose(self, odom, x, y, yaw, by, force=False):
+        """An agent says the dog is at map (x, y, yaw). Applied exactly (no search) unless it fits the
+        recent lidar views worse than the current pose, unless force. Returns (info, None) or (info, reason)."""
+        if self.mapping:
+            return {}, "stop mapping first"
+        if odom is None:
+            return {}, "no odometry"
+        T = self.T_for(odom, float(x), float(y), float(yaw))
+        before = self.view_fit(self.T) if self.T is not None else None
+        after = self.view_fit(T)
+        info = {"fit_before": before, "fit_after": after}
+        if not force and before is not None and (after is None or after < before - 0.02):
+            return info, (f"that pose fits the lidar worse than the current one ({after} vs {before}); "
+                          "send force: true to apply it anyway")
+        self.pending, self.resume_mapping = None, False
+        self._set_T(T, "agent_relocalize", by=by, fit=after, fit_before=before)
+        self.align_info = {"score": None, "runner_up": None, "by_agent": by, "fit_before": before,
+                           "fit_after": after, "at": time.strftime("%H:%M:%S")}
+        self.status = f"placed by agent {by} at ({float(x):.2f}, {float(y):.2f}) (fit {after}, was {before})"
+        return info, None
+
     def localize_at(self, odom, x, y, yaw=None, by="console"):
         """A person says the dog is about at map (x, y), optionally facing about yaw (rad). Search
         only near there and take the best heading, without the usual confidence checks."""
@@ -624,85 +738,97 @@ class Mapper:
         self.status = "lining up with the saved map…"
         threading.Thread(target=self._align, args=(odom,), daemon=True).start()
 
+    def _search(self, odom, hint=None, radius=None, keep_all=False):
+        """Line the recent lidar views up with the saved map: for each heading (1 degree steps) the best shift.
+        hint (x, y, yaw or None): keep only shifts that put the dog within radius (default HINT_R) of (x, y),
+        and headings within HINT_YAW_TOL of yaw. Returns [(score, deg, T)] best first, or a reason string."""
+        radius = HINT_R if radius is None else radius
+        pts = np.concatenate(self.recent)          # odom frame
+        # one point per 5 cm cell, capped, so the search stays light
+        pts = np.unique(np.floor(pts / RES), axis=0) * RES + RES / 2
+        if len(pts) > ALIGN_MAX_PTS:
+            pts = pts[np.random.default_rng(0).choice(len(pts), ALIGN_MAX_PTS, replace=False)]
+        img = self.grid()
+        cropped = self.crop(img, margin=60)
+        if cropped is None or len(pts) < 50:
+            return "not enough lidar data to line up yet"
+        sub, (ox, oy) = cropped
+        walls = cv2.dilate((sub == 0).astype(np.uint8), np.ones((3, 3), np.uint8))
+        free = ((sub == 254) & (walls == 0)).astype(np.float32)
+        rel = pts - pts.mean(0)
+        pad = int(np.ceil(np.abs(rel).max() * 2 / RES)) + 2     # zero padding so shifts don't wrap around
+        H, W = walls.shape[0] + pad, walls.shape[1] + pad
+        def ft(a):
+            z = np.zeros((H, W), np.float32)
+            z[:a.shape[0], :a.shape[1]] = a
+            return np.fft.rfft2(z)
+        FW, FF = ft(walls.astype(np.float32)), ft(free)
+        robot_rel = np.array(odom["pos"][:2], dtype=np.float64) - pts.mean(0)
+        if hint:
+            yy, xx = np.mgrid[0:H, 0:W]
+        best = []
+        for deg in np.arange(0, 360, 1.0):
+            th = math.radians(deg)
+            if hint and hint[2] is not None and abs(wrap(odom["yaw"] + th - hint[2])) > HINT_YAW_TOL:
+                continue
+            c, s = math.cos(th), math.sin(th)
+            q = rel @ np.array([[c, s], [-s, c]])  # rotate by th
+            ij = np.unique(np.floor(q / RES).astype(np.int64), axis=0)
+            qmin = ij.min(0)
+            ij -= qmin
+            if ij[:, 0].max() >= W or ij[:, 1].max() >= H:
+                continue
+            L = np.zeros((H, W), np.float32)
+            L[ij[:, 1], ij[:, 0]] = 1
+            FL = np.conj(np.fft.rfft2(L))
+            score = (np.fft.irfft2(FW * FL, s=(H, W)) - np.fft.irfft2(FF * FL, s=(H, W))) / len(ij)
+            if hint:
+                # keep only shifts that put the dog within radius of the given spot
+                qr = robot_rel @ np.array([[c, s], [-s, c]])
+                cc0 = (hint[0] - ox - 0.5 * RES) / RES - (qr[0] / RES - qmin[0])
+                r0 = (hint[1] - oy - 0.5 * RES) / RES - (qr[1] / RES - qmin[1])
+                score = np.where(np.hypot(xx - cc0, yy - r0) <= radius / RES, score, -np.inf)
+            if keep_all:          # several shifts per heading (other places that fit): local maxima 0.5 m apart
+                sc = np.nan_to_num(score.astype(np.float32), neginf=-1e9)
+                peak = (sc == cv2.dilate(sc, np.ones((11, 11), np.uint8))) & (sc > 0)
+                ks = np.flatnonzero(peak)
+                picks = [int(k) for k in ks[np.argsort(-sc.ravel()[ks])[:5]]]
+            else:
+                picks = [int(score.argmax())]
+            for k in picks:
+                r, cc = divmod(k, W)
+                # a rotated point q lands at cell (q/RES - qmin) + (cc, r) of the crop
+                shift = np.array([ox, oy]) + (np.array([cc, r]) - qmin) * RES
+                mean_map = shift + 0.5 * RES       # map position of the cloud's mean point (rel = 0)
+                mx, my = pts.mean(0)
+                T = (float(mean_map[0] - (c * mx - s * my)), float(mean_map[1] - (s * mx + c * my)), th)
+                best.append((float(score.flat[k]), float(deg), T))
+        if not best:
+            return "could not line up: map too small"
+        best = [b for b in best if np.isfinite(b[0])]
+        if not best:
+            return "could not line up there: the clicked spot is off the mapped area"
+        best.sort(key=lambda b: -b[0])
+        self._search_pts = len(pts)
+        return best
+
     def _align(self, odom, hint=None):
         """hint: (x, y, yaw or None) in the map from a person; then the dog must end up within
         HINT_R of (x, y) (and HINT_YAW_TOL of yaw), and the best fit there is taken as is."""
         try:
             self.T_found = None
             t0 = time.time()
-            pts = np.concatenate(self.recent)          # odom frame
-            # one point per 5 cm cell, capped, so the search stays light
-            pts = np.unique(np.floor(pts / RES), axis=0) * RES + RES / 2
-            if len(pts) > ALIGN_MAX_PTS:
-                pts = pts[np.random.default_rng(0).choice(len(pts), ALIGN_MAX_PTS, replace=False)]
-            img = self.grid()
-            cropped = self.crop(img, margin=60)
-            if cropped is None or len(pts) < 50:
-                self.status = "not enough lidar data to line up yet"
+            best = self._search(odom, hint)
+            if isinstance(best, str):
+                self.status = best
                 return
-            sub, (ox, oy) = cropped
-            walls = cv2.dilate((sub == 0).astype(np.uint8), np.ones((3, 3), np.uint8))
-            free = ((sub == 254) & (walls == 0)).astype(np.float32)
-            rel = pts - pts.mean(0)
-            pad = int(np.ceil(np.abs(rel).max() * 2 / RES)) + 2     # zero padding so shifts don't wrap around
-            H, W = walls.shape[0] + pad, walls.shape[1] + pad
-            def ft(a):
-                z = np.zeros((H, W), np.float32)
-                z[:a.shape[0], :a.shape[1]] = a
-                return np.fft.rfft2(z)
-            FW, FF = ft(walls.astype(np.float32)), ft(free)
-            robot_rel = np.array(odom["pos"][:2], dtype=np.float64) - pts.mean(0)
-            if hint:
-                yy, xx = np.mgrid[0:H, 0:W]
-            best = []
-            for deg in np.arange(0, 360, 1.0):
-                th = math.radians(deg)
-                if hint and hint[2] is not None and abs(wrap(odom["yaw"] + th - hint[2])) > HINT_YAW_TOL:
-                    continue
-                c, s = math.cos(th), math.sin(th)
-                q = rel @ np.array([[c, s], [-s, c]])  # rotate by th
-                ij = np.unique(np.floor(q / RES).astype(np.int64), axis=0)
-                qmin = ij.min(0)
-                ij -= qmin
-                if ij[:, 0].max() >= W or ij[:, 1].max() >= H:
-                    continue
-                L = np.zeros((H, W), np.float32)
-                L[ij[:, 1], ij[:, 0]] = 1
-                FL = np.conj(np.fft.rfft2(L))
-                score = (np.fft.irfft2(FW * FL, s=(H, W)) - np.fft.irfft2(FF * FL, s=(H, W))) / len(ij)
-                if hint:
-                    # keep only shifts that put the dog within HINT_R of the clicked spot
-                    qr = robot_rel @ np.array([[c, s], [-s, c]])
-                    cc0 = (hint[0] - ox - 0.5 * RES) / RES - (qr[0] / RES - qmin[0])
-                    r0 = (hint[1] - oy - 0.5 * RES) / RES - (qr[1] / RES - qmin[1])
-                    score = np.where(np.hypot(xx - cc0, yy - r0) <= HINT_R / RES, score, -np.inf)
-                k = int(score.argmax())
-                r, cc = divmod(k, W)
-                best.append((float(score.flat[k]), deg, r, cc))
-            if not best:
-                self.status = "could not line up: map too small"
-                return
-            best = [b for b in best if np.isfinite(b[0])]
-            if not best:
-                self.status = "could not line up there: the clicked spot is off the mapped area"
-                return
-            best.sort(key=lambda b: -b[0])
-            score, deg, r, cc = best[0]
+            score, deg, T = best[0]
             # best fit at a clearly different rotation, to judge ambiguity
             other = next((b[0] for b in best[1:] if abs(wrap(math.radians(b[1] - deg))) > math.radians(10)), 0.0)
-            th = math.radians(deg)
-            c, s = math.cos(th), math.sin(th)
-            q = rel @ np.array([[c, s], [-s, c]])
-            qmin = np.floor(q / RES).astype(np.int64).min(0)
-            # a rotated point q lands at cell (q/RES - qmin) + (cc, r) of the crop
-            shift = np.array([ox, oy]) + (np.array([cc, r]) - qmin) * RES
-            mean_map = shift + 0.5 * RES       # map position of the cloud's mean point (rel = 0)
-            mx, my = pts.mean(0)
-            tx = mean_map[0] - (c * mx - s * my)
-            ty = mean_map[1] - (s * mx + c * my)
+            th = T[2]
             self.align_info = {"score": round(score, 2), "runner_up": round(other, 2), "deg": float(deg),
-                               "points": int(len(pts)), "secs": round(time.time() - t0, 1), "at": time.strftime("%H:%M:%S")}
-            self.T_found = (float(tx), float(ty), th)
+                               "points": int(self._search_pts), "secs": round(time.time() - t0, 1), "at": time.strftime("%H:%M:%S")}
+            self.T_found = T
             if self.mapping:      # a new map was started meanwhile; its frame wins
                 return
             if hint:
