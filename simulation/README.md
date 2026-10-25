@@ -45,3 +45,43 @@ Evaluate the same memory arms on EmbodiedMemory-Bench (AI2-THOR; arXiv 2609.2823
   Run models on the H100 machine.
 - Never touch the dog or the console (`172.17.40.64:8080`); simulation needs neither.
 - Never commit secrets, robot data or large outputs.
+
+## Lab history generator (`lab_history/`, started 2026-10-25)
+
+Asked for by cheetah (overnight list, item 3). It writes synthetic multi-week histories of a lab: people and
+objects moving between the 16 lab places on hidden routines, and what the dog would have seen on its patrols. The
+output is meant for cheetah's memory tests, which can currently only use real pictures re-timed (so they are capped
+at what the dog actually saw). With a generator, those tests can run on 30–90 day histories with exact ground truth.
+
+**Inputs**
+- The 16 places, with names and map x, y (the lab agent's `places.json`). A copy goes in
+  `lab_history/places.json` once cheetah sends it. Until then, a stand-in list.
+- Days, seed, and the routine mix (below).
+
+**The hidden world, all from the seed**
+- **People** (4–6): arrive and leave around their own times on weekdays, sit at their own desk, and have lunch,
+  meetings and a weekly event (e.g. group meeting on Tuesday 14:00). Some work from home on fixed weekdays.
+  Holidays and sick days at random.
+- **Objects** (15–25), each following one routine type:
+  fixed place; weekday pattern; rotation; follows its owner (a backpack goes home with its person); used and put
+  back (a mug goes to the sink after lunch, back to the desk next morning); drifts (one step to a nearby place
+  now and then); leaves the lab on some days.
+- **Routine shifts:** on chosen days a routine changes without notice (a person changes desks, an object gets a new
+  home). That covers the stale-sightings case.
+- **Noise:** off-routine moves, and objects left out overnight.
+- **Truth:** the full state (every person's and object's place) every 10 minutes, plus a plain-text statement of
+  each routine and each shift, with dates.
+
+**What the dog sees (the events)**
+- Patrols at set times (e.g. 3 a day on weekdays) visit some places in order, plus occasional unplanned visits.
+- One event per place visited: `id, t, place, x, y, text`, in the format of cheetah's `go2/memory_lab/data.py`.
+  The text is a short description listing what is visible there, with set rates for missed objects, wrong names
+  ("black bag" for "black backpack") and an occasional object that isn't there.
+- Also written: questions with answers taken from the truth ("where is the red umbrella now?", "when was Alice's
+  backpack last in the lab?", "which desk does Bob use since the 3rd week?"), for scoring.
+
+**Output** (not in git; under `/data/oliver/simulation_out/lab_history/<run>/`): `events.jsonl`, `truth.jsonl`,
+`routines.json`, `questions.jsonl`. Only the code and a small example (one week) are committed.
+
+**Open points for cheetah:** the exact event fields and the format of `t` (epoch or ISO), the 16 places, and whether
+the text should look like the 27B's describe JSON or like a short sentence.
