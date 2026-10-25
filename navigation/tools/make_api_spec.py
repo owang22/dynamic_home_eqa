@@ -228,7 +228,8 @@ ENDPOINTS = [
                        "align, saved_at, track, room_deg}",
                 "map_pose": "{x, y, yaw (rad)} on the map, 5 Hz, or null when not lined up",
                 "age": "seconds since each sensor's last message: odom, imu, state, cloud, camera, map, map_pose, ...",
-                "loc": "{status, seq, events, track, fit, runner_up, unsure, lost, lost_since, track_fit}",
+                "loc": "{status, seq, events, track, fit, runner_up, unsure, lost, lost_since, track_fit, fresh_fit, suspect, "
+                       "suspect_since}",
                 "nav": "{path, goal, t} of the last plan (5 min)",
                 "markers": "as GET /markers", "battery": "{soc %, current_ma, cycles, voltage, bms_temp_c, age_s, stale?}",
                 "control": "{avoid, speed, speeds, look_deg, driver, driver_ip}"}},
@@ -258,12 +259,16 @@ ENDPOINTS = [
                 "y": {"type": "number", "units": "m", "frame": "map"}},
      "returns": {"path?": "array", "length_m?": "number", "goal?": "array", "tight?": "bool", "squeeze?": "bool",
                  "squeeze_at?": "array", "squeeze_along_m?": "number", "squeeze_clear_m?": "number",
-                 "error?": "string", "why?": "object"},
+                 "error?": "string", "why?": "object", "fallback?": "string"},
      "fields": {"path": "[[x, y], ...] map m, first point = the dog (or its spot, then the nearest open floor)",
                 "goal": "the goal actually used: moved up to {GOAL_SNAP_M} m off furniture onto open floor",
                 "tight": "true: no route with {ROBOT_R} m clearance, this one keeps {ROBOT_R_TIGHT} m (or less if squeeze)",
                 "squeeze": "true: only fits with {ROBOT_R_SQUEEZE} m clearance more than {SQUEEZE_NEAR_M} m away; go_to "
-                           "drives up to it and re-plans", "error": "why there is no route", "why": "as in go_to"},
+                           "drives up to it and re-plans; within {SQUEEZE_NEAR_M} m of the dog only within {TRAIL_R} m of where it "
+                           "walked in the last {TRAIL_S} s (leaving a pocket the way it came)",
+                "fallback": "live_noblocks: no clearance worked normally, this route ignores the {BLOCK_S} s stall blocks "
+                            "(live obstacles keep full clearance). Not used while loc.lost (nor the trail squeeze)",
+                "error": "why there is no route", "why": "as in go_to"},
      "errors": {"409": "{error: 'not lined up with the map'}", "400": "{error} unknown place or bad x/y"}},
     {"method": "GET", "path": "/markers", "for_agents": True, "blocks": False, "latency": "<50 ms",
      "summary": "ArUco markers in view now (DICT_4X4_50, {SIZE_M} m): ids {KNOWN}, detected up to {RATE_HZ} Hz on the "
@@ -405,7 +410,13 @@ NOTES = {
                     "at least {LOST_MOVE_M} m; it clears at {LOST_CLEAR} or on a new placement or line-up. loc.fit, "
                     "runner_up and unsure describe the last line-up only (unsure: score under 0.3 or less than 0.05 "
                     "ahead of the next heading). Event kinds: hand_placement, auto_align, session_restore, new_map, "
-                    "drift_correction (only jumps > 0.3 m or 10 deg), agent_relocalize, unknown (POST /map frame).",
+                    "drift_correction (only jumps > 0.3 m or 10 deg), agent_relocalize, unknown (POST /map frame). "
+                    "loc.suspect / fresh_fit / suspect_since are ADVISORY and never stop anything: fresh_fit is the fit "
+                    "of the voxels placed in the last {SUSPECT_FRESH_S} s at the current pose; suspect comes on when it "
+                    "stays under {SUSPECT_FIT} for {SUSPECT_S} s while the dog walks {SUSPECT_MOVE_M} m, and clears at "
+                    "{SUSPECT_CLEAR} or a placement. It can't tell a wrong pose from a changed room: on suspect take a "
+                    "fix_ok marker or a relocalize search before a long go_to. Only in /state.json loc. The lost and "
+                    "suspect timers restart after a gap > {LOST_GAP_S} s between judged views.",
     "localization_notice": "Agent replies (and GET /agent/status?client=) carry localization_notice when line-up "
                            "events happened since your previous call: {events, status, fit, runner_up, unsure, summary}. "
                            "A jump means poses you stored before it may be off.",
@@ -420,6 +431,9 @@ NOTES = {
         "turned_deg short of deg with result done: within the 5 degree tolerance after one correction.",
         "a marker in /markers with held: true is a sighting up to 0.5 s old, not a live one; use fix_ok items for "
         "positions (a single-frame sighting is unconfirmed).",
+        "an expected marker missing: markers read reliably from the open room, not from under or next to dark "
+        "furniture (auto-exposure blows out the bright room; patches brighter than ~230/255 are mostly missed). "
+        "Back out into the open or turn so the camera isn't looking from dark into bright.",
     ],
     "http": "Base http://172.17.40.64:8080. POST bodies are JSON. POSTs only from localhost or 172.17.0.0/18 (403 "
             "otherwise). An unknown /agent/<call> is 404. Bad arguments to a tool (missing m, non-number, bad pose or "

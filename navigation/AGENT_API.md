@@ -138,7 +138,11 @@ place's own `yaw_deg` when it has no target). It is close enough within 0.20 m.
 
 - Plans on 10 cm cells with 0.28 m clearance; if nothing fits, `tight` 0.20 m; last resort `squeeze` 0.12 m,
   only more than 1.5 m from the dog. On a squeeze route it drives to 1 m before the narrow part, looks with the
-  live lidar, and re-plans; if it really is too narrow, it ends `no_route`.
+  live lidar, and re-plans; if it really is too narrow, it ends `no_route`. Within 1.5 m of the dog a squeeze
+  route is allowed only where the dog walked in the last 300 s, i.e. leaving a pocket the way it came in.
+- If every clearance fails, one fallback tier ignores the 120 s stall blocks (live obstacles keep full
+  clearance). `/nav/plan` then shows `fallback: "live_noblocks"`; the go_to reply doesn't say so. Neither
+  the fallback nor the trail squeeze is used while `loc.lost` is on.
 - A goal on furniture moves to open floor within 1.2 m. A start the map shows as blocked steps out to open floor
   within 0.8 m.
 - Within 3 m of the dog the planner uses what the lidar sees now: points 0.18–0.60 m high are obstacles,
@@ -192,6 +196,14 @@ good, try `global`. If nothing fits well, drive a little (turn 90°) so the lida
   to all voxels) without the pose being wrong. Move a little before judging it.
 - `loc.lost` comes on when `track_fit` stays **under 0.65 for 10 s while the dog walks at least 0.3 m**. It
   clears at 0.70, or on any new placement or line-up. `move` and `turn` ignore it; `go_to` stops on it.
+- `loc.suspect` (with `loc.fresh_fit`, `loc.suspect_since`) is **advisory only and never stops anything**.
+  `fresh_fit` is the fit of the voxels placed in the last 10 s, at the current pose. `suspect` comes on when
+  it stays under 0.65 for 10 s while the dog walks 0.3 m, and clears at 0.70 or on a placement. It catches
+  a bad start much sooner than `lost`, but it can't tell a wrong pose from a changed room. On `suspect`, get a
+  `fix_ok` marker sighting or run `relocalize search` before a long go_to. It is in `/state.json` `loc`,
+  not in tool replies or `/history`.
+- Both the `lost` and `suspect` timers start over after a gap of more than 5 s between judged lidar views
+  (for example while the dog stands), so standing still never accumulates time toward them.
 - `loc.fit`, `runner_up` and `unsure` describe the *last line-up* only. `unsure` means a score under 0.3, or
   less than 0.05 ahead of the next-best heading.
 - `loc.events` kinds: `hand_placement`, `auto_align`, `session_restore`, `new_map`, `drift_correction` (only
@@ -205,7 +217,7 @@ good, try `global`. If nothing fits well, drive a little (turn 90°) so the lida
 |---|---|
 | `/state.json` | everything at once. `odom {pos, yaw, vel}`, `imu {rpy}`, `state {body_height, obstacle [4 ranges], mode, ...}`, `map {mode, status, origin, resolution, room_deg, ...}`, `map_pose`, `loc`, `agents`, `nav`, `markers`, `battery {soc, ..., stale?}`, `control {avoid, speed, ...}`, `age` (seconds since each sensor). `/events` streams it at 10 Hz |
 | `/places` | `{id: {x, y, yaw_deg, target {x, y} or null, description, preview, ...}}`. `(x, y, yaw_deg)` is where the dog stands; `target` is where the thing is. `/places/<id>.jpg` is its view |
-| `/nav/plan?place=` or `?x=&y=` | `{path [[x, y]...], length_m, goal, tight, squeeze?, squeeze_at?, squeeze_along_m?, squeeze_clear_m?}` or `{error, why?}`. 409 when not lined up |
+| `/nav/plan?place=` or `?x=&y=` | `{path [[x, y]...], length_m, goal, tight, squeeze?, squeeze_at?, squeeze_along_m?, squeeze_clear_m?, fallback?}` or `{error, why?}`. 409 when not lined up |
 | `/markers` | `{list: [...], age_s, err}`. Empty if the newest detection is older than 1 s. Each item: `id`, `mark` (A–D, spare 4/5), `z` (m along the camera axis), `x` (m, + right), `up`, `bearing_deg` (**+ right**), `dist` (m), `view_deg` (0 = head-on), `yaw_deg` (turn of the marker face), `reproj_px`, `ambig` (1.0 = two poses equally likely), `alt`, `side_px`, `min_side_px`, `edge` (1 = image border), `fix_ok`, `why` (`far`, `oblique`, `small`, `reproj`, `edge`, `unconfirmed`), `held`, `seen_age_s`. **`held: true`** means kept up to 0.5 s after the last sighting, so skip those for a live sighting. Use only `fix_ok` items for a position fix (≤ 3 m, ≤ 60° oblique, ≥ 30 px, reproj ≤ 2 px, not at the edge, confirmed in 2 of the last 3 frames) |
 | `/trail/near?x=&y=&radius=3&limit=12` | `{views: [{t, x, y, yaw_deg, dist, bearing_deg (+ left), facing, url}], spot: obstacle\|open\|unseen}`. Frames that faced the spot (\|bearing\| ≤ 40° or within 0.3 m) come first, nearest first. radius at most 20, limit 1–200 |
 | `/trail/since?t=&limit=500` | frames newer than t, oldest first (`more: true` → page with the last t). limit at most 2000 |
@@ -240,5 +252,9 @@ These belong to people at the console. Don't call them:
 - **`photo.still: false`**: it never settled within 5 s; take another.
 - **A marker with `held: true`, or `fix_ok: false` with `why: [unconfirmed]`**: a one-frame or slightly old
   sighting. Wait a moment and read again before using it as a fix.
+- **An expected marker missing**: markers read reliably from the open room, not from under or next to dark
+  furniture. Auto-exposure blows out the bright room behind, and marker patches brighter than about 230/255
+  are mostly missed. Back out into the open, or turn so the camera isn't looking from a dark spot into a
+  bright one.
 - **409 `busy`** (`stop_reason: busy`): your previous call is still running (for example after a client timeout). Wait for it, or
   call `stop`.

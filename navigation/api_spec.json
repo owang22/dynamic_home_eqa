@@ -101,6 +101,7 @@
   ],
   "LOST_CLEAR": 0.7,
   "LOST_FIT": 0.65,
+  "LOST_GAP_S": 5.0,
   "LOST_MOVE_M": 0.3,
   "LOST_S": 10.0,
   "MAX_BACK_M": 1.0,
@@ -160,10 +161,17 @@
   "STALL_S": 2.0,
   "STAND_H": 0.24,
   "STILL_S": 1.0,
+  "SUSPECT_CLEAR": 0.7,
+  "SUSPECT_FIT": 0.65,
+  "SUSPECT_FRESH_S": 10.0,
+  "SUSPECT_MOVE_M": 0.3,
+  "SUSPECT_S": 10.0,
   "TILT_LIMIT": 0.6,
   "TRACK_FRESH_MIN": 200,
   "TRACK_FRESH_S": 20.0,
   "TRACK_MIN_FIT": 0.35,
+  "TRAIL_R": 0.2,
+  "TRAIL_S": 300.0,
   "TURN_CLAMP": [
    -360.0,
    360.0
@@ -1026,13 +1034,15 @@
     "squeeze_along_m?": "number",
     "squeeze_clear_m?": "number",
     "error?": "string",
-    "why?": "object"
+    "why?": "object",
+    "fallback?": "string"
    },
    "fields": {
     "path": "[[x, y], ...] map m, first point = the dog (or its spot, then the nearest open floor)",
     "goal": "the goal actually used: moved up to 1.2 m off furniture onto open floor",
     "tight": "true: no route with 0.28 m clearance, this one keeps 0.2 m (or less if squeeze)",
-    "squeeze": "true: only fits with 0.12 m clearance more than 1.5 m away; go_to drives up to it and re-plans",
+    "squeeze": "true: only fits with 0.12 m clearance more than 1.5 m away; go_to drives up to it and re-plans; within 1.5 m of the dog only within 0.2 m of where it walked in the last 300.0 s (leaving a pocket the way it came)",
+    "fallback": "live_noblocks: no clearance worked normally, this route ignores the 120.0 s stall blocks (live obstacles keep full clearance). Not used while loc.lost (nor the trail squeeze)",
     "error": "why there is no route",
     "why": "as in go_to"
    },
@@ -1090,7 +1100,7 @@
     "map": "{resolution, origin, width, height, t, mapped_m2, mode: mapping|localized|not_aligned, status, align, saved_at, track, room_deg}",
     "map_pose": "{x, y, yaw (rad)} on the map, 5 Hz, or null when not lined up",
     "age": "seconds since each sensor's last message: odom, imu, state, cloud, camera, map, map_pose, ...",
-    "loc": "{status, seq, events, track, fit, runner_up, unsure, lost, lost_since, track_fit}",
+    "loc": "{status, seq, events, track, fit, runner_up, unsure, lost, lost_since, track_fit, fresh_fit, suspect, suspect_since}",
     "nav": "{path, goal, t} of the last plan (5 min)",
     "markers": "as GET /markers",
     "battery": "{soc %, current_ma, cycles, voltage, bms_temp_c, age_s, stale?}",
@@ -1303,7 +1313,7 @@
   "signs": "turn deg + = left (CCW). look deg + = up. move m + = forward. /markers bearing_deg + = right (atan2(x, z), camera x to the right). /trail/near bearing_deg + = left (map angle to the spot minus the frame's yaw). map yaw + = CCW.",
   "ownership": "One agent owns the dog at a time. claim, or any tool call, takes and refreshes it; it lapses after 60.0 s without a call. status, stop, release and say need no claim. A person always wins: driving at the console, Take over, or a console STOP aborts the running tool (stop_reason person or stop) and locks agents out (409 refused) until Hand back or 300.0 s without console commands. /agent/stop is allowed for anyone and does not change the owner. One tool at a time: a second call while one runs gets 409 {result: error, reason: 'busy: ...', stop_reason: busy}.",
   "safety": "Before any motion tool and every 0.1 s during it: odom and IMU fresher than 1.0 s, |roll| and |pitch| under 0.6 rad, body_height at least 0.18 m. Obstacle box ahead [0.35, 0.9, 0.25] (x from, x to, half width, m) when avoidance is off; behind [0.3, 0.75, 0.22], always checked; heights [0.18, 0.6] m count. Backing up is slow (0.2 m/s) and short (1.0 m) because the dog sees little behind it.",
-  "localization": "loc.track_fit: how well the latest lidar view sits on the map's walls, about 0.75-0.9 when placed right. The tracker matches only lidar voxels first seen in the last 20.0 s (falls back to all when fewer than 200 fresh obstacle points): /point_cloud2 is the dog's accumulated voxel map, and old voxels carry old heading drift. So track_fit can dip after a long time standing still without the pose being wrong. loc.lost turns on when track_fit stays under 0.65 for 10.0 s while the dog walks at least 0.3 m; it clears at 0.7 or on a new placement or line-up. loc.fit, runner_up and unsure describe the last line-up only (unsure: score under 0.3 or less than 0.05 ahead of the next heading). Event kinds: hand_placement, auto_align, session_restore, new_map, drift_correction (only jumps > 0.3 m or 10 deg), agent_relocalize, unknown (POST /map frame).",
+  "localization": "loc.track_fit: how well the latest lidar view sits on the map's walls, about 0.75-0.9 when placed right. The tracker matches only lidar voxels first seen in the last 20.0 s (falls back to all when fewer than 200 fresh obstacle points): /point_cloud2 is the dog's accumulated voxel map, and old voxels carry old heading drift. So track_fit can dip after a long time standing still without the pose being wrong. loc.lost turns on when track_fit stays under 0.65 for 10.0 s while the dog walks at least 0.3 m; it clears at 0.7 or on a new placement or line-up. loc.fit, runner_up and unsure describe the last line-up only (unsure: score under 0.3 or less than 0.05 ahead of the next heading). Event kinds: hand_placement, auto_align, session_restore, new_map, drift_correction (only jumps > 0.3 m or 10 deg), agent_relocalize, unknown (POST /map frame). loc.suspect / fresh_fit / suspect_since are ADVISORY and never stop anything: fresh_fit is the fit of the voxels placed in the last 10.0 s at the current pose; suspect comes on when it stays under 0.65 for 10.0 s while the dog walks 0.3 m, and clears at 0.7 or a placement. It can't tell a wrong pose from a changed room: on suspect take a fix_ok marker or a relocalize search before a long go_to. Only in /state.json loc. The lost and suspect timers restart after a gap > 5.0 s between judged views.",
   "localization_notice": "Agent replies (and GET /agent/status?client=) carry localization_notice when line-up events happened since your previous call: {events, status, fit, runner_up, unsure, summary}. A jump means poses you stored before it may be off.",
   "failure_signatures": [
    "no_route near furniture or right after start: map pose misaligned. Check fit; relocalize.",
@@ -1312,7 +1322,8 @@
    "stale_sensors with odom null in /state.json: the dog or the driver container is off.",
    "photo.still false: it never settled in 5 s (rocking, still turning); take another.",
    "turned_deg short of deg with result done: within the 5 degree tolerance after one correction.",
-   "a marker in /markers with held: true is a sighting up to 0.5 s old, not a live one; use fix_ok items for positions (a single-frame sighting is unconfirmed)."
+   "a marker in /markers with held: true is a sighting up to 0.5 s old, not a live one; use fix_ok items for positions (a single-frame sighting is unconfirmed).",
+   "an expected marker missing: markers read reliably from the open room, not from under or next to dark furniture (auto-exposure blows out the bright room; patches brighter than ~230/255 are mostly missed). Back out into the open or turn so the camera isn't looking from dark into bright."
   ],
   "http": "Base http://172.17.40.64:8080. POST bodies are JSON. POSTs only from localhost or 172.17.0.0/18 (403 otherwise). An unknown /agent/<call> is 404. Bad arguments to a tool (missing m, non-number, bad pose or mode) are 400 {result: error, reason: 'bad arguments: ...', stop_reason: bad_arguments}, and are not logged."
  }
