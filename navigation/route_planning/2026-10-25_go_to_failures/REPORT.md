@@ -23,13 +23,24 @@ The prototypes are copies in `proto/` on Z690 (`~/go2_overnight/route_planning/`
   | live cells and blocks: each alone closes the route | 5 | 3 |
   | live-lidar cells alone close the route (2 wall-hugging, 1 free-standing) | 3 | 2 |
 
-* **Prototype C** (planner fallback tiers plus a "walked-trail" squeeze exit) turns **39 of those 45** into routes
-  (26 of the 30 not in a lost window). It changes **no route at all** when nothing failed: in the all-pairs run
-  over 16 places it made 0 changes in the clean and live scenarios. It also fixes a systematic asymmetry: every
+* **Scoring (rescored 10-25 at the coordinator's request, `rescore.py`, `results/rescore.md`).** A planner change
+  can't fix a failure caused by a wrong pose. In the 15 lost-window records, any route returned was planned from a
+  wrong map position, so it counts as a **harm**; the correct outcome there is no route or a lost report.
+* **Prototype C** (planner fallback tiers plus a "walked-trail" squeeze exit):
+  * **fixes 26 of the 30 non-lost failures**;
+  * **harms 13 of the 15 lost-window records**: it returns a route from the wrong pose;
+  * changes **no normal route** (0 changes over all 240 place-pair plans in the clean and live scenarios).
+* C may only ship together with a lost gate: skip the fallback tiers and the trail, and report "localization lost",
+  whenever `mapper.lost_since` is set. With the gate the harms would be 0, *if* the lost flag fires. That flag was
+  added 10-25 01:20, after these events, and track fit isn't in the Z690 logs, so this is untested. Cheetah's logger
+  shows fit 0.44–0.59 from 16:23, below `LOST_FIT` 0.65, so it would probably have fired for 69–81. Unknown for
+  82–83.
+* C also fixes a systematic asymmetry. It also fixes a systematic asymmetry: every
   place can drive *to* `door_outside` with a squeeze route, but nothing can be planned *from* `door_outside`.
   That's 15 of the 240 place pairs, and it is the cause of the 10-24 15:28 failures.
 * **Main risk:** a fallback route may pass about 0.1 m from unconfirmed live obstacles. Its last tier ignores the
-  2-minute stall blocks, so when an object really blocks the only way, the dog walks up to it again. The dog's
+  2-minute stall blocks, so when an object really blocks the only way, the dog walks up to it again. On a wrong pose
+  it plans confidently (13 harms above). The dog's
   avoidance and the stall → replan loop (max 3) then end it with `blocked` instead of an instant `no_route`.
   Pair it with the agent-side changes below: don't place blocks for stalls with nothing in front, and say "lost"
   instead of `no_route`.
@@ -174,26 +185,33 @@ Run them with `~/miniconda3/envs/go2/bin/python <script>`. Order: `diag.py` → 
 3. `SNAP_REACHABLE` (off by default). When everything fails, drive to the reachable cell nearest the goal, within
    1.2 m, at 0.20 m clearance, and mark the route `goal_cut_off`.
 
-### On the 45 records since 10-23 19:00 (`results/replay_summary.txt`)
+### On the 45 records since 10-23 19:00 (`results/rescore.md`, `results/replay_summary.txt`)
 
-| variant | plans (of 45) | not-lost (of 30) | routes entering a logged live cell | routes entering a logged block disc |
+Fixes count only among the 30 non-lost records. A route returned in the 15 lost-window records is a harm.
+
+| variant | fixes (of 30 non-lost) | harms (of 15 lost) | routes entering a logged live cell | routes entering a logged block disc |
 |---|---|---|---|---|
 | current | 0 | 0 | – | – |
-| A: trail only | 6 | 6 | 0 | 0 |
-| B: tiers only | 29 | 16 | 0 | 16 |
-| **C: tiers + trail (recommended)** | **39** | **26** | **0** | 19 |
-| C2: like C but blocks "thin" instead of dropped | 30 | 20 | 0 | 6 |
-| D: C + reachable-goal snap | 42 | 28 | 0 | 19 |
-| E: drop live cells beyond 0.6 m (instead of thin) | 40 | 27 | **16** | 17 |
+| A: trail only | 6 | 0 | 0 | 0 |
+| B: tiers only | 16 | 13 | 0 | 16 |
+| **C: tiers + trail (recommended, with the lost gate)** | **26** | 13 (0 with a working lost gate) | **0** | 19 |
+| **C gated** (`fallback=False` while lost, replayed) | **26** | **0** | 0 | 19 |
+| C2: like C but blocks "thin" instead of dropped | 20 | 10 | 0 | 6 |
+| D: C + reachable-goal snap | 28 | 14 | 0 | 19 |
+| E: drop live cells beyond 0.6 m (instead of thin) | 27 | 13 | **16** | 17 |
+
+The trail alone (A) causes no harm: in the lost windows the dog had no trail into a squeeze pocket. All the harms
+come from the fallback tiers.
 
 `tier_grid.py` has more tier designs. The pattern:
 * blocks are the main closer: removing blocks helps more than anything done to the live cells;
 * "thin" live cells get almost the same success as dropping them, without ever routing through one.
 
-C's remaining 6 failures:
+C's 4 remaining non-lost failures:
 * #46/47: the pose sits in a pocket the map shows closed.
 * #66/67: wall-hugging cells narrow the door corridor below squeeze. Only dropping live cells (E) passes.
-* #71/81: lost; one goal is off the map.
+
+In the lost windows C still returns no route only for #71 and #81. That is correct, but by luck.
 
 Era 1 under C: 42 of 45, against 41 for current.
 
@@ -214,7 +232,9 @@ Era 1 under C: 42 of 45, against 41 for current.
 
 ## 5. Recommendation
 
-**Deploy (planner):** `proto.diff` with `FALLBACK_TIERS` as in the file (C) and `SNAP_REACHABLE = False`.
+**Deploy (planner):** `proto.diff` with `FALLBACK_TIERS` as in the file (C) and `SNAP_REACHABLE = False`. Deploy it
+**only together with agent item 3 as a gate**: no fallback tiers and no trail while `mapper.lost_since` is set.
+Without the gate it would have produced 13 wrong-pose routes on 10-24.
 * Lowest risk: tier 0 is untouched, so nothing changes unless today's planner would have said `no_route`. That's
   verified: 0 differing routes in the clean and live all-pairs runs.
 * The trail only acts on the squeeze retry and needs `set_trail`. Without it, the change is inert.
@@ -227,7 +247,9 @@ Era 1 under C: 42 of 45, against 41 for current.
    stall mark, and 16 of the 45 failures involve them.
 3. When a plan fails while `mapper.lost_since` is set, say so: `reason: "localization lost: relocalize first …"`
    and `loc_lost: true`. 15 of the 45 recent failures were planning on a wrong pose, and the fallbacks would
-   happily plan there too. Better still: skip the fallback tiers while lost.
+   happily plan there too. **Required for C, and implemented:** `planner.plan(..., fallback=False)` skips the tiers, the trail and the snap.
+`proto_agent.diff` passes `fallback=self.mapper.lost_since is None`. Replay with the gate set on the lost-window
+records: 26 of 30 fixes, **0 of 15 harms**. That assumes the flag is set in those windows.
 
 **Risk notes:**
 * A fallback route can pass about 0.1 m from a live obstacle that may be real (a chair, a person, the mop
@@ -275,10 +297,11 @@ Also include squeeze in `_why_failed`'s saved-map check.
 
 ## Files
 * `REPORT.md` (this file)
-* `proposed/go2_nav_fallback_tiers.diff` (Z690: `proto/go2_nav.py`): planner prototype, recommended configuration C
-* `proposed/go2_agent_untested.diff` (Z690: `proto/go2_agent.py`): suggested agent changes, untested
+* `proto.diff` and `proto/go2_nav.py`: planner prototype, recommended configuration C
+* `proto_agent.diff` and `proto/go2_agent.py`: suggested agent changes, untested
 * `harness.py`, `diag.py`, `evaluate.py`, `categorize.py`, `figures.py`, `render.py`, `allpairs.py`,
   `arrival_trail.py`, `tier_grid.py`, `variants_check.py`, `tjumps.py`, `replay.py`: harness and analysis scripts
-* `results/`: categories, replay results, all-pairs results, timing
+* `results/`: categories, replay results, all-pairs results, timing; `results/rescore.md` (fixes vs. harms, `rescore.py`)
+* `casebook.json`, `casebook_README.md`, `figs/episodes/`: one case per failure episode plus localization events (`casebook.py`)
 * `figs/`: rendered example situations
 * `orig/`: the untouched copies used as the baseline

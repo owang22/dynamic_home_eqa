@@ -1,5 +1,5 @@
 --- orig/go2_nav.py	2026-10-25 01:37:54.767399560 -0700
-+++ proto/go2_nav.py	2026-10-25 01:50:25.168665289 -0700
++++ proto/go2_nav.py	2026-10-25 02:24:41.429183847 -0700
 @@ -40,6 +40,18 @@
  LIVE_NEW_R = 1.2           # live obstacles that aren't on the saved map count only this close to the dog
  MID_BLOCKS = False         # use the map's desk/table-top layer as obstacles (see _grid)
@@ -82,7 +82,7 @@
  
      def _why_failed(self, sx, sy, gx, gy, error):
          """Diagnose a failed plan (lock held): would the saved map alone have had a route, and which
-@@ -262,6 +303,11 @@
+@@ -262,31 +303,57 @@
                  return round(px, 2), round(py, 2)
          return None
  
@@ -94,14 +94,22 @@
      def block(self, x, y, r=0.25):
          """Treat a spot as an obstacle for a while (something the dog ran into that isn't on the map)."""
          with self.lock:
-@@ -274,19 +320,37 @@
+             self.blocks.append((time.time() + BLOCK_S, round(x, 2), round(y, 2), r))
+ 
+-    def plan(self, sx, sy, gx, gy):
++    def plan(self, sx, sy, gx, gy, fallback=True):
+         """Route from (sx, sy) to (gx, gy) in map metres. Returns {"path": [[x, y], ...], "length_m",
+         "goal": [x, y] actually used} or {"error": reason}."""
+         with self.lock:
              self._grid()
              if self.occ is None:
                  return {"error": "no map"}
 -            for rr in (ROBOT_R, ROBOT_R_TIGHT, ROBOT_R_SQUEEZE):
 -                out = self._plan(sx, sy, gx, gy, rr)
 +            first = None
-+            for t in range(len(FALLBACK_TIERS) if self.live is not None or self.blocks else 1):
++            # fallback=False (the dog is lost): no fallback tiers and no trail, a wrong pose must not get a route
++            trail, self.trail = self.trail, (self.trail if fallback else [])
++            for t in range(len(FALLBACK_TIERS) if fallback and (self.live is not None or self.blocks) else 1):
 +                if t:
 +                    self._set_tier(t)
 +                for rr in (ROBOT_R, ROBOT_R_TIGHT, ROBOT_R_SQUEEZE):
@@ -121,7 +129,8 @@
                      break
 +            if self.tier:
 +                self._set_tier(0)
-+            if "path" not in out and SNAP_REACHABLE:
++            self.trail = trail
++            if "path" not in out and SNAP_REACHABLE and fallback:
 +                # still nothing: drive to the reachable spot nearest the goal (the live view there may open it up)
 +                out = self._plan(sx, sy, gx, gy, ROBOT_R_TIGHT, snap=True)
 +                if "path" in out:
@@ -138,7 +147,7 @@
          g = self._nearest_free(gx, gy, GOAL_SNAP_M, rr)
          if g is None:
              return {"error": f"no open floor within {GOAL_SNAP_M} m of the goal"}
-@@ -308,7 +372,17 @@
+@@ -308,7 +375,17 @@
          free = self.dist >= rr
          if rr < ROBOT_R_TIGHT:      # squeeze: only away from the dog, where the map is all we know
              yy, xx = np.mgrid[0:free.shape[0], 0:free.shape[1]]
@@ -157,7 +166,7 @@
          # the dog may be standing close to something: let it leave through any cell it can reach
          # within half a metre, even if that cell is tighter than rr
          start_ok = self.dist >= min(rr, 0.12)
-@@ -340,6 +414,16 @@
+@@ -340,6 +417,16 @@
                      best[nr, nc] = nd
                      prev[nr, nc] = r * W + c
                      heapq.heappush(heap, (nd + math.hypot(gr - nr, gc - nc), nd, nr, nc))

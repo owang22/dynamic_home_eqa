@@ -1,0 +1,6260 @@
+{
+ "generated": "2026-10-25T02:28:09.22-0700",
+ "n_cases": 70,
+ "cases": [
+  {
+   "id": "E01",
+   "kind": "nav_failure",
+   "t_start": {
+    "iso": "2026-10-23T13:34:02.53-0700",
+    "epoch": 1792787642.53
+   },
+   "t_end": {
+    "iso": "2026-10-23T13:34:02.53-0700",
+    "epoch": 1792787642.53
+   },
+   "client": null,
+   "call": null,
+   "call_note": "the failure log does not record client or call; a record is written by any failed planner.plan() with a live view (go_to or GET /nav/plan preview)",
+   "args": {
+    "goal_xy": [
+     -0.83,
+     -3.7
+    ],
+    "place_guess": null,
+    "place_guess_dist_m": null,
+    "note": "goal as passed to plan() and logged; on a go_to replan this is the goal already snapped by the first plan. place_guess = saved place within 0.4 m in the current places file (inferred)"
+   },
+   "result": null,
+   "planner_error": "no route: the goal is not connected to where the robot is on the map",
+   "result_note": "go_to returns no_route if this was its first plan, blocked ('no other route') after a replan; which one is not logged",
+   "why": {
+    "saved_map_has_route": true,
+    "cause": "live lidar or temporary blocks",
+    "live_cleared_n": 130,
+    "blocks": [],
+    "live_robot": [
+     -0.2,
+     -0.46
+    ],
+    "live_new_n": 251
+   },
+   "n_records": 1,
+   "record_ids": [
+    0
+   ],
+   "distinct_goals": [
+    [
+     -0.83,
+     -3.7
+    ]
+   ],
+   "sensor": {
+    "map_pose_logged": [
+     -0.2,
+     -0.46
+    ],
+    "poselog": null,
+    "loc_fit": null,
+    "track_fit": null,
+    "lost_flag": null,
+    "loc_note": "fit/track fit/lost are not in the Z690 logs (lost flag added 10-25 01:20); cheetah's logger reported track fit 0.44-0.59 from 10-24 16:23",
+    "obstacle_ranges": null,
+    "live_new_count": 251,
+    "live_new_count_range": [
+     251,
+     251
+    ],
+    "live_cleared_count": 130,
+    "blocks_count": 0,
+    "start_clearance_saved_map_m": 0.42,
+    "goal_clearance_saved_map_m": 0.14,
+    "saved_map": "lab_20261019_165417.grid.npz",
+    "planner_era": "pre 10-23 19:00 (no speck filter, no squeeze)"
+   },
+   "true_cause": "obsolete map + localization (10-19 map)",
+   "mechanism": "On the old 10-19 map, 251 live cells (77% along mapped walls) closed the way: the live view and the map disagreed, i.e. the pose or the old map was off.",
+   "evidence": [
+    "diag.jsonl records [0]",
+    "results/replay_results.jsonl records [0]",
+    "live_new count 251, wall-hug fraction 0.77",
+    "board #42: old-map line-ups were often 1-3 m off"
+   ],
+   "confidence": "low",
+   "confidence_why": "no pose log before 14:29 on 10-23; the old planner version (live-new radius) is unknown",
+   "fixed_by": "n/a: map replaced",
+   "replay": {
+    "as_logged_fails": true,
+    "current_plans": false,
+    "proto_C_plans": true,
+    "in_lost_window": false
+   },
+   "figure": "figs/episodes/E01.png",
+   "detail_figure": "figs/00_old_map_mislocalized.png"
+  },
+  {
+   "id": "E02",
+   "kind": "nav_failure",
+   "t_start": {
+    "iso": "2026-10-23T14:45:00.75-0700",
+    "epoch": 1792791900.75
+   },
+   "t_end": {
+    "iso": "2026-10-23T14:45:00.75-0700",
+    "epoch": 1792791900.75
+   },
+   "client": null,
+   "call": null,
+   "call_note": "the failure log does not record client or call; a record is written by any failed planner.plan() with a live view (go_to or GET /nav/plan preview)",
+   "args": {
+    "goal_xy": [
+     -0.4,
+     3.18
+    ],
+    "place_guess": null,
+    "place_guess_dist_m": null,
+    "note": "goal as passed to plan() and logged; on a go_to replan this is the goal already snapped by the first plan. place_guess = saved place within 0.4 m in the current places file (inferred)"
+   },
+   "result": null,
+   "planner_error": "no route: the goal is not connected to where the robot is on the map",
+   "result_note": "go_to returns no_route if this was its first plan, blocked ('no other route') after a replan; which one is not logged",
+   "why": {
+    "saved_map_has_route": false,
+    "cause": "saved map",
+    "live_cleared_n": 553,
+    "blocks": [],
+    "live_robot": [
+     1.4,
+     0.81
+    ],
+    "live_new_n": 4
+   },
+   "n_records": 1,
+   "record_ids": [
+    1
+   ],
+   "distinct_goals": [
+    [
+     -0.4,
+     3.18
+    ]
+   ],
+   "sensor": {
+    "map_pose_logged": [
+     1.4,
+     0.81
+    ],
+    "poselog": {
+     "t": 1792791900.79,
+     "map": [
+      1.396,
+      0.806,
+      -2.22
+     ],
+     "odom": [
+      -1.431,
+      0.431,
+      0.101
+     ],
+     "T": [
+      0.10494,
+      0.05316,
+      3.9619
+     ],
+     "mapping": false
+    },
+    "loc_fit": null,
+    "track_fit": null,
+    "lost_flag": null,
+    "loc_note": "fit/track fit/lost are not in the Z690 logs (lost flag added 10-25 01:20); cheetah's logger reported track fit 0.44-0.59 from 10-24 16:23",
+    "obstacle_ranges": null,
+    "live_new_count": 4,
+    "live_new_count_range": [
+     4,
+     4
+    ],
+    "live_cleared_count": 553,
+    "blocks_count": 0,
+    "start_clearance_saved_map_m": 0.5,
+    "goal_clearance_saved_map_m": 0.22,
+    "saved_map": "lab_20261023_144422.grid.npz",
+    "planner_era": "pre 10-23 19:00 (no speck filter, no squeeze)"
+   },
+   "true_cause": "obsolete map (14:44 unstraightened save)",
+   "mechanism": "Planned on the map saved 40 s earlier from the drifted 14:31-14:44 mapping drive (pre-straightening); that map was replaced at 15:15.",
+   "evidence": [
+    "diag.jsonl records [1]",
+    "results/replay_results.jsonl records [1]",
+    "map history: history/lab_20261023_144422 saved 14:44:22, lab.grid.npz loaded 15:15:52 (board #42)",
+    "replay reproduces the failure: False"
+   ],
+   "confidence": "low",
+   "confidence_why": "map in memory at 14:45 is inferred from file times; replay does NOT reproduce it, so the in-memory map probably differed",
+   "fixed_by": "n/a: map replaced 10-23 15:15",
+   "replay": {
+    "as_logged_fails": false,
+    "current_plans": true,
+    "proto_C_plans": true,
+    "in_lost_window": false
+   },
+   "figure": "figs/episodes/E02.png",
+   "detail_figure": null
+  },
+  {
+   "id": "E03",
+   "kind": "nav_failure",
+   "t_start": {
+    "iso": "2026-10-23T14:45:00.77-0700",
+    "epoch": 1792791900.77
+   },
+   "t_end": {
+    "iso": "2026-10-23T14:45:00.77-0700",
+    "epoch": 1792791900.77
+   },
+   "client": null,
+   "call": null,
+   "call_note": "the failure log does not record client or call; a record is written by any failed planner.plan() with a live view (go_to or GET /nav/plan preview)",
+   "args": {
+    "goal_xy": [
+     -1.4,
+     3.22
+    ],
+    "place_guess": null,
+    "place_guess_dist_m": null,
+    "note": "goal as passed to plan() and logged; on a go_to replan this is the goal already snapped by the first plan. place_guess = saved place within 0.4 m in the current places file (inferred)"
+   },
+   "result": null,
+   "planner_error": "no route: the goal is not connected to where the robot is on the map",
+   "result_note": "go_to returns no_route if this was its first plan, blocked ('no other route') after a replan; which one is not logged",
+   "why": {
+    "saved_map_has_route": false,
+    "cause": "saved map",
+    "live_cleared_n": 553,
+    "blocks": [],
+    "live_robot": [
+     1.4,
+     0.81
+    ],
+    "live_new_n": 4
+   },
+   "n_records": 1,
+   "record_ids": [
+    2
+   ],
+   "distinct_goals": [
+    [
+     -1.4,
+     3.22
+    ]
+   ],
+   "sensor": {
+    "map_pose_logged": [
+     1.4,
+     0.81
+    ],
+    "poselog": {
+     "t": 1792791900.79,
+     "map": [
+      1.396,
+      0.806,
+      -2.22
+     ],
+     "odom": [
+      -1.431,
+      0.431,
+      0.101
+     ],
+     "T": [
+      0.10494,
+      0.05316,
+      3.9619
+     ],
+     "mapping": false
+    },
+    "loc_fit": null,
+    "track_fit": null,
+    "lost_flag": null,
+    "loc_note": "fit/track fit/lost are not in the Z690 logs (lost flag added 10-25 01:20); cheetah's logger reported track fit 0.44-0.59 from 10-24 16:23",
+    "obstacle_ranges": null,
+    "live_new_count": 4,
+    "live_new_count_range": [
+     4,
+     4
+    ],
+    "live_cleared_count": 553,
+    "blocks_count": 0,
+    "start_clearance_saved_map_m": 0.5,
+    "goal_clearance_saved_map_m": 0.0,
+    "saved_map": "lab_20261023_144422.grid.npz",
+    "planner_era": "pre 10-23 19:00 (no speck filter, no squeeze)"
+   },
+   "true_cause": "obsolete map (14:44 unstraightened save)",
+   "mechanism": "Planned on the map saved 40 s earlier from the drifted 14:31-14:44 mapping drive (pre-straightening); that map was replaced at 15:15.",
+   "evidence": [
+    "diag.jsonl records [2]",
+    "results/replay_results.jsonl records [2]",
+    "map history: history/lab_20261023_144422 saved 14:44:22, lab.grid.npz loaded 15:15:52 (board #42)",
+    "replay reproduces the failure: False"
+   ],
+   "confidence": "low",
+   "confidence_why": "map in memory at 14:45 is inferred from file times; replay does NOT reproduce it, so the in-memory map probably differed",
+   "fixed_by": "n/a: map replaced 10-23 15:15",
+   "replay": {
+    "as_logged_fails": false,
+    "current_plans": true,
+    "proto_C_plans": true,
+    "in_lost_window": false
+   },
+   "figure": "figs/episodes/E03.png",
+   "detail_figure": null
+  },
+  {
+   "id": "E04",
+   "kind": "nav_failure",
+   "t_start": {
+    "iso": "2026-10-23T14:45:00.80-0700",
+    "epoch": 1792791900.8
+   },
+   "t_end": {
+    "iso": "2026-10-23T14:45:00.80-0700",
+    "epoch": 1792791900.8
+   },
+   "client": null,
+   "call": null,
+   "call_note": "the failure log does not record client or call; a record is written by any failed planner.plan() with a live view (go_to or GET /nav/plan preview)",
+   "args": {
+    "goal_xy": [
+     2.15,
+     2.66
+    ],
+    "place_guess": null,
+    "place_guess_dist_m": null,
+    "note": "goal as passed to plan() and logged; on a go_to replan this is the goal already snapped by the first plan. place_guess = saved place within 0.4 m in the current places file (inferred)"
+   },
+   "result": null,
+   "planner_error": "no route: the goal is not connected to where the robot is on the map",
+   "result_note": "go_to returns no_route if this was its first plan, blocked ('no other route') after a replan; which one is not logged",
+   "why": {
+    "saved_map_has_route": false,
+    "cause": "saved map",
+    "live_cleared_n": 553,
+    "blocks": [],
+    "live_robot": [
+     1.4,
+     0.81
+    ],
+    "live_new_n": 4
+   },
+   "n_records": 1,
+   "record_ids": [
+    3
+   ],
+   "distinct_goals": [
+    [
+     2.15,
+     2.66
+    ]
+   ],
+   "sensor": {
+    "map_pose_logged": [
+     1.4,
+     0.81
+    ],
+    "poselog": {
+     "t": 1792791900.79,
+     "map": [
+      1.396,
+      0.806,
+      -2.22
+     ],
+     "odom": [
+      -1.431,
+      0.431,
+      0.101
+     ],
+     "T": [
+      0.10494,
+      0.05316,
+      3.9619
+     ],
+     "mapping": false
+    },
+    "loc_fit": null,
+    "track_fit": null,
+    "lost_flag": null,
+    "loc_note": "fit/track fit/lost are not in the Z690 logs (lost flag added 10-25 01:20); cheetah's logger reported track fit 0.44-0.59 from 10-24 16:23",
+    "obstacle_ranges": null,
+    "live_new_count": 4,
+    "live_new_count_range": [
+     4,
+     4
+    ],
+    "live_cleared_count": 553,
+    "blocks_count": 0,
+    "start_clearance_saved_map_m": 0.5,
+    "goal_clearance_saved_map_m": 0.0,
+    "saved_map": "lab_20261023_144422.grid.npz",
+    "planner_era": "pre 10-23 19:00 (no speck filter, no squeeze)"
+   },
+   "true_cause": "obsolete map (14:44 unstraightened save)",
+   "mechanism": "Planned on the map saved 40 s earlier from the drifted 14:31-14:44 mapping drive (pre-straightening); that map was replaced at 15:15.",
+   "evidence": [
+    "diag.jsonl records [3]",
+    "results/replay_results.jsonl records [3]",
+    "map history: history/lab_20261023_144422 saved 14:44:22, lab.grid.npz loaded 15:15:52 (board #42)",
+    "replay reproduces the failure: True"
+   ],
+   "confidence": "medium",
+   "confidence_why": "map in memory at 14:45 is inferred from file times; replay reproduces",
+   "fixed_by": "n/a: map replaced 10-23 15:15",
+   "replay": {
+    "as_logged_fails": true,
+    "current_plans": true,
+    "proto_C_plans": true,
+    "in_lost_window": false
+   },
+   "figure": "figs/episodes/E04.png",
+   "detail_figure": null
+  },
+  {
+   "id": "E05",
+   "kind": "nav_failure",
+   "t_start": {
+    "iso": "2026-10-23T14:45:00.82-0700",
+    "epoch": 1792791900.82
+   },
+   "t_end": {
+    "iso": "2026-10-23T14:45:00.82-0700",
+    "epoch": 1792791900.82
+   },
+   "client": null,
+   "call": null,
+   "call_note": "the failure log does not record client or call; a record is written by any failed planner.plan() with a live view (go_to or GET /nav/plan preview)",
+   "args": {
+    "goal_xy": [
+     -0.83,
+     -3.7
+    ],
+    "place_guess": null,
+    "place_guess_dist_m": null,
+    "note": "goal as passed to plan() and logged; on a go_to replan this is the goal already snapped by the first plan. place_guess = saved place within 0.4 m in the current places file (inferred)"
+   },
+   "result": null,
+   "planner_error": "no route: the goal is not connected to where the robot is on the map",
+   "result_note": "go_to returns no_route if this was its first plan, blocked ('no other route') after a replan; which one is not logged",
+   "why": {
+    "saved_map_has_route": false,
+    "cause": "saved map",
+    "live_cleared_n": 553,
+    "blocks": [],
+    "live_robot": [
+     1.4,
+     0.81
+    ],
+    "live_new_n": 4
+   },
+   "n_records": 1,
+   "record_ids": [
+    4
+   ],
+   "distinct_goals": [
+    [
+     -0.83,
+     -3.7
+    ]
+   ],
+   "sensor": {
+    "map_pose_logged": [
+     1.4,
+     0.81
+    ],
+    "poselog": {
+     "t": 1792791900.79,
+     "map": [
+      1.396,
+      0.806,
+      -2.22
+     ],
+     "odom": [
+      -1.431,
+      0.431,
+      0.101
+     ],
+     "T": [
+      0.10494,
+      0.05316,
+      3.9619
+     ],
+     "mapping": false
+    },
+    "loc_fit": null,
+    "track_fit": null,
+    "lost_flag": null,
+    "loc_note": "fit/track fit/lost are not in the Z690 logs (lost flag added 10-25 01:20); cheetah's logger reported track fit 0.44-0.59 from 10-24 16:23",
+    "obstacle_ranges": null,
+    "live_new_count": 4,
+    "live_new_count_range": [
+     4,
+     4
+    ],
+    "live_cleared_count": 553,
+    "blocks_count": 0,
+    "start_clearance_saved_map_m": 0.5,
+    "goal_clearance_saved_map_m": 0.1,
+    "saved_map": "lab_20261023_144422.grid.npz",
+    "planner_era": "pre 10-23 19:00 (no speck filter, no squeeze)"
+   },
+   "true_cause": "obsolete map (14:44 unstraightened save)",
+   "mechanism": "Planned on the map saved 40 s earlier from the drifted 14:31-14:44 mapping drive (pre-straightening); that map was replaced at 15:15.",
+   "evidence": [
+    "diag.jsonl records [4]",
+    "results/replay_results.jsonl records [4]",
+    "map history: history/lab_20261023_144422 saved 14:44:22, lab.grid.npz loaded 15:15:52 (board #42)",
+    "replay reproduces the failure: True"
+   ],
+   "confidence": "medium",
+   "confidence_why": "map in memory at 14:45 is inferred from file times; replay reproduces",
+   "fixed_by": "n/a: map replaced 10-23 15:15",
+   "replay": {
+    "as_logged_fails": true,
+    "current_plans": false,
+    "proto_C_plans": false,
+    "in_lost_window": false
+   },
+   "figure": "figs/episodes/E05.png",
+   "detail_figure": null
+  },
+  {
+   "id": "E06",
+   "kind": "nav_failure",
+   "t_start": {
+    "iso": "2026-10-23T14:45:00.85-0700",
+    "epoch": 1792791900.85
+   },
+   "t_end": {
+    "iso": "2026-10-23T14:45:00.85-0700",
+    "epoch": 1792791900.85
+   },
+   "client": null,
+   "call": null,
+   "call_note": "the failure log does not record client or call; a record is written by any failed planner.plan() with a live view (go_to or GET /nav/plan preview)",
+   "args": {
+    "goal_xy": [
+     -5.22,
+     3.89
+    ],
+    "place_guess": null,
+    "place_guess_dist_m": null,
+    "note": "goal as passed to plan() and logged; on a go_to replan this is the goal already snapped by the first plan. place_guess = saved place within 0.4 m in the current places file (inferred)"
+   },
+   "result": null,
+   "planner_error": "no open floor within 1.2 m of the goal",
+   "result_note": "go_to returns no_route if this was its first plan, blocked ('no other route') after a replan; which one is not logged",
+   "why": {
+    "saved_map_has_route": false,
+    "cause": "saved map",
+    "live_cleared_n": 553,
+    "blocks": [],
+    "live_robot": [
+     1.4,
+     0.81
+    ],
+    "live_new_n": 4
+   },
+   "n_records": 1,
+   "record_ids": [
+    5
+   ],
+   "distinct_goals": [
+    [
+     -5.22,
+     3.89
+    ]
+   ],
+   "sensor": {
+    "map_pose_logged": [
+     1.4,
+     0.81
+    ],
+    "poselog": {
+     "t": 1792791900.79,
+     "map": [
+      1.396,
+      0.806,
+      -2.22
+     ],
+     "odom": [
+      -1.431,
+      0.431,
+      0.101
+     ],
+     "T": [
+      0.10494,
+      0.05316,
+      3.9619
+     ],
+     "mapping": false
+    },
+    "loc_fit": null,
+    "track_fit": null,
+    "lost_flag": null,
+    "loc_note": "fit/track fit/lost are not in the Z690 logs (lost flag added 10-25 01:20); cheetah's logger reported track fit 0.44-0.59 from 10-24 16:23",
+    "obstacle_ranges": null,
+    "live_new_count": 4,
+    "live_new_count_range": [
+     4,
+     4
+    ],
+    "live_cleared_count": 553,
+    "blocks_count": 0,
+    "start_clearance_saved_map_m": 0.5,
+    "goal_clearance_saved_map_m": 0.0,
+    "saved_map": "lab_20261023_144422.grid.npz",
+    "planner_era": "pre 10-23 19:00 (no speck filter, no squeeze)"
+   },
+   "true_cause": "obsolete map (14:44 unstraightened save)",
+   "mechanism": "Planned on the map saved 40 s earlier from the drifted 14:31-14:44 mapping drive (pre-straightening); that map was replaced at 15:15.",
+   "evidence": [
+    "diag.jsonl records [5]",
+    "results/replay_results.jsonl records [5]",
+    "map history: history/lab_20261023_144422 saved 14:44:22, lab.grid.npz loaded 15:15:52 (board #42)",
+    "replay reproduces the failure: True"
+   ],
+   "confidence": "medium",
+   "confidence_why": "map in memory at 14:45 is inferred from file times; replay reproduces",
+   "fixed_by": "n/a: map replaced 10-23 15:15",
+   "replay": {
+    "as_logged_fails": true,
+    "current_plans": true,
+    "proto_C_plans": true,
+    "in_lost_window": false
+   },
+   "figure": "figs/episodes/E06.png",
+   "detail_figure": null
+  },
+  {
+   "id": "E07",
+   "kind": "nav_failure",
+   "t_start": {
+    "iso": "2026-10-23T14:45:00.88-0700",
+    "epoch": 1792791900.88
+   },
+   "t_end": {
+    "iso": "2026-10-23T14:45:00.88-0700",
+    "epoch": 1792791900.88
+   },
+   "client": null,
+   "call": null,
+   "call_note": "the failure log does not record client or call; a record is written by any failed planner.plan() with a live view (go_to or GET /nav/plan preview)",
+   "args": {
+    "goal_xy": [
+     -0.51,
+     -0.85
+    ],
+    "place_guess": null,
+    "place_guess_dist_m": null,
+    "note": "goal as passed to plan() and logged; on a go_to replan this is the goal already snapped by the first plan. place_guess = saved place within 0.4 m in the current places file (inferred)"
+   },
+   "result": null,
+   "planner_error": "no route: the goal is not connected to where the robot is on the map",
+   "result_note": "go_to returns no_route if this was its first plan, blocked ('no other route') after a replan; which one is not logged",
+   "why": {
+    "saved_map_has_route": false,
+    "cause": "saved map",
+    "live_cleared_n": 553,
+    "blocks": [],
+    "live_robot": [
+     1.4,
+     0.81
+    ],
+    "live_new_n": 4
+   },
+   "n_records": 1,
+   "record_ids": [
+    6
+   ],
+   "distinct_goals": [
+    [
+     -0.51,
+     -0.85
+    ]
+   ],
+   "sensor": {
+    "map_pose_logged": [
+     1.4,
+     0.81
+    ],
+    "poselog": {
+     "t": 1792791900.79,
+     "map": [
+      1.396,
+      0.806,
+      -2.22
+     ],
+     "odom": [
+      -1.431,
+      0.431,
+      0.101
+     ],
+     "T": [
+      0.10494,
+      0.05316,
+      3.9619
+     ],
+     "mapping": false
+    },
+    "loc_fit": null,
+    "track_fit": null,
+    "lost_flag": null,
+    "loc_note": "fit/track fit/lost are not in the Z690 logs (lost flag added 10-25 01:20); cheetah's logger reported track fit 0.44-0.59 from 10-24 16:23",
+    "obstacle_ranges": null,
+    "live_new_count": 4,
+    "live_new_count_range": [
+     4,
+     4
+    ],
+    "live_cleared_count": 553,
+    "blocks_count": 0,
+    "start_clearance_saved_map_m": 0.5,
+    "goal_clearance_saved_map_m": 0.0,
+    "saved_map": "lab_20261023_144422.grid.npz",
+    "planner_era": "pre 10-23 19:00 (no speck filter, no squeeze)"
+   },
+   "true_cause": "obsolete map (14:44 unstraightened save)",
+   "mechanism": "Planned on the map saved 40 s earlier from the drifted 14:31-14:44 mapping drive (pre-straightening); that map was replaced at 15:15.",
+   "evidence": [
+    "diag.jsonl records [6]",
+    "results/replay_results.jsonl records [6]",
+    "map history: history/lab_20261023_144422 saved 14:44:22, lab.grid.npz loaded 15:15:52 (board #42)",
+    "replay reproduces the failure: True"
+   ],
+   "confidence": "medium",
+   "confidence_why": "map in memory at 14:45 is inferred from file times; replay reproduces",
+   "fixed_by": "n/a: map replaced 10-23 15:15",
+   "replay": {
+    "as_logged_fails": true,
+    "current_plans": false,
+    "proto_C_plans": false,
+    "in_lost_window": false
+   },
+   "figure": "figs/episodes/E07.png",
+   "detail_figure": null
+  },
+  {
+   "id": "E08",
+   "kind": "nav_failure",
+   "t_start": {
+    "iso": "2026-10-23T14:46:11.53-0700",
+    "epoch": 1792791971.53
+   },
+   "t_end": {
+    "iso": "2026-10-23T14:46:11.53-0700",
+    "epoch": 1792791971.53
+   },
+   "client": null,
+   "call": null,
+   "call_note": "the failure log does not record client or call; a record is written by any failed planner.plan() with a live view (go_to or GET /nav/plan preview)",
+   "args": {
+    "goal_xy": [
+     2.15,
+     2.66
+    ],
+    "place_guess": null,
+    "place_guess_dist_m": null,
+    "note": "goal as passed to plan() and logged; on a go_to replan this is the goal already snapped by the first plan. place_guess = saved place within 0.4 m in the current places file (inferred)"
+   },
+   "result": null,
+   "planner_error": "no route: the goal is not connected to where the robot is on the map",
+   "result_note": "go_to returns no_route if this was its first plan, blocked ('no other route') after a replan; which one is not logged",
+   "why": {
+    "saved_map_has_route": false,
+    "cause": "saved map",
+    "live_cleared_n": 57,
+    "blocks": [],
+    "live_robot": [
+     1.4,
+     0.81
+    ],
+    "live_new_n": 7
+   },
+   "n_records": 1,
+   "record_ids": [
+    7
+   ],
+   "distinct_goals": [
+    [
+     2.15,
+     2.66
+    ]
+   ],
+   "sensor": {
+    "map_pose_logged": [
+     1.4,
+     0.81
+    ],
+    "poselog": {
+     "t": 1792791971.526,
+     "map": [
+      1.396,
+      0.806,
+      -2.183
+     ],
+     "odom": [
+      -1.431,
+      0.431,
+      0.138
+     ],
+     "T": [
+      0.10494,
+      0.05316,
+      3.9619
+     ],
+     "mapping": false
+    },
+    "loc_fit": null,
+    "track_fit": null,
+    "lost_flag": null,
+    "loc_note": "fit/track fit/lost are not in the Z690 logs (lost flag added 10-25 01:20); cheetah's logger reported track fit 0.44-0.59 from 10-24 16:23",
+    "obstacle_ranges": null,
+    "live_new_count": 7,
+    "live_new_count_range": [
+     7,
+     7
+    ],
+    "live_cleared_count": 57,
+    "blocks_count": 0,
+    "start_clearance_saved_map_m": 0.5,
+    "goal_clearance_saved_map_m": 0.0,
+    "saved_map": "lab_20261023_144422.grid.npz",
+    "planner_era": "pre 10-23 19:00 (no speck filter, no squeeze)"
+   },
+   "true_cause": "obsolete map (14:44 unstraightened save)",
+   "mechanism": "Planned on the map saved 40 s earlier from the drifted 14:31-14:44 mapping drive (pre-straightening); that map was replaced at 15:15.",
+   "evidence": [
+    "diag.jsonl records [7]",
+    "results/replay_results.jsonl records [7]",
+    "map history: history/lab_20261023_144422 saved 14:44:22, lab.grid.npz loaded 15:15:52 (board #42)",
+    "replay reproduces the failure: True"
+   ],
+   "confidence": "medium",
+   "confidence_why": "map in memory at 14:45 is inferred from file times; replay reproduces",
+   "fixed_by": "n/a: map replaced 10-23 15:15",
+   "replay": {
+    "as_logged_fails": true,
+    "current_plans": true,
+    "proto_C_plans": true,
+    "in_lost_window": false
+   },
+   "figure": "figs/episodes/E08.png",
+   "detail_figure": null
+  },
+  {
+   "id": "E09",
+   "kind": "nav_failure",
+   "t_start": {
+    "iso": "2026-10-23T14:46:11.60-0700",
+    "epoch": 1792791971.6
+   },
+   "t_end": {
+    "iso": "2026-10-23T14:46:11.60-0700",
+    "epoch": 1792791971.6
+   },
+   "client": null,
+   "call": null,
+   "call_note": "the failure log does not record client or call; a record is written by any failed planner.plan() with a live view (go_to or GET /nav/plan preview)",
+   "args": {
+    "goal_xy": [
+     -0.83,
+     -3.7
+    ],
+    "place_guess": null,
+    "place_guess_dist_m": null,
+    "note": "goal as passed to plan() and logged; on a go_to replan this is the goal already snapped by the first plan. place_guess = saved place within 0.4 m in the current places file (inferred)"
+   },
+   "result": null,
+   "planner_error": "no route: the goal is not connected to where the robot is on the map",
+   "result_note": "go_to returns no_route if this was its first plan, blocked ('no other route') after a replan; which one is not logged",
+   "why": {
+    "saved_map_has_route": false,
+    "cause": "saved map",
+    "live_cleared_n": 57,
+    "blocks": [],
+    "live_robot": [
+     1.4,
+     0.81
+    ],
+    "live_new_n": 7
+   },
+   "n_records": 1,
+   "record_ids": [
+    8
+   ],
+   "distinct_goals": [
+    [
+     -0.83,
+     -3.7
+    ]
+   ],
+   "sensor": {
+    "map_pose_logged": [
+     1.4,
+     0.81
+    ],
+    "poselog": {
+     "t": 1792791971.526,
+     "map": [
+      1.396,
+      0.806,
+      -2.183
+     ],
+     "odom": [
+      -1.431,
+      0.431,
+      0.138
+     ],
+     "T": [
+      0.10494,
+      0.05316,
+      3.9619
+     ],
+     "mapping": false
+    },
+    "loc_fit": null,
+    "track_fit": null,
+    "lost_flag": null,
+    "loc_note": "fit/track fit/lost are not in the Z690 logs (lost flag added 10-25 01:20); cheetah's logger reported track fit 0.44-0.59 from 10-24 16:23",
+    "obstacle_ranges": null,
+    "live_new_count": 7,
+    "live_new_count_range": [
+     7,
+     7
+    ],
+    "live_cleared_count": 57,
+    "blocks_count": 0,
+    "start_clearance_saved_map_m": 0.5,
+    "goal_clearance_saved_map_m": 0.1,
+    "saved_map": "lab_20261023_144422.grid.npz",
+    "planner_era": "pre 10-23 19:00 (no speck filter, no squeeze)"
+   },
+   "true_cause": "obsolete map (14:44 unstraightened save)",
+   "mechanism": "Planned on the map saved 40 s earlier from the drifted 14:31-14:44 mapping drive (pre-straightening); that map was replaced at 15:15.",
+   "evidence": [
+    "diag.jsonl records [8]",
+    "results/replay_results.jsonl records [8]",
+    "map history: history/lab_20261023_144422 saved 14:44:22, lab.grid.npz loaded 15:15:52 (board #42)",
+    "replay reproduces the failure: True"
+   ],
+   "confidence": "medium",
+   "confidence_why": "map in memory at 14:45 is inferred from file times; replay reproduces",
+   "fixed_by": "n/a: map replaced 10-23 15:15",
+   "replay": {
+    "as_logged_fails": true,
+    "current_plans": false,
+    "proto_C_plans": false,
+    "in_lost_window": false
+   },
+   "figure": "figs/episodes/E09.png",
+   "detail_figure": null
+  },
+  {
+   "id": "E10",
+   "kind": "nav_failure",
+   "t_start": {
+    "iso": "2026-10-23T15:59:14.65-0700",
+    "epoch": 1792796354.65
+   },
+   "t_end": {
+    "iso": "2026-10-23T15:59:14.65-0700",
+    "epoch": 1792796354.65
+   },
+   "client": null,
+   "call": null,
+   "call_note": "the failure log does not record client or call; a record is written by any failed planner.plan() with a live view (go_to or GET /nav/plan preview)",
+   "args": {
+    "goal_xy": [
+     1.73,
+     2.62
+    ],
+    "place_guess": "desk_joseph",
+    "place_guess_dist_m": 0.0,
+    "note": "goal as passed to plan() and logged; on a go_to replan this is the goal already snapped by the first plan. place_guess = saved place within 0.4 m in the current places file (inferred)"
+   },
+   "result": null,
+   "planner_error": "no route: the goal is not connected to where the robot is on the map",
+   "result_note": "go_to returns no_route if this was its first plan, blocked ('no other route') after a replan; which one is not logged",
+   "why": {
+    "saved_map_has_route": false,
+    "cause": "saved map",
+    "live_cleared_n": 253,
+    "blocks": [],
+    "live_robot": [
+     0.89,
+     -0.28
+    ],
+    "live_new_n": 10
+   },
+   "n_records": 1,
+   "record_ids": [
+    9
+   ],
+   "distinct_goals": [
+    [
+     1.73,
+     2.62
+    ]
+   ],
+   "sensor": {
+    "map_pose_logged": [
+     0.89,
+     -0.28
+    ],
+    "poselog": {
+     "t": 1792796354.547,
+     "map": [
+      0.886,
+      -0.279,
+      -2.842
+     ],
+     "odom": [
+      -0.006,
+      0.037,
+      0.097
+     ],
+     "T": [
+      0.87302,
+      -0.24361,
+      -2.93913
+     ],
+     "mapping": false
+    },
+    "loc_fit": null,
+    "track_fit": null,
+    "lost_flag": null,
+    "loc_note": "fit/track fit/lost are not in the Z690 logs (lost flag added 10-25 01:20); cheetah's logger reported track fit 0.44-0.59 from 10-24 16:23",
+    "obstacle_ranges": null,
+    "live_new_count": 10,
+    "live_new_count_range": [
+     10,
+     10
+    ],
+    "live_cleared_count": 253,
+    "blocks_count": 0,
+    "start_clearance_saved_map_m": 0.36,
+    "goal_clearance_saved_map_m": 0.22,
+    "saved_map": "lab.grid.npz",
+    "planner_era": "pre 10-23 19:00 (no speck filter, no squeeze)"
+   },
+   "true_cause": "narrow aisle on saved map (fixed 10-23 19:00)",
+   "mechanism": "On the saved map the widest route has only 0.14 m clearance (lidar-smear specks in the aisle), below the 0.20 m tight retry; the planner of the time had no speck filter and no squeeze retry.",
+   "evidence": [
+    "diag.jsonl records [9]",
+    "results/replay_results.jsonl records [9]",
+    "variants_check.py: logged saved_map_has_route matches a planner without speck filter",
+    "replay: as-logged planner fails, current planner plans",
+    "go2_nav.py mtime 2026-10-23 19:00:21"
+   ],
+   "confidence": "high",
+   "confidence_why": "replay reproduces the failure with the era's planner and the current planner plans it",
+   "fixed_by": "planner change 10-23 19:00 (speck filter + squeeze)",
+   "replay": {
+    "as_logged_fails": true,
+    "current_plans": true,
+    "proto_C_plans": true,
+    "in_lost_window": false
+   },
+   "figure": "figs/episodes/E10.png",
+   "detail_figure": "figs/09_narrow_aisle_era1.png"
+  },
+  {
+   "id": "E11",
+   "kind": "nav_failure",
+   "t_start": {
+    "iso": "2026-10-23T15:59:14.83-0700",
+    "epoch": 1792796354.83
+   },
+   "t_end": {
+    "iso": "2026-10-23T15:59:14.83-0700",
+    "epoch": 1792796354.83
+   },
+   "client": null,
+   "call": null,
+   "call_note": "the failure log does not record client or call; a record is written by any failed planner.plan() with a live view (go_to or GET /nav/plan preview)",
+   "args": {
+    "goal_xy": [
+     0.35,
+     3.97
+    ],
+    "place_guess": "workbench",
+    "place_guess_dist_m": 0.0,
+    "note": "goal as passed to plan() and logged; on a go_to replan this is the goal already snapped by the first plan. place_guess = saved place within 0.4 m in the current places file (inferred)"
+   },
+   "result": null,
+   "planner_error": "no route: the goal is not connected to where the robot is on the map",
+   "result_note": "go_to returns no_route if this was its first plan, blocked ('no other route') after a replan; which one is not logged",
+   "why": {
+    "saved_map_has_route": false,
+    "cause": "saved map",
+    "live_cleared_n": 253,
+    "blocks": [],
+    "live_robot": [
+     0.89,
+     -0.28
+    ],
+    "live_new_n": 10
+   },
+   "n_records": 1,
+   "record_ids": [
+    10
+   ],
+   "distinct_goals": [
+    [
+     0.35,
+     3.97
+    ]
+   ],
+   "sensor": {
+    "map_pose_logged": [
+     0.89,
+     -0.28
+    ],
+    "poselog": {
+     "t": 1792796354.937,
+     "map": [
+      0.886,
+      -0.279,
+      -2.842
+     ],
+     "odom": [
+      -0.006,
+      0.037,
+      0.097
+     ],
+     "T": [
+      0.87302,
+      -0.24361,
+      -2.93913
+     ],
+     "mapping": false
+    },
+    "loc_fit": null,
+    "track_fit": null,
+    "lost_flag": null,
+    "loc_note": "fit/track fit/lost are not in the Z690 logs (lost flag added 10-25 01:20); cheetah's logger reported track fit 0.44-0.59 from 10-24 16:23",
+    "obstacle_ranges": null,
+    "live_new_count": 10,
+    "live_new_count_range": [
+     10,
+     10
+    ],
+    "live_cleared_count": 253,
+    "blocks_count": 0,
+    "start_clearance_saved_map_m": 0.36,
+    "goal_clearance_saved_map_m": 0.42,
+    "saved_map": "lab.grid.npz",
+    "planner_era": "pre 10-23 19:00 (no speck filter, no squeeze)"
+   },
+   "true_cause": "narrow aisle on saved map (fixed 10-23 19:00)",
+   "mechanism": "On the saved map the widest route has only 0.14 m clearance (lidar-smear specks in the aisle), below the 0.20 m tight retry; the planner of the time had no speck filter and no squeeze retry.",
+   "evidence": [
+    "diag.jsonl records [10]",
+    "results/replay_results.jsonl records [10]",
+    "variants_check.py: logged saved_map_has_route matches a planner without speck filter",
+    "replay: as-logged planner fails, current planner plans",
+    "go2_nav.py mtime 2026-10-23 19:00:21"
+   ],
+   "confidence": "high",
+   "confidence_why": "replay reproduces the failure with the era's planner and the current planner plans it",
+   "fixed_by": "planner change 10-23 19:00 (speck filter + squeeze)",
+   "replay": {
+    "as_logged_fails": true,
+    "current_plans": true,
+    "proto_C_plans": true,
+    "in_lost_window": false
+   },
+   "figure": "figs/episodes/E11.png",
+   "detail_figure": null
+  },
+  {
+   "id": "E12",
+   "kind": "nav_failure",
+   "t_start": {
+    "iso": "2026-10-23T18:32:00.00-0700",
+    "epoch": 1792805520.0
+   },
+   "t_end": {
+    "iso": "2026-10-23T18:32:04.13-0700",
+    "epoch": 1792805524.13
+   },
+   "client": null,
+   "call": null,
+   "call_note": "the failure log does not record client or call; a record is written by any failed planner.plan() with a live view (go_to or GET /nav/plan preview)",
+   "args": {
+    "goal_xy": [
+     0.07,
+     -3.07
+    ],
+    "place_guess": "door_outside",
+    "place_guess_dist_m": 0.0,
+    "note": "goal as passed to plan() and logged; on a go_to replan this is the goal already snapped by the first plan. place_guess = saved place within 0.4 m in the current places file (inferred)"
+   },
+   "result": null,
+   "planner_error": "no route: the goal is not connected to where the robot is on the map",
+   "result_note": "go_to returns no_route if this was its first plan, blocked ('no other route') after a replan; which one is not logged",
+   "why": {
+    "saved_map_has_route": false,
+    "cause": "saved map",
+    "live_cleared_n": 290,
+    "blocks": [],
+    "live_robot": [
+     2.69,
+     0.58
+    ],
+    "live_new_n": 30
+   },
+   "n_records": 3,
+   "record_ids": [
+    11,
+    12,
+    13
+   ],
+   "distinct_goals": [
+    [
+     0.07,
+     -3.07
+    ]
+   ],
+   "sensor": {
+    "map_pose_logged": [
+     2.69,
+     0.58
+    ],
+    "poselog": {
+     "t": 1792805520.017,
+     "map": [
+      2.692,
+      0.578,
+      -1.647
+     ],
+     "odom": [
+      -0.879,
+      2.739,
+      -0.073
+     ],
+     "T": [
+      -0.04987,
+      -0.2911,
+      -1.57429
+     ],
+     "mapping": false
+    },
+    "loc_fit": null,
+    "track_fit": null,
+    "lost_flag": null,
+    "loc_note": "fit/track fit/lost are not in the Z690 logs (lost flag added 10-25 01:20); cheetah's logger reported track fit 0.44-0.59 from 10-24 16:23",
+    "obstacle_ranges": null,
+    "live_new_count": 30,
+    "live_new_count_range": [
+     29,
+     30
+    ],
+    "live_cleared_count": 290,
+    "blocks_count": 0,
+    "start_clearance_saved_map_m": 0.3,
+    "goal_clearance_saved_map_m": 0.36,
+    "saved_map": "lab.grid.npz",
+    "planner_era": "pre 10-23 19:00 (no speck filter, no squeeze)"
+   },
+   "true_cause": "narrow aisle on saved map (fixed 10-23 19:00)",
+   "mechanism": "On the saved map the widest route has only 0.14 m clearance (lidar-smear specks in the aisle), below the 0.20 m tight retry; the planner of the time had no speck filter and no squeeze retry.",
+   "evidence": [
+    "diag.jsonl records [11, 12, 13]",
+    "results/replay_results.jsonl records [11, 12, 13]",
+    "variants_check.py: logged saved_map_has_route matches a planner without speck filter",
+    "replay: as-logged planner fails, current planner plans",
+    "go2_nav.py mtime 2026-10-23 19:00:21"
+   ],
+   "confidence": "high",
+   "confidence_why": "replay reproduces the failure with the era's planner and the current planner plans it",
+   "fixed_by": "planner change 10-23 19:00 (speck filter + squeeze)",
+   "replay": {
+    "as_logged_fails": true,
+    "current_plans": true,
+    "proto_C_plans": true,
+    "in_lost_window": false
+   },
+   "figure": "figs/episodes/E12.png",
+   "detail_figure": null
+  },
+  {
+   "id": "E13",
+   "kind": "nav_failure",
+   "t_start": {
+    "iso": "2026-10-23T18:37:58.33-0700",
+    "epoch": 1792805878.33
+   },
+   "t_end": {
+    "iso": "2026-10-23T18:38:48.16-0700",
+    "epoch": 1792805928.16
+   },
+   "client": null,
+   "call": null,
+   "call_note": "the failure log does not record client or call; a record is written by any failed planner.plan() with a live view (go_to or GET /nav/plan preview)",
+   "args": {
+    "goal_xy": [
+     1.8,
+     2.8
+    ],
+    "place_guess": "desk_joseph",
+    "place_guess_dist_m": 0.19,
+    "note": "goal as passed to plan() and logged; on a go_to replan this is the goal already snapped by the first plan. place_guess = saved place within 0.4 m in the current places file (inferred)"
+   },
+   "result": null,
+   "planner_error": "no route: the goal is not connected to where the robot is on the map",
+   "result_note": "go_to returns no_route if this was its first plan, blocked ('no other route') after a replan; which one is not logged",
+   "why": {
+    "saved_map_has_route": false,
+    "cause": "saved map",
+    "live_cleared_n": 259,
+    "blocks": [
+     [
+      0.39,
+      -0.15,
+      0.15
+     ]
+    ],
+    "live_robot": [
+     0.95,
+     0.01
+    ],
+    "live_new_n": 21
+   },
+   "n_records": 6,
+   "record_ids": [
+    14,
+    15,
+    16,
+    17,
+    18,
+    19
+   ],
+   "distinct_goals": [
+    [
+     1.8,
+     2.8
+    ]
+   ],
+   "sensor": {
+    "map_pose_logged": [
+     0.95,
+     0.01
+    ],
+    "poselog": {
+     "t": 1792805878.377,
+     "map": [
+      0.952,
+      0.005,
+      1.278
+     ],
+     "odom": [
+      0.451,
+      1.015,
+      -3.096
+     ],
+     "T": [
+      0.14475,
+      0.76741,
+      -1.90939
+     ],
+     "mapping": false
+    },
+    "loc_fit": null,
+    "track_fit": null,
+    "lost_flag": null,
+    "loc_note": "fit/track fit/lost are not in the Z690 logs (lost flag added 10-25 01:20); cheetah's logger reported track fit 0.44-0.59 from 10-24 16:23",
+    "obstacle_ranges": null,
+    "live_new_count": 21,
+    "live_new_count_range": [
+     21,
+     22
+    ],
+    "live_cleared_count": 259,
+    "blocks_count": 1,
+    "start_clearance_saved_map_m": 0.5,
+    "goal_clearance_saved_map_m": 0.36,
+    "saved_map": "lab.grid.npz",
+    "planner_era": "pre 10-23 19:00 (no speck filter, no squeeze)"
+   },
+   "true_cause": "narrow aisle on saved map (fixed 10-23 19:00)",
+   "mechanism": "On the saved map the widest route has only 0.14 m clearance (lidar-smear specks in the aisle), below the 0.20 m tight retry; the planner of the time had no speck filter and no squeeze retry.",
+   "evidence": [
+    "diag.jsonl records [14, 15, 16, 17, 18, 19]",
+    "results/replay_results.jsonl records [14, 15, 16, 17, 18, 19]",
+    "variants_check.py: logged saved_map_has_route matches a planner without speck filter",
+    "replay: as-logged planner fails, current planner plans",
+    "go2_nav.py mtime 2026-10-23 19:00:21"
+   ],
+   "confidence": "high",
+   "confidence_why": "replay reproduces the failure with the era's planner and the current planner plans it",
+   "fixed_by": "planner change 10-23 19:00 (speck filter + squeeze)",
+   "replay": {
+    "as_logged_fails": true,
+    "current_plans": true,
+    "proto_C_plans": true,
+    "in_lost_window": false
+   },
+   "figure": "figs/episodes/E13.png",
+   "detail_figure": null
+  },
+  {
+   "id": "E14",
+   "kind": "nav_failure",
+   "t_start": {
+    "iso": "2026-10-23T18:39:06.18-0700",
+    "epoch": 1792805946.18
+   },
+   "t_end": {
+    "iso": "2026-10-23T18:39:22.02-0700",
+    "epoch": 1792805962.02
+   },
+   "client": null,
+   "call": null,
+   "call_note": "the failure log does not record client or call; a record is written by any failed planner.plan() with a live view (go_to or GET /nav/plan preview)",
+   "args": {
+    "goal_xy": [
+     1.8,
+     2.8
+    ],
+    "place_guess": "desk_joseph",
+    "place_guess_dist_m": 0.19,
+    "note": "goal as passed to plan() and logged; on a go_to replan this is the goal already snapped by the first plan. place_guess = saved place within 0.4 m in the current places file (inferred)"
+   },
+   "result": null,
+   "planner_error": "no route: the goal is not connected to where the robot is on the map",
+   "result_note": "go_to returns no_route if this was its first plan, blocked ('no other route') after a replan; which one is not logged",
+   "why": {
+    "saved_map_has_route": false,
+    "cause": "saved map",
+    "live_cleared_n": 223,
+    "blocks": [],
+    "live_robot": [
+     1.87,
+     -0.25
+    ],
+    "live_new_n": 20
+   },
+   "n_records": 6,
+   "record_ids": [
+    20,
+    21,
+    22,
+    23,
+    24,
+    25
+   ],
+   "distinct_goals": [
+    [
+     1.73,
+     2.62
+    ],
+    [
+     1.8,
+     2.8
+    ]
+   ],
+   "sensor": {
+    "map_pose_logged": [
+     1.87,
+     -0.25
+    ],
+    "poselog": {
+     "t": 1792805946.177,
+     "map": [
+      1.867,
+      -0.254,
+      -0.286
+     ],
+     "odom": [
+      0.363,
+      1.895,
+      1.665
+     ],
+     "T": [
+      0.24257,
+      0.78721,
+      -1.95128
+     ],
+     "mapping": false
+    },
+    "loc_fit": null,
+    "track_fit": null,
+    "lost_flag": null,
+    "loc_note": "fit/track fit/lost are not in the Z690 logs (lost flag added 10-25 01:20); cheetah's logger reported track fit 0.44-0.59 from 10-24 16:23",
+    "obstacle_ranges": null,
+    "live_new_count": 20,
+    "live_new_count_range": [
+     20,
+     23
+    ],
+    "live_cleared_count": 223,
+    "blocks_count": 0,
+    "start_clearance_saved_map_m": 0.22,
+    "goal_clearance_saved_map_m": 0.36,
+    "saved_map": "lab.grid.npz",
+    "planner_era": "pre 10-23 19:00 (no speck filter, no squeeze)"
+   },
+   "true_cause": "narrow aisle on saved map (fixed 10-23 19:00)",
+   "mechanism": "On the saved map the widest route has only 0.14 m clearance (lidar-smear specks in the aisle), below the 0.20 m tight retry; the planner of the time had no speck filter and no squeeze retry.",
+   "evidence": [
+    "diag.jsonl records [20, 21, 22, 23, 24, 25]",
+    "results/replay_results.jsonl records [20, 21, 22, 23, 24, 25]",
+    "variants_check.py: logged saved_map_has_route matches a planner without speck filter",
+    "replay: as-logged planner fails, current planner plans",
+    "go2_nav.py mtime 2026-10-23 19:00:21"
+   ],
+   "confidence": "high",
+   "confidence_why": "replay reproduces the failure with the era's planner and the current planner plans it",
+   "fixed_by": "planner change 10-23 19:00 (speck filter + squeeze)",
+   "replay": {
+    "as_logged_fails": true,
+    "current_plans": true,
+    "proto_C_plans": true,
+    "in_lost_window": false
+   },
+   "figure": "figs/episodes/E14.png",
+   "detail_figure": "figs/20_narrow_aisle_era1_b.png"
+  },
+  {
+   "id": "E15",
+   "kind": "nav_failure",
+   "t_start": {
+    "iso": "2026-10-23T18:39:52.87-0700",
+    "epoch": 1792805992.87
+   },
+   "t_end": {
+    "iso": "2026-10-23T18:39:56.99-0700",
+    "epoch": 1792805996.99
+   },
+   "client": null,
+   "call": null,
+   "call_note": "the failure log does not record client or call; a record is written by any failed planner.plan() with a live view (go_to or GET /nav/plan preview)",
+   "args": {
+    "goal_xy": [
+     1.73,
+     2.62
+    ],
+    "place_guess": "desk_joseph",
+    "place_guess_dist_m": 0.0,
+    "note": "goal as passed to plan() and logged; on a go_to replan this is the goal already snapped by the first plan. place_guess = saved place within 0.4 m in the current places file (inferred)"
+   },
+   "result": null,
+   "planner_error": "no route: the goal is not connected to where the robot is on the map",
+   "result_note": "go_to returns no_route if this was its first plan, blocked ('no other route') after a replan; which one is not logged",
+   "why": {
+    "saved_map_has_route": false,
+    "cause": "saved map",
+    "live_cleared_n": 193,
+    "blocks": [
+     [
+      3.0,
+      0.28,
+      0.15
+     ]
+    ],
+    "live_robot": [
+     2.9,
+     0.96
+    ],
+    "live_new_n": 27
+   },
+   "n_records": 3,
+   "record_ids": [
+    26,
+    27,
+    28
+   ],
+   "distinct_goals": [
+    [
+     1.73,
+     2.62
+    ]
+   ],
+   "sensor": {
+    "map_pose_logged": [
+     2.9,
+     0.96
+    ],
+    "poselog": {
+     "t": 1792805992.779,
+     "map": [
+      2.901,
+      0.961,
+      1.642
+     ],
+     "odom": [
+      -1.149,
+      2.404,
+      -2.69
+     ],
+     "T": [
+      0.24257,
+      0.78721,
+      -1.95128
+     ],
+     "mapping": false
+    },
+    "loc_fit": null,
+    "track_fit": null,
+    "lost_flag": null,
+    "loc_note": "fit/track fit/lost are not in the Z690 logs (lost flag added 10-25 01:20); cheetah's logger reported track fit 0.44-0.59 from 10-24 16:23",
+    "obstacle_ranges": null,
+    "live_new_count": 27,
+    "live_new_count_range": [
+     27,
+     28
+    ],
+    "live_cleared_count": 193,
+    "blocks_count": 1,
+    "start_clearance_saved_map_m": 0.42,
+    "goal_clearance_saved_map_m": 0.22,
+    "saved_map": "lab.grid.npz",
+    "planner_era": "pre 10-23 19:00 (no speck filter, no squeeze)"
+   },
+   "true_cause": "narrow aisle on saved map (fixed 10-23 19:00)",
+   "mechanism": "On the saved map the widest route has only 0.14 m clearance (lidar-smear specks in the aisle), below the 0.20 m tight retry; the planner of the time had no speck filter and no squeeze retry.",
+   "evidence": [
+    "diag.jsonl records [26, 27, 28]",
+    "results/replay_results.jsonl records [26, 27, 28]",
+    "variants_check.py: logged saved_map_has_route matches a planner without speck filter",
+    "replay: as-logged planner fails, current planner plans",
+    "go2_nav.py mtime 2026-10-23 19:00:21"
+   ],
+   "confidence": "high",
+   "confidence_why": "replay reproduces the failure with the era's planner and the current planner plans it",
+   "fixed_by": "planner change 10-23 19:00 (speck filter + squeeze)",
+   "replay": {
+    "as_logged_fails": true,
+    "current_plans": true,
+    "proto_C_plans": true,
+    "in_lost_window": false
+   },
+   "figure": "figs/episodes/E15.png",
+   "detail_figure": null
+  },
+  {
+   "id": "E16",
+   "kind": "nav_failure",
+   "t_start": {
+    "iso": "2026-10-23T18:40:04.02-0700",
+    "epoch": 1792806004.02
+   },
+   "t_end": {
+    "iso": "2026-10-23T18:40:08.16-0700",
+    "epoch": 1792806008.16
+   },
+   "client": null,
+   "call": null,
+   "call_note": "the failure log does not record client or call; a record is written by any failed planner.plan() with a live view (go_to or GET /nav/plan preview)",
+   "args": {
+    "goal_xy": [
+     0.35,
+     3.97
+    ],
+    "place_guess": "workbench",
+    "place_guess_dist_m": 0.0,
+    "note": "goal as passed to plan() and logged; on a go_to replan this is the goal already snapped by the first plan. place_guess = saved place within 0.4 m in the current places file (inferred)"
+   },
+   "result": null,
+   "planner_error": "no route: the goal is not connected to where the robot is on the map",
+   "result_note": "go_to returns no_route if this was its first plan, blocked ('no other route') after a replan; which one is not logged",
+   "why": {
+    "saved_map_has_route": false,
+    "cause": "saved map",
+    "live_cleared_n": 172,
+    "blocks": [
+     [
+      3.0,
+      0.28,
+      0.15
+     ]
+    ],
+    "live_robot": [
+     2.87,
+     0.87
+    ],
+    "live_new_n": 34
+   },
+   "n_records": 3,
+   "record_ids": [
+    29,
+    30,
+    31
+   ],
+   "distinct_goals": [
+    [
+     0.35,
+     3.97
+    ]
+   ],
+   "sensor": {
+    "map_pose_logged": [
+     2.87,
+     0.87
+    ],
+    "poselog": {
+     "t": 1792806003.99,
+     "map": [
+      2.871,
+      0.871,
+      1.624
+     ],
+     "odom": [
+      -1.149,
+      2.404,
+      -2.687
+     ],
+     "T": [
+      0.20951,
+      0.75293,
+      -1.97222
+     ],
+     "mapping": false
+    },
+    "loc_fit": null,
+    "track_fit": null,
+    "lost_flag": null,
+    "loc_note": "fit/track fit/lost are not in the Z690 logs (lost flag added 10-25 01:20); cheetah's logger reported track fit 0.44-0.59 from 10-24 16:23",
+    "obstacle_ranges": null,
+    "live_new_count": 34,
+    "live_new_count_range": [
+     34,
+     34
+    ],
+    "live_cleared_count": 172,
+    "blocks_count": 1,
+    "start_clearance_saved_map_m": 0.44,
+    "goal_clearance_saved_map_m": 0.42,
+    "saved_map": "lab.grid.npz",
+    "planner_era": "pre 10-23 19:00 (no speck filter, no squeeze)"
+   },
+   "true_cause": "narrow aisle on saved map (fixed 10-23 19:00)",
+   "mechanism": "On the saved map the widest route has only 0.14 m clearance (lidar-smear specks in the aisle), below the 0.20 m tight retry; the planner of the time had no speck filter and no squeeze retry.",
+   "evidence": [
+    "diag.jsonl records [29, 30, 31]",
+    "results/replay_results.jsonl records [29, 30, 31]",
+    "variants_check.py: logged saved_map_has_route matches a planner without speck filter",
+    "replay: as-logged planner fails, current planner plans",
+    "go2_nav.py mtime 2026-10-23 19:00:21"
+   ],
+   "confidence": "high",
+   "confidence_why": "replay reproduces the failure with the era's planner and the current planner plans it",
+   "fixed_by": "planner change 10-23 19:00 (speck filter + squeeze)",
+   "replay": {
+    "as_logged_fails": true,
+    "current_plans": true,
+    "proto_C_plans": true,
+    "in_lost_window": false
+   },
+   "figure": "figs/episodes/E16.png",
+   "detail_figure": null
+  },
+  {
+   "id": "E17",
+   "kind": "nav_failure",
+   "t_start": {
+    "iso": "2026-10-23T18:40:19.31-0700",
+    "epoch": 1792806019.31
+   },
+   "t_end": {
+    "iso": "2026-10-23T18:40:19.31-0700",
+    "epoch": 1792806019.31
+   },
+   "client": null,
+   "call": null,
+   "call_note": "the failure log does not record client or call; a record is written by any failed planner.plan() with a live view (go_to or GET /nav/plan preview)",
+   "args": {
+    "goal_xy": [
+     1.22,
+     2.95
+    ],
+    "place_guess": null,
+    "place_guess_dist_m": null,
+    "note": "goal as passed to plan() and logged; on a go_to replan this is the goal already snapped by the first plan. place_guess = saved place within 0.4 m in the current places file (inferred)"
+   },
+   "result": null,
+   "planner_error": "no route: the goal is not connected to where the robot is on the map",
+   "result_note": "go_to returns no_route if this was its first plan, blocked ('no other route') after a replan; which one is not logged",
+   "why": {
+    "saved_map_has_route": false,
+    "cause": "saved map",
+    "live_cleared_n": 172,
+    "blocks": [
+     [
+      3.0,
+      0.28,
+      0.15
+     ]
+    ],
+    "live_robot": [
+     2.96,
+     0.78
+    ],
+    "live_new_n": 24
+   },
+   "n_records": 1,
+   "record_ids": [
+    32
+   ],
+   "distinct_goals": [
+    [
+     1.22,
+     2.95
+    ]
+   ],
+   "sensor": {
+    "map_pose_logged": [
+     2.96,
+     0.78
+    ],
+    "poselog": {
+     "t": 1792806019.382,
+     "map": [
+      2.961,
+      0.781,
+      1.605
+     ],
+     "odom": [
+      -1.149,
+      2.404,
+      -2.685
+     ],
+     "T": [
+      0.29762,
+      0.7187,
+      -1.99317
+     ],
+     "mapping": false
+    },
+    "loc_fit": null,
+    "track_fit": null,
+    "lost_flag": null,
+    "loc_note": "fit/track fit/lost are not in the Z690 logs (lost flag added 10-25 01:20); cheetah's logger reported track fit 0.44-0.59 from 10-24 16:23",
+    "obstacle_ranges": null,
+    "live_new_count": 24,
+    "live_new_count_range": [
+     24,
+     24
+    ],
+    "live_cleared_count": 172,
+    "blocks_count": 1,
+    "start_clearance_saved_map_m": 0.4,
+    "goal_clearance_saved_map_m": 0.22,
+    "saved_map": "lab.grid.npz",
+    "planner_era": "pre 10-23 19:00 (no speck filter, no squeeze)"
+   },
+   "true_cause": "narrow aisle on saved map (fixed 10-23 19:00)",
+   "mechanism": "On the saved map the widest route has only 0.14 m clearance (lidar-smear specks in the aisle), below the 0.20 m tight retry; the planner of the time had no speck filter and no squeeze retry.",
+   "evidence": [
+    "diag.jsonl records [32]",
+    "results/replay_results.jsonl records [32]",
+    "variants_check.py: logged saved_map_has_route matches a planner without speck filter",
+    "replay: as-logged planner fails, current planner plans",
+    "go2_nav.py mtime 2026-10-23 19:00:21"
+   ],
+   "confidence": "high",
+   "confidence_why": "replay reproduces the failure with the era's planner and the current planner plans it",
+   "fixed_by": "planner change 10-23 19:00 (speck filter + squeeze)",
+   "replay": {
+    "as_logged_fails": true,
+    "current_plans": true,
+    "proto_C_plans": true,
+    "in_lost_window": false
+   },
+   "figure": "figs/episodes/E17.png",
+   "detail_figure": null
+  },
+  {
+   "id": "E18",
+   "kind": "nav_failure",
+   "t_start": {
+    "iso": "2026-10-23T18:40:19.38-0700",
+    "epoch": 1792806019.38
+   },
+   "t_end": {
+    "iso": "2026-10-23T18:40:19.38-0700",
+    "epoch": 1792806019.38
+   },
+   "client": null,
+   "call": null,
+   "call_note": "the failure log does not record client or call; a record is written by any failed planner.plan() with a live view (go_to or GET /nav/plan preview)",
+   "args": {
+    "goal_xy": [
+     1.52,
+     2.95
+    ],
+    "place_guess": "desk_joseph",
+    "place_guess_dist_m": 0.39,
+    "note": "goal as passed to plan() and logged; on a go_to replan this is the goal already snapped by the first plan. place_guess = saved place within 0.4 m in the current places file (inferred)"
+   },
+   "result": null,
+   "planner_error": "no route: the goal is not connected to where the robot is on the map",
+   "result_note": "go_to returns no_route if this was its first plan, blocked ('no other route') after a replan; which one is not logged",
+   "why": {
+    "saved_map_has_route": false,
+    "cause": "saved map",
+    "live_cleared_n": 172,
+    "blocks": [
+     [
+      3.0,
+      0.28,
+      0.15
+     ]
+    ],
+    "live_robot": [
+     2.96,
+     0.78
+    ],
+    "live_new_n": 24
+   },
+   "n_records": 1,
+   "record_ids": [
+    33
+   ],
+   "distinct_goals": [
+    [
+     1.52,
+     2.95
+    ]
+   ],
+   "sensor": {
+    "map_pose_logged": [
+     2.96,
+     0.78
+    ],
+    "poselog": {
+     "t": 1792806019.382,
+     "map": [
+      2.961,
+      0.781,
+      1.605
+     ],
+     "odom": [
+      -1.149,
+      2.404,
+      -2.685
+     ],
+     "T": [
+      0.29762,
+      0.7187,
+      -1.99317
+     ],
+     "mapping": false
+    },
+    "loc_fit": null,
+    "track_fit": null,
+    "lost_flag": null,
+    "loc_note": "fit/track fit/lost are not in the Z690 logs (lost flag added 10-25 01:20); cheetah's logger reported track fit 0.44-0.59 from 10-24 16:23",
+    "obstacle_ranges": null,
+    "live_new_count": 24,
+    "live_new_count_range": [
+     24,
+     24
+    ],
+    "live_cleared_count": 172,
+    "blocks_count": 1,
+    "start_clearance_saved_map_m": 0.4,
+    "goal_clearance_saved_map_m": 0.14,
+    "saved_map": "lab.grid.npz",
+    "planner_era": "pre 10-23 19:00 (no speck filter, no squeeze)"
+   },
+   "true_cause": "narrow aisle on saved map (fixed 10-23 19:00)",
+   "mechanism": "On the saved map the widest route has only 0.14 m clearance (lidar-smear specks in the aisle), below the 0.20 m tight retry; the planner of the time had no speck filter and no squeeze retry.",
+   "evidence": [
+    "diag.jsonl records [33]",
+    "results/replay_results.jsonl records [33]",
+    "variants_check.py: logged saved_map_has_route matches a planner without speck filter",
+    "replay: as-logged planner fails, current planner plans",
+    "go2_nav.py mtime 2026-10-23 19:00:21"
+   ],
+   "confidence": "high",
+   "confidence_why": "replay reproduces the failure with the era's planner and the current planner plans it",
+   "fixed_by": "planner change 10-23 19:00 (speck filter + squeeze)",
+   "replay": {
+    "as_logged_fails": true,
+    "current_plans": true,
+    "proto_C_plans": true,
+    "in_lost_window": false
+   },
+   "figure": "figs/episodes/E18.png",
+   "detail_figure": null
+  },
+  {
+   "id": "E19",
+   "kind": "nav_failure",
+   "t_start": {
+    "iso": "2026-10-23T18:40:19.44-0700",
+    "epoch": 1792806019.44
+   },
+   "t_end": {
+    "iso": "2026-10-23T18:40:19.44-0700",
+    "epoch": 1792806019.44
+   },
+   "client": null,
+   "call": null,
+   "call_note": "the failure log does not record client or call; a record is written by any failed planner.plan() with a live view (go_to or GET /nav/plan preview)",
+   "args": {
+    "goal_xy": [
+     1.02,
+     2.95
+    ],
+    "place_guess": null,
+    "place_guess_dist_m": null,
+    "note": "goal as passed to plan() and logged; on a go_to replan this is the goal already snapped by the first plan. place_guess = saved place within 0.4 m in the current places file (inferred)"
+   },
+   "result": null,
+   "planner_error": "no route: the goal is not connected to where the robot is on the map",
+   "result_note": "go_to returns no_route if this was its first plan, blocked ('no other route') after a replan; which one is not logged",
+   "why": {
+    "saved_map_has_route": false,
+    "cause": "saved map",
+    "live_cleared_n": 172,
+    "blocks": [
+     [
+      3.0,
+      0.28,
+      0.15
+     ]
+    ],
+    "live_robot": [
+     2.96,
+     0.78
+    ],
+    "live_new_n": 24
+   },
+   "n_records": 1,
+   "record_ids": [
+    34
+   ],
+   "distinct_goals": [
+    [
+     1.02,
+     2.95
+    ]
+   ],
+   "sensor": {
+    "map_pose_logged": [
+     2.96,
+     0.78
+    ],
+    "poselog": {
+     "t": 1792806019.382,
+     "map": [
+      2.961,
+      0.781,
+      1.605
+     ],
+     "odom": [
+      -1.149,
+      2.404,
+      -2.685
+     ],
+     "T": [
+      0.29762,
+      0.7187,
+      -1.99317
+     ],
+     "mapping": false
+    },
+    "loc_fit": null,
+    "track_fit": null,
+    "lost_flag": null,
+    "loc_note": "fit/track fit/lost are not in the Z690 logs (lost flag added 10-25 01:20); cheetah's logger reported track fit 0.44-0.59 from 10-24 16:23",
+    "obstacle_ranges": null,
+    "live_new_count": 24,
+    "live_new_count_range": [
+     24,
+     24
+    ],
+    "live_cleared_count": 172,
+    "blocks_count": 1,
+    "start_clearance_saved_map_m": 0.4,
+    "goal_clearance_saved_map_m": 0.3,
+    "saved_map": "lab.grid.npz",
+    "planner_era": "pre 10-23 19:00 (no speck filter, no squeeze)"
+   },
+   "true_cause": "narrow aisle on saved map (fixed 10-23 19:00)",
+   "mechanism": "On the saved map the widest route has only 0.14 m clearance (lidar-smear specks in the aisle), below the 0.20 m tight retry; the planner of the time had no speck filter and no squeeze retry.",
+   "evidence": [
+    "diag.jsonl records [34]",
+    "results/replay_results.jsonl records [34]",
+    "variants_check.py: logged saved_map_has_route matches a planner without speck filter",
+    "replay: as-logged planner fails, current planner plans",
+    "go2_nav.py mtime 2026-10-23 19:00:21"
+   ],
+   "confidence": "high",
+   "confidence_why": "replay reproduces the failure with the era's planner and the current planner plans it",
+   "fixed_by": "planner change 10-23 19:00 (speck filter + squeeze)",
+   "replay": {
+    "as_logged_fails": true,
+    "current_plans": true,
+    "proto_C_plans": true,
+    "in_lost_window": false
+   },
+   "figure": "figs/episodes/E19.png",
+   "detail_figure": null
+  },
+  {
+   "id": "E20",
+   "kind": "nav_failure",
+   "t_start": {
+    "iso": "2026-10-23T18:40:19.50-0700",
+    "epoch": 1792806019.5
+   },
+   "t_end": {
+    "iso": "2026-10-23T18:40:19.50-0700",
+    "epoch": 1792806019.5
+   },
+   "client": null,
+   "call": null,
+   "call_note": "the failure log does not record client or call; a record is written by any failed planner.plan() with a live view (go_to or GET /nav/plan preview)",
+   "args": {
+    "goal_xy": [
+     1.82,
+     2.95
+    ],
+    "place_guess": "desk_joseph",
+    "place_guess_dist_m": 0.34,
+    "note": "goal as passed to plan() and logged; on a go_to replan this is the goal already snapped by the first plan. place_guess = saved place within 0.4 m in the current places file (inferred)"
+   },
+   "result": null,
+   "planner_error": "no route: the goal is not connected to where the robot is on the map",
+   "result_note": "go_to returns no_route if this was its first plan, blocked ('no other route') after a replan; which one is not logged",
+   "why": {
+    "saved_map_has_route": false,
+    "cause": "saved map",
+    "live_cleared_n": 177,
+    "blocks": [
+     [
+      3.0,
+      0.28,
+      0.15
+     ]
+    ],
+    "live_robot": [
+     2.93,
+     0.72
+    ],
+    "live_new_n": 24
+   },
+   "n_records": 1,
+   "record_ids": [
+    35
+   ],
+   "distinct_goals": [
+    [
+     1.82,
+     2.95
+    ]
+   ],
+   "sensor": {
+    "map_pose_logged": [
+     2.93,
+     0.72
+    ],
+    "poselog": {
+     "t": 1792806019.577,
+     "map": [
+      2.931,
+      0.721,
+      1.584
+     ],
+     "odom": [
+      -1.149,
+      2.404,
+      -2.685
+     ],
+     "T": [
+      0.26689,
+      0.7145,
+      -2.01411
+     ],
+     "mapping": false
+    },
+    "loc_fit": null,
+    "track_fit": null,
+    "lost_flag": null,
+    "loc_note": "fit/track fit/lost are not in the Z690 logs (lost flag added 10-25 01:20); cheetah's logger reported track fit 0.44-0.59 from 10-24 16:23",
+    "obstacle_ranges": null,
+    "live_new_count": 24,
+    "live_new_count_range": [
+     24,
+     24
+    ],
+    "live_cleared_count": 177,
+    "blocks_count": 1,
+    "start_clearance_saved_map_m": 0.4,
+    "goal_clearance_saved_map_m": 0.42,
+    "saved_map": "lab.grid.npz",
+    "planner_era": "pre 10-23 19:00 (no speck filter, no squeeze)"
+   },
+   "true_cause": "narrow aisle on saved map (fixed 10-23 19:00)",
+   "mechanism": "On the saved map the widest route has only 0.14 m clearance (lidar-smear specks in the aisle), below the 0.20 m tight retry; the planner of the time had no speck filter and no squeeze retry.",
+   "evidence": [
+    "diag.jsonl records [35]",
+    "results/replay_results.jsonl records [35]",
+    "variants_check.py: logged saved_map_has_route matches a planner without speck filter",
+    "replay: as-logged planner fails, current planner plans",
+    "go2_nav.py mtime 2026-10-23 19:00:21"
+   ],
+   "confidence": "high",
+   "confidence_why": "replay reproduces the failure with the era's planner and the current planner plans it",
+   "fixed_by": "planner change 10-23 19:00 (speck filter + squeeze)",
+   "replay": {
+    "as_logged_fails": true,
+    "current_plans": true,
+    "proto_C_plans": true,
+    "in_lost_window": false
+   },
+   "figure": "figs/episodes/E20.png",
+   "detail_figure": null
+  },
+  {
+   "id": "E21",
+   "kind": "nav_failure",
+   "t_start": {
+    "iso": "2026-10-23T18:41:33.93-0700",
+    "epoch": 1792806093.93
+   },
+   "t_end": {
+    "iso": "2026-10-23T18:41:34.00-0700",
+    "epoch": 1792806094.0
+   },
+   "client": null,
+   "call": null,
+   "call_note": "the failure log does not record client or call; a record is written by any failed planner.plan() with a live view (go_to or GET /nav/plan preview)",
+   "args": {
+    "goal_xy": [
+     0.31,
+     2.61
+    ],
+    "place_guess": null,
+    "place_guess_dist_m": null,
+    "note": "goal as passed to plan() and logged; on a go_to replan this is the goal already snapped by the first plan. place_guess = saved place within 0.4 m in the current places file (inferred)"
+   },
+   "result": null,
+   "planner_error": "no route: the goal is not connected to where the robot is on the map",
+   "result_note": "go_to returns no_route if this was its first plan, blocked ('no other route') after a replan; which one is not logged",
+   "why": {
+    "saved_map_has_route": false,
+    "cause": "saved map",
+    "live_cleared_n": 184,
+    "blocks": [
+     [
+      3.0,
+      0.28,
+      0.15
+     ]
+    ],
+    "live_robot": [
+     2.72,
+     0.55
+    ],
+    "live_new_n": 23
+   },
+   "n_records": 2,
+   "record_ids": [
+    36,
+    37
+   ],
+   "distinct_goals": [
+    [
+     0.31,
+     2.61
+    ],
+    [
+     0.59,
+     2.7
+    ]
+   ],
+   "sensor": {
+    "map_pose_logged": [
+     2.72,
+     0.55
+    ],
+    "poselog": {
+     "t": 1792806093.982,
+     "map": [
+      2.723,
+      0.551,
+      0.85
+     ],
+     "odom": [
+      -1.106,
+      2.361,
+      2.922
+     ],
+     "T": [
+      0.12087,
+      0.71456,
+      -2.07171
+     ],
+     "mapping": false
+    },
+    "loc_fit": null,
+    "track_fit": null,
+    "lost_flag": null,
+    "loc_note": "fit/track fit/lost are not in the Z690 logs (lost flag added 10-25 01:20); cheetah's logger reported track fit 0.44-0.59 from 10-24 16:23",
+    "obstacle_ranges": null,
+    "live_new_count": 23,
+    "live_new_count_range": [
+     23,
+     23
+    ],
+    "live_cleared_count": 184,
+    "blocks_count": 1,
+    "start_clearance_saved_map_m": 0.4,
+    "goal_clearance_saved_map_m": 0.0,
+    "saved_map": "lab.grid.npz",
+    "planner_era": "pre 10-23 19:00 (no speck filter, no squeeze)"
+   },
+   "true_cause": "narrow aisle on saved map (fixed 10-23 19:00)",
+   "mechanism": "On the saved map the widest route has only 0.0 m clearance (lidar-smear specks in the aisle), below the 0.20 m tight retry; the planner of the time had no speck filter and no squeeze retry.",
+   "evidence": [
+    "diag.jsonl records [36, 37]",
+    "results/replay_results.jsonl records [36, 37]",
+    "variants_check.py: logged saved_map_has_route matches a planner without speck filter",
+    "replay: as-logged planner fails, current planner plans",
+    "go2_nav.py mtime 2026-10-23 19:00:21"
+   ],
+   "confidence": "high",
+   "confidence_why": "replay reproduces the failure with the era's planner and the current planner plans it",
+   "fixed_by": "planner change 10-23 19:00 (speck filter + squeeze)",
+   "replay": {
+    "as_logged_fails": true,
+    "current_plans": true,
+    "proto_C_plans": true,
+    "in_lost_window": false
+   },
+   "figure": "figs/episodes/E21.png",
+   "detail_figure": null
+  },
+  {
+   "id": "E22",
+   "kind": "nav_failure",
+   "t_start": {
+    "iso": "2026-10-23T18:41:34.05-0700",
+    "epoch": 1792806094.05
+   },
+   "t_end": {
+    "iso": "2026-10-23T18:41:34.05-0700",
+    "epoch": 1792806094.05
+   },
+   "client": null,
+   "call": null,
+   "call_note": "the failure log does not record client or call; a record is written by any failed planner.plan() with a live view (go_to or GET /nav/plan preview)",
+   "args": {
+    "goal_xy": [
+     0.12,
+     2.55
+    ],
+    "place_guess": null,
+    "place_guess_dist_m": null,
+    "note": "goal as passed to plan() and logged; on a go_to replan this is the goal already snapped by the first plan. place_guess = saved place within 0.4 m in the current places file (inferred)"
+   },
+   "result": null,
+   "planner_error": "no route: the goal is not connected to where the robot is on the map",
+   "result_note": "go_to returns no_route if this was its first plan, blocked ('no other route') after a replan; which one is not logged",
+   "why": {
+    "saved_map_has_route": false,
+    "cause": "saved map",
+    "live_cleared_n": 184,
+    "blocks": [
+     [
+      3.0,
+      0.28,
+      0.15
+     ]
+    ],
+    "live_robot": [
+     2.72,
+     0.55
+    ],
+    "live_new_n": 23
+   },
+   "n_records": 1,
+   "record_ids": [
+    38
+   ],
+   "distinct_goals": [
+    [
+     0.12,
+     2.55
+    ]
+   ],
+   "sensor": {
+    "map_pose_logged": [
+     2.72,
+     0.55
+    ],
+    "poselog": {
+     "t": 1792806093.982,
+     "map": [
+      2.723,
+      0.551,
+      0.85
+     ],
+     "odom": [
+      -1.106,
+      2.361,
+      2.922
+     ],
+     "T": [
+      0.12087,
+      0.71456,
+      -2.07171
+     ],
+     "mapping": false
+    },
+    "loc_fit": null,
+    "track_fit": null,
+    "lost_flag": null,
+    "loc_note": "fit/track fit/lost are not in the Z690 logs (lost flag added 10-25 01:20); cheetah's logger reported track fit 0.44-0.59 from 10-24 16:23",
+    "obstacle_ranges": null,
+    "live_new_count": 23,
+    "live_new_count_range": [
+     23,
+     23
+    ],
+    "live_cleared_count": 184,
+    "blocks_count": 1,
+    "start_clearance_saved_map_m": 0.4,
+    "goal_clearance_saved_map_m": 0.0,
+    "saved_map": "lab.grid.npz",
+    "planner_era": "pre 10-23 19:00 (no speck filter, no squeeze)"
+   },
+   "true_cause": "narrow aisle on saved map (fixed 10-23 19:00)",
+   "mechanism": "On the saved map the widest route has only 0.0 m clearance (lidar-smear specks in the aisle), below the 0.20 m tight retry; the planner of the time had no speck filter and no squeeze retry.",
+   "evidence": [
+    "diag.jsonl records [38]",
+    "results/replay_results.jsonl records [38]",
+    "variants_check.py: logged saved_map_has_route matches a planner without speck filter",
+    "replay: as-logged planner fails, current planner plans",
+    "go2_nav.py mtime 2026-10-23 19:00:21"
+   ],
+   "confidence": "high",
+   "confidence_why": "replay reproduces the failure with the era's planner and the current planner plans it",
+   "fixed_by": "planner change 10-23 19:00 (speck filter + squeeze)",
+   "replay": {
+    "as_logged_fails": true,
+    "current_plans": true,
+    "proto_C_plans": true,
+    "in_lost_window": false
+   },
+   "figure": "figs/episodes/E22.png",
+   "detail_figure": null
+  },
+  {
+   "id": "E23",
+   "kind": "nav_failure",
+   "t_start": {
+    "iso": "2026-10-23T18:41:34.12-0700",
+    "epoch": 1792806094.12
+   },
+   "t_end": {
+    "iso": "2026-10-23T18:41:34.12-0700",
+    "epoch": 1792806094.12
+   },
+   "client": null,
+   "call": null,
+   "call_note": "the failure log does not record client or call; a record is written by any failed planner.plan() with a live view (go_to or GET /nav/plan preview)",
+   "args": {
+    "goal_xy": [
+     0.88,
+     2.8
+    ],
+    "place_guess": null,
+    "place_guess_dist_m": null,
+    "note": "goal as passed to plan() and logged; on a go_to replan this is the goal already snapped by the first plan. place_guess = saved place within 0.4 m in the current places file (inferred)"
+   },
+   "result": null,
+   "planner_error": "no route: the goal is not connected to where the robot is on the map",
+   "result_note": "go_to returns no_route if this was its first plan, blocked ('no other route') after a replan; which one is not logged",
+   "why": {
+    "saved_map_has_route": false,
+    "cause": "saved map",
+    "live_cleared_n": 184,
+    "blocks": [
+     [
+      3.0,
+      0.28,
+      0.15
+     ]
+    ],
+    "live_robot": [
+     2.72,
+     0.55
+    ],
+    "live_new_n": 23
+   },
+   "n_records": 1,
+   "record_ids": [
+    39
+   ],
+   "distinct_goals": [
+    [
+     0.88,
+     2.8
+    ]
+   ],
+   "sensor": {
+    "map_pose_logged": [
+     2.72,
+     0.55
+    ],
+    "poselog": {
+     "t": 1792806094.177,
+     "map": [
+      2.723,
+      0.551,
+      0.85
+     ],
+     "odom": [
+      -1.106,
+      2.361,
+      2.922
+     ],
+     "T": [
+      0.12087,
+      0.71456,
+      -2.07171
+     ],
+     "mapping": false
+    },
+    "loc_fit": null,
+    "track_fit": null,
+    "lost_flag": null,
+    "loc_note": "fit/track fit/lost are not in the Z690 logs (lost flag added 10-25 01:20); cheetah's logger reported track fit 0.44-0.59 from 10-24 16:23",
+    "obstacle_ranges": null,
+    "live_new_count": 23,
+    "live_new_count_range": [
+     23,
+     23
+    ],
+    "live_cleared_count": 184,
+    "blocks_count": 1,
+    "start_clearance_saved_map_m": 0.4,
+    "goal_clearance_saved_map_m": 0.1,
+    "saved_map": "lab.grid.npz",
+    "planner_era": "pre 10-23 19:00 (no speck filter, no squeeze)"
+   },
+   "true_cause": "narrow aisle on saved map (fixed 10-23 19:00)",
+   "mechanism": "On the saved map the widest route has only 0.14 m clearance (lidar-smear specks in the aisle), below the 0.20 m tight retry; the planner of the time had no speck filter and no squeeze retry.",
+   "evidence": [
+    "diag.jsonl records [39]",
+    "results/replay_results.jsonl records [39]",
+    "variants_check.py: logged saved_map_has_route matches a planner without speck filter",
+    "replay: as-logged planner fails, current planner plans",
+    "go2_nav.py mtime 2026-10-23 19:00:21"
+   ],
+   "confidence": "high",
+   "confidence_why": "replay reproduces the failure with the era's planner and the current planner plans it",
+   "fixed_by": "planner change 10-23 19:00 (speck filter + squeeze)",
+   "replay": {
+    "as_logged_fails": true,
+    "current_plans": true,
+    "proto_C_plans": true,
+    "in_lost_window": false
+   },
+   "figure": "figs/episodes/E23.png",
+   "detail_figure": null
+  },
+  {
+   "id": "E24",
+   "kind": "nav_failure",
+   "t_start": {
+    "iso": "2026-10-23T18:42:31.02-0700",
+    "epoch": 1792806151.02
+   },
+   "t_end": {
+    "iso": "2026-10-23T18:42:35.15-0700",
+    "epoch": 1792806155.15
+   },
+   "client": null,
+   "call": null,
+   "call_note": "the failure log does not record client or call; a record is written by any failed planner.plan() with a live view (go_to or GET /nav/plan preview)",
+   "args": {
+    "goal_xy": [
+     1.8,
+     2.8
+    ],
+    "place_guess": "desk_joseph",
+    "place_guess_dist_m": 0.19,
+    "note": "goal as passed to plan() and logged; on a go_to replan this is the goal already snapped by the first plan. place_guess = saved place within 0.4 m in the current places file (inferred)"
+   },
+   "result": null,
+   "planner_error": "no route: the goal is not connected to where the robot is on the map",
+   "result_note": "go_to returns no_route if this was its first plan, blocked ('no other route') after a replan; which one is not logged",
+   "why": {
+    "saved_map_has_route": false,
+    "cause": "saved map",
+    "live_cleared_n": 236,
+    "blocks": [],
+    "live_robot": [
+     0.42,
+     0.43
+    ],
+    "live_new_n": 19
+   },
+   "n_records": 3,
+   "record_ids": [
+    40,
+    41,
+    42
+   ],
+   "distinct_goals": [
+    [
+     1.8,
+     2.8
+    ]
+   ],
+   "sensor": {
+    "map_pose_logged": [
+     0.42,
+     0.43
+    ],
+    "poselog": {
+     "t": 1792806150.98,
+     "map": [
+      0.424,
+      0.429,
+      2.16
+     ],
+     "odom": [
+      0.499,
+      0.358,
+      -2.036
+     ],
+     "T": [
+      0.35886,
+      1.0399,
+      -2.08741
+     ],
+     "mapping": false
+    },
+    "loc_fit": null,
+    "track_fit": null,
+    "lost_flag": null,
+    "loc_note": "fit/track fit/lost are not in the Z690 logs (lost flag added 10-25 01:20); cheetah's logger reported track fit 0.44-0.59 from 10-24 16:23",
+    "obstacle_ranges": null,
+    "live_new_count": 19,
+    "live_new_count_range": [
+     19,
+     19
+    ],
+    "live_cleared_count": 236,
+    "blocks_count": 0,
+    "start_clearance_saved_map_m": 0.44,
+    "goal_clearance_saved_map_m": 0.36,
+    "saved_map": "lab.grid.npz",
+    "planner_era": "pre 10-23 19:00 (no speck filter, no squeeze)"
+   },
+   "true_cause": "narrow aisle on saved map (fixed 10-23 19:00)",
+   "mechanism": "On the saved map the widest route has only 0.14 m clearance (lidar-smear specks in the aisle), below the 0.20 m tight retry; the planner of the time had no speck filter and no squeeze retry.",
+   "evidence": [
+    "diag.jsonl records [40, 41, 42]",
+    "results/replay_results.jsonl records [40, 41, 42]",
+    "variants_check.py: logged saved_map_has_route matches a planner without speck filter",
+    "replay: as-logged planner fails, current planner plans",
+    "go2_nav.py mtime 2026-10-23 19:00:21"
+   ],
+   "confidence": "high",
+   "confidence_why": "replay reproduces the failure with the era's planner and the current planner plans it",
+   "fixed_by": "planner change 10-23 19:00 (speck filter + squeeze)",
+   "replay": {
+    "as_logged_fails": true,
+    "current_plans": true,
+    "proto_C_plans": true,
+    "in_lost_window": false
+   },
+   "figure": "figs/episodes/E24.png",
+   "detail_figure": null
+  },
+  {
+   "id": "E25",
+   "kind": "nav_failure",
+   "t_start": {
+    "iso": "2026-10-23T18:56:05.53-0700",
+    "epoch": 1792806965.53
+   },
+   "t_end": {
+    "iso": "2026-10-23T18:56:28.77-0700",
+    "epoch": 1792806988.77
+   },
+   "client": null,
+   "call": null,
+   "call_note": "the failure log does not record client or call; a record is written by any failed planner.plan() with a live view (go_to or GET /nav/plan preview)",
+   "args": {
+    "goal_xy": [
+     0.07,
+     -3.07
+    ],
+    "place_guess": "door_outside",
+    "place_guess_dist_m": 0.0,
+    "note": "goal as passed to plan() and logged; on a go_to replan this is the goal already snapped by the first plan. place_guess = saved place within 0.4 m in the current places file (inferred)"
+   },
+   "result": null,
+   "planner_error": "no route: the goal is not connected to where the robot is on the map",
+   "result_note": "go_to returns no_route if this was its first plan, blocked ('no other route') after a replan; which one is not logged",
+   "why": {
+    "saved_map_has_route": false,
+    "cause": "saved map",
+    "live_cleared_n": 271,
+    "blocks": [],
+    "live_robot": [
+     0.35,
+     1.07
+    ],
+    "live_new_n": 34
+   },
+   "n_records": 2,
+   "record_ids": [
+    43,
+    44
+   ],
+   "distinct_goals": [
+    [
+     0.07,
+     -3.07
+    ]
+   ],
+   "sensor": {
+    "map_pose_logged": [
+     0.35,
+     1.07
+    ],
+    "poselog": {
+     "t": 1792806965.607,
+     "map": [
+      0.349,
+      1.072,
+      0.021
+     ],
+     "odom": [
+      -0.193,
+      0.082,
+      2.15
+     ],
+     "T": [
+      0.17729,
+      0.95177,
+      -2.1293
+     ],
+     "mapping": false
+    },
+    "loc_fit": null,
+    "track_fit": null,
+    "lost_flag": null,
+    "loc_note": "fit/track fit/lost are not in the Z690 logs (lost flag added 10-25 01:20); cheetah's logger reported track fit 0.44-0.59 from 10-24 16:23",
+    "obstacle_ranges": null,
+    "live_new_count": 34,
+    "live_new_count_range": [
+     34,
+     34
+    ],
+    "live_cleared_count": 271,
+    "blocks_count": 0,
+    "start_clearance_saved_map_m": 0.22,
+    "goal_clearance_saved_map_m": 0.36,
+    "saved_map": "lab.grid.npz",
+    "planner_era": "pre 10-23 19:00 (no speck filter, no squeeze)"
+   },
+   "true_cause": "narrow aisle on saved map (fixed 10-23 19:00)",
+   "mechanism": "On the saved map the widest route has only 0.14 m clearance (lidar-smear specks in the aisle), below the 0.20 m tight retry; the planner of the time had no speck filter and no squeeze retry.",
+   "evidence": [
+    "diag.jsonl records [43, 44]",
+    "results/replay_results.jsonl records [43, 44]",
+    "variants_check.py: logged saved_map_has_route matches a planner without speck filter",
+    "replay: as-logged planner fails, current planner plans",
+    "go2_nav.py mtime 2026-10-23 19:00:21"
+   ],
+   "confidence": "high",
+   "confidence_why": "replay reproduces the failure with the era's planner and the current planner plans it",
+   "fixed_by": "planner change 10-23 19:00 (speck filter + squeeze)",
+   "replay": {
+    "as_logged_fails": true,
+    "current_plans": true,
+    "proto_C_plans": true,
+    "in_lost_window": false
+   },
+   "figure": "figs/episodes/E25.png",
+   "detail_figure": null
+  },
+  {
+   "id": "E26",
+   "kind": "nav_failure",
+   "t_start": {
+    "iso": "2026-10-23T19:24:16.94-0700",
+    "epoch": 1792808656.94
+   },
+   "t_end": {
+    "iso": "2026-10-23T19:24:16.94-0700",
+    "epoch": 1792808656.94
+   },
+   "client": null,
+   "call": null,
+   "call_note": "the failure log does not record client or call; a record is written by any failed planner.plan() with a live view (go_to or GET /nav/plan preview)",
+   "args": {
+    "goal_xy": [
+     -0.44,
+     2.33
+    ],
+    "place_guess": "sofa",
+    "place_guess_dist_m": 0.0,
+    "note": "goal as passed to plan() and logged; on a go_to replan this is the goal already snapped by the first plan. place_guess = saved place within 0.4 m in the current places file (inferred)"
+   },
+   "result": null,
+   "planner_error": "no route: the goal is not connected to where the robot is on the map",
+   "result_note": "go_to returns no_route if this was its first plan, blocked ('no other route') after a replan; which one is not logged",
+   "why": {
+    "saved_map_has_route": true,
+    "cause": "live lidar or temporary blocks",
+    "live_cleared_n": 200,
+    "blocks": [],
+    "live_robot": [
+     0.56,
+     3.52
+    ],
+    "live_new_n": 48
+   },
+   "n_records": 1,
+   "record_ids": [
+    45
+   ],
+   "distinct_goals": [
+    [
+     -0.44,
+     2.33
+    ]
+   ],
+   "sensor": {
+    "map_pose_logged": [
+     0.56,
+     3.52
+    ],
+    "poselog": {
+     "t": 1792808656.885,
+     "map": [
+      0.561,
+      3.521,
+      2.453
+     ],
+     "odom": [
+      0.181,
+      -1.988,
+      -0.577
+     ],
+     "T": [
+      0.51888,
+      1.52538,
+      3.02989
+     ],
+     "mapping": false
+    },
+    "loc_fit": null,
+    "track_fit": null,
+    "lost_flag": null,
+    "loc_note": "fit/track fit/lost are not in the Z690 logs (lost flag added 10-25 01:20); cheetah's logger reported track fit 0.44-0.59 from 10-24 16:23",
+    "obstacle_ranges": null,
+    "live_new_count": 48,
+    "live_new_count_range": [
+     48,
+     48
+    ],
+    "live_cleared_count": 200,
+    "blocks_count": 0,
+    "start_clearance_saved_map_m": 0.62,
+    "goal_clearance_saved_map_m": 0.36,
+    "saved_map": "lab.grid.npz",
+    "planner_era": "current go2_nav.py"
+   },
+   "true_cause": "live lidar cells close the route",
+   "mechanism": "48 live-new cells (mostly free-standing) close the way.",
+   "evidence": [
+    "diag.jsonl records [45]",
+    "results/replay_results.jsonl records [45]",
+    "live_new 48 cells, median 0.96 m from the dog, wall-hug fraction 0.15",
+    "replay: live-only route closed, blocks-only route exists"
+   ],
+   "confidence": "medium",
+   "confidence_why": "the replay shows which cells close the route, but not whether those cells were real objects or lidar smear (no camera check done)",
+   "fixed_by": "prototype C (proposed)",
+   "replay": {
+    "as_logged_fails": true,
+    "current_plans": false,
+    "proto_C_plans": true,
+    "in_lost_window": false
+   },
+   "figure": "figs/episodes/E26.png",
+   "detail_figure": "figs/45_live_freestanding.png"
+  },
+  {
+   "id": "E27",
+   "kind": "nav_failure",
+   "t_start": {
+    "iso": "2026-10-23T19:36:32.37-0700",
+    "epoch": 1792809392.37
+   },
+   "t_end": {
+    "iso": "2026-10-23T19:36:37.14-0700",
+    "epoch": 1792809397.14
+   },
+   "client": null,
+   "call": null,
+   "call_note": "the failure log does not record client or call; a record is written by any failed planner.plan() with a live view (go_to or GET /nav/plan preview)",
+   "args": {
+    "goal_xy": [
+     0.05,
+     -3.05
+    ],
+    "place_guess": "door_outside",
+    "place_guess_dist_m": 0.03,
+    "note": "goal as passed to plan() and logged; on a go_to replan this is the goal already snapped by the first plan. place_guess = saved place within 0.4 m in the current places file (inferred)"
+   },
+   "result": null,
+   "planner_error": "no route: the goal is not connected to where the robot is on the map",
+   "result_note": "go_to returns no_route if this was its first plan, blocked ('no other route') after a replan; which one is not logged",
+   "why": {
+    "saved_map_has_route": false,
+    "cause": "saved map",
+    "live_cleared_n": 207,
+    "blocks": [
+     [
+      1.23,
+      -2.15,
+      0.15
+     ]
+    ],
+    "live_robot": [
+     1.43,
+     -1.69
+    ],
+    "live_new_n": 22
+   },
+   "n_records": 2,
+   "record_ids": [
+    46,
+    47
+   ],
+   "distinct_goals": [
+    [
+     0.05,
+     -3.05
+    ],
+    [
+     0.07,
+     -3.07
+    ]
+   ],
+   "sensor": {
+    "map_pose_logged": [
+     1.43,
+     -1.69
+    ],
+    "poselog": {
+     "t": 1792809392.285,
+     "map": [
+      1.428,
+      -1.69,
+      -1.941
+     ],
+     "odom": [
+      -3.168,
+      1.541,
+      1.914
+     ],
+     "T": [
+      0.04238,
+      1.5494,
+      2.42775
+     ],
+     "mapping": false
+    },
+    "loc_fit": null,
+    "track_fit": null,
+    "lost_flag": null,
+    "loc_note": "fit/track fit/lost are not in the Z690 logs (lost flag added 10-25 01:20); cheetah's logger reported track fit 0.44-0.59 from 10-24 16:23",
+    "obstacle_ranges": null,
+    "live_new_count": 22,
+    "live_new_count_range": [
+     22,
+     23
+    ],
+    "live_cleared_count": 207,
+    "blocks_count": 1,
+    "start_clearance_saved_map_m": 0.2,
+    "goal_clearance_saved_map_m": 0.36,
+    "saved_map": "lab.grid.npz",
+    "planner_era": "current go2_nav.py"
+   },
+   "true_cause": "start pocket: dog's pose in a pocket the map shows closed",
+   "mechanism": "The saved map shows the dog's spot enclosed by obstacles with no exit of 0.12 m clearance; either the pose or the map is wrong here.",
+   "evidence": [
+    "diag.jsonl records [46, 47]",
+    "results/replay_results.jsonl records [46, 47]",
+    "saved-map bottleneck 0.14 m",
+    "figs/46_start_pocket_unfixed.png: walked-in trail crosses mapped obstacles"
+   ],
+   "confidence": "low",
+   "confidence_why": "can't tell a pose error from a map error from the logs",
+   "fixed_by": "none (snap-to-reachable variant D would stop 1.1 m short)",
+   "replay": {
+    "as_logged_fails": true,
+    "current_plans": false,
+    "proto_C_plans": false,
+    "in_lost_window": false
+   },
+   "figure": "figs/episodes/E27.png",
+   "detail_figure": "figs/46_start_pocket_unfixed.png"
+  },
+  {
+   "id": "E28",
+   "kind": "nav_failure",
+   "t_start": {
+    "iso": "2026-10-23T19:37:21.70-0700",
+    "epoch": 1792809441.7
+   },
+   "t_end": {
+    "iso": "2026-10-23T19:37:25.75-0700",
+    "epoch": 1792809445.75
+   },
+   "client": null,
+   "call": null,
+   "call_note": "the failure log does not record client or call; a record is written by any failed planner.plan() with a live view (go_to or GET /nav/plan preview)",
+   "args": {
+    "goal_xy": [
+     0.95,
+     0.0
+    ],
+    "place_guess": "water_cooler",
+    "place_guess_dist_m": 0.32,
+    "note": "goal as passed to plan() and logged; on a go_to replan this is the goal already snapped by the first plan. place_guess = saved place within 0.4 m in the current places file (inferred)"
+   },
+   "result": null,
+   "planner_error": "no route: the goal is not connected to where the robot is on the map",
+   "result_note": "go_to returns no_route if this was its first plan, blocked ('no other route') after a replan; which one is not logged",
+   "why": {
+    "saved_map_has_route": false,
+    "cause": "saved map",
+    "live_cleared_n": 146,
+    "blocks": [
+     [
+      1.23,
+      -2.15,
+      0.15
+     ]
+    ],
+    "live_robot": [
+     0.4,
+     -2.83
+    ],
+    "live_new_n": 24
+   },
+   "n_records": 3,
+   "record_ids": [
+    48,
+    49,
+    50
+   ],
+   "distinct_goals": [
+    [
+     0.95,
+     0.0
+    ]
+   ],
+   "sensor": {
+    "map_pose_logged": [
+     0.4,
+     -2.83
+    ],
+    "poselog": {
+     "t": 1792809441.685,
+     "map": [
+      0.403,
+      -2.829,
+      -2.402
+     ],
+     "odom": [
+      -3.158,
+      3.031,
+      1.485
+     ],
+     "T": [
+      0.13774,
+      1.54023,
+      2.39634
+     ],
+     "mapping": false
+    },
+    "loc_fit": null,
+    "track_fit": null,
+    "lost_flag": null,
+    "loc_note": "fit/track fit/lost are not in the Z690 logs (lost flag added 10-25 01:20); cheetah's logger reported track fit 0.44-0.59 from 10-24 16:23",
+    "obstacle_ranges": null,
+    "live_new_count": 24,
+    "live_new_count_range": [
+     23,
+     24
+    ],
+    "live_cleared_count": 146,
+    "blocks_count": 1,
+    "start_clearance_saved_map_m": 0.22,
+    "goal_clearance_saved_map_m": 0.56,
+    "saved_map": "lab.grid.npz",
+    "planner_era": "current go2_nav.py"
+   },
+   "true_cause": "start pocket: squeeze not allowed near the dog",
+   "mechanism": "The only exit from the dog's spot is narrower than 0.20 m within 1.5 m of the dog, where the squeeze retry is not allowed; the dog had walked in that way minutes earlier.",
+   "evidence": [
+    "diag.jsonl records [48, 49, 50]",
+    "results/replay_results.jsonl records [48, 49, 50]",
+    "saved-map bottleneck 0.14 m",
+    "pose log: dog walked >1.5 m into this spot in the previous 5 min: True",
+    "allpairs: every place -> door_outside plans by squeeze, door_outside -> every place fails"
+   ],
+   "confidence": "high",
+   "confidence_why": "replay reproduces; trail shows how it got in",
+   "fixed_by": "prototype C (proposed): trail squeeze",
+   "replay": {
+    "as_logged_fails": true,
+    "current_plans": false,
+    "proto_C_plans": true,
+    "in_lost_window": false
+   },
+   "figure": "figs/episodes/E28.png",
+   "detail_figure": null
+  },
+  {
+   "id": "E29",
+   "kind": "nav_failure",
+   "t_start": {
+    "iso": "2026-10-23T19:38:13.08-0700",
+    "epoch": 1792809493.08
+   },
+   "t_end": {
+    "iso": "2026-10-23T19:38:13.08-0700",
+    "epoch": 1792809493.08
+   },
+   "client": null,
+   "call": null,
+   "call_note": "the failure log does not record client or call; a record is written by any failed planner.plan() with a live view (go_to or GET /nav/plan preview)",
+   "args": {
+    "goal_xy": [
+     0.95,
+     -0.05
+    ],
+    "place_guess": "water_cooler",
+    "place_guess_dist_m": 0.27,
+    "note": "goal as passed to plan() and logged; on a go_to replan this is the goal already snapped by the first plan. place_guess = saved place within 0.4 m in the current places file (inferred)"
+   },
+   "result": null,
+   "planner_error": "no route: the goal is not connected to where the robot is on the map",
+   "result_note": "go_to returns no_route if this was its first plan, blocked ('no other route') after a replan; which one is not logged",
+   "why": {
+    "saved_map_has_route": true,
+    "cause": "live lidar or temporary blocks",
+    "live_cleared_n": 201,
+    "blocks": [
+     [
+      1.23,
+      -2.15,
+      0.15
+     ],
+     [
+      1.36,
+      -1.85,
+      0.15
+     ]
+    ],
+    "live_robot": [
+     0.99,
+     -2.21
+    ],
+    "live_new_n": 14
+   },
+   "n_records": 1,
+   "record_ids": [
+    51
+   ],
+   "distinct_goals": [
+    [
+     0.95,
+     -0.05
+    ]
+   ],
+   "sensor": {
+    "map_pose_logged": [
+     0.99,
+     -2.21
+    ],
+    "poselog": {
+     "t": 1792809493.085,
+     "map": [
+      0.982,
+      -2.199,
+      0.752
+     ],
+     "odom": [
+      -3.135,
+      2.008,
+      -1.592
+     ],
+     "T": [
+      0.22996,
+      1.44761,
+      2.34398
+     ],
+     "mapping": false
+    },
+    "loc_fit": null,
+    "track_fit": null,
+    "lost_flag": null,
+    "loc_note": "fit/track fit/lost are not in the Z690 logs (lost flag added 10-25 01:20); cheetah's logger reported track fit 0.44-0.59 from 10-24 16:23",
+    "obstacle_ranges": null,
+    "live_new_count": 14,
+    "live_new_count_range": [
+     14,
+     14
+    ],
+    "live_cleared_count": 201,
+    "blocks_count": 2,
+    "start_clearance_saved_map_m": 0.1,
+    "goal_clearance_saved_map_m": 0.56,
+    "saved_map": "lab.grid.npz",
+    "planner_era": "current go2_nav.py"
+   },
+   "true_cause": "live cells + blocks",
+   "mechanism": "14 live-new cells (mostly along mapped walls) close the way; 2 temporary block(s).",
+   "evidence": [
+    "diag.jsonl records [51]",
+    "results/replay_results.jsonl records [51]",
+    "live_new 14 cells, median 0.86 m from the dog, wall-hug fraction 1.0",
+    "replay: live-only route closed, blocks-only route closed"
+   ],
+   "confidence": "medium",
+   "confidence_why": "the replay shows which cells close the route, but not whether those cells were real objects or lidar smear (no camera check done)",
+   "fixed_by": "prototype C (proposed)",
+   "replay": {
+    "as_logged_fails": true,
+    "current_plans": false,
+    "proto_C_plans": true,
+    "in_lost_window": false
+   },
+   "figure": "figs/episodes/E29.png",
+   "detail_figure": null
+  },
+  {
+   "id": "E30",
+   "kind": "nav_failure",
+   "t_start": {
+    "iso": "2026-10-23T19:39:12.02-0700",
+    "epoch": 1792809552.02
+   },
+   "t_end": {
+    "iso": "2026-10-23T19:39:30.83-0700",
+    "epoch": 1792809570.83
+   },
+   "client": null,
+   "call": null,
+   "call_note": "the failure log does not record client or call; a record is written by any failed planner.plan() with a live view (go_to or GET /nav/plan preview)",
+   "args": {
+    "goal_xy": [
+     0.95,
+     -0.05
+    ],
+    "place_guess": "water_cooler",
+    "place_guess_dist_m": 0.27,
+    "note": "goal as passed to plan() and logged; on a go_to replan this is the goal already snapped by the first plan. place_guess = saved place within 0.4 m in the current places file (inferred)"
+   },
+   "result": null,
+   "planner_error": "no route: the goal is not connected to where the robot is on the map",
+   "result_note": "go_to returns no_route if this was its first plan, blocked ('no other route') after a replan; which one is not logged",
+   "why": {
+    "saved_map_has_route": true,
+    "cause": "live lidar or temporary blocks",
+    "live_cleared_n": 149,
+    "blocks": [
+     [
+      1.36,
+      -1.85,
+      0.15
+     ],
+     [
+      1.75,
+      -0.49,
+      0.15
+     ],
+     [
+      1.72,
+      -0.06,
+      0.15
+     ]
+    ],
+    "live_robot": [
+     2.18,
+     -0.3
+    ],
+    "live_new_n": 21
+   },
+   "n_records": 4,
+   "record_ids": [
+    52,
+    53,
+    54,
+    55
+   ],
+   "distinct_goals": [
+    [
+     0.95,
+     -0.05
+    ],
+    [
+     0.95,
+     0.0
+    ]
+   ],
+   "sensor": {
+    "map_pose_logged": [
+     2.18,
+     -0.3
+    ],
+    "poselog": {
+     "t": 1792809552.085,
+     "map": [
+      2.178,
+      -0.302,
+      2.698
+     ],
+     "odom": [
+      -2.519,
+      0.007,
+      0.391
+     ],
+     "T": [
+      0.49066,
+      1.56839,
+      2.30733
+     ],
+     "mapping": false
+    },
+    "loc_fit": null,
+    "track_fit": null,
+    "lost_flag": null,
+    "loc_note": "fit/track fit/lost are not in the Z690 logs (lost flag added 10-25 01:20); cheetah's logger reported track fit 0.44-0.59 from 10-24 16:23",
+    "obstacle_ranges": null,
+    "live_new_count": 21,
+    "live_new_count_range": [
+     18,
+     21
+    ],
+    "live_cleared_count": 149,
+    "blocks_count": 3,
+    "start_clearance_saved_map_m": 0.32,
+    "goal_clearance_saved_map_m": 0.56,
+    "saved_map": "lab.grid.npz",
+    "planner_era": "current go2_nav.py"
+   },
+   "true_cause": "temporary blocks close the aisle",
+   "mechanism": "3 temporary block disc(s) (0.15 m; go_to's stall marks, inferred from the code) plus clearance close an aisle the saved map has open; the live cells alone would not.",
+   "evidence": [
+    "diag.jsonl records [52, 53, 54, 55]",
+    "results/replay_results.jsonl records [52, 53, 54, 55]",
+    "replay: with logged live cells but no blocks the route exists; with blocks only it does not",
+    "blocks [[1.36, -1.85, 0.15], [1.75, -0.49, 0.15], [1.72, -0.06, 0.15]]",
+    "go2_agent: avoidance always on => obstacle() returns None ahead, so blocks come only from stalls"
+   ],
+   "confidence": "high",
+   "confidence_why": "replay isolates the blocks; that they are stall marks follows from the code, not from a log field",
+   "fixed_by": "prototype C (proposed)",
+   "replay": {
+    "as_logged_fails": true,
+    "current_plans": false,
+    "proto_C_plans": true,
+    "in_lost_window": false
+   },
+   "figure": "figs/episodes/E30.png",
+   "detail_figure": "figs/52_blocks_close_aisle.png"
+  },
+  {
+   "id": "E31",
+   "kind": "nav_failure",
+   "t_start": {
+    "iso": "2026-10-23T19:39:40.26-0700",
+    "epoch": 1792809580.26
+   },
+   "t_end": {
+    "iso": "2026-10-23T19:39:51.28-0700",
+    "epoch": 1792809591.28
+   },
+   "client": null,
+   "call": null,
+   "call_note": "the failure log does not record client or call; a record is written by any failed planner.plan() with a live view (go_to or GET /nav/plan preview)",
+   "args": {
+    "goal_xy": [
+     0.36,
+     -0.44
+    ],
+    "place_guess": "desk_oliver",
+    "place_guess_dist_m": 0.0,
+    "note": "goal as passed to plan() and logged; on a go_to replan this is the goal already snapped by the first plan. place_guess = saved place within 0.4 m in the current places file (inferred)"
+   },
+   "result": null,
+   "planner_error": "no route: the goal is not connected to where the robot is on the map",
+   "result_note": "go_to returns no_route if this was its first plan, blocked ('no other route') after a replan; which one is not logged",
+   "why": {
+    "saved_map_has_route": true,
+    "cause": "live lidar or temporary blocks",
+    "live_cleared_n": 162,
+    "blocks": [
+     [
+      1.36,
+      -1.85,
+      0.15
+     ],
+     [
+      1.75,
+      -0.49,
+      0.15
+     ],
+     [
+      1.72,
+      -0.06,
+      0.15
+     ]
+    ],
+    "live_robot": [
+     2.21,
+     -0.3
+    ],
+    "live_new_n": 20
+   },
+   "n_records": 4,
+   "record_ids": [
+    56,
+    57,
+    58,
+    59
+   ],
+   "distinct_goals": [
+    [
+     0.36,
+     -0.44
+    ]
+   ],
+   "sensor": {
+    "map_pose_logged": [
+     2.21,
+     -0.3
+    ],
+    "poselog": {
+     "t": 1792809580.285,
+     "map": [
+      2.208,
+      -0.302,
+      2.681
+     ],
+     "odom": [
+      -2.519,
+      0.007,
+      0.395
+     ],
+     "T": [
+      0.56021,
+      1.60331,
+      2.28638
+     ],
+     "mapping": false
+    },
+    "loc_fit": null,
+    "track_fit": null,
+    "lost_flag": null,
+    "loc_note": "fit/track fit/lost are not in the Z690 logs (lost flag added 10-25 01:20); cheetah's logger reported track fit 0.44-0.59 from 10-24 16:23",
+    "obstacle_ranges": null,
+    "live_new_count": 20,
+    "live_new_count_range": [
+     20,
+     22
+    ],
+    "live_cleared_count": 162,
+    "blocks_count": 3,
+    "start_clearance_saved_map_m": 0.36,
+    "goal_clearance_saved_map_m": 0.58,
+    "saved_map": "lab.grid.npz",
+    "planner_era": "current go2_nav.py"
+   },
+   "true_cause": "temporary blocks close the aisle",
+   "mechanism": "3 temporary block disc(s) (0.15 m; go_to's stall marks, inferred from the code) plus clearance close an aisle the saved map has open; the live cells alone would not.",
+   "evidence": [
+    "diag.jsonl records [56, 57, 58, 59]",
+    "results/replay_results.jsonl records [56, 57, 58, 59]",
+    "replay: with logged live cells but no blocks the route exists; with blocks only it does not",
+    "blocks [[1.36, -1.85, 0.15], [1.75, -0.49, 0.15], [1.72, -0.06, 0.15]]",
+    "go2_agent: avoidance always on => obstacle() returns None ahead, so blocks come only from stalls"
+   ],
+   "confidence": "high",
+   "confidence_why": "replay isolates the blocks; that they are stall marks follows from the code, not from a log field",
+   "fixed_by": "prototype C (proposed)",
+   "replay": {
+    "as_logged_fails": true,
+    "current_plans": false,
+    "proto_C_plans": true,
+    "in_lost_window": false
+   },
+   "figure": "figs/episodes/E31.png",
+   "detail_figure": null
+  },
+  {
+   "id": "E32",
+   "kind": "nav_failure",
+   "t_start": {
+    "iso": "2026-10-24T15:27:57.89-0700",
+    "epoch": 1792880877.89
+   },
+   "t_end": {
+    "iso": "2026-10-24T15:28:07.40-0700",
+    "epoch": 1792880887.4
+   },
+   "client": null,
+   "call": null,
+   "call_note": "the failure log does not record client or call; a record is written by any failed planner.plan() with a live view (go_to or GET /nav/plan preview)",
+   "args": {
+    "goal_xy": [
+     -5.38,
+     2.2
+    ],
+    "place_guess": "door_stairwell",
+    "place_guess_dist_m": 0.0,
+    "note": "goal as passed to plan() and logged; on a go_to replan this is the goal already snapped by the first plan. place_guess = saved place within 0.4 m in the current places file (inferred)"
+   },
+   "result": null,
+   "planner_error": "no route: the goal is not connected to where the robot is on the map",
+   "result_note": "go_to returns no_route if this was its first plan, blocked ('no other route') after a replan; which one is not logged",
+   "why": {
+    "saved_map_has_route": false,
+    "cause": "saved map",
+    "live_cleared_n": 219,
+    "blocks": [
+     [
+      3.11,
+      0.02,
+      0.15
+     ]
+    ],
+    "live_robot": [
+     0.15,
+     -2.95
+    ],
+    "live_new_n": 26
+   },
+   "n_records": 4,
+   "record_ids": [
+    60,
+    61,
+    62,
+    63
+   ],
+   "distinct_goals": [
+    [
+     -5.38,
+     2.2
+    ]
+   ],
+   "sensor": {
+    "map_pose_logged": [
+     0.15,
+     -2.95
+    ],
+    "poselog": {
+     "t": 1792880877.979,
+     "map": [
+      0.149,
+      -2.948,
+      -2.372
+     ],
+     "odom": [
+      0.658,
+      -2.825,
+      -2.81
+     ],
+     "T": [
+      -1.6454,
+      -0.66915,
+      0.43808
+     ],
+     "mapping": false
+    },
+    "loc_fit": null,
+    "track_fit": null,
+    "lost_flag": null,
+    "loc_note": "fit/track fit/lost are not in the Z690 logs (lost flag added 10-25 01:20); cheetah's logger reported track fit 0.44-0.59 from 10-24 16:23",
+    "obstacle_ranges": null,
+    "live_new_count": 26,
+    "live_new_count_range": [
+     23,
+     26
+    ],
+    "live_cleared_count": 219,
+    "blocks_count": 1,
+    "start_clearance_saved_map_m": 0.36,
+    "goal_clearance_saved_map_m": 0.36,
+    "saved_map": "lab.grid.npz",
+    "planner_era": "current go2_nav.py"
+   },
+   "true_cause": "start pocket: squeeze not allowed near the dog",
+   "mechanism": "The only exit from the dog's spot is narrower than 0.20 m within 1.5 m of the dog, where the squeeze retry is not allowed; the dog had walked in that way minutes earlier.",
+   "evidence": [
+    "diag.jsonl records [60, 61, 62, 63]",
+    "results/replay_results.jsonl records [60, 61, 62, 63]",
+    "saved-map bottleneck 0.14 m",
+    "pose log: dog walked >1.5 m into this spot in the previous 5 min: True",
+    "allpairs: every place -> door_outside plans by squeeze, door_outside -> every place fails"
+   ],
+   "confidence": "high",
+   "confidence_why": "replay reproduces; trail shows how it got in",
+   "fixed_by": "prototype C (proposed): trail squeeze",
+   "replay": {
+    "as_logged_fails": true,
+    "current_plans": false,
+    "proto_C_plans": true,
+    "in_lost_window": false
+   },
+   "figure": "figs/episodes/E32.png",
+   "detail_figure": "figs/60_start_pocket_door_outside.png"
+  },
+  {
+   "id": "E33",
+   "kind": "nav_failure",
+   "t_start": {
+    "iso": "2026-10-24T15:28:09.44-0700",
+    "epoch": 1792880889.44
+   },
+   "t_end": {
+    "iso": "2026-10-24T15:28:09.44-0700",
+    "epoch": 1792880889.44
+   },
+   "client": null,
+   "call": null,
+   "call_note": "the failure log does not record client or call; a record is written by any failed planner.plan() with a live view (go_to or GET /nav/plan preview)",
+   "args": {
+    "goal_xy": [
+     -2.48,
+     1.04
+    ],
+    "place_guess": "podium",
+    "place_guess_dist_m": 0.0,
+    "note": "goal as passed to plan() and logged; on a go_to replan this is the goal already snapped by the first plan. place_guess = saved place within 0.4 m in the current places file (inferred)"
+   },
+   "result": null,
+   "planner_error": "no route: the goal is not connected to where the robot is on the map",
+   "result_note": "go_to returns no_route if this was its first plan, blocked ('no other route') after a replan; which one is not logged",
+   "why": {
+    "saved_map_has_route": false,
+    "cause": "saved map",
+    "live_cleared_n": 221,
+    "blocks": [
+     [
+      3.11,
+      0.02,
+      0.15
+     ]
+    ],
+    "live_robot": [
+     0.15,
+     -2.95
+    ],
+    "live_new_n": 23
+   },
+   "n_records": 1,
+   "record_ids": [
+    64
+   ],
+   "distinct_goals": [
+    [
+     -2.48,
+     1.04
+    ]
+   ],
+   "sensor": {
+    "map_pose_logged": [
+     0.15,
+     -2.95
+    ],
+    "poselog": {
+     "t": 1792880889.379,
+     "map": [
+      0.149,
+      -2.947,
+      -2.367
+     ],
+     "odom": [
+      0.659,
+      -2.824,
+      -2.805
+     ],
+     "T": [
+      -1.6454,
+      -0.66915,
+      0.43808
+     ],
+     "mapping": false
+    },
+    "loc_fit": null,
+    "track_fit": null,
+    "lost_flag": null,
+    "loc_note": "fit/track fit/lost are not in the Z690 logs (lost flag added 10-25 01:20); cheetah's logger reported track fit 0.44-0.59 from 10-24 16:23",
+    "obstacle_ranges": null,
+    "live_new_count": 23,
+    "live_new_count_range": [
+     23,
+     23
+    ],
+    "live_cleared_count": 221,
+    "blocks_count": 1,
+    "start_clearance_saved_map_m": 0.36,
+    "goal_clearance_saved_map_m": 0.42,
+    "saved_map": "lab.grid.npz",
+    "planner_era": "current go2_nav.py"
+   },
+   "true_cause": "start pocket: squeeze not allowed near the dog",
+   "mechanism": "The only exit from the dog's spot is narrower than 0.20 m within 1.5 m of the dog, where the squeeze retry is not allowed; the dog had walked in that way minutes earlier.",
+   "evidence": [
+    "diag.jsonl records [64]",
+    "results/replay_results.jsonl records [64]",
+    "saved-map bottleneck 0.14 m",
+    "pose log: dog walked >1.5 m into this spot in the previous 5 min: True",
+    "allpairs: every place -> door_outside plans by squeeze, door_outside -> every place fails"
+   ],
+   "confidence": "high",
+   "confidence_why": "replay reproduces; trail shows how it got in",
+   "fixed_by": "prototype C (proposed): trail squeeze",
+   "replay": {
+    "as_logged_fails": true,
+    "current_plans": false,
+    "proto_C_plans": true,
+    "in_lost_window": false
+   },
+   "figure": "figs/episodes/E33.png",
+   "detail_figure": null
+  },
+  {
+   "id": "E34",
+   "kind": "nav_failure",
+   "t_start": {
+    "iso": "2026-10-24T15:28:10.85-0700",
+    "epoch": 1792880890.85
+   },
+   "t_end": {
+    "iso": "2026-10-24T15:28:10.85-0700",
+    "epoch": 1792880890.85
+   },
+   "client": null,
+   "call": null,
+   "call_note": "the failure log does not record client or call; a record is written by any failed planner.plan() with a live view (go_to or GET /nav/plan preview)",
+   "args": {
+    "goal_xy": [
+     -1.5,
+     0.5
+    ],
+    "place_guess": null,
+    "place_guess_dist_m": null,
+    "note": "goal as passed to plan() and logged; on a go_to replan this is the goal already snapped by the first plan. place_guess = saved place within 0.4 m in the current places file (inferred)"
+   },
+   "result": null,
+   "planner_error": "no route: the goal is not connected to where the robot is on the map",
+   "result_note": "go_to returns no_route if this was its first plan, blocked ('no other route') after a replan; which one is not logged",
+   "why": {
+    "saved_map_has_route": false,
+    "cause": "saved map",
+    "live_cleared_n": 222,
+    "blocks": [
+     [
+      3.11,
+      0.02,
+      0.15
+     ]
+    ],
+    "live_robot": [
+     0.15,
+     -2.95
+    ],
+    "live_new_n": 23
+   },
+   "n_records": 1,
+   "record_ids": [
+    65
+   ],
+   "distinct_goals": [
+    [
+     -1.5,
+     0.5
+    ]
+   ],
+   "sensor": {
+    "map_pose_logged": [
+     0.15,
+     -2.95
+    ],
+    "poselog": {
+     "t": 1792880890.779,
+     "map": [
+      0.149,
+      -2.947,
+      -2.365
+     ],
+     "odom": [
+      0.659,
+      -2.824,
+      -2.803
+     ],
+     "T": [
+      -1.6454,
+      -0.66915,
+      0.43808
+     ],
+     "mapping": false
+    },
+    "loc_fit": null,
+    "track_fit": null,
+    "lost_flag": null,
+    "loc_note": "fit/track fit/lost are not in the Z690 logs (lost flag added 10-25 01:20); cheetah's logger reported track fit 0.44-0.59 from 10-24 16:23",
+    "obstacle_ranges": null,
+    "live_new_count": 23,
+    "live_new_count_range": [
+     23,
+     23
+    ],
+    "live_cleared_count": 222,
+    "blocks_count": 1,
+    "start_clearance_saved_map_m": 0.36,
+    "goal_clearance_saved_map_m": 0.0,
+    "saved_map": "lab.grid.npz",
+    "planner_era": "current go2_nav.py"
+   },
+   "true_cause": "start pocket: squeeze not allowed near the dog",
+   "mechanism": "The only exit from the dog's spot is narrower than 0.20 m within 1.5 m of the dog, where the squeeze retry is not allowed; the dog had walked in that way minutes earlier.",
+   "evidence": [
+    "diag.jsonl records [65]",
+    "results/replay_results.jsonl records [65]",
+    "saved-map bottleneck 0.0 m",
+    "pose log: dog walked >1.5 m into this spot in the previous 5 min: True",
+    "allpairs: every place -> door_outside plans by squeeze, door_outside -> every place fails"
+   ],
+   "confidence": "high",
+   "confidence_why": "replay reproduces; trail shows how it got in",
+   "fixed_by": "prototype C (proposed): trail squeeze",
+   "replay": {
+    "as_logged_fails": true,
+    "current_plans": false,
+    "proto_C_plans": true,
+    "in_lost_window": false
+   },
+   "figure": "figs/episodes/E34.png",
+   "detail_figure": null
+  },
+  {
+   "id": "E35",
+   "kind": "nav_failure",
+   "t_start": {
+    "iso": "2026-10-24T15:28:42.45-0700",
+    "epoch": 1792880922.45
+   },
+   "t_end": {
+    "iso": "2026-10-24T15:28:44.49-0700",
+    "epoch": 1792880924.49
+   },
+   "client": null,
+   "call": null,
+   "call_note": "the failure log does not record client or call; a record is written by any failed planner.plan() with a live view (go_to or GET /nav/plan preview)",
+   "args": {
+    "goal_xy": [
+     -5.38,
+     2.2
+    ],
+    "place_guess": "door_stairwell",
+    "place_guess_dist_m": 0.0,
+    "note": "goal as passed to plan() and logged; on a go_to replan this is the goal already snapped by the first plan. place_guess = saved place within 0.4 m in the current places file (inferred)"
+   },
+   "result": null,
+   "planner_error": "no route: the goal is not connected to where the robot is on the map",
+   "result_note": "go_to returns no_route if this was its first plan, blocked ('no other route') after a replan; which one is not logged",
+   "why": {
+    "saved_map_has_route": true,
+    "cause": "live lidar or temporary blocks",
+    "live_cleared_n": 195,
+    "blocks": [],
+    "live_robot": [
+     0.7,
+     -2.5
+    ],
+    "live_new_n": 20
+   },
+   "n_records": 2,
+   "record_ids": [
+    66,
+    67
+   ],
+   "distinct_goals": [
+    [
+     -5.38,
+     2.2
+    ]
+   ],
+   "sensor": {
+    "map_pose_logged": [
+     0.7,
+     -2.5
+    ],
+    "poselog": {
+     "t": 1792880922.379,
+     "map": [
+      0.703,
+      -2.497,
+      0.808
+     ],
+     "odom": [
+      1.377,
+      -2.597,
+      0.433
+     ],
+     "T": [
+      -1.53001,
+      -0.58525,
+      0.37525
+     ],
+     "mapping": false
+    },
+    "loc_fit": null,
+    "track_fit": null,
+    "lost_flag": null,
+    "loc_note": "fit/track fit/lost are not in the Z690 logs (lost flag added 10-25 01:20); cheetah's logger reported track fit 0.44-0.59 from 10-24 16:23",
+    "obstacle_ranges": null,
+    "live_new_count": 20,
+    "live_new_count_range": [
+     20,
+     20
+    ],
+    "live_cleared_count": 195,
+    "blocks_count": 0,
+    "start_clearance_saved_map_m": 0.14,
+    "goal_clearance_saved_map_m": 0.36,
+    "saved_map": "lab.grid.npz",
+    "planner_era": "current go2_nav.py"
+   },
+   "true_cause": "live lidar cells close the route",
+   "mechanism": "20 live-new cells (mostly along mapped walls) close the way.",
+   "evidence": [
+    "diag.jsonl records [66, 67]",
+    "results/replay_results.jsonl records [66, 67]",
+    "live_new 20 cells, median 0.92 m from the dog, wall-hug fraction 0.95",
+    "replay: live-only route closed, blocks-only route exists"
+   ],
+   "confidence": "medium",
+   "confidence_why": "the replay shows which cells close the route, but not whether those cells were real objects or lidar smear (no camera check done)",
+   "fixed_by": "none (only dropping live cells, variant E, passes)",
+   "replay": {
+    "as_logged_fails": true,
+    "current_plans": false,
+    "proto_C_plans": false,
+    "in_lost_window": false
+   },
+   "figure": "figs/episodes/E35.png",
+   "detail_figure": "figs/66_live_wallhug.png"
+  },
+  {
+   "id": "E36",
+   "kind": "nav_failure",
+   "t_start": {
+    "iso": "2026-10-24T15:56:29.03-0700",
+    "epoch": 1792882589.03
+   },
+   "t_end": {
+    "iso": "2026-10-24T15:56:29.03-0700",
+    "epoch": 1792882589.03
+   },
+   "client": null,
+   "call": null,
+   "call_note": "the failure log does not record client or call; a record is written by any failed planner.plan() with a live view (go_to or GET /nav/plan preview)",
+   "args": {
+    "goal_xy": [
+     -0.05,
+     0.95
+    ],
+    "place_guess": null,
+    "place_guess_dist_m": null,
+    "note": "goal as passed to plan() and logged; on a go_to replan this is the goal already snapped by the first plan. place_guess = saved place within 0.4 m in the current places file (inferred)"
+   },
+   "result": null,
+   "planner_error": "no route: the goal is not connected to where the robot is on the map",
+   "result_note": "go_to returns no_route if this was its first plan, blocked ('no other route') after a replan; which one is not logged",
+   "why": {
+    "saved_map_has_route": true,
+    "cause": "live lidar or temporary blocks",
+    "live_cleared_n": 104,
+    "blocks": [
+     [
+      0.25,
+      4.21,
+      0.15
+     ],
+     [
+      0.17,
+      3.26,
+      0.15
+     ]
+    ],
+    "live_robot": [
+     0.41,
+     3.74
+    ],
+    "live_new_n": 57
+   },
+   "n_records": 1,
+   "record_ids": [
+    68
+   ],
+   "distinct_goals": [
+    [
+     -0.05,
+     0.95
+    ]
+   ],
+   "sensor": {
+    "map_pose_logged": [
+     0.41,
+     3.74
+    ],
+    "poselog": {
+     "t": 1792882588.979,
+     "map": [
+      0.412,
+      3.737,
+      -2.038
+     ],
+     "odom": [
+      0.429,
+      3.445,
+      -1.073
+     ],
+     "T": [
+      -2.66447,
+      2.12866,
+      -0.96517
+     ],
+     "mapping": false
+    },
+    "loc_fit": null,
+    "track_fit": null,
+    "lost_flag": null,
+    "loc_note": "fit/track fit/lost are not in the Z690 logs (lost flag added 10-25 01:20); cheetah's logger reported track fit 0.44-0.59 from 10-24 16:23",
+    "obstacle_ranges": null,
+    "live_new_count": 57,
+    "live_new_count_range": [
+     57,
+     57
+    ],
+    "live_cleared_count": 104,
+    "blocks_count": 2,
+    "start_clearance_saved_map_m": 0.74,
+    "goal_clearance_saved_map_m": 0.2,
+    "saved_map": "lab.grid.npz",
+    "planner_era": "current go2_nav.py"
+   },
+   "true_cause": "live cells + blocks",
+   "mechanism": "57 live-new cells (mostly free-standing) close the way; 2 temporary block(s).",
+   "evidence": [
+    "diag.jsonl records [68]",
+    "results/replay_results.jsonl records [68]",
+    "live_new 57 cells, median 0.82 m from the dog, wall-hug fraction 0.16",
+    "replay: live-only route closed, blocks-only route closed"
+   ],
+   "confidence": "medium",
+   "confidence_why": "the replay shows which cells close the route, but not whether those cells were real objects or lidar smear (no camera check done)",
+   "fixed_by": "prototype C (proposed)",
+   "replay": {
+    "as_logged_fails": true,
+    "current_plans": false,
+    "proto_C_plans": true,
+    "in_lost_window": false
+   },
+   "figure": "figs/episodes/E36.png",
+   "detail_figure": null
+  },
+  {
+   "id": "E37",
+   "kind": "nav_failure",
+   "t_start": {
+    "iso": "2026-10-24T16:23:43.28-0700",
+    "epoch": 1792884223.28
+   },
+   "t_end": {
+    "iso": "2026-10-24T16:23:47.68-0700",
+    "epoch": 1792884227.68
+   },
+   "client": null,
+   "call": null,
+   "call_note": "the failure log does not record client or call; a record is written by any failed planner.plan() with a live view (go_to or GET /nav/plan preview)",
+   "args": {
+    "goal_xy": [
+     1.05,
+     2.85
+    ],
+    "place_guess": null,
+    "place_guess_dist_m": null,
+    "note": "goal as passed to plan() and logged; on a go_to replan this is the goal already snapped by the first plan. place_guess = saved place within 0.4 m in the current places file (inferred)"
+   },
+   "result": null,
+   "planner_error": "no route: the goal is not connected to where the robot is on the map",
+   "result_note": "go_to returns no_route if this was its first plan, blocked ('no other route') after a replan; which one is not logged",
+   "why": {
+    "saved_map_has_route": true,
+    "cause": "live lidar or temporary blocks",
+    "live_cleared_n": 176,
+    "blocks": [
+     [
+      -4.44,
+      1.59,
+      0.15
+     ],
+     [
+      -3.92,
+      3.28,
+      0.15
+     ],
+     [
+      -4.8,
+      1.36,
+      0.15
+     ]
+    ],
+    "live_robot": [
+     -5.06,
+     1.78
+    ],
+    "live_new_n": 51
+   },
+   "n_records": 2,
+   "record_ids": [
+    69,
+    70
+   ],
+   "distinct_goals": [
+    [
+     1.03,
+     2.87
+    ],
+    [
+     1.05,
+     2.85
+    ]
+   ],
+   "sensor": {
+    "map_pose_logged": [
+     -5.06,
+     1.78
+    ],
+    "poselog": {
+     "t": 1792884223.379,
+     "map": [
+      -5.057,
+      1.783,
+      -1.041
+     ],
+     "odom": [
+      4.263,
+      -2.236,
+      1.113
+     ],
+     "T": [
+      -0.84391,
+      4.11087,
+      -2.15374
+     ],
+     "mapping": false
+    },
+    "loc_fit": null,
+    "track_fit": null,
+    "lost_flag": null,
+    "loc_note": "fit/track fit/lost are not in the Z690 logs (lost flag added 10-25 01:20); cheetah's logger reported track fit 0.44-0.59 from 10-24 16:23",
+    "obstacle_ranges": null,
+    "live_new_count": 51,
+    "live_new_count_range": [
+     51,
+     51
+    ],
+    "live_cleared_count": 176,
+    "blocks_count": 3,
+    "start_clearance_saved_map_m": 0.52,
+    "goal_clearance_saved_map_m": 0.28,
+    "saved_map": "lab.grid.npz",
+    "planner_era": "current go2_nav.py"
+   },
+   "true_cause": "localization lost",
+   "mechanism": "51 live-new cells (mostly free-standing) close the way; 3 temporary block(s).",
+   "evidence": [
+    "diag.jsonl records [69, 70]",
+    "results/replay_results.jsonl records [69, 70]",
+    "pose log: T jump of 3.19 m / -55.5 deg at 16:34:25 (hand placement); cheetah inbox 10-24 16:32: track fit fell from ~0.85 to 0.44-0.59 at 16:23",
+    "start clearance on the saved map 0.52 m",
+    "live_new 51 cells, wall-hug 0.33"
+   ],
+   "confidence": "high",
+   "confidence_why": "lost window from cheetah's logged track fit plus a large correction right after",
+   "fixed_by": "none: localization (relocalize). Proto C must NOT route here: lost gate (fallback=False while lost)",
+   "replay": {
+    "as_logged_fails": true,
+    "current_plans": false,
+    "proto_C_plans": true,
+    "in_lost_window": true
+   },
+   "figure": "figs/episodes/E37.png",
+   "detail_figure": null
+  },
+  {
+   "id": "E38",
+   "kind": "nav_failure",
+   "t_start": {
+    "iso": "2026-10-24T16:23:50.05-0700",
+    "epoch": 1792884230.05
+   },
+   "t_end": {
+    "iso": "2026-10-24T16:23:50.05-0700",
+    "epoch": 1792884230.05
+   },
+   "client": null,
+   "call": null,
+   "call_note": "the failure log does not record client or call; a record is written by any failed planner.plan() with a live view (go_to or GET /nav/plan preview)",
+   "args": {
+    "goal_xy": [
+     -3.0,
+     2.5
+    ],
+    "place_guess": null,
+    "place_guess_dist_m": null,
+    "note": "goal as passed to plan() and logged; on a go_to replan this is the goal already snapped by the first plan. place_guess = saved place within 0.4 m in the current places file (inferred)"
+   },
+   "result": null,
+   "planner_error": "no route: the goal is not connected to where the robot is on the map",
+   "result_note": "go_to returns no_route if this was its first plan, blocked ('no other route') after a replan; which one is not logged",
+   "why": {
+    "saved_map_has_route": false,
+    "cause": "saved map",
+    "live_cleared_n": 178,
+    "blocks": [
+     [
+      -4.44,
+      1.59,
+      0.15
+     ],
+     [
+      -3.92,
+      3.28,
+      0.15
+     ],
+     [
+      -4.8,
+      1.36,
+      0.15
+     ]
+    ],
+    "live_robot": [
+     -5.06,
+     1.78
+    ],
+    "live_new_n": 53
+   },
+   "n_records": 1,
+   "record_ids": [
+    71
+   ],
+   "distinct_goals": [
+    [
+     -3.0,
+     2.5
+    ]
+   ],
+   "sensor": {
+    "map_pose_logged": [
+     -5.06,
+     1.78
+    ],
+    "poselog": {
+     "t": 1792884229.979,
+     "map": [
+      -5.056,
+      1.782,
+      -1.04
+     ],
+     "odom": [
+      4.263,
+      -2.235,
+      1.114
+     ],
+     "T": [
+      -0.84391,
+      4.11087,
+      -2.15374
+     ],
+     "mapping": false
+    },
+    "loc_fit": null,
+    "track_fit": null,
+    "lost_flag": null,
+    "loc_note": "fit/track fit/lost are not in the Z690 logs (lost flag added 10-25 01:20); cheetah's logger reported track fit 0.44-0.59 from 10-24 16:23",
+    "obstacle_ranges": null,
+    "live_new_count": 53,
+    "live_new_count_range": [
+     53,
+     53
+    ],
+    "live_cleared_count": 178,
+    "blocks_count": 3,
+    "start_clearance_saved_map_m": 0.52,
+    "goal_clearance_saved_map_m": 0.14,
+    "saved_map": "lab.grid.npz",
+    "planner_era": "current go2_nav.py"
+   },
+   "true_cause": "localization lost",
+   "mechanism": "53 live-new cells (mostly free-standing) close the way; 3 temporary block(s).",
+   "evidence": [
+    "diag.jsonl records [71]",
+    "results/replay_results.jsonl records [71]",
+    "pose log: T jump of 3.19 m / -55.5 deg at 16:34:25 (hand placement); cheetah inbox 10-24 16:32: track fit fell from ~0.85 to 0.44-0.59 at 16:23",
+    "start clearance on the saved map 0.52 m",
+    "live_new 53 cells, wall-hug 0.32"
+   ],
+   "confidence": "high",
+   "confidence_why": "lost window from cheetah's logged track fit plus a large correction right after",
+   "fixed_by": "none: localization (relocalize). Proto C must NOT route here: lost gate (fallback=False while lost)",
+   "replay": {
+    "as_logged_fails": true,
+    "current_plans": false,
+    "proto_C_plans": false,
+    "in_lost_window": true
+   },
+   "figure": "figs/episodes/E38.png",
+   "detail_figure": null
+  },
+  {
+   "id": "E39",
+   "kind": "nav_failure",
+   "t_start": {
+    "iso": "2026-10-24T16:24:44.34-0700",
+    "epoch": 1792884284.34
+   },
+   "t_end": {
+    "iso": "2026-10-24T16:24:54.99-0700",
+    "epoch": 1792884294.99
+   },
+   "client": null,
+   "call": null,
+   "call_note": "the failure log does not record client or call; a record is written by any failed planner.plan() with a live view (go_to or GET /nav/plan preview)",
+   "args": {
+    "goal_xy": [
+     1.03,
+     2.87
+    ],
+    "place_guess": null,
+    "place_guess_dist_m": null,
+    "note": "goal as passed to plan() and logged; on a go_to replan this is the goal already snapped by the first plan. place_guess = saved place within 0.4 m in the current places file (inferred)"
+   },
+   "result": null,
+   "planner_error": "no route: the goal is not connected to where the robot is on the map",
+   "result_note": "go_to returns no_route if this was its first plan, blocked ('no other route') after a replan; which one is not logged",
+   "why": {
+    "saved_map_has_route": true,
+    "cause": "live lidar or temporary blocks",
+    "live_cleared_n": 235,
+    "blocks": [
+     [
+      -4.44,
+      1.59,
+      0.15
+     ],
+     [
+      -3.92,
+      3.28,
+      0.15
+     ],
+     [
+      -4.8,
+      1.36,
+      0.15
+     ]
+    ],
+    "live_robot": [
+     -4.09,
+     2.03
+    ],
+    "live_new_n": 77
+   },
+   "n_records": 4,
+   "record_ids": [
+    72,
+    73,
+    74,
+    75
+   ],
+   "distinct_goals": [
+    [
+     1.03,
+     2.87
+    ]
+   ],
+   "sensor": {
+    "map_pose_logged": [
+     -4.09,
+     2.03
+    ],
+    "poselog": {
+     "t": 1792884284.379,
+     "map": [
+      -4.092,
+      2.028,
+      0.223
+     ],
+     "odom": [
+      3.527,
+      -1.565,
+      2.377
+     ],
+     "T": [
+      -0.84391,
+      4.11087,
+      -2.15374
+     ],
+     "mapping": false
+    },
+    "loc_fit": null,
+    "track_fit": null,
+    "lost_flag": null,
+    "loc_note": "fit/track fit/lost are not in the Z690 logs (lost flag added 10-25 01:20); cheetah's logger reported track fit 0.44-0.59 from 10-24 16:23",
+    "obstacle_ranges": null,
+    "live_new_count": 77,
+    "live_new_count_range": [
+     71,
+     77
+    ],
+    "live_cleared_count": 235,
+    "blocks_count": 3,
+    "start_clearance_saved_map_m": 0.0,
+    "goal_clearance_saved_map_m": 0.28,
+    "saved_map": "lab.grid.npz",
+    "planner_era": "current go2_nav.py"
+   },
+   "true_cause": "localization lost",
+   "mechanism": "the dog's map pose is inside a mapped obstacle; 77 live-new cells (mostly free-standing) close the way; 3 temporary block(s).",
+   "evidence": [
+    "diag.jsonl records [72, 73, 74, 75]",
+    "results/replay_results.jsonl records [72, 73, 74, 75]",
+    "pose log: T jump of 3.19 m / -55.5 deg at 16:34:25 (hand placement); cheetah inbox 10-24 16:32: track fit fell from ~0.85 to 0.44-0.59 at 16:23",
+    "start clearance on the saved map 0.0 m",
+    "live_new 77 cells, wall-hug 0.12"
+   ],
+   "confidence": "high",
+   "confidence_why": "lost window from cheetah's logged track fit plus a large correction right after",
+   "fixed_by": "none: localization (relocalize). Proto C must NOT route here: lost gate (fallback=False while lost)",
+   "replay": {
+    "as_logged_fails": true,
+    "current_plans": false,
+    "proto_C_plans": true,
+    "in_lost_window": true
+   },
+   "figure": "figs/episodes/E39.png",
+   "detail_figure": "figs/72_lost_start_in_obstacle.png"
+  },
+  {
+   "id": "E40",
+   "kind": "nav_failure",
+   "t_start": {
+    "iso": "2026-10-24T16:28:01.37-0700",
+    "epoch": 1792884481.37
+   },
+   "t_end": {
+    "iso": "2026-10-24T16:28:01.37-0700",
+    "epoch": 1792884481.37
+   },
+   "client": null,
+   "call": null,
+   "call_note": "the failure log does not record client or call; a record is written by any failed planner.plan() with a live view (go_to or GET /nav/plan preview)",
+   "args": {
+    "goal_xy": [
+     1.85,
+     2.65
+    ],
+    "place_guess": "desk_joseph",
+    "place_guess_dist_m": 0.12,
+    "note": "goal as passed to plan() and logged; on a go_to replan this is the goal already snapped by the first plan. place_guess = saved place within 0.4 m in the current places file (inferred)"
+   },
+   "result": null,
+   "planner_error": "no route: the goal is not connected to where the robot is on the map",
+   "result_note": "go_to returns no_route if this was its first plan, blocked ('no other route') after a replan; which one is not logged",
+   "why": {
+    "saved_map_has_route": true,
+    "cause": "live lidar or temporary blocks",
+    "live_cleared_n": 273,
+    "blocks": [
+     [
+      -3.01,
+      4.42,
+      0.15
+     ],
+     [
+      -2.89,
+      4.43,
+      0.15
+     ],
+     [
+      -0.61,
+      4.74,
+      0.15
+     ]
+    ],
+    "live_robot": [
+     -1.02,
+     5.06
+    ],
+    "live_new_n": 42
+   },
+   "n_records": 1,
+   "record_ids": [
+    76
+   ],
+   "distinct_goals": [
+    [
+     1.85,
+     2.65
+    ]
+   ],
+   "sensor": {
+    "map_pose_logged": [
+     -1.02,
+     5.06
+    ],
+    "poselog": {
+     "t": 1792884481.379,
+     "map": [
+      -1.02,
+      5.059,
+      -0.648
+     ],
+     "odom": [
+      -2.184,
+      -1.223,
+      1.485
+     ],
+     "T": [
+      -1.149,
+      2.55911,
+      -2.13279
+     ],
+     "mapping": false
+    },
+    "loc_fit": null,
+    "track_fit": null,
+    "lost_flag": null,
+    "loc_note": "fit/track fit/lost are not in the Z690 logs (lost flag added 10-25 01:20); cheetah's logger reported track fit 0.44-0.59 from 10-24 16:23",
+    "obstacle_ranges": null,
+    "live_new_count": 42,
+    "live_new_count_range": [
+     42,
+     42
+    ],
+    "live_cleared_count": 273,
+    "blocks_count": 3,
+    "start_clearance_saved_map_m": 0.4,
+    "goal_clearance_saved_map_m": 0.28,
+    "saved_map": "lab.grid.npz",
+    "planner_era": "current go2_nav.py"
+   },
+   "true_cause": "localization lost",
+   "mechanism": "42 live-new cells (mostly free-standing) close the way; 3 temporary block(s).",
+   "evidence": [
+    "diag.jsonl records [76]",
+    "results/replay_results.jsonl records [76]",
+    "pose log: T jump of 3.19 m / -55.5 deg at 16:34:25 (hand placement); cheetah inbox 10-24 16:32: track fit fell from ~0.85 to 0.44-0.59 at 16:23",
+    "start clearance on the saved map 0.4 m",
+    "live_new 42 cells, wall-hug 0.45"
+   ],
+   "confidence": "high",
+   "confidence_why": "lost window from cheetah's logged track fit plus a large correction right after",
+   "fixed_by": "none: localization (relocalize). Proto C must NOT route here: lost gate (fallback=False while lost)",
+   "replay": {
+    "as_logged_fails": true,
+    "current_plans": false,
+    "proto_C_plans": true,
+    "in_lost_window": true
+   },
+   "figure": "figs/episodes/E40.png",
+   "detail_figure": null
+  },
+  {
+   "id": "E41",
+   "kind": "nav_failure",
+   "t_start": {
+    "iso": "2026-10-24T16:30:02.52-0700",
+    "epoch": 1792884602.52
+   },
+   "t_end": {
+    "iso": "2026-10-24T16:30:02.52-0700",
+    "epoch": 1792884602.52
+   },
+   "client": null,
+   "call": null,
+   "call_note": "the failure log does not record client or call; a record is written by any failed planner.plan() with a live view (go_to or GET /nav/plan preview)",
+   "args": {
+    "goal_xy": [
+     0.55,
+     3.85
+    ],
+    "place_guess": "workbench",
+    "place_guess_dist_m": 0.23,
+    "note": "goal as passed to plan() and logged; on a go_to replan this is the goal already snapped by the first plan. place_guess = saved place within 0.4 m in the current places file (inferred)"
+   },
+   "result": null,
+   "planner_error": "no route: the goal is not connected to where the robot is on the map",
+   "result_note": "go_to returns no_route if this was its first plan, blocked ('no other route') after a replan; which one is not logged",
+   "why": {
+    "saved_map_has_route": true,
+    "cause": "live lidar or temporary blocks",
+    "live_cleared_n": 240,
+    "blocks": [
+     [
+      -0.14,
+      4.64,
+      0.15
+     ],
+     [
+      -1.82,
+      3.23,
+      0.15
+     ],
+     [
+      -0.36,
+      4.27,
+      0.15
+     ]
+    ],
+    "live_robot": [
+     -0.82,
+     4.46
+    ],
+    "live_new_n": 30
+   },
+   "n_records": 1,
+   "record_ids": [
+    77
+   ],
+   "distinct_goals": [
+    [
+     0.55,
+     3.85
+    ]
+   ],
+   "sensor": {
+    "map_pose_logged": [
+     -0.82,
+     4.46
+    ],
+    "poselog": {
+     "t": 1792884602.579,
+     "map": [
+      -0.827,
+      4.46,
+      -0.39
+     ],
+     "odom": [
+      -2.237,
+      -1.311,
+      1.69
+     ],
+     "T": [
+      -0.77406,
+      1.86739,
+      -2.08043
+     ],
+     "mapping": false
+    },
+    "loc_fit": null,
+    "track_fit": null,
+    "lost_flag": null,
+    "loc_note": "fit/track fit/lost are not in the Z690 logs (lost flag added 10-25 01:20); cheetah's logger reported track fit 0.44-0.59 from 10-24 16:23",
+    "obstacle_ranges": null,
+    "live_new_count": 30,
+    "live_new_count_range": [
+     30,
+     30
+    ],
+    "live_cleared_count": 240,
+    "blocks_count": 3,
+    "start_clearance_saved_map_m": 0.14,
+    "goal_clearance_saved_map_m": 0.86,
+    "saved_map": "lab.grid.npz",
+    "planner_era": "current go2_nav.py"
+   },
+   "true_cause": "localization lost",
+   "mechanism": "30 live-new cells (mostly free-standing) close the way; 3 temporary block(s).",
+   "evidence": [
+    "diag.jsonl records [77]",
+    "results/replay_results.jsonl records [77]",
+    "pose log: T jump of 3.19 m / -55.5 deg at 16:34:25 (hand placement); cheetah inbox 10-24 16:32: track fit fell from ~0.85 to 0.44-0.59 at 16:23",
+    "start clearance on the saved map 0.14 m",
+    "live_new 30 cells, wall-hug 0.3"
+   ],
+   "confidence": "high",
+   "confidence_why": "lost window from cheetah's logged track fit plus a large correction right after",
+   "fixed_by": "none: localization (relocalize). Proto C must NOT route here: lost gate (fallback=False while lost)",
+   "replay": {
+    "as_logged_fails": true,
+    "current_plans": false,
+    "proto_C_plans": true,
+    "in_lost_window": true
+   },
+   "figure": "figs/episodes/E41.png",
+   "detail_figure": null
+  },
+  {
+   "id": "E42",
+   "kind": "nav_failure",
+   "t_start": {
+    "iso": "2026-10-24T16:30:09.23-0700",
+    "epoch": 1792884609.23
+   },
+   "t_end": {
+    "iso": "2026-10-24T16:30:13.30-0700",
+    "epoch": 1792884613.3
+   },
+   "client": null,
+   "call": null,
+   "call_note": "the failure log does not record client or call; a record is written by any failed planner.plan() with a live view (go_to or GET /nav/plan preview)",
+   "args": {
+    "goal_xy": [
+     -2.75,
+     0.95
+    ],
+    "place_guess": "podium",
+    "place_guess_dist_m": 0.28,
+    "note": "goal as passed to plan() and logged; on a go_to replan this is the goal already snapped by the first plan. place_guess = saved place within 0.4 m in the current places file (inferred)"
+   },
+   "result": null,
+   "planner_error": "no route: the goal is not connected to where the robot is on the map",
+   "result_note": "go_to returns no_route if this was its first plan, blocked ('no other route') after a replan; which one is not logged",
+   "why": {
+    "saved_map_has_route": true,
+    "cause": "live lidar or temporary blocks",
+    "live_cleared_n": 237,
+    "blocks": [
+     [
+      -0.14,
+      4.64,
+      0.15
+     ],
+     [
+      -1.82,
+      3.23,
+      0.15
+     ],
+     [
+      -0.36,
+      4.27,
+      0.15
+     ]
+    ],
+    "live_robot": [
+     -0.74,
+     4.58
+    ],
+    "live_new_n": 37
+   },
+   "n_records": 3,
+   "record_ids": [
+    78,
+    79,
+    80
+   ],
+   "distinct_goals": [
+    [
+     -2.75,
+     0.95
+    ]
+   ],
+   "sensor": {
+    "map_pose_logged": [
+     -0.74,
+     4.58
+    ],
+    "poselog": {
+     "t": 1792884609.179,
+     "map": [
+      -0.74,
+      4.58,
+      -0.408
+     ],
+     "odom": [
+      -2.236,
+      -1.314,
+      1.693
+     ],
+     "T": [
+      -0.73837,
+      1.98678,
+      -2.10138
+     ],
+     "mapping": false
+    },
+    "loc_fit": null,
+    "track_fit": null,
+    "lost_flag": null,
+    "loc_note": "fit/track fit/lost are not in the Z690 logs (lost flag added 10-25 01:20); cheetah's logger reported track fit 0.44-0.59 from 10-24 16:23",
+    "obstacle_ranges": null,
+    "live_new_count": 37,
+    "live_new_count_range": [
+     37,
+     38
+    ],
+    "live_cleared_count": 237,
+    "blocks_count": 3,
+    "start_clearance_saved_map_m": 0.2,
+    "goal_clearance_saved_map_m": 0.44,
+    "saved_map": "lab.grid.npz",
+    "planner_era": "current go2_nav.py"
+   },
+   "true_cause": "localization lost",
+   "mechanism": "37 live-new cells (mostly free-standing) close the way; 3 temporary block(s).",
+   "evidence": [
+    "diag.jsonl records [78, 79, 80]",
+    "results/replay_results.jsonl records [78, 79, 80]",
+    "pose log: T jump of 3.19 m / -55.5 deg at 16:34:25 (hand placement); cheetah inbox 10-24 16:32: track fit fell from ~0.85 to 0.44-0.59 at 16:23",
+    "start clearance on the saved map 0.2 m",
+    "live_new 37 cells, wall-hug 0.35"
+   ],
+   "confidence": "high",
+   "confidence_why": "lost window from cheetah's logged track fit plus a large correction right after",
+   "fixed_by": "none: localization (relocalize). Proto C must NOT route here: lost gate (fallback=False while lost)",
+   "replay": {
+    "as_logged_fails": true,
+    "current_plans": false,
+    "proto_C_plans": true,
+    "in_lost_window": true
+   },
+   "figure": "figs/episodes/E42.png",
+   "detail_figure": "figs/78_lost_live.png"
+  },
+  {
+   "id": "E43",
+   "kind": "nav_failure",
+   "t_start": {
+    "iso": "2026-10-24T16:33:09.48-0700",
+    "epoch": 1792884789.48
+   },
+   "t_end": {
+    "iso": "2026-10-24T16:33:09.48-0700",
+    "epoch": 1792884789.48
+   },
+   "client": null,
+   "call": null,
+   "call_note": "the failure log does not record client or call; a record is written by any failed planner.plan() with a live view (go_to or GET /nav/plan preview)",
+   "args": {
+    "goal_xy": [
+     -6.5,
+     -5.0
+    ],
+    "place_guess": null,
+    "place_guess_dist_m": null,
+    "note": "goal as passed to plan() and logged; on a go_to replan this is the goal already snapped by the first plan. place_guess = saved place within 0.4 m in the current places file (inferred)"
+   },
+   "result": null,
+   "planner_error": "no open floor within 1.2 m of the goal",
+   "result_note": "go_to returns no_route if this was its first plan, blocked ('no other route') after a replan; which one is not logged",
+   "why": {
+    "saved_map_has_route": false,
+    "cause": "saved map",
+    "live_cleared_n": 208,
+    "blocks": [],
+    "live_robot": [
+     -1.11,
+     5.14
+    ],
+    "live_new_n": 68
+   },
+   "n_records": 1,
+   "record_ids": [
+    81
+   ],
+   "distinct_goals": [
+    [
+     -6.5,
+     -5.0
+    ]
+   ],
+   "sensor": {
+    "map_pose_logged": [
+     -1.11,
+     5.14
+    ],
+    "poselog": {
+     "t": 1792884789.579,
+     "map": [
+      -1.111,
+      5.141,
+      2.433
+     ],
+     "odom": [
+      -2.478,
+      -1.934,
+      -1.696
+     ],
+     "T": [
+      -0.86096,
+      2.00784,
+      -2.15374
+     ],
+     "mapping": false
+    },
+    "loc_fit": null,
+    "track_fit": null,
+    "lost_flag": null,
+    "loc_note": "fit/track fit/lost are not in the Z690 logs (lost flag added 10-25 01:20); cheetah's logger reported track fit 0.44-0.59 from 10-24 16:23",
+    "obstacle_ranges": null,
+    "live_new_count": 68,
+    "live_new_count_range": [
+     68,
+     68
+    ],
+    "live_cleared_count": 208,
+    "blocks_count": 0,
+    "start_clearance_saved_map_m": 0.5,
+    "goal_clearance_saved_map_m": null,
+    "saved_map": "lab.grid.npz",
+    "planner_era": "current go2_nav.py"
+   },
+   "true_cause": "localization lost",
+   "mechanism": "the goal is off the map; 68 live-new cells (mostly free-standing) close the way.",
+   "evidence": [
+    "diag.jsonl records [81]",
+    "results/replay_results.jsonl records [81]",
+    "pose log: T jump of 3.19 m / -55.5 deg at 16:34:25 (hand placement); cheetah inbox 10-24 16:32: track fit fell from ~0.85 to 0.44-0.59 at 16:23",
+    "start clearance on the saved map 0.5 m",
+    "live_new 68 cells, wall-hug 0.16"
+   ],
+   "confidence": "high",
+   "confidence_why": "lost window from cheetah's logged track fit plus a large correction right after",
+   "fixed_by": "none: localization (relocalize). Proto C must NOT route here: lost gate (fallback=False while lost)",
+   "replay": {
+    "as_logged_fails": true,
+    "current_plans": false,
+    "proto_C_plans": false,
+    "in_lost_window": true
+   },
+   "figure": "figs/episodes/E43.png",
+   "detail_figure": null
+  },
+  {
+   "id": "E44",
+   "kind": "nav_failure",
+   "t_start": {
+    "iso": "2026-10-24T16:44:54.39-0700",
+    "epoch": 1792885494.39
+   },
+   "t_end": {
+    "iso": "2026-10-24T16:44:54.46-0700",
+    "epoch": 1792885494.46
+   },
+   "client": null,
+   "call": null,
+   "call_note": "the failure log does not record client or call; a record is written by any failed planner.plan() with a live view (go_to or GET /nav/plan preview)",
+   "args": {
+    "goal_xy": [
+     -1.29,
+     5.74
+    ],
+    "place_guess": null,
+    "place_guess_dist_m": null,
+    "note": "goal as passed to plan() and logged; on a go_to replan this is the goal already snapped by the first plan. place_guess = saved place within 0.4 m in the current places file (inferred)"
+   },
+   "result": null,
+   "planner_error": "no route: the goal is not connected to where the robot is on the map",
+   "result_note": "go_to returns no_route if this was its first plan, blocked ('no other route') after a replan; which one is not logged",
+   "why": {
+    "saved_map_has_route": true,
+    "cause": "live lidar or temporary blocks",
+    "live_cleared_n": 212,
+    "blocks": [],
+    "live_robot": [
+     0.39,
+     3.34
+    ],
+    "live_new_n": 64
+   },
+   "n_records": 2,
+   "record_ids": [
+    82,
+    83
+   ],
+   "distinct_goals": [
+    [
+     -1.34,
+     5.88
+    ],
+    [
+     -1.29,
+     5.74
+    ]
+   ],
+   "sensor": {
+    "map_pose_logged": [
+     0.39,
+     3.34
+    ],
+    "poselog": {
+     "t": 1792885494.38,
+     "map": [
+      0.385,
+      3.342,
+      0.177
+     ],
+     "odom": [
+      -1.672,
+      -1.634,
+      -3.083
+     ],
+     "T": [
+      -1.08127,
+      1.52192,
+      -3.02291
+     ],
+     "mapping": false
+    },
+    "loc_fit": null,
+    "track_fit": null,
+    "lost_flag": null,
+    "loc_note": "fit/track fit/lost are not in the Z690 logs (lost flag added 10-25 01:20); cheetah's logger reported track fit 0.44-0.59 from 10-24 16:23",
+    "obstacle_ranges": null,
+    "live_new_count": 64,
+    "live_new_count_range": [
+     64,
+     64
+    ],
+    "live_cleared_count": 212,
+    "blocks_count": 0,
+    "start_clearance_saved_map_m": 0.42,
+    "goal_clearance_saved_map_m": 0.56,
+    "saved_map": "lab.grid.npz",
+    "planner_era": "current go2_nav.py"
+   },
+   "true_cause": "localization lost",
+   "mechanism": "64 live-new cells (mostly free-standing) close the way.",
+   "evidence": [
+    "diag.jsonl records [82, 83]",
+    "results/replay_results.jsonl records [82, 83]",
+    "pose log: T corrections of 0.73, 0.82 and 1.03 m (-48, -13, -7 deg) at 16:45:17-35, 20-40 s after this episode",
+    "start clearance on the saved map 0.42 m",
+    "live_new 64 cells, wall-hug 0.23"
+   ],
+   "confidence": "medium",
+   "confidence_why": "inferred only from the size of the corrections right after; no fit logged for this time",
+   "fixed_by": "none: localization (relocalize). Proto C must NOT route here: lost gate (fallback=False while lost)",
+   "replay": {
+    "as_logged_fails": true,
+    "current_plans": false,
+    "proto_C_plans": true,
+    "in_lost_window": true
+   },
+   "figure": "figs/episodes/E44.png",
+   "detail_figure": null
+  },
+  {
+   "id": "E45",
+   "kind": "nav_failure",
+   "t_start": {
+    "iso": "2026-10-24T16:49:41.52-0700",
+    "epoch": 1792885781.52
+   },
+   "t_end": {
+    "iso": "2026-10-24T16:49:45.88-0700",
+    "epoch": 1792885785.88
+   },
+   "client": null,
+   "call": null,
+   "call_note": "the failure log does not record client or call; a record is written by any failed planner.plan() with a live view (go_to or GET /nav/plan preview)",
+   "args": {
+    "goal_xy": [
+     -2.45,
+     1.05
+    ],
+    "place_guess": "podium",
+    "place_guess_dist_m": 0.03,
+    "note": "goal as passed to plan() and logged; on a go_to replan this is the goal already snapped by the first plan. place_guess = saved place within 0.4 m in the current places file (inferred)"
+   },
+   "result": null,
+   "planner_error": "no route: the goal is not connected to where the robot is on the map",
+   "result_note": "go_to returns no_route if this was its first plan, blocked ('no other route') after a replan; which one is not logged",
+   "why": {
+    "saved_map_has_route": true,
+    "cause": "live lidar or temporary blocks",
+    "live_cleared_n": 184,
+    "blocks": [
+     [
+      -0.27,
+      3.0,
+      0.15
+     ]
+    ],
+    "live_robot": [
+     0.13,
+     3.3
+    ],
+    "live_new_n": 29
+   },
+   "n_records": 3,
+   "record_ids": [
+    84,
+    85,
+    86
+   ],
+   "distinct_goals": [
+    [
+     -2.48,
+     1.04
+    ],
+    [
+     -2.45,
+     1.05
+    ]
+   ],
+   "sensor": {
+    "map_pose_logged": [
+     0.13,
+     3.3
+    ],
+    "poselog": {
+     "t": 1792885781.579,
+     "map": [
+      0.132,
+      3.301,
+      -2.507
+     ],
+     "odom": [
+      -1.545,
+      -0.757,
+      1.476
+     ],
+     "T": [
+      -1.46187,
+      3.94837,
+      2.30034
+     ],
+     "mapping": false
+    },
+    "loc_fit": null,
+    "track_fit": null,
+    "lost_flag": null,
+    "loc_note": "fit/track fit/lost are not in the Z690 logs (lost flag added 10-25 01:20); cheetah's logger reported track fit 0.44-0.59 from 10-24 16:23",
+    "obstacle_ranges": null,
+    "live_new_count": 29,
+    "live_new_count_range": [
+     29,
+     31
+    ],
+    "live_cleared_count": 184,
+    "blocks_count": 1,
+    "start_clearance_saved_map_m": 0.42,
+    "goal_clearance_saved_map_m": 0.42,
+    "saved_map": "lab.grid.npz",
+    "planner_era": "current go2_nav.py"
+   },
+   "true_cause": "live cells + blocks",
+   "mechanism": "29 live-new cells (mostly free-standing) close the way; 1 temporary block(s).",
+   "evidence": [
+    "diag.jsonl records [84, 85, 86]",
+    "results/replay_results.jsonl records [84, 85, 86]",
+    "live_new 29 cells, median 0.91 m from the dog, wall-hug fraction 0.21",
+    "replay: live-only route closed, blocks-only route closed"
+   ],
+   "confidence": "medium",
+   "confidence_why": "the replay shows which cells close the route, but not whether those cells were real objects or lidar smear (no camera check done)",
+   "fixed_by": "prototype C (proposed)",
+   "replay": {
+    "as_logged_fails": true,
+    "current_plans": false,
+    "proto_C_plans": true,
+    "in_lost_window": false
+   },
+   "figure": "figs/episodes/E45.png",
+   "detail_figure": "figs/85_live_plus_blocks.png"
+  },
+  {
+   "id": "E46",
+   "kind": "nav_failure",
+   "t_start": {
+    "iso": "2026-10-24T16:49:49.80-0700",
+    "epoch": 1792885789.8
+   },
+   "t_end": {
+    "iso": "2026-10-24T16:49:53.89-0700",
+    "epoch": 1792885793.89
+   },
+   "client": null,
+   "call": null,
+   "call_note": "the failure log does not record client or call; a record is written by any failed planner.plan() with a live view (go_to or GET /nav/plan preview)",
+   "args": {
+    "goal_xy": [
+     -1.07,
+     1.89
+    ],
+    "place_guess": "conference_table",
+    "place_guess_dist_m": 0.0,
+    "note": "goal as passed to plan() and logged; on a go_to replan this is the goal already snapped by the first plan. place_guess = saved place within 0.4 m in the current places file (inferred)"
+   },
+   "result": null,
+   "planner_error": "no route: the goal is not connected to where the robot is on the map",
+   "result_note": "go_to returns no_route if this was its first plan, blocked ('no other route') after a replan; which one is not logged",
+   "why": {
+    "saved_map_has_route": true,
+    "cause": "live lidar or temporary blocks",
+    "live_cleared_n": 190,
+    "blocks": [
+     [
+      -0.27,
+      3.0,
+      0.15
+     ]
+    ],
+    "live_robot": [
+     -0.05,
+     3.33
+    ],
+    "live_new_n": 30
+   },
+   "n_records": 3,
+   "record_ids": [
+    87,
+    88,
+    89
+   ],
+   "distinct_goals": [
+    [
+     -1.07,
+     1.89
+    ]
+   ],
+   "sensor": {
+    "map_pose_logged": [
+     -0.05,
+     3.33
+    ],
+    "poselog": {
+     "t": 1792885789.781,
+     "map": [
+      -0.047,
+      3.332,
+      -2.528
+     ],
+     "odom": [
+      -1.545,
+      -0.758,
+      1.481
+     ],
+     "T": [
+      -1.6244,
+      4.0199,
+      2.27416
+     ],
+     "mapping": false
+    },
+    "loc_fit": null,
+    "track_fit": null,
+    "lost_flag": null,
+    "loc_note": "fit/track fit/lost are not in the Z690 logs (lost flag added 10-25 01:20); cheetah's logger reported track fit 0.44-0.59 from 10-24 16:23",
+    "obstacle_ranges": null,
+    "live_new_count": 30,
+    "live_new_count_range": [
+     30,
+     32
+    ],
+    "live_cleared_count": 190,
+    "blocks_count": 1,
+    "start_clearance_saved_map_m": 0.2,
+    "goal_clearance_saved_map_m": 0.62,
+    "saved_map": "lab.grid.npz",
+    "planner_era": "current go2_nav.py"
+   },
+   "true_cause": "temporary blocks close the aisle",
+   "mechanism": "1 temporary block disc(s) (0.15 m; go_to's stall marks, inferred from the code) plus clearance close an aisle the saved map has open; the live cells alone would not.",
+   "evidence": [
+    "diag.jsonl records [87, 88, 89]",
+    "results/replay_results.jsonl records [87, 88, 89]",
+    "replay: with logged live cells but no blocks the route exists; with blocks only it does not",
+    "blocks [[-0.27, 3.0, 0.15]]",
+    "go2_agent: avoidance always on => obstacle() returns None ahead, so blocks come only from stalls"
+   ],
+   "confidence": "high",
+   "confidence_why": "replay isolates the blocks; that they are stall marks follows from the code, not from a log field",
+   "fixed_by": "prototype C (proposed)",
+   "replay": {
+    "as_logged_fails": true,
+    "current_plans": false,
+    "proto_C_plans": true,
+    "in_lost_window": false
+   },
+   "figure": "figs/episodes/E46.png",
+   "detail_figure": "figs/87_blocks_close_aisle_b.png"
+  },
+  {
+   "id": "L01",
+   "kind": "localization_event",
+   "subkind": "first map pose after none",
+   "t_start": {
+    "iso": "2026-10-23T14:31:50.39-0700",
+    "epoch": 1792791110.39
+   },
+   "t_end": {
+    "iso": "2026-10-23T14:31:50.39-0700",
+    "epoch": 1792791110.39
+   },
+   "client": null,
+   "call": null,
+   "args": null,
+   "result": null,
+   "why": null,
+   "n_records": 1,
+   "sensor": {
+    "map_pose_after": [
+     0.117,
+     0.053,
+     -2.232
+    ],
+    "jump_m": null,
+    "jump_deg": null,
+    "loc_fit": null,
+    "lost_flag": null,
+    "event_kind_logged": null
+   },
+   "true_cause": "first map pose after none",
+   "mechanism": "Map pose appears after a period without one (session start, console restart or a new line-up); size of the change unknown.",
+   "evidence": [
+    "lab_poselog (T changes between consecutive 5 Hz rows), tjumps.py"
+   ],
+   "confidence": "medium",
+   "confidence_why": "only the appearance of a pose is logged, not its cause",
+   "fixed_by": "n/a",
+   "figure": null
+  },
+  {
+   "id": "L02",
+   "kind": "localization_event",
+   "subkind": "first map pose after none",
+   "t_start": {
+    "iso": "2026-10-23T14:46:03.73-0700",
+    "epoch": 1792791963.726
+   },
+   "t_end": {
+    "iso": "2026-10-23T14:46:03.73-0700",
+    "epoch": 1792791963.726
+   },
+   "client": null,
+   "call": null,
+   "args": null,
+   "result": null,
+   "why": null,
+   "n_records": 1,
+   "sensor": {
+    "map_pose_after": [
+     1.396,
+     0.806,
+     -2.187
+    ],
+    "jump_m": null,
+    "jump_deg": null,
+    "loc_fit": null,
+    "lost_flag": null,
+    "event_kind_logged": null
+   },
+   "true_cause": "first map pose after none",
+   "mechanism": "Map pose appears after a period without one (session start, console restart or a new line-up); size of the change unknown.",
+   "evidence": [
+    "lab_poselog (T changes between consecutive 5 Hz rows), tjumps.py"
+   ],
+   "confidence": "medium",
+   "confidence_why": "only the appearance of a pose is logged, not its cause",
+   "fixed_by": "n/a",
+   "figure": null
+  },
+  {
+   "id": "L03",
+   "kind": "localization_event",
+   "subkind": "first map pose after none",
+   "t_start": {
+    "iso": "2026-10-23T15:00:03.91-0700",
+    "epoch": 1792792803.912
+   },
+   "t_end": {
+    "iso": "2026-10-23T15:00:03.91-0700",
+    "epoch": 1792792803.912
+   },
+   "client": null,
+   "call": null,
+   "args": null,
+   "result": null,
+   "why": null,
+   "n_records": 1,
+   "sensor": {
+    "map_pose_after": [
+     1.42,
+     0.827,
+     -2.028
+    ],
+    "jump_m": null,
+    "jump_deg": null,
+    "loc_fit": null,
+    "lost_flag": null,
+    "event_kind_logged": null
+   },
+   "true_cause": "first map pose after none",
+   "mechanism": "Map pose appears after a period without one (session start, console restart or a new line-up); size of the change unknown.",
+   "evidence": [
+    "lab_poselog (T changes between consecutive 5 Hz rows), tjumps.py"
+   ],
+   "confidence": "medium",
+   "confidence_why": "only the appearance of a pose is logged, not its cause",
+   "fixed_by": "n/a",
+   "figure": null
+  },
+  {
+   "id": "L04",
+   "kind": "localization_event",
+   "subkind": "first map pose after none",
+   "t_start": {
+    "iso": "2026-10-23T15:01:07.02-0700",
+    "epoch": 1792792867.024
+   },
+   "t_end": {
+    "iso": "2026-10-23T15:01:07.02-0700",
+    "epoch": 1792792867.024
+   },
+   "client": null,
+   "call": null,
+   "args": null,
+   "result": null,
+   "why": null,
+   "n_records": 1,
+   "sensor": {
+    "map_pose_after": [
+     0.91,
+     0.539,
+     -2.049
+    ],
+    "jump_m": null,
+    "jump_deg": null,
+    "loc_fit": null,
+    "lost_flag": null,
+    "event_kind_logged": null
+   },
+   "true_cause": "first map pose after none",
+   "mechanism": "Map pose appears after a period without one (session start, console restart or a new line-up); size of the change unknown.",
+   "evidence": [
+    "lab_poselog (T changes between consecutive 5 Hz rows), tjumps.py"
+   ],
+   "confidence": "medium",
+   "confidence_why": "only the appearance of a pose is logged, not its cause",
+   "fixed_by": "n/a",
+   "figure": null
+  },
+  {
+   "id": "L05",
+   "kind": "localization_event",
+   "subkind": "pose jump",
+   "t_start": {
+    "iso": "2026-10-23T15:01:13.22-0700",
+    "epoch": 1792792873.224
+   },
+   "t_end": {
+    "iso": "2026-10-23T15:01:13.22-0700",
+    "epoch": 1792792873.224
+   },
+   "client": null,
+   "call": null,
+   "args": null,
+   "result": null,
+   "why": null,
+   "n_records": 1,
+   "sensor": {
+    "map_pose_after": [
+     1.4863936168880476,
+     0.8601539887912707
+    ],
+    "jump_m": 0.66,
+    "jump_deg": -16.7,
+    "loc_fit": null,
+    "lost_flag": null,
+    "event_kind_logged": null
+   },
+   "true_cause": "pose jump",
+   "mechanism": "The map<-odom transform moved the dog's map position by 0.66 m and its heading by -16.7 deg in one step.",
+   "evidence": [
+    "lab_poselog (T changes between consecutive 5 Hz rows), tjumps.py"
+   ],
+   "confidence": "high",
+   "confidence_why": "a single step in the logged T at 5 Hz",
+   "fixed_by": "n/a",
+   "figure": null
+  },
+  {
+   "id": "L06",
+   "kind": "localization_event",
+   "subkind": "first map pose after none",
+   "t_start": {
+    "iso": "2026-10-23T15:11:38.27-0700",
+    "epoch": 1792793498.271
+   },
+   "t_end": {
+    "iso": "2026-10-23T15:11:38.27-0700",
+    "epoch": 1792793498.271
+   },
+   "client": null,
+   "call": null,
+   "args": null,
+   "result": null,
+   "why": null,
+   "n_records": 1,
+   "sensor": {
+    "map_pose_after": [
+     1.496,
+     0.852,
+     -2.344
+    ],
+    "jump_m": null,
+    "jump_deg": null,
+    "loc_fit": null,
+    "lost_flag": null,
+    "event_kind_logged": null
+   },
+   "true_cause": "first map pose after none",
+   "mechanism": "Map pose appears after a period without one (session start, console restart or a new line-up); size of the change unknown.",
+   "evidence": [
+    "lab_poselog (T changes between consecutive 5 Hz rows), tjumps.py"
+   ],
+   "confidence": "medium",
+   "confidence_why": "only the appearance of a pose is logged, not its cause",
+   "fixed_by": "n/a",
+   "figure": null
+  },
+  {
+   "id": "L07",
+   "kind": "localization_event",
+   "subkind": "first map pose after none",
+   "t_start": {
+    "iso": "2026-10-23T15:16:15.46-0700",
+    "epoch": 1792793775.459
+   },
+   "t_end": {
+    "iso": "2026-10-23T15:16:15.46-0700",
+    "epoch": 1792793775.459
+   },
+   "client": null,
+   "call": null,
+   "args": null,
+   "result": null,
+   "why": null,
+   "n_records": 1,
+   "sensor": {
+    "map_pose_after": [
+     1.437,
+     0.803,
+     -2.003
+    ],
+    "jump_m": null,
+    "jump_deg": null,
+    "loc_fit": null,
+    "lost_flag": null,
+    "event_kind_logged": null
+   },
+   "true_cause": "first map pose after none",
+   "mechanism": "Map pose appears after a period without one (session start, console restart or a new line-up); size of the change unknown.",
+   "evidence": [
+    "lab_poselog (T changes between consecutive 5 Hz rows), tjumps.py"
+   ],
+   "confidence": "medium",
+   "confidence_why": "only the appearance of a pose is logged, not its cause",
+   "fixed_by": "n/a",
+   "figure": null
+  },
+  {
+   "id": "L08",
+   "kind": "localization_event",
+   "subkind": "pose jump",
+   "t_start": {
+    "iso": "2026-10-23T15:16:27.86-0700",
+    "epoch": 1792793787.859
+   },
+   "t_end": {
+    "iso": "2026-10-23T15:16:27.86-0700",
+    "epoch": 1792793787.859
+   },
+   "client": null,
+   "call": null,
+   "args": null,
+   "result": null,
+   "why": null,
+   "n_records": 1,
+   "sensor": {
+    "map_pose_after": [
+     0.8888169773514115,
+     0.48039416949481933
+    ],
+    "jump_m": 0.54,
+    "jump_deg": -33.5,
+    "loc_fit": null,
+    "lost_flag": null,
+    "event_kind_logged": null
+   },
+   "true_cause": "pose jump",
+   "mechanism": "The map<-odom transform moved the dog's map position by 0.54 m and its heading by -33.5 deg in one step.",
+   "evidence": [
+    "lab_poselog (T changes between consecutive 5 Hz rows), tjumps.py"
+   ],
+   "confidence": "high",
+   "confidence_why": "a single step in the logged T at 5 Hz",
+   "fixed_by": "n/a",
+   "figure": null
+  },
+  {
+   "id": "L09",
+   "kind": "localization_event",
+   "subkind": "first map pose after none",
+   "t_start": {
+    "iso": "2026-10-23T15:19:26.45-0700",
+    "epoch": 1792793966.448
+   },
+   "t_end": {
+    "iso": "2026-10-23T15:19:26.45-0700",
+    "epoch": 1792793966.448
+   },
+   "client": null,
+   "call": null,
+   "args": null,
+   "result": null,
+   "why": null,
+   "n_records": 1,
+   "sensor": {
+    "map_pose_after": [
+     0.741,
+     -0.064,
+     -2.735
+    ],
+    "jump_m": null,
+    "jump_deg": null,
+    "loc_fit": null,
+    "lost_flag": null,
+    "event_kind_logged": null
+   },
+   "true_cause": "first map pose after none",
+   "mechanism": "Map pose appears after a period without one (session start, console restart or a new line-up); size of the change unknown.",
+   "evidence": [
+    "lab_poselog (T changes between consecutive 5 Hz rows), tjumps.py"
+   ],
+   "confidence": "medium",
+   "confidence_why": "only the appearance of a pose is logged, not its cause",
+   "fixed_by": "n/a",
+   "figure": null
+  },
+  {
+   "id": "L10",
+   "kind": "localization_event",
+   "subkind": "pose jump",
+   "t_start": {
+    "iso": "2026-10-23T15:20:35.45-0700",
+    "epoch": 1792794035.448
+   },
+   "t_end": {
+    "iso": "2026-10-23T15:20:35.45-0700",
+    "epoch": 1792794035.448
+   },
+   "client": null,
+   "call": null,
+   "args": null,
+   "result": null,
+   "why": null,
+   "n_records": 1,
+   "sensor": {
+    "map_pose_after": [
+     0.8614298909626992,
+     -0.21401128194671476
+    ],
+    "jump_m": 0.19,
+    "jump_deg": -6.5,
+    "loc_fit": null,
+    "lost_flag": null,
+    "event_kind_logged": null
+   },
+   "true_cause": "pose jump",
+   "mechanism": "The map<-odom transform moved the dog's map position by 0.19 m and its heading by -6.5 deg in one step.",
+   "evidence": [
+    "lab_poselog (T changes between consecutive 5 Hz rows), tjumps.py"
+   ],
+   "confidence": "medium",
+   "confidence_why": "small; could be a drift correction",
+   "fixed_by": "n/a",
+   "figure": null
+  },
+  {
+   "id": "L11",
+   "kind": "localization_event",
+   "subkind": "first map pose after none",
+   "t_start": {
+    "iso": "2026-10-23T15:43:09.75-0700",
+    "epoch": 1792795389.746
+   },
+   "t_end": {
+    "iso": "2026-10-23T15:43:09.75-0700",
+    "epoch": 1792795389.746
+   },
+   "client": null,
+   "call": null,
+   "args": null,
+   "result": null,
+   "why": null,
+   "n_records": 1,
+   "sensor": {
+    "map_pose_after": [
+     0.909,
+     -0.339,
+     -2.908
+    ],
+    "jump_m": null,
+    "jump_deg": null,
+    "loc_fit": null,
+    "lost_flag": null,
+    "event_kind_logged": null
+   },
+   "true_cause": "first map pose after none",
+   "mechanism": "Map pose appears after a period without one (session start, console restart or a new line-up); size of the change unknown.",
+   "evidence": [
+    "lab_poselog (T changes between consecutive 5 Hz rows), tjumps.py"
+   ],
+   "confidence": "medium",
+   "confidence_why": "only the appearance of a pose is logged, not its cause",
+   "fixed_by": "n/a",
+   "figure": null
+  },
+  {
+   "id": "L12",
+   "kind": "localization_event",
+   "subkind": "first map pose after none",
+   "t_start": {
+    "iso": "2026-10-23T15:57:45.73-0700",
+    "epoch": 1792796265.735
+   },
+   "t_end": {
+    "iso": "2026-10-23T15:57:45.73-0700",
+    "epoch": 1792796265.735
+   },
+   "client": null,
+   "call": null,
+   "args": null,
+   "result": null,
+   "why": null,
+   "n_records": 1,
+   "sensor": {
+    "map_pose_after": [
+     0.886,
+     -0.276,
+     -2.853
+    ],
+    "jump_m": null,
+    "jump_deg": null,
+    "loc_fit": null,
+    "lost_flag": null,
+    "event_kind_logged": null
+   },
+   "true_cause": "first map pose after none",
+   "mechanism": "Map pose appears after a period without one (session start, console restart or a new line-up); size of the change unknown.",
+   "evidence": [
+    "lab_poselog (T changes between consecutive 5 Hz rows), tjumps.py"
+   ],
+   "confidence": "medium",
+   "confidence_why": "only the appearance of a pose is logged, not its cause",
+   "fixed_by": "n/a",
+   "figure": null
+  },
+  {
+   "id": "L13",
+   "kind": "localization_event",
+   "subkind": "first map pose after none",
+   "t_start": {
+    "iso": "2026-10-23T18:06:49.97-0700",
+    "epoch": 1792804009.967
+   },
+   "t_end": {
+    "iso": "2026-10-23T18:06:49.97-0700",
+    "epoch": 1792804009.967
+   },
+   "client": null,
+   "call": null,
+   "args": null,
+   "result": null,
+   "why": null,
+   "n_records": 1,
+   "sensor": {
+    "map_pose_after": [
+     0.221,
+     -0.239,
+     -1.506
+    ],
+    "jump_m": null,
+    "jump_deg": null,
+    "loc_fit": null,
+    "lost_flag": null,
+    "event_kind_logged": null
+   },
+   "true_cause": "first map pose after none",
+   "mechanism": "Map pose appears after a period without one (session start, console restart or a new line-up); size of the change unknown.",
+   "evidence": [
+    "lab_poselog (T changes between consecutive 5 Hz rows), tjumps.py"
+   ],
+   "confidence": "medium",
+   "confidence_why": "only the appearance of a pose is logged, not its cause",
+   "fixed_by": "n/a",
+   "figure": null
+  },
+  {
+   "id": "L14",
+   "kind": "localization_event",
+   "subkind": "first map pose after none",
+   "t_start": {
+    "iso": "2026-10-23T18:09:29.38-0700",
+    "epoch": 1792804169.378
+   },
+   "t_end": {
+    "iso": "2026-10-23T18:09:29.38-0700",
+    "epoch": 1792804169.378
+   },
+   "client": null,
+   "call": null,
+   "args": null,
+   "result": null,
+   "why": null,
+   "n_records": 1,
+   "sensor": {
+    "map_pose_after": [
+     2.858,
+     0.906,
+     1.62
+    ],
+    "jump_m": null,
+    "jump_deg": null,
+    "loc_fit": null,
+    "lost_flag": null,
+    "event_kind_logged": null
+   },
+   "true_cause": "first map pose after none",
+   "mechanism": "Map pose appears after a period without one (session start, console restart or a new line-up); size of the change unknown.",
+   "evidence": [
+    "lab_poselog (T changes between consecutive 5 Hz rows), tjumps.py"
+   ],
+   "confidence": "medium",
+   "confidence_why": "only the appearance of a pose is logged, not its cause",
+   "fixed_by": "n/a",
+   "figure": null
+  },
+  {
+   "id": "L15",
+   "kind": "localization_event",
+   "subkind": "first map pose after none",
+   "t_start": {
+    "iso": "2026-10-23T18:54:27.09-0700",
+    "epoch": 1792806867.092
+   },
+   "t_end": {
+    "iso": "2026-10-23T18:54:27.09-0700",
+    "epoch": 1792806867.092
+   },
+   "client": null,
+   "call": null,
+   "args": null,
+   "result": null,
+   "why": null,
+   "n_records": 1,
+   "sensor": {
+    "map_pose_after": [
+     0.349,
+     1.072,
+     -0.014
+    ],
+    "jump_m": null,
+    "jump_deg": null,
+    "loc_fit": null,
+    "lost_flag": null,
+    "event_kind_logged": null
+   },
+   "true_cause": "first map pose after none",
+   "mechanism": "Map pose appears after a period without one (session start, console restart or a new line-up); size of the change unknown.",
+   "evidence": [
+    "lab_poselog (T changes between consecutive 5 Hz rows), tjumps.py"
+   ],
+   "confidence": "medium",
+   "confidence_why": "only the appearance of a pose is logged, not its cause",
+   "fixed_by": "n/a",
+   "figure": null
+  },
+  {
+   "id": "L16",
+   "kind": "localization_event",
+   "subkind": "first map pose after none",
+   "t_start": {
+    "iso": "2026-10-23T18:55:53.81-0700",
+    "epoch": 1792806953.807
+   },
+   "t_end": {
+    "iso": "2026-10-23T18:55:53.81-0700",
+    "epoch": 1792806953.807
+   },
+   "client": null,
+   "call": null,
+   "args": null,
+   "result": null,
+   "why": null,
+   "n_records": 1,
+   "sensor": {
+    "map_pose_after": [
+     0.349,
+     1.071,
+     0.017
+    ],
+    "jump_m": null,
+    "jump_deg": null,
+    "loc_fit": null,
+    "lost_flag": null,
+    "event_kind_logged": null
+   },
+   "true_cause": "first map pose after none",
+   "mechanism": "Map pose appears after a period without one (session start, console restart or a new line-up); size of the change unknown.",
+   "evidence": [
+    "lab_poselog (T changes between consecutive 5 Hz rows), tjumps.py"
+   ],
+   "confidence": "medium",
+   "confidence_why": "only the appearance of a pose is logged, not its cause",
+   "fixed_by": "n/a",
+   "figure": null
+  },
+  {
+   "id": "L17",
+   "kind": "localization_event",
+   "subkind": "first map pose after none",
+   "t_start": {
+    "iso": "2026-10-23T19:01:15.68-0700",
+    "epoch": 1792807275.685
+   },
+   "t_end": {
+    "iso": "2026-10-23T19:01:15.68-0700",
+    "epoch": 1792807275.685
+   },
+   "client": null,
+   "call": null,
+   "args": null,
+   "result": null,
+   "why": null,
+   "n_records": 1,
+   "sensor": {
+    "map_pose_after": [
+     0.349,
+     0.981,
+     0.058
+    ],
+    "jump_m": null,
+    "jump_deg": null,
+    "loc_fit": null,
+    "lost_flag": null,
+    "event_kind_logged": null
+   },
+   "true_cause": "first map pose after none",
+   "mechanism": "Map pose appears after a period without one (session start, console restart or a new line-up); size of the change unknown.",
+   "evidence": [
+    "lab_poselog (T changes between consecutive 5 Hz rows), tjumps.py"
+   ],
+   "confidence": "medium",
+   "confidence_why": "only the appearance of a pose is logged, not its cause",
+   "fixed_by": "n/a",
+   "figure": null
+  },
+  {
+   "id": "L18",
+   "kind": "localization_event",
+   "subkind": "first map pose after none",
+   "t_start": {
+    "iso": "2026-10-24T15:19:21.98-0700",
+    "epoch": 1792880361.979
+   },
+   "t_end": {
+    "iso": "2026-10-24T15:19:21.98-0700",
+    "epoch": 1792880361.979
+   },
+   "client": null,
+   "call": null,
+   "args": null,
+   "result": null,
+   "why": null,
+   "n_records": 1,
+   "sensor": {
+    "map_pose_after": [
+     -0.445,
+     -1.678,
+     0.977
+    ],
+    "jump_m": null,
+    "jump_deg": null,
+    "loc_fit": null,
+    "lost_flag": null,
+    "event_kind_logged": null
+   },
+   "true_cause": "first map pose after none",
+   "mechanism": "Map pose appears after a period without one (session start, console restart or a new line-up); size of the change unknown.",
+   "evidence": [
+    "lab_poselog (T changes between consecutive 5 Hz rows), tjumps.py"
+   ],
+   "confidence": "medium",
+   "confidence_why": "only the appearance of a pose is logged, not its cause",
+   "fixed_by": "n/a",
+   "figure": null
+  },
+  {
+   "id": "L19",
+   "kind": "localization_event",
+   "subkind": "probable hand placement",
+   "t_start": {
+    "iso": "2026-10-24T16:34:25.38-0700",
+    "epoch": 1792884865.378
+   },
+   "t_end": {
+    "iso": "2026-10-24T16:34:25.38-0700",
+    "epoch": 1792884865.378
+   },
+   "client": null,
+   "call": null,
+   "args": null,
+   "result": null,
+   "why": null,
+   "n_records": 1,
+   "sensor": {
+    "map_pose_after": [
+     1.7927943347758752,
+     3.6148899838740385
+    ],
+    "jump_m": 3.19,
+    "jump_deg": -55.5,
+    "loc_fit": null,
+    "lost_flag": null,
+    "event_kind_logged": null
+   },
+   "true_cause": "probable hand placement",
+   "mechanism": "The map<-odom transform moved the dog's map position by 3.19 m and its heading by -55.5 deg in one step.",
+   "evidence": [
+    "lab_poselog (T changes between consecutive 5 Hz rows), tjumps.py",
+    "cheetah inbox 10-24 16:32: only a hand placement fixes it; fit was 0.44-0.59 since 16:23"
+   ],
+   "confidence": "high",
+   "confidence_why": "cheetah inbox 10-24 16:32: only a hand placement fixes it; fit was 0.44-0.59 since 16:23",
+   "fixed_by": "n/a",
+   "figure": null
+  },
+  {
+   "id": "L20",
+   "kind": "localization_event",
+   "subkind": "first map pose after none",
+   "t_start": {
+    "iso": "2026-10-24T16:34:39.78-0700",
+    "epoch": 1792884879.779
+   },
+   "t_end": {
+    "iso": "2026-10-24T16:34:39.78-0700",
+    "epoch": 1792884879.779
+   },
+   "client": null,
+   "call": null,
+   "args": null,
+   "result": null,
+   "why": null,
+   "n_records": 1,
+   "sensor": {
+    "map_pose_after": [
+     1.8,
+     3.668,
+     1.489
+    ],
+    "jump_m": null,
+    "jump_deg": null,
+    "loc_fit": null,
+    "lost_flag": null,
+    "event_kind_logged": null
+   },
+   "true_cause": "first map pose after none",
+   "mechanism": "Map pose appears after a period without one (session start, console restart or a new line-up); size of the change unknown.",
+   "evidence": [
+    "lab_poselog (T changes between consecutive 5 Hz rows), tjumps.py"
+   ],
+   "confidence": "medium",
+   "confidence_why": "only the appearance of a pose is logged, not its cause",
+   "fixed_by": "n/a",
+   "figure": null
+  },
+  {
+   "id": "L21",
+   "kind": "localization_event",
+   "subkind": "pose jump",
+   "t_start": {
+    "iso": "2026-10-24T16:45:17.98-0700",
+    "epoch": 1792885517.979
+   },
+   "t_end": {
+    "iso": "2026-10-24T16:45:17.98-0700",
+    "epoch": 1792885517.979
+   },
+   "client": null,
+   "call": null,
+   "args": null,
+   "result": null,
+   "why": null,
+   "n_records": 1,
+   "sensor": {
+    "map_pose_after": [
+     0.8792845526741224,
+     3.8792102182436183
+    ],
+    "jump_m": 0.73,
+    "jump_deg": -47.8,
+    "loc_fit": null,
+    "lost_flag": null,
+    "event_kind_logged": null
+   },
+   "true_cause": "pose jump",
+   "mechanism": "The map<-odom transform moved the dog's map position by 0.73 m and its heading by -47.8 deg in one step.",
+   "evidence": [
+    "lab_poselog (T changes between consecutive 5 Hz rows), tjumps.py"
+   ],
+   "confidence": "high",
+   "confidence_why": "a single step in the logged T at 5 Hz",
+   "fixed_by": "n/a",
+   "figure": null
+  },
+  {
+   "id": "L22",
+   "kind": "localization_event",
+   "subkind": "pose jump",
+   "t_start": {
+    "iso": "2026-10-24T16:45:26.98-0700",
+    "epoch": 1792885526.979
+   },
+   "t_end": {
+    "iso": "2026-10-24T16:45:26.98-0700",
+    "epoch": 1792885526.979
+   },
+   "client": null,
+   "call": null,
+   "args": null,
+   "result": null,
+   "why": null,
+   "n_records": 1,
+   "sensor": {
+    "map_pose_after": [
+     1.601898805326417,
+     3.5016134924937123
+    ],
+    "jump_m": 0.82,
+    "jump_deg": -13.0,
+    "loc_fit": null,
+    "lost_flag": null,
+    "event_kind_logged": null
+   },
+   "true_cause": "pose jump",
+   "mechanism": "The map<-odom transform moved the dog's map position by 0.82 m and its heading by -13.0 deg in one step.",
+   "evidence": [
+    "lab_poselog (T changes between consecutive 5 Hz rows), tjumps.py"
+   ],
+   "confidence": "high",
+   "confidence_why": "a single step in the logged T at 5 Hz",
+   "fixed_by": "n/a",
+   "figure": null
+  },
+  {
+   "id": "L23",
+   "kind": "localization_event",
+   "subkind": "pose jump",
+   "t_start": {
+    "iso": "2026-10-24T16:45:35.78-0700",
+    "epoch": 1792885535.779
+   },
+   "t_end": {
+    "iso": "2026-10-24T16:45:35.78-0700",
+    "epoch": 1792885535.779
+   },
+   "client": null,
+   "call": null,
+   "args": null,
+   "result": null,
+   "why": null,
+   "n_records": 1,
+   "sensor": {
+    "map_pose_after": [
+     1.730158744289544,
+     3.266394338336738
+    ],
+    "jump_m": 1.03,
+    "jump_deg": -7.1,
+    "loc_fit": null,
+    "lost_flag": null,
+    "event_kind_logged": null
+   },
+   "true_cause": "pose jump",
+   "mechanism": "The map<-odom transform moved the dog's map position by 1.03 m and its heading by -7.1 deg in one step.",
+   "evidence": [
+    "lab_poselog (T changes between consecutive 5 Hz rows), tjumps.py"
+   ],
+   "confidence": "high",
+   "confidence_why": "a single step in the logged T at 5 Hz",
+   "fixed_by": "n/a",
+   "figure": null
+  },
+  {
+   "id": "L24",
+   "kind": "localization_event",
+   "subkind": "lost period",
+   "t_start": {
+    "iso": "2026-10-24T16:23:00.00-0700",
+    "epoch": 1792884180.0
+   },
+   "t_end": {
+    "iso": "2026-10-24T16:34:25.40-0700",
+    "epoch": 1792884865.4
+   },
+   "client": null,
+   "call": null,
+   "args": null,
+   "result": null,
+   "why": null,
+   "n_records": null,
+   "sensor": {
+    "loc_fit": null,
+    "track_fit": "0.44-0.59 (cheetah's logger, 2-min bins; not on Z690)",
+    "lost_flag": null
+   },
+   "true_cause": "localization lost",
+   "mechanism": "Track fit fell from about 0.85 to 0.44-0.59 as the dog left the stairwell corner and stayed low until a hand placement (3.19 m, -55.5 deg).",
+   "evidence": [
+    "coordination/inbox/z690/2026-10-24_1632_cheetah_agent-relocalize.md",
+    "pose log jump at 16:34:25",
+    "failure episodes in this window (see in_lost_window)"
+   ],
+   "confidence": "high",
+   "confidence_why": "two independent sources agree on start and end",
+   "fixed_by": "relocalize (/agent/relocalize, lost flag added 10-25)",
+   "figure": null
+  }
+ ]
+}
