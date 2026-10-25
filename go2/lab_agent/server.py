@@ -8,6 +8,11 @@ except the read-only /state.json and /map.png)
 Moving the dog: no one needs to be next to the dog (Oliver's call, 2026-10-22, replacing his earlier rule). The
 console keeps obstacle avoidance on and caps the speed; nothing here changes either. A person at the console always wins: a 409 or "aborted" is reported and
 not retried. Client name on the console: cheetah-lab-agent.
+
+Turning and looking (Oliver, 2026-10-24): go_to(place) stops 1.2-1.8 m back from what the place looks at, on open
+floor, facing it (console_view_next.pick_view_spot); go_to(look_for=) watches the camera on the way (watch_go_to's
+machinery). turn (over 45 deg), look_around, look_toward and scan_for read the lidar clearance first, step clear of
+anything within SWING_M, turn only through the room the body has, and skip views facing something within VIEW_M.
 """
 from __future__ import annotations
 
@@ -23,11 +28,15 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
 import memory as M  # noqa: E402
+# The read-only console views (map, route planner, clearance); also picks go_to's viewing spot (2026-10-24 copy of
+# console_view.py with pick_view_spot added; nothing else in it changed except clearance's max_h).
+import console_view_next as console_view  # noqa: E402
 
 from mcp.server.fastmcp import FastMCP, Image  # noqa: E402
 
 CLIENT = "cheetah-lab-agent"
 mcp = FastMCP("lab")
+ME = sys.modules[__name__]              # this module, for console_view's helpers (they call ME.http, ME.Refused)
 LOG = M.DATA / "calls.jsonl"
 STOP_FLAG = M.DATA / "stop_flag"       # written by the phone page's STOP; cleared when Oliver sends a new message
 MOVES = {"go_to", "turn", "move", "look"}
@@ -240,18 +249,46 @@ def list_places() -> str:
 
 @mcp.tool()
 @safe(moves=True)
-def go_to(place: str = "", x: float | None = None, y: float | None = None,
-          yaw_deg: float | None = None) -> list:
+def go_to(place: str = "", x: float | None = None, y: float | None = None, yaw_deg: float | None = None,
+          stand_at: bool = False, look_for: str = "", max_s: float = 120.0) -> list:
     """Walk to a saved place (by id from list_places) or to map coordinates x, y (metres) facing yaw_deg
-    (0 = +x, counter-clockwise). Then takes a photo there, remembers it and returns it."""
+    (0 = +x, counter-clockwise). Then takes a photo there, remembers it and returns it.
+    A place is looked at from a viewing spot 1.2-1.8 m back from what it looks at, on open floor, facing it (the
+    camera is low and sees nothing from up close). The reply says which spot was used; it is the place's own
+    stand point when no open spot is reachable. stand_at=True walks to the stand point itself: only when you need
+    to be right there. x, y are walked to exactly as given.
+    look_for: something to watch for on the way (e.g. 'a grey backpack', 'a person in a red jumper'): the small
+    vision model checks the camera about 3 times a second and stops the dog when it sees it, as watch_go_to does.
+    Use it whenever you are searching. max_s: the longest it watches."""
+    t_start = time.time()
+    spot = None
+    if place and not stand_at:      # read-only: the map, the live lidar changes and the route planner
+        spot = console_view.pick_view_spot(ME, console_view.snapshot(ME), place)
+    if spot and spot["used"] == "viewing spot":
+        args = {"x": spot["x"], "y": spot["y"], "yaw_deg": spot["yaw_deg"]}
+    else:
+        args = {"place": place} if place else {"x": x, "y": y, **({"yaw_deg": yaw_deg} if yaw_deg is not None else {})}
+    pre = f"go_to {place}: {console_view.spot_text(spot)}\n" if spot else ""
+    if look_for:                    # watch_go_to (hierarchy/integration_next.py) claims, walks, watches and photographs
+        out = watch_go_to(look_for, max_s=max_s, **args)
+        if isinstance(out, str):
+            return pre + out
+        return [pre + out[0] + walk_pictures(t_start), *out[1:]]
     begin_move()
-    args = {"place": place} if place else {"x": x, "y": y, **({"yaw_deg": yaw_deg} if yaw_deg is not None else {})}
-    for _ in range(3):                 # "no_route" came and went with live lidar points (board #16)
-        r = agent("go_to", timeout_s=120, **args)
-        if r.get("result") != "no_route":
-            break
-        time.sleep(2)
-    head = (f"go_to {args}: {r.get('result')} {r.get('reason') or ''}; moved {r.get('moved_m')} m, "
+
+    def walk(args):
+        for _ in range(3):             # "no_route" came and went with live lidar points (board #16)
+            r = agent("go_to", timeout_s=120, **args)
+            if r.get("result") != "no_route":
+                break
+            time.sleep(2)
+        return r
+    r = walk(args)
+    if "place" not in args and spot and r.get("result") == "no_route":
+        pre += "the viewing spot had no route now, so it walked to the place's stand point instead\n"
+        args = {"place": place}
+        r = walk(args)
+    head = (pre + f"go_to {args}: {r.get('result')} {r.get('reason') or ''}; moved {r.get('moved_m')} m, "
             f"ended at {r.get('map_pose')}")
     if place and r.get("result") == "done":
         tgt = (M.places().get(place) or {}).get("target")
@@ -259,20 +296,48 @@ def go_to(place: str = "", x: float | None = None, y: float | None = None,
         if tgt and mp:             # face the thing from wherever it stopped (it can stop short near furniture)
             d = (math.degrees(math.atan2(tgt["y"] - mp["y"], tgt["x"] - mp["x"]) - mp["yaw"]) + 180) % 360 - 180
             if abs(d) > 12:
-                agent("turn", deg=round(d, 1))
-                head += f"; turned {d:.0f} deg to face the place's target"
+                try:
+                    d, notes = checked_turn(round(d, 1)) if abs(d) > 45 else (round(d, 1), [])
+                    agent("turn", deg=d)
+                    head += "; " + "; ".join(notes + [f"turned {d:.0f} deg to face the place's target"])
+                except Refused as e:
+                    head += f"; did not turn to face the place's target: {e}"
     rec, jpg = snap(source="photo")
-    return [head + "\n" + describe_rec(rec), small(jpg)]
+    return [head + walk_pictures(t_start) + "\n" + describe_rec(rec), small(jpg)]
+
+
+def walk_pictures(t0):
+    """The console's trail frames from this walk, indexed now, as a line for the reply. On 2026-10-23 the agent
+    walked past the pliers it was looking for (trail frames 19:20:24 and :28 show them) and never opened those
+    frames, because it only looked at the photo after go_to."""
+    try:
+        M.index_trail(M.fetch_trail(), background=True)
+        ids = [r["id"] for r in sorted(M.load(), key=lambda r: r["t"])
+               if r["source"] == "trail" and r["t"] >= t0 - 1]
+    except Exception as e:  # noqa: BLE001 - console trail off: the walk itself still worked
+        return f"\n(pictures from the walk unavailable: {type(e).__name__})"
+    if not ids:
+        return "\npictures taken on the way: none"
+    if len(ids) > 40:                      # about one frame a second: keep 40 spread over the walk
+        ids = [ids[round(i * (len(ids) - 1) / 39)] for i in range(40)]
+    return (f"\npictures taken on the way ({len(ids)}, oldest first; open them with show_pictures when you are "
+            f"looking for something, it may have passed in front of the camera): " + ", ".join(ids))
 
 
 @mcp.tool()
 @safe(moves=True)
 def turn(deg: float) -> list:
-    """Turn in place (positive = left), then take, remember and return a photo."""
+    """Turn in place (positive = left), then take, remember and return a photo. A turn over 45 deg checks the lidar
+    clearance first: it steps clear of anything within 0.45 m; if that fails it turns only as far as the body has
+    room, or refuses with the reason."""
     begin_move()
+    asked, notes = deg, []
+    if abs(deg) > 45:
+        deg, notes = checked_turn(deg)
     r = agent("turn", deg=deg)
     rec, jpg = snap()
-    return [f"turn {deg}: {r.get('result')} {r.get('reason') or ''}, turned {r.get('turned_deg')} deg\n" + describe_rec(rec), small(jpg)]
+    return [f"turn {deg}" + (f" (asked {asked})" if deg != asked else "") + "".join(f"; {n}" for n in notes)
+            + f": {r.get('result')} {r.get('reason') or ''}, turned {r.get('turned_deg')} deg\n" + describe_rec(rec), small(jpg)]
 
 
 @mcp.tool()
@@ -286,19 +351,228 @@ def move(metres: float) -> list:
     return [f"move {m} (asked {metres}): {r.get('result')} {r.get('reason') or ''}, moved {r.get('moved_m')} m\n" + describe_rec(rec), small(jpg)]
 
 
+# ---- turning safely (Oliver, 2026-10-24: look_around and scan_for spun a full circle wherever the dog stood, so
+# it bumped chairs, and half the views faced a surface centimetres away). Headings are degrees relative to where
+# the dog faces when the tool starts, left positive; clearance dicts are console_view.clearance()'s 8 sectors. ----
+SWING_M = 0.45      # something nearer than this (from the body centre) can be hit when the dog turns in place
+VIEW_M = 0.6        # a view whose centre faces something nearer than this shows only that thing
+VIEW_H = 1.2        # ... counting desk tops too (the camera under one sees only the knee space)
+SECTOR_DEG = dict(console_view.SECTORS)
+
+
+def near(cl, m):
+    """The sectors with something nearer than m metres."""
+    return {k for k, v in cl.items() if v is not None and v < m}
+
+
+def sector_at(h):
+    """The sector a heading points into."""
+    return min(console_view.SECTORS, key=lambda sc: abs((h - sc[1] + 180) % 360 - 180))[0]
+
+
+def swept(a, b):
+    """The sectors the body passes over turning from heading a to b: those its front end sweeps through, and those
+    its back end sweeps through (a sector at c is under the back end when the front faces c + 180)."""
+    lo, hi = min(a, b), max(a, b)
+    out = set()
+    for name, c in console_view.SECTORS:
+        for c2 in (c, c + 180):
+            k = math.ceil((lo - c2 - 22.5) / 360)          # the first copy of the sector's span ending at or after lo
+            if c2 - 22.5 + 360 * k <= hi:
+                out.add(name)
+    return out
+
+
+def turn_room(cl):
+    """How far the dog can turn each way without its body swinging over a sector nearer than SWING_M:
+    (right_deg, left_deg), in 5 deg steps; (360, 360) when nothing is that near."""
+    bad = near(cl, SWING_M)
+    if not bad:
+        return 360, 360
+
+    def how_far(sign):
+        d = 0
+        while d < 360 and not (swept(0, sign * (d + 5)) & bad):
+            d += 5
+        return d
+    return how_far(-1), how_far(1)
+
+
+def reach(w, room):
+    """Heading w as a turn the room allows (w itself, or w +-360 the short way), or None."""
+    right, left = room
+    for h in sorted((w, w - 360, w + 360, w - 720, w + 720), key=lambda h: (h != w, abs(h))):
+        if -right <= h <= left:
+            return h
+    return None
+
+
+def escape_step(cl):
+    """A short straight step (metres, + = forward) away from whatever is nearer than SWING_M: (metres, why), or
+    (None, why) when there is no good one. The dog only walks straight, so things beside it cannot be stepped away
+    from; it steps away from the near things' side (back when they are ahead), into a side with room for the step
+    plus SWING_M and nothing near on it."""
+    bad = near(cl, SWING_M)
+    what = ", ".join(f"{k} {cl[k]} m" for k in sorted(bad))
+    if not bad:
+        return 0.0, "nothing near"
+    pull = sum(math.cos(math.radians(SECTOR_DEG[k])) for k in bad)
+    if abs(pull) < 0.2:
+        return None, f"{what}: beside it, a straight step would not clear it"
+    for side in (("back", "front") if pull > 0 else ("front", "back")):
+        room = cl[side] if cl[side] is not None else 3.0
+        if {side, f"{side}-left", f"{side}-right"} & bad or room < SWING_M + 0.2:
+            continue
+        step = round(min(0.4, room - SWING_M), 2)
+        return (step if side == "front" else -step), f"{what} was within {SWING_M} m"
+    return None, f"{what}: no room to step away (front {cl['front']} m, back {cl['back']} m)"
+
+
+def view_plan(cl, vcl, want, full=False):
+    """Which wanted view headings to turn to, in the order to visit them, and notes on any left out: out of the
+    body's turning room (turn_room), or facing something nearer than VIEW_M (vcl, desk tops counted). full: a
+    look all round; when the room is less than a circle the views are spread over the room there is instead.
+    The order sweeps one way after first turning to the nearer end."""
+    room = turn_room(cl)
+    notes = []
+    if sum(room) < 360:
+        notes.append(f"room to turn {room[0]} deg right and {room[1]} deg left only ("
+                     + ", ".join(f"{k} {cl[k]} m" for k in sorted(near(cl, SWING_M))) + f" within {SWING_M} m)")
+        if full:
+            n = max(1, min(len(want), 1 + round(sum(room) / 60)))
+            want = [-room[0] + i * sum(room) / (n - 1) for i in range(n)] if n > 1 else [0.0]
+    hs = []
+    for w in want:
+        h = reach(w, room)
+        if h is None:
+            notes.append(f"not turned to {w:+.0f} deg: no room")
+        elif (vcl.get(sector_at(h)) or 9) < VIEW_M:
+            notes.append(f"skipped the view at {h:+.0f} deg: it faces something {vcl[sector_at(h)]} m away")
+        elif all(abs(h - g) > 1 for g in hs):
+            hs.append(round(h, 1))
+    if not hs:
+        return [], notes
+    lo, hi = min(hs), max(hs)
+    return sorted(hs, reverse=abs(hi) < abs(lo)), notes
+
+
+def make_room(blocked):
+    """Read the clearance; while blocked(clearance) says the wanted turns would swing into something, step clear
+    (escape_step, at most twice; the console keeps obstacle avoidance on). Moves the dog: call after begin_move().
+    Returns (clearance, view clearance with desk tops, notes)."""
+    notes = []
+    for i in range(3):
+        s = console_view.snapshot(ME)
+        cl, vcl = console_view.clearance(s), console_view.clearance(s, max_h=VIEW_H)
+        if not cl:
+            raise Refused("no map pose, so the room around the dog cannot be checked before turning")
+        if i == 2 or not blocked(cl):
+            break
+        m, why = escape_step(cl)
+        if not m:
+            notes.append(f"could not step clear first ({why})")
+            break
+        r = agent("move", m=m)
+        moved = r.get("moved_m")
+        notes.append(f"stepped {'forward' if m > 0 else 'back'} "
+                     f"{abs(moved) if isinstance(moved, (int, float)) else moved} m first ({why})")
+    return cl, vcl, notes
+
+
+def checked_turn(deg):
+    """(deg, notes) for a turn over 45 deg: the turn asked when the body has room, after stepping clear if needed;
+    else as far that way as the room allows (at least 15 deg); else Refused. (The other way round never helps:
+    a close thing blocks two opposite headings, the front end's and the back end's, so if the short way crosses
+    one the long way crosses the other.)"""
+    ok = lambda cl, d: not (swept(0, d) & near(cl, SWING_M))  # noqa: E731
+    cl, _, notes = make_room(lambda c: not ok(c, deg))
+    if ok(cl, deg):
+        return deg, notes
+    what = ", ".join(f"{k} {cl[k]} m" for k in sorted(swept(0, deg) & near(cl, SWING_M)))
+    part = turn_room(cl)[deg > 0]
+    if part >= 15:
+        return math.copysign(part, deg), notes + [f"turned only {math.copysign(part, deg):+.0f} of {deg:+.0f} deg: "
+                                                  f"further would swing the body into {what}"]
+    raise Refused("; ".join(notes + [f"no room to turn {deg:+.0f} deg ({what} within {SWING_M} m)"])
+                  + ". Move to open floor first (show_map, go_to, move).")
+
+
+def plan_turns(want, full=False):
+    """make_room for the wanted headings, then view_plan: (headings in visiting order, notes). Refused when there is
+    nothing to look at from here without swinging into something."""
+    if full:
+        cl, vcl, notes = make_room(lambda c: sum(turn_room(c)) < 360)
+    else:
+        cl, vcl, notes = make_room(lambda c: any(reach(w, turn_room(c)) is None for w in want))
+    order, more = view_plan(cl, vcl, want, full)
+    notes += more
+    if not order:
+        raise Refused("; ".join(notes) + ". Nothing to look at from here without bumping into something: move to "
+                                         "open floor first (show_map, go_to, move).")
+    return order, notes
+
+
+def turn_through(order, source):
+    """Turn to each heading in order and take a photo there: [description, picture, ...]."""
+    out, at = [], 0.0
+    for h in order:
+        if abs(h - at) > 1:
+            r = agent("turn", deg=round(h - at, 1))
+            at += r.get("turned_deg") if isinstance(r.get("turned_deg"), (int, float)) else h - at
+        rec, jpg = snap(source=source)
+        out += [describe_rec(rec), small(jpg, 640)]
+    return out
+
+
 @mcp.tool()
 @safe(moves=True)
 def look_around(views: int = 4) -> list:
-    """Turn in place through a full circle, taking `views` photos (2-8); all are remembered and returned."""
+    """Turn in place through a full circle, taking `views` photos (2-8); all are remembered and returned. Use it on
+    open floor when you have no idea which way to look. When you know roughly where (a place, a desk, the side a
+    sighting came from), use look_toward instead: fewer turns, and every view counts.
+    It reads the lidar clearance first: it steps clear of anything within 0.45 m, turns only as far as the body
+    has room, and skips views that would face something within 0.6 m. The first line says what it did."""
     begin_move()
     views = max(2, min(8, views))
-    out = []
-    for i in range(views):
-        if i:
-            agent("turn", deg=360 / views)
-        rec, jpg = snap(source="look_around")
-        out += [describe_rec(rec), small(jpg, 640)]
-    return out
+    order, notes = plan_turns([i * 360 / views for i in range(views)], full=True)
+    head = (f"look_around: views at {', '.join(f'{h:+.0f}' for h in order)} deg (relative to where it faced)"
+            + "".join(f"; {n}" for n in notes))
+    return [head] + turn_through(order, "look_around")
+
+
+@mcp.tool()
+@safe(moves=True)
+def look_toward(place: str = "", x: float | None = None, y: float | None = None, spread_deg: float = 90.0,
+                views: int = 3) -> list:
+    """Turn toward a place (what it looks at) or map point x, y and take `views` photos (1-8) spread over
+    spread_deg (0-360) centred on it; all are remembered and returned. Use it instead of look_around when you know
+    roughly where to look (a desk, where a thing was last seen, the far side of a table): it turns only through
+    that sector. Same safety checks as look_around (steps clear, turns only where the body has room, skips views
+    facing something within 0.6 m)."""
+    if place:
+        p = M.places().get(place)
+        if not p:
+            raise Refused(f"no place '{place}' (see list_places)")
+        x, y = (p["target"]["x"], p["target"]["y"]) if p.get("target") else (p["x"], p["y"])
+    elif x is None or y is None:
+        raise Refused("give a place id or x and y")
+    begin_move()
+    mp = console_view.snapshot(ME).get("map_pose")
+    if not mp:
+        raise Refused("no map pose, so the direction to look cannot be worked out")
+    dist = math.hypot(x - mp["x"], y - mp["y"])
+    if dist < 0.3:
+        raise Refused(f"the dog is at that point ({dist:.2f} m away): use look_around")
+    c = (math.degrees(math.atan2(y - mp["y"], x - mp["x"]) - mp["yaw"]) + 180) % 360 - 180
+    views, spread = max(1, min(8, views)), max(0.0, min(360.0, spread_deg))
+    if spread >= 360:
+        want = [c + i * 360 / views for i in range(views)]
+    else:
+        want = [c + spread * (i / (views - 1) - 0.5) for i in range(views)] if views > 1 else [c]
+    order, notes = plan_turns(want)
+    head = (f"look_toward ({x:.2f}, {y:.2f}), {dist:.1f} m away, {c:+.0f} deg from where it faced: views at "
+            f"{', '.join(f'{h:+.0f}' for h in order)} deg" + "".join(f"; {n}" for n in notes))
+    return [head] + turn_through(order, "look_toward")
 
 
 @mcp.tool()
@@ -323,7 +597,7 @@ def stop() -> str:
 @mcp.tool()
 @safe
 def release() -> str:
-    """Give control back (do this when Oliver's request is done)."""
+    """Give control back now. Rarely needed: control goes back automatically when your reply ends."""
     return json.dumps(agent("release"))
 
 
@@ -557,10 +831,11 @@ def selftest(memory_only=False):
 
 # Skill tools from the small/large hierarchy (hierarchy/REPORT.md, added 2026-10-23): watch_go_to and scan_for
 # let the local Qwen3-VL-8B (:8301) watch the camera and stop the dog on sight. They refuse to move if it is down.
+# integration_next (2026-10-24): scan_for plans its turns with plan_turns; go_to(look_for=) calls watch_go_to.
 sys.path.insert(0, str(Path(__file__).parent / "hierarchy"))
-import integration  # noqa: E402
+import integration_next as integration  # noqa: E402
 
-integration.register(mcp, sys.modules[__name__])
+watch_go_to, scan_for = integration.register(mcp, sys.modules[__name__])
 
 # Skills the agent writes for itself (skills.py, Oliver 2026-10-23): write_skill, test_skill, run_skill, note_skill,
 # list_skills, read_skill.
@@ -568,9 +843,8 @@ import skills  # noqa: E402
 
 skills.register(mcp, sys.modules[__name__])
 
-# Read-only views of the console's map, route planner and sensors (console_view.py, Oliver 2026-10-23).
-import console_view  # noqa: E402
-
+# Read-only views of the console's map, route planner and sensors (console_view.py, Oliver 2026-10-23; imported at
+# the top, as console_view_next).
 console_view.register(mcp, sys.modules[__name__])
 
 if __name__ == "__main__":

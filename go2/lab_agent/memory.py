@@ -234,10 +234,10 @@ def trail_id(v):
     return "t" + v["url"].split("/")[-1].split(".")[0]
 
 
-def index_trail(items, workers=12):
+def index_trail(items, workers=12, background=False):
     def one(item):
         v, jpg = item
-        return add_picture(jpg, v["t"], v["x"], v["y"], v["yaw_deg"], "trail", pid=trail_id(v))
+        return add_picture(jpg, v["t"], v["x"], v["y"], v["yaw_deg"], "trail", pid=trail_id(v), background=background)
     with ThreadPoolExecutor(workers) as pool:
         recs = list(pool.map(one, items))
     return recs

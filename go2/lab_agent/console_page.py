@@ -218,7 +218,7 @@ class H(W.H):
         elif u.path.startswith("/c/") and proxy_key(u) in PROXY:
             body, ctype, stale = fetch(proxy_key(u))
             self.send(200, body, ctype, [("X-Stale", "1" if stale else "0")])
-        elif u.path.startswith("/pic/"):
+        elif u.path.startswith("/pic/") or u.path == "/live":
             super().do_GET()                  # web.H checks its own key in ok(): ours, via this override
         else:
             self.send_error(404)

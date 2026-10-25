@@ -177,8 +177,14 @@ MODELS = {"opus:high": ("opus", "high"), "opus:medium": ("opus", "medium"),     
           "sonnet:medium": ("sonnet", "medium"), "sonnet:low": ("sonnet", "low")}  # the conversation carries over
 
 
+TRANSCRIPTS = Path.home() / ".claude" / "projects" / "-home-oliver-robot-dynamic-home-eqa-go2-lab-agent"
+
+
 def agent_cmd(session, text, choice="opus:high"):
-    resume = ["--resume", session] if SESSIONS.get(session) else ["--session-id", session]
+    # a turn ended by STOP never reaches its result event, so SESSIONS misses it; its transcript exists anyway
+    # (10-24: the follow-up after a STOP failed with "Session ID ... is already in use")
+    started = SESSIONS.get(session) or (TRANSCRIPTS / f"{session}.jsonl").exists()
+    resume = ["--resume", session] if started else ["--session-id", session]
     model, effort = MODELS.get(choice, MODELS["opus:high"])
     return ["claude", "-p", "--model", model, "--effort", effort, "--mcp-config", str(HERE / "mcp.json"), "--strict-mcp-config",
             "--tools", "", "--allowedTools", "mcp__lab__*", "--append-system-prompt-file", str(HERE / "SYSTEM.md"),
@@ -209,6 +215,20 @@ class H(BaseHTTPRequestHandler):
             body = PAGE.encode()
             self.send_response(200)
             self.send_header("Content-Type", "text/html; charset=utf-8")
+            self.end_headers()
+            self.wfile.write(body)
+        elif u.path == "/live":            # the console page's Monitor view polls this (collect.read_live)
+            q = parse_qs(u.query)
+
+            def num(k):
+                try:
+                    return int(q.get(k, ["-1"])[0])
+                except ValueError:
+                    return -1
+            body = json.dumps(collect.read_live(num("since"), num("esince")), ensure_ascii=False).encode()
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Cache-Control", "no-store")
             self.end_headers()
             self.wfile.write(body)
         elif u.path.startswith("/pic/"):
@@ -246,11 +266,22 @@ class H(BaseHTTPRequestHandler):
         wlock = threading.Lock()
         ep = body.get("episode")          # Collect mode on the console page: record the turn in collect.py's log
         rec = {"answer": [], "tools": [], "t0": __import__("time").time()}
+        # who sent it, for the Monitor view: the sender's own "by", else the console page (a browser) or a script
+        by = re.sub(r"[^\w .()@-]", "", str(body.get("by") or ""))[:40] or (
+            "page" if "Mozilla" in (self.headers.get("User-Agent") or "") else "script")
+        tid = uuid.uuid4().hex[:12]       # this turn's id in live.jsonl
+        lv = {"tid": tid, "episode": collect.clean_id(ep), "session": session, "turn": body.get("turn")} if ep else None
         if ep:
             collect.log("prompt", ep, session=session, turn=body.get("turn"), text=text, model=body.get("model"),
                         expected=str(body.get("expected") or "")[:4000] or None)
+            collect.live(kind="prompt", **lv, by=by, text=text, model=body.get("model"),
+                         expected=str(body.get("expected") or "")[:4000] or None)
 
         def emit(kind, text, pics=(), **extra):
+            if lv:                        # the Monitor view's copy; logged before the send so a closed page loses nothing
+                cap = 4000 if kind == "result" else 2000 if kind == "tool" else 20000
+                collect.live(kind=kind, **lv, text=text[:cap] + (" …" if len(text) > cap else ""), pics=list(pics),
+                             **extra)
             if ep and kind == "text":
                 rec["answer"].append(text)
             elif ep and kind == "tool":
@@ -357,6 +388,8 @@ class H(BaseHTTPRequestHandler):
                 collect.log("done", ep, session=session, turn=body.get("turn"), ok=False,
                             text="the page disconnected mid-turn; the turn was ended",
                             answer="\n\n".join(rec["answer"]), tools=rec["tools"])
+                collect.live(kind="done", **lv, text="the page disconnected mid-turn; the turn was ended", pics=[],
+                             ok=False)
             if p and p.poll() is None:
                 p.kill()
                 http_stop = console_stop("cheetah-lab-page-disconnect")
