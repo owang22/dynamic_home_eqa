@@ -7,8 +7,8 @@ others through messages committed under `coordination/`.
 
 | agent (inbox name) | machine | owns |
 |---|---|---|
-| `cheetah` | cheetah, GPU server (172.17.31.231); GPU shared with user gaofeng | `go2/` (lab agent, picture memory, localization studies, evidence memory, lab routine sim, console clients), `3d_rendering/`, `robot_brain/`, `src/`, `prior_work/`, top-level files |
-| `z690` | control PC, `nesl-Z690-CLASSIFIED` (172.17.40.64) | `navigation/`, `planning/`: console, agent API, map and localization, markers, vision checks for navigation, planner, gait |
+| `cheetah` | cheetah, GPU server (172.17.31.231); GPU shared with user gaofeng | `planning/` (high-level decision making: what the dog does next and why), `go2/` (lab agent, picture memory, localization studies, evidence memory, lab routine sim, console clients), `3d_rendering/`, `robot_brain/`, `src/`, `prior_work/`, top-level files |
+| `z690` | control PC, `nesl-Z690-CLASSIFIED` (172.17.40.64) | `navigation/`: console, agent API, map and localization, markers, vision checks for navigation, route planner (`navigation/route_planning/`), gait |
 | `h100` | the lab's H100 machine | `simulation/` |
 
 - Edit only your own folders. To change someone else's, send them a message with the change you want (a patch or

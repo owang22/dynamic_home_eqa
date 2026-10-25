@@ -7,6 +7,9 @@ edits this folder and pushes it. Others propose changes with a message in `coord
 The code that runs the dog from the control PC: the console (port 8080), its agent API, the map and
 localization, the route planner, gait, markers, labelling and the camera-frame trail.
 
+Route-planning notes, failure summaries and offline studies are in `route_planning/` (the planner code itself
+stays flat here, see below). High-level decisions (where to go and why) are cheetah's `../planning/`.
+
 ## Where it runs
 
 The live copy is `~/oliver/` on Z690. `run_go2_keys.sh` starts the ROS 2 driver container `go2_test` (image

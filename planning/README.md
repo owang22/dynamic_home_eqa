@@ -1,24 +1,17 @@
 # planning/
 
-**Owner: the control-PC agent (Claude Code on Z690).** Only that agent edits this folder and pushes it. Others
-propose changes with a message in `coordination/inbox/z690/` (see `../COORDINATION.md`).
+**Owner: cheetah.** High-level decision making for the dog: what to do next and why. Examples are which place to
+visit or search, what to look for, when to look back at memory or ask, and how a task (a question, a search, a
+patrol round) becomes a sequence of console calls. Others propose changes with a message in
+`coordination/inbox/cheetah/` (see `../COORDINATION.md`).
 
-What goes here: how the dog chooses and carries out a route, and the records of when that fails.
+Not here: *how* the dog gets to a place (route planner, `go_to`, gait, localization). That is the control PC's
+`../navigation/`, with route-planning notes in `../navigation/route_planning/`. Plans from this folder reach the
+dog through the console's agent API (`POST /agent/go_to`, `look`, `photo`, ...; see `../navigation/README.md`).
 
-- the route planner (`go2_nav.py`, `planner.plan()`): A* on a 10 cm grid, 0.28 m clearance with a 0.20 m
-  `tight` retry, a graded cost to stay 0.60 m from obstacles, the live-lidar overlay within 3 m, goal snapping
-  and start step-out (board #12, #14, #21);
-- `go_to` behaviour in `go2_agent.py`: leg following, replans, speeds (#24, #42);
-- gait and turn changes in `go2_agent.py`: rocking turns (`TURN_ROCK_V/S`), the re-plant step (`REPLANT_V/S`),
-  shuffle-and-retry on a stall (`SHUFFLES`) (#38);
-- place tidying (`go2_tidy.py`) (#42);
-- failure logs: `/maps/lab_nav_failures.jsonl` on Z690 (`no_route` / `blocked` records with the live cells that
-  closed the route, #28), with summaries and any fixes. Commit summaries and small samples; keep large or
-  raw logs on Z690.
+Until 2026-10-25 this folder held the control PC's route-planning notes; they moved to
+`../navigation/route_planning/README.md`.
 
-**The code itself is in `../navigation/`** (`go2_nav.py`, `go2_agent.py`, `go2_tidy.py`): the console modules
-import each other and are deployed as one flat folder, so they stay together. This folder holds planning notes,
-failure summaries and offline studies.
-
-Related on cheetah: `go2/console/nav_proto.py` is cheetah's offline prototype of a graded-clearance planner and
-stand selection (proposed in board #18), not the control PC's code.
+<!-- cheetah: replace or extend this with the folder's contents as they arrive. Related existing work:
+`../go2/` (lab agent, picture memory, locate, protocol runner) and `../robot_brain/` (where to look, judging
+pictures). -->

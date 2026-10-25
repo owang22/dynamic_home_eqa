@@ -9,7 +9,8 @@ on simulated households rendered in 3D. (Updated 2026-10-19.)
 | path | what | status |
 |---|---|---|
 | `go2/` | the lab's Go2: clients of the control PC's console (patrol rounds, viewpoints, object anchors, logger), and two memory studies (`evidence_memory/`, `lab_routine_sim/`) | **active**; start at `go2/README.md` |
-| `navigation/`, `planning/` | the control PC's console, agent API, localization, markers, vision checks, route planner and gait; owned and pushed by the control-PC (Z690) agent | new 2026-10-23, code to come; their READMEs |
+| `navigation/` | the control PC's console, agent API, localization, markers, vision checks, route planner (notes in `navigation/route_planning/`) and gait; owned and pushed by the control-PC (Z690) agent | active; `navigation/README.md` |
+| `planning/` | high-level decision making for the dog: what to do next and why, turned into console calls; owned by cheetah | new 2026-10-25; `planning/README.md` |
 | `simulation/` | simulation experiments run on the lab's H100 machine, building on `go2/lab_routine_sim/` and `3d_rendering/`; owned by the H100 agent | new 2026-10-23; `simulation/README.md` |
 | `COORDINATION.md`, `coordination/` | how the three agents (cheetah, Z690, H100) split folders and message each other through git; board archive | new 2026-10-23 |
 | `robot_brain/` | HTTP service that plans where to look and judges pictures for a search, for the ROS-side controller | built 2026-10-13/14 by the other session; `robot_brain/README.md` |
