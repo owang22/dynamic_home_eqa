@@ -54,6 +54,7 @@ LOOKAHEAD_M = 0.5                          # go_to: steer toward the point this 
 STEER_GAIN, STEER_MAX = 1.5, 0.8           # go_to: turn rate (rad/s) per rad of heading error, and its cap
 TURN_IN_PLACE = math.radians(45)           # go_to: heading error above this: stop and turn in place
 MAX_REPLANS = 3                            # go_to: plan around new obstacles this many times
+TRAIL_S, TRAIL_JUMP_M = 300.0, 0.3           # go_to: remember where the dog walked this long; forget it after a line-up jump
 SQUEEZE_STOP_M = 1.0                       # go_to on a squeeze route: stop this far before the narrow part, look, re-plan
 MAPS_DIR = "/maps"
 MAP_NAME = os.environ.get("MAP_NAME", "lab")
@@ -123,6 +124,8 @@ class Agents:
         self.live_hist = deque(maxlen=LIVE_KEEP)   # recent lidar clouds in map frame, for the planner
         self._live_cloud = None
         self._live_lock = threading.Lock()
+        self._trail = deque()          # (t, x, y) map poses the dog walked, for the planner's set_trail
+        self._trail_T = None
         self._stop_if_lost = False     # set while a go_to runs (GO_TO_STOP_WHEN_LOST)
 
     # ---------- ownership ----------
@@ -192,7 +195,7 @@ class Agents:
             return "not_standing: the dog is lying down; call posture {\"pose\": \"stand\"} first"
         return None
 
-    def obstacle(self, direction):
+    def obstacle(self, direction, force=False):
         """Nearest obstacle distance in a box ahead (direction=+1) or behind (-1), from the lidar grid.
         Ahead: None while the dog's own obstacle avoidance is on (it slows and stops the dog itself, and
         a stall then counts as blocked). Behind: always checked, also against the saved map, because
@@ -201,7 +204,7 @@ class Agents:
             hit = self._map_behind()
             if hit is not None:
                 return hit
-        elif self.node.avoid:
+        elif self.node.avoid and not force:
             return None
         odom, _, _, cloud, _, ages = self.snap()
         if not cloud or not cloud["obs"] or ages.get("cloud", 99) > 3.0 or cloud["frame"] == "base_link":
@@ -589,7 +592,26 @@ class Agents:
         if odom is None or self.mapper is None or self.mapper.T is None:
             return None
         x, y, yaw = self.mapper.to_map(odom["pos"][0], odom["pos"][1], odom["yaw"])
+        self._note_trail(odom, x, y)
         return {"x": x, "y": y, "yaw": yaw}
+
+    def _note_trail(self, odom, x, y):
+        """Where the dog walked (map frame), for the planner's squeeze-out-the-way-you-came (set_trail).
+        A line-up that moves the dog more than TRAIL_JUMP_M makes the old trail meaningless: start over."""
+        T, now = tuple(self.mapper.T), time.time()
+        trail = self._trail
+        if trail and now - trail[-1][0] < 0.2:
+            return
+        old = self._trail_T
+        if old is not None and old != T:
+            c, s_ = math.cos(old[2]), math.sin(old[2])
+            o = odom["pos"]
+            if math.hypot(old[0] + c * o[0] - s_ * o[1] - x, old[1] + s_ * o[0] + c * o[1] - y) > TRAIL_JUMP_M:
+                trail.clear()
+        self._trail_T = T
+        trail.append((now, x, y))
+        while trail and now - trail[0][0] > TRAIL_S:
+            trail.popleft()
 
     def update_live(self):
         """Give the planner what the lidar sees right now around the dog: it overrides the saved map
@@ -661,6 +683,7 @@ class Agents:
             if math.hypot(gx - mp["x"], gy - mp["y"]) < GOAL_TOL_M:
                 break
             self.update_live()
+            self.planner.set_trail([(x, y) for _, x, y in self._trail])
             plan = self.planner.plan(mp["x"], mp["y"], gx, gy)
             if "error" in plan:
                 why = {"why": plan["why"]} if plan.get("why") else {}
@@ -758,7 +781,7 @@ class Agents:
                         hist.clear()
                         prev = self.map_pose_now()
                         continue
-                    return {"result": "blocked", "side": "front", "moved_m": moved,
+                    return {"result": "blocked", "side": "front", "moved_m": moved, "stall": True,
                             "reason": "not making progress (something is in the way, or avoidance stopped it)",
                             "at": [mp["x"] + math.cos(mp["yaw"]) * 0.5, mp["y"] + math.sin(mp["yaw"]) * 0.5]}
                 v = MOVE_SPEED if not last else max(MIN_SPEED, min(MOVE_SPEED, dist * 1.2))

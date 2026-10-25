@@ -58,6 +58,14 @@ LOST_FIT = 0.65            # "lost": the drift tracker's fit stays under this...
 LOST_S = 10.0              # ...for this long...
 LOST_MOVE_M = 0.3          # ...while the dog walks at least this far (odom); cleared at LOST_CLEAR or a new placement
 LOST_CLEAR = 0.70
+LOST_GAP_S = 5.0           # a gap this long between judged views (e.g. the dog stood) restarts the low-fit episode
+# "Suspect" (advisory; doesn't stop go_to): the voxels the dog placed in the last SUSPECT_FRESH_S sit poorly on the
+# map at the current T, before any correction. Replay of bad starts on the 10-23 drive: 11/11 caught within 11 s
+# (current lost rule 4/11, 32 s median); but on 10-24 (room changed since mapping) a well-placed dog sat at
+# 0.63-0.72, so it can't tell a wrong pose from a changed room: take a marker fix or a relocalize search.
+SUSPECT_FRESH_S = 10.0
+SUSPECT_FIT, SUSPECT_CLEAR = 0.65, 0.70
+SUSPECT_S, SUSPECT_MOVE_M = 10.0, 0.3
 CAND_SEP_M, CAND_SEP_DEG = 0.5, 20.0   # relocalize search: candidates must differ by this much
 HOST_UID = 1000
 
@@ -101,6 +109,11 @@ class Mapper:
         self._low = None                    # [since, last robot xy, metres walked] while the track fit is low
         self.lost_since = None              # time the dog was judged lost (see LOST_*), else None
         self._vox = (np.empty(0, np.int64), np.empty(0), np.empty(0))   # sorted voxel keys, birth, last seen
+        self._judged_at = None              # last time _judge_lost ran (see LOST_GAP_S)
+        self._sus_obs = None                # obstacle points placed within SUSPECT_FRESH_S (from _fresh)
+        self.fresh_fit = None               # their fit at the current T
+        self._sus_low, self._sus_at = None, None
+        self.suspect_since = None           # time the dog was judged suspect (see SUSPECT_*), else None
         if self.load_unsaved():
             self.status = "restored the unsaved map from before the console restarted; lining up with it"
         elif self.load():
@@ -120,6 +133,7 @@ class Mapper:
         self.T = T
         if kind != "drift_correction":     # a new placement or line-up: judge lost afresh
             self._low, self.lost_since = None, None
+            self._sus_low, self.suspect_since = None, None
 
     def _note_T(self, odom):
         """Record a change of T as an event: where the dog was on the map before and after."""
@@ -161,7 +175,9 @@ class Mapper:
                 "track": list(self.track_log)[-track_n:], "fit": sc, "runner_up": ru,
                 "unsure": sc is not None and (sc < 0.3 or sc - (ru or 0) < 0.05),
                 "lost": self.lost_since is not None, "lost_since": self.lost_since,
-                "track_fit": (self.track_info or {}).get("fit")}
+                "track_fit": (self.track_info or {}).get("fit"),
+                "fresh_fit": None if self.fresh_fit is None else round(self.fresh_fit, 3),
+                "suspect": self.suspect_since is not None, "suspect_since": self.suspect_since}
 
     def pose(self, odom):
         if odom is not None:
@@ -510,6 +526,7 @@ class Mapper:
         o = np.argsort(keys, kind="stable")
         self._vox = (keys[o], born[o], seen[o])
         fresh = now - b[inv] <= TRACK_FRESH_S
+        self._sus_obs = obs[now - b[inv] <= SUSPECT_FRESH_S]
         return obs[fresh] if fresh.sum() >= TRACK_FRESH_MIN else obs
 
     def track(self, obs, robot):
@@ -559,6 +576,10 @@ class Mapper:
                 "known": round(known, 2), "at": time.strftime("%H:%M:%S")}
         matches = not (known >= MISMATCH_KNOWN and fit < MISMATCH_FIT)
         self._judge_lost(fit, robot)
+        ff = self._fit_at(self._sus_obs, T)
+        if ff is not None:
+            self.fresh_fit = ff
+            self._judge_suspect(ff, robot)
         if fit < TRACK_MIN_FIT or fit - zero < TRACK_MIN_GAIN or (a == 0 and dx == 0 and dy == 0):
             self.track_info = dict(info, applied=False, matches=matches)
             self.track_log.append(dict(self.track_info, t=round(time.time(), 2), best_dx=round(dx, 3),
@@ -624,6 +645,9 @@ class Mapper:
     # ---------- lining up a new session with the saved map ----------
     def _judge_lost(self, fit, robot):
         now = time.time()
+        if self._judged_at is not None and now - self._judged_at > LOST_GAP_S:
+            self._low = None               # the dog stood (or views stopped): don't count that time as low fit
+        self._judged_at = now
         if fit >= LOST_CLEAR:
             self._low, self.lost_since = None, None
             return
@@ -637,6 +661,43 @@ class Mapper:
         self._low[1] = (rx, ry)
         if self.lost_since is None and now - self._low[0] >= LOST_S and self._low[2] >= LOST_MOVE_M:
             self.lost_since = round(now, 2)
+
+    def _judge_suspect(self, fit, robot):
+        """Like _judge_lost, on the fresh-voxel fit at the current T (advisory only)."""
+        now = time.time()
+        if self._sus_at is not None and now - self._sus_at > LOST_GAP_S:
+            self._sus_low = None
+        self._sus_at = now
+        if fit >= SUSPECT_CLEAR:
+            self._sus_low, self.suspect_since = None, None
+            return
+        if fit >= SUSPECT_FIT:
+            return
+        rx, ry = float(robot[0]), float(robot[1])
+        if self._sus_low is None:
+            self._sus_low = [now, (rx, ry), 0.0]
+            return
+        self._sus_low[2] += math.hypot(rx - self._sus_low[1][0], ry - self._sus_low[1][1])
+        self._sus_low[1] = (rx, ry)
+        if self.suspect_since is None and now - self._sus_low[0] >= SUSPECT_S and self._sus_low[2] >= SUSPECT_MOVE_M:
+            self.suspect_since = round(now, 2)
+
+    def _fit_at(self, obs, T):
+        """Mean wall likelihood of these odom-frame points if the odom-to-map transform were T, or None."""
+        L, r0, c0, _ = self._wall_field()
+        if L is None or obs is None:
+            return None
+        pts = np.unique(np.floor(obs / RES), axis=0) * RES + RES / 2
+        if len(pts) < TRACK_MIN_PTS:
+            return None
+        tx, ty, th = T
+        c, s = math.cos(th), math.sin(th)
+        q = pts @ np.array([[c, s], [-s, c]]) + (tx, ty)
+        cc = np.floor((q[:, 0] - self.origin[0]) / RES).astype(np.int64) - c0
+        rr = np.floor((q[:, 1] - self.origin[1]) / RES).astype(np.int64) - r0
+        H, W = L.shape
+        ok = (rr >= 0) & (rr < H) & (cc >= 0) & (cc < W)
+        return float(np.where(ok, L[np.clip(rr, 0, H - 1), np.clip(cc, 0, W - 1)], 0.0).mean())
 
     def view_fit(self, T):
         """How well the recent lidar views sit on the map's walls if the odom-to-map transform were T: the

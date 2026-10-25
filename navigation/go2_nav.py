@@ -40,6 +40,17 @@ FOOTPRINT_R = 0.35         # m around the dog that is always open floor (it is s
 LIVE_NEW_R = 1.2           # live obstacles that aren't on the saved map count only this close to the dog
 MID_BLOCKS = False         # use the map's desk/table-top layer as obstacles (see _grid)
 SPECK_CELLS = 2            # obstacle specks this small (5 cm map cells, nothing touching) are lidar smear, not furniture
+# Fallback tiers, tried in order only when the normal plan (tier 0, all three radii) finds nothing and there are
+# live obstacles or temporary blocks (route_planning/deploy/TIERS.md). Each: (name, clearance bonus for live
+# obstacles that aren't on the saved map: the route may pass this much closer to them, never through them;
+# keep the temporary blocks). Overhead (desk/table-top) cells and saved-map obstacles are never relaxed.
+# Skipped while the map says the dog is lost (mapper.lost_since): a wrong pose gets no extra routes.
+LIVE_THIN_BONUS = 0.16     # ROBOT_R - ROBOT_R_SQUEEZE: pass unconfirmed live obstacles at squeeze distance
+# Default (ablation 10-25): only ignore the temporary blocks; live obstacles keep full clearance. The thin tiers
+# ("thin_live", LIVE_THIN_BONUS, True/False) fixed 5 more replays but passed ~0.07 m from a real wooden panel in 3.
+FALLBACK_TIERS = [("live", 0.0, True), ("live_noblocks", 0.0, False)]
+TRAIL_R = 0.20             # squeeze near the dog is allowed this close to where it walked recently (set_trail):
+                           # it got in that way, so it can get out (10-24 15:28: stuck at door_outside)
 SQ2 = math.sqrt(2)
 
 
@@ -55,6 +66,8 @@ class Planner:
         self.last_fail = None      # why the last failed plan failed (see _why_failed)
         self.live_over = []        # overhead cells (desk/table tops) from the live lidar
         self.fail_log = None       # jsonl file for failed plans, set by the agent
+        self.trail = []            # recent map xy where the dog walked (set_trail), for squeezing out of a pocket
+        self.tier = 0              # fallback tier the grid is built for (0 = normal)
 
     # ---------- grid ----------
     def _grid(self):
@@ -95,6 +108,7 @@ class Planner:
         nb = cv2.filter2D(occ.astype(np.uint8), -1, np.ones((3, 3), np.float32), borderType=cv2.BORDER_CONSTANT)
         occ &= nb > 1
         self.origin = (self.mapper.origin[0] + c0 * RES, self.mapper.origin[1] + r0 * RES)
+        saved0 = occ.copy()        # saved-map obstacles, before the live view (for the fallback tiers)
         yy, xx = np.mgrid[0:h, 0:w]
         cx, cy = (xx + 0.5) * CELL + self.origin[0], (yy + 0.5) * CELL + self.origin[1]
         self.live_view = None
@@ -128,17 +142,51 @@ class Planner:
             self.live_view = {"t": lt,
                               "new": np.c_[cx[occ & ~saved & near], cy[occ & ~saved & near]].round(2).tolist(),
                               "cleared": np.c_[cx[saved & ~occ & near], cy[saved & ~occ & near]].round(2).tolist()}
+        # Split the tier-0 obstacles for the fallback tiers. This never ADDS an obstacle: new_m and hard are both
+        # subsets of occ. new_m = live obstacles not on the saved map (relaxable in later tiers); a cell that is an
+        # obstacle here because of an overhead (desk/table-top) point in live_over is excluded from new_m, so it
+        # stays hard in every tier. Overhead cells that are not obstacles (e.g. only a routing cost) stay free.
+        new_m = occ & ~saved0
+        if self.live is not None and len(self.live_over):
+            a = np.asarray(self.live_over, dtype=np.float64).reshape(-1, 2)
+            oc = np.floor((a[:, 0] - self.origin[0]) / CELL).astype(int)
+            orr = np.floor((a[:, 1] - self.origin[1]) / CELL).astype(int)
+            ok = (orr >= 0) & (orr < h) & (oc >= 0) & (oc < w)
+            over_m = np.zeros_like(occ)
+            over_m[orr[ok], oc[ok]] = True
+            new_m &= ~over_m
+        hard = occ & ~new_m
+        blk = np.zeros_like(occ)
         for _, bx, by, br in self.blocks:
-            occ |= np.hypot(cx - bx, cy - by) < br
+            blk |= np.hypot(cx - bx, cy - by) < br
+        foot = np.zeros_like(occ)
         if self.live is not None:
             # the dog is standing here, so nothing else is
             foot = np.hypot(cx - self.live[2], cy - self.live[3]) <= FOOTPRINT_R
-            occ[foot], known[foot] = False, True
-        blocked = occ | ~known
+            known[foot] = True
+        self._parts = (hard, new_m, blk, foot)
+        self.known = known
+        self.key = key
+        self._set_tier(0)
+
+    def _set_tier(self, t):
+        """Planning grid (occ, dist) for fallback tier t (see FALLBACK_TIERS); tier 0 is the normal one."""
+        hard, new_m, blk, foot = self._parts
+        _, bonus, use_blocks = FALLBACK_TIERS[t]
+        occ = hard | blk if use_blocks else hard.copy()
+        new_m = new_m & ~foot
+        if not bonus:
+            occ |= new_m
+        occ &= ~foot
+        blocked = occ | ~self.known
         # distance (m) from each cell to the nearest blocked cell
         self.dist = cv2.distanceTransform((~blocked).astype(np.uint8), cv2.DIST_L2, 5) * CELL
-        self.occ, self.known = occ, known
-        self.key = key
+        if bonus and new_m.any():
+            # live obstacles not on the saved map: may be passed `bonus` closer, never entered
+            dn = cv2.distanceTransform((~new_m).astype(np.uint8), cv2.DIST_L2, 5) * CELL
+            self.dist = np.minimum(self.dist, np.where(new_m, 0.0, dn + bonus))
+            occ = occ | new_m
+        self.occ, self.tier = occ, t
 
     def _why_failed(self, sx, sy, gx, gy, error):
         """Diagnose a failed plan (lock held): would the saved map alone have had a route, and which
@@ -262,6 +310,11 @@ class Planner:
                 return round(px, 2), round(py, 2)
         return None
 
+    def set_trail(self, pts):
+        """Where the dog walked recently (map xy), for squeezing out of a pocket the way it came in."""
+        with self.lock:
+            self.trail = [tuple(p) for p in pts]
+
     def block(self, x, y, r=0.25):
         """Treat a spot as an obstacle for a while (something the dog ran into that isn't on the map)."""
         with self.lock:
@@ -274,19 +327,35 @@ class Planner:
             self._grid()
             if self.occ is None:
                 return {"error": "no map"}
-            for rr in (ROBOT_R, ROBOT_R_TIGHT, ROBOT_R_SQUEEZE):
-                out = self._plan(sx, sy, gx, gy, rr)
+            # lost (the same flag that stops go_to): plan exactly as before, no fallback tiers and no trail
+            lost = getattr(self.mapper, "lost_since", None) is not None
+            n_tiers = 1 if lost or (self.live is None and not self.blocks) else len(FALLBACK_TIERS)
+            first = None
+            for t in range(n_tiers):
+                if t:
+                    self._set_tier(t)
+                for rr in (ROBOT_R, ROBOT_R_TIGHT, ROBOT_R_SQUEEZE):
+                    out = self._plan(sx, sy, gx, gy, rr, use_trail=not lost)
+                    if "path" in out:
+                        out["tight"] = rr < ROBOT_R
+                        if rr == ROBOT_R_SQUEEZE:
+                            self._mark_squeeze(out, sx, sy)
+                        break
+                first = first or out
                 if "path" in out:
-                    out["tight"] = rr < ROBOT_R
-                    if rr == ROBOT_R_SQUEEZE:
-                        self._mark_squeeze(out, sx, sy)
+                    if t:
+                        out["fallback"] = FALLBACK_TIERS[t][0]
                     break
+            if self.tier:
+                self._set_tier(0)
+            if "path" not in out:
+                out = first
             if "path" not in out and self.live is not None:
                 out["why"] = self._why_failed(sx, sy, gx, gy, out.get("error"))
             self.last = dict(out, t=time.time(), start=[sx, sy], want=[gx, gy])
             return out
 
-    def _plan(self, sx, sy, gx, gy, rr):
+    def _plan(self, sx, sy, gx, gy, rr, use_trail=True):
         g = self._nearest_free(gx, gy, GOAL_SNAP_M, rr)
         if g is None:
             return {"error": f"no open floor within {GOAL_SNAP_M} m of the goal"}
@@ -308,7 +377,16 @@ class Planner:
         free = self.dist >= rr
         if rr < ROBOT_R_TIGHT:      # squeeze: only away from the dog, where the map is all we know
             yy, xx = np.mgrid[0:free.shape[0], 0:free.shape[1]]
-            free &= (self.dist >= ROBOT_R_TIGHT) | (np.hypot(yy - sr, xx - sc) * CELL > SQUEEZE_NEAR_M)
+            ok = (self.dist >= ROBOT_R_TIGHT) | (np.hypot(yy - sr, xx - sc) * CELL > SQUEEZE_NEAR_M)
+            if use_trail and self.trail:      # ... or where the dog has just walked
+                tr = np.zeros_like(ok)
+                for tx, ty in self.trail:
+                    r_, c_ = self.cell(tx, ty)
+                    if self.inside(r_, c_):
+                        tr[r_, c_] = True
+                k = 2 * int(TRAIL_R / CELL) + 1
+                ok |= cv2.dilate(tr.astype(np.uint8), cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (k, k))).astype(bool)
+            free &= ok
         # the dog may be standing close to something: let it leave through any cell it can reach
         # within half a metre, even if that cell is tighter than rr
         start_ok = self.dist >= min(rr, 0.12)

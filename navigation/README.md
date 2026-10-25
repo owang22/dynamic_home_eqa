@@ -60,7 +60,7 @@ Base `http://172.17.40.64:8080`. A person at the console always wins; one agent 
 | `GET /map.png`, `/map/layer.png`, `/map/objects`, `/map/proposals` | map image, height layers, object labels, proposed objects |
 | `POST /map {action}` | people only: `start`, `new`, `extend`, `stop`, `save`, `revert`, `clear`, `frame {T}`, `align`, `localize_at {x, y, yaw_deg}` |
 | `GET/POST /places`, `/places/move`, `/places/delete`, `/places/<id>.jpg` | saved places: stand spot `x, y, yaw_deg`, `target {x, y}` |
-| `GET /nav/plan?place=<id>` or `?x=&y=` | route preview without moving; may carry `tight` or `squeeze`, `squeeze_at`, `squeeze_along_m` |
+| `GET /nav/plan?place=<id>` or `?x=&y=` | route preview without moving; may carry `tight` or `squeeze`, `squeeze_at`, `squeeze_along_m`, and `fallback: live_noblocks` when it only worked by ignoring the 120 s stall blocks |
 | `GET /trail/near`, `/trail/since`, `/trail/coverage`, `/trail/<day>/<ms>.jpg` | camera frames with map poses |
 | `GET /markers` | live ArUco detections: `id`, `mark` (A–D), `z`, `x`, `bearing_deg` (+ = right), `dist`, `view_deg`, `fix_ok`/`why`, `held` (kept 0.5 s after the last sighting), and more; see `AGENT_API.md` |
 | `/label/detect`, `/label/example(s)`, `/label/remove` | labelling by example |
@@ -86,7 +86,11 @@ Base `http://172.17.40.64:8080`. A person at the console always wins; one agent 
   - `track_fit` is the drift tracker's latest fit: mean wall likelihood of the lidar view, about 0.75–0.9 when
     placed right. Relocalize's `fit` is the same measure.
   - `lost` turns on when `track_fit` stays under 0.65 for 10 s while the dog walks at least 0.3 m. It clears at
-    0.70 or on any new placement or line-up.
+    0.70 or on any new placement or line-up. A gap over 5 s between judged views (the dog stood) restarts the timer.
+  - `fresh_fit`, `suspect`, `suspect_since` (advisory, never stops anything): the fit of voxels placed in the last
+    10 s at the current pose; `suspect` when under 0.65 for 10 s while walking 0.3 m. It can't tell a wrong pose
+    from a changed room (10-24: a well-placed dog sat at 0.63-0.72), so on `suspect` take a marker fix or run
+    `relocalize search` before a long `go_to`.
 - Qwen3-VL-8B: `POST http://172.17.40.64:8000/v1/chat/completions`, model `qwen3-vl-8b` (Docker `go2_vlm`,
   GPU 1), lab LAN only.
 
