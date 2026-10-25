@@ -67,10 +67,18 @@ Base `http://172.17.40.64:8080`. A person at the console always wins; one agent 
 | `POST /agent/<call>` | `claim`, `release`, `stop`, `say`, `status`, `move {m}`, `turn {deg}`, `look {deg}`, `photo`, `look_around {n}`, `go_to {place \| x, y}`, `posture`, `relocalize`; body needs `client` |
 | `POST /agent/posture {pose}` | `stand` or `lie`, as the console's buttons do; waits until `/go2_states` body height shows it (stand at 0.24 m or more, lie under 0.18 m; thresholds not yet checked on the dog) and returns `body_height`. `crouch` / `body_height` are not supported yet. While lying, `move`, `turn` and `go_to` fail with `not_standing` |
 | `POST /agent/relocalize {mode}` | `search` (around the current pose or `x, y`, `radius_m` 3, clamped 0.5–10) or `global`: the top `top` (5) line-ups of the recent lidar views with the saved map, `[{x, y, yaw, yaw_deg, score, fit}]`, not applied; takes about 4–9 s. `set {x, y, yaw \| yaw_deg, force?}`: applies that pose exactly; refused if its `fit` is more than 0.02 below the current one unless `force`; logs a `loc` event `agent_relocalize`. Every reply has `current {pose, fit, lost, lost_since}` |
+| `GET /history?keys=&since=&until=&step=&limit=` | state once a second over the last 4 h (also kept in `/maps/lab_history/<day>.jsonl` across restarts): `odom.*`, `map_pose.*`, `loc.track_fit`, `loc.lost`, `loc.fit`, `loc.seq`, `obstacle`, `body_height`, `mode`, `roll`, `pitch`, `owner`, `owner_kind`, `call`, `battery`, `markers`, `age.*`; `keys` takes prefixes (`map_pose`). Also returns `loc_events` and `agent_calls` in the window |
 | `GET /agent/status?client=<you>` | owner, running tool, `safe`, `battery`, notes, `localization_notice` |
 
 - Results: `done`, `blocked`, `timeout`, `aborted`, `error`, `no_route`, `refused`; `no_route` and `blocked`
   carry `why`.
+- Every tool result also has `stop_reason`, one word to branch on: `arrived` (move, turn, go_to finished), `done`
+  (other tools), `obstacle`, `stuck` (no progress), `no_route`, `timeout`, `stop` (STOP or an agent's stop),
+  `person` (a person took over), `lost`, `not_standing`, `fallen`, `stale_sensors`, `refused`, `error`. Also `fit`
+  (`loc.track_fit` at the end), `lost`, and the final `map_pose` and `odom`; `move` and `go_to` give `moved_m`, `turn`
+  gives `turned_deg`.
+- `go_to` stops with `stop_reason: lost` when `loc.lost` comes on, or at the start if it's already on
+  (`GO_TO_STOP_WHEN_LOST`): relocalize first. `move` and `turn` work on odometry and don't check it.
 - `loc`: `{status, seq, fit, runner_up, unsure, lost, lost_since, track_fit, events, track}`; event kinds
   `hand_placement`, `auto_align`, `session_restore`, `new_map`, `drift_correction`, `agent_relocalize`, `unknown`.
   - `fit` / `runner_up` / `unsure` describe the last line-up only (`unsure`: score under 0.3, or less than 0.05

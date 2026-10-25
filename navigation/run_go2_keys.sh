@@ -60,6 +60,7 @@ docker cp -q "$HERE/go2_trail.py" $C:/root/go2_trail.py
 docker cp -q "$HERE/go2_nav.py" $C:/root/go2_nav.py
 docker cp -q "$HERE/go2_markers.py" $C:/root/go2_markers.py
 docker cp -q "$HERE/go2_examples.py" $C:/root/go2_examples.py
+docker cp -q "$HERE/go2_history.py" $C:/root/go2_history.py
 if ! docker exec $C pgrep -f go2_dashboard.py >/dev/null; then
     docker exec -d $C bash -c "$ROS && exec python3 /root/go2_dashboard.py 8080 > /tmp/dash.log 2>&1"
 fi

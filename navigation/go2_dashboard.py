@@ -41,6 +41,7 @@ from go2_nav import Planner
 from go2_trail import Trail
 from go2_markers import Markers
 from go2_examples import Examples
+from go2_history import History, sample_from
 
 PORT = int(sys.argv[1]) if len(sys.argv) > 1 else 8080
 CELL = 0.1            # metres per grid cell in the top view
@@ -70,6 +71,7 @@ NODE = None
 AG = None                  # agent tools and who has control (go2_agent.py)
 MAPPER = None              # lab map built from the lidar clouds (go2_mapper.py)
 EXAMPLES = None            # objects labelled by example from camera frames (go2_examples.py)
+HIST = None                # state once a second over the last hours (go2_history.py)
 MARKERS = None             # printed ArUco markers in view (go2_markers.py)
 TRAIL = None               # camera frames along the way, with map poses (go2_trail.py)
 AGENT_CALLS = ("claim", "release", "stop", "say", "status", "move", "turn", "photo", "look_around", "go_to", "look",
@@ -882,6 +884,19 @@ class Handler(BaseHTTPRequestHandler):
             self.send_bytes(AG.photo_bytes(self.path[len("/agent/photos/"):-4]), "image/jpeg")
         elif self.path.split("?")[0] == "/state.json":
             self.send_json(200, snapshot())
+        elif self.path.split("?")[0] == "/history":
+            # state once a second over the last hours (go2_history.py), plus line-up events and agent calls in that window
+            q = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
+            try:
+                num = lambda k: float(q[k][0]) if k in q else None      # noqa: E731
+                keys = [k for k in q.get("keys", [""])[0].split(",") if k]
+                out = HIST.get(keys or None, num("since"), num("until"), num("step"), int(num("limit") or 3600))
+            except ValueError as e:
+                return self.send_json(400, {"result": "error", "reason": str(e)})
+            lo, hi = num("since") or 0, num("until") or 1e12
+            out["loc_events"] = [e for e in MAPPER.loc_info(track_n=0)["events"] if lo <= e["t"] <= hi]
+            out["agent_calls"] = [e for e in AG.status()["log"] if lo <= e["t"] <= hi]
+            self.send_json(200, out)
         elif self.path.split("?")[0] == "/agent/status":
             q = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
             self.notice_for = q.get("client", [None])[0]
@@ -1958,7 +1973,7 @@ def main():
     signal.signal(signal.SIGTERM, lambda *_: sys.exit(0))  # rclpy otherwise swallows SIGTERM
     global NODE
     node = NODE = Collector()
-    global AG, MAPPER, TRAIL, MARKERS, EXAMPLES
+    global AG, MAPPER, TRAIL, MARKERS, EXAMPLES, HIST
     AG = Agents(node, latest, lock, full)
     MAPPER = Mapper("/maps", os.environ.get("MAP_NAME", "lab"))
     TRAIL = Trail("/maps", os.environ.get("MAP_NAME", "lab"))
@@ -1967,6 +1982,7 @@ def main():
     AG.mapper, AG.planner = MAPPER, Planner(MAPPER)
     AG.planner.fail_log = os.path.join("/maps", f"{os.environ.get('MAP_NAME', 'lab')}_nav_failures.jsonl")
     threading.Thread(target=rclpy.spin, args=(node,), daemon=True).start()
+    HIST = History("/maps", os.environ.get("MAP_NAME", "lab"), sample_from(latest, lock, MAPPER, AG, MARKERS, battery))
     srv = ThreadingHTTPServer(("0.0.0.0", PORT), Handler)
     srv.daemon_threads = True
     print(f"Go2 dashboard on http://0.0.0.0:{PORT}  (Ctrl+C to stop)", flush=True)

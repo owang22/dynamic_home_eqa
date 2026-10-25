@@ -41,6 +41,7 @@ STALL_S, STALL_M = 2.0, 0.03               # blocked if moved less than this in 
 TILT_LIMIT = 0.6                           # rad of roll/pitch that counts as fallen
 MIN_BODY_H = 0.18                          # m; lower means lying down
 STALE_S = 1.0                              # sensors older than this: refuse to move
+GO_TO_STOP_WHEN_LOST = True                # go_to stops when the map says the dog is lost (loc.lost)
 STAND_H = 0.24                             # m; posture stand is done once the body is at least this high (untested)
 POSTURE_S = 8.0                            # posture: give up waiting for the body height after this long
 RELOC_R = (0.5, 10.0)                      # relocalize search radius limits (m)
@@ -73,6 +74,25 @@ def cut_path(path, upto_m):
     return out
 
 
+def stop_reason(call, out):
+    """Why a tool call ended, as one word an agent can branch on (cheetah, 10-25): arrived (move, turn, go_to
+    finished), done (other tools), obstacle, stuck (no progress), no_route, timeout, stop (STOP or the agent's
+    stop), person (a person took over), lost, not_standing, fallen, stale_sensors, refused, busy, error."""
+    res, why = out.get("result"), str(out.get("reason") or "")
+    if res == "done":
+        return "arrived" if call in ("move", "turn", "go_to") else "done"
+    if res == "blocked":
+        return "obstacle" if "obstacle" in why or "something not on the map" in why else "stuck"
+    if res in ("no_route", "timeout", "refused"):
+        return res
+    if res == "aborted":
+        return "person" if "took over" in why or "person" in why else "stop"
+    for k in ("lost", "not_standing", "fallen", "stale_sensors", "busy"):
+        if why.startswith(k):
+            return k
+    return "error"
+
+
 def wrap(a):
     return (a + math.pi) % (2 * math.pi) - math.pi
 
@@ -100,6 +120,7 @@ class Agents:
         self.live_hist = deque(maxlen=LIVE_KEEP)   # recent lidar clouds in map frame, for the planner
         self._live_cloud = None
         self._live_lock = threading.Lock()
+        self._stop_if_lost = False     # set while a go_to runs (GO_TO_STOP_WHEN_LOST)
 
     # ---------- ownership ----------
     def owner_now(self):
@@ -220,6 +241,9 @@ class Agents:
         bad = self.check_safe()
         if bad:
             raise RuntimeError(bad)
+        if self._stop_if_lost and self.mapper is not None and self.mapper.lost_since is not None:
+            raise RuntimeError(f"lost: the map fit has been low since {time.strftime('%H:%M:%S', time.localtime(self.mapper.lost_since))}"
+                               "; the map pose is probably wrong. Use relocalize before driving on")
 
     # ---------- tool runner ----------
     def run(self, client, call, args, fn, stop=True):
@@ -248,6 +272,11 @@ class Agents:
             if self.owner and self.owner["kind"] == "agent" and self.owner["client"] == client:
                 self.owner["t"] = time.monotonic()
         out.update(self.pose_out(), t=round(time.time(), 2))
+        out.setdefault("stop_reason", stop_reason(call, out))
+        if self.mapper is not None:
+            li = self.mapper.loc_info(track_n=0)
+            out.setdefault("fit", li.get("track_fit"))
+            out.setdefault("lost", li.get("lost"))
         # everything but bulky fields, so the console can show the whole call when a row is opened
         brief = {k: v for k, v in out.items() if k not in ("photo", "photos", "t", "odom", "image", "jpeg_b64", "map_png")
                  and len(json.dumps(v, default=str)) < 2000}
@@ -467,7 +496,13 @@ class Agents:
                 return {"result": "done", "photos": shots}
             return self.run(client, call, args, look)
         if call == "go_to":
-            return self.run(client, call, args, lambda: self._go_to(args, timeout_s))
+            def go_to():
+                self._stop_if_lost = GO_TO_STOP_WHEN_LOST      # only while this go_to runs (run() holds the tool lock)
+                try:
+                    return self._go_to(args, timeout_s)
+                finally:
+                    self._stop_if_lost = False
+            return self.run(client, call, args, go_to)
         if call == "look":
             return self.run(client, call, args, lambda: self._look(float(args["deg"])))
         if call == "posture":

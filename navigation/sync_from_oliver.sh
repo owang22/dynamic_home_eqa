@@ -5,7 +5,7 @@
 set -euo pipefail
 SRC=${1:-$HOME/oliver}
 cd "$(dirname "$0")"
-FILES="go2_dashboard.py go2_agent.py go2_nav.py go2_mapper.py go2_trail.py go2_markers.py go2_examples.py
+FILES="go2_dashboard.py go2_agent.py go2_nav.py go2_mapper.py go2_trail.py go2_markers.py go2_examples.py go2_history.py
        go2_label.py go2_tidy.py go2_floor.py go2_straighten.py go2_keys.py
        go2_map.sh go2_goto.sh go2_claude.sh run_go2_keys.sh patch_driver_battery.sh watch_notes.sh
        go2_claude/go2_tools_mcp.py go2_claude/mcp.json go2_claude/prompt.md go2_claude/show.py
