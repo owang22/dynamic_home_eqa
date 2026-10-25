@@ -52,8 +52,8 @@ not the main lever.
 
 | frames | before A/B/C/D | after |
 |---|---|---|
-| raw 10-23 | 388/497/142/357 | 403/504/142/343 (D: printer FP and < 15 px removed) |
-| trail | 97/99/32/60 | 101/102/32/57 |
+| raw 10-23 | 388/497/142/357 | 403/504/142/343 (D: 16 printer false positives removed; the rest of the drop are real but tiny D sightings under 15 px) |
+| trail | 97/99/32/60 | 101/102/32/57 (D: 3 real sightings 5-7 px wide at 640 px, 3-4.5 m, dropped by MIN_SIDE_PX; not false positives) |
 | 10-24 | 1 | 1 |
 
 "Nothing shown while in view" (raw 10-23): 7.2% -> 5.8% (no hold) -> **2.4%** (with the 0.5 s hold).
