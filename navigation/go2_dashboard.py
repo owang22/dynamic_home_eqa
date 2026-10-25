@@ -941,6 +941,25 @@ class Handler(BaseHTTPRequestHandler):
                 return self.send_error(400, "t must be unix seconds (optional limit)")
             frames = TRAIL.since(t, limit)
             self.send_json(200, {"frames": frames, "more": len(frames) == limit})
+        elif self.path.split("?")[0] == "/nav/grid":
+            # read-only look at the planning grid around ?x=&y= (map m; default the dog), ?r= m (default 2, max 4);
+            # PNG, or ?json=1 for the narrowest clearance along the last route and cell counts. No planning.
+            q = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
+            mp = AG.map_pose_now()
+            try:
+                x = float(q["x"][0]) if "x" in q else (mp or {})["x"]
+                y = float(q["y"][0]) if "y" in q else (mp or {})["y"]
+                r = float(q.get("r", [2.0])[0])
+            except (KeyError, TypeError, ValueError):
+                return self.send_json(400, {"error": "x and y (map m) are required when the dog has no map pose; r in m"})
+            want_json = q.get("json", ["0"])[0] not in ("0", "")
+            robot = (mp["x"], mp["y"], mp["yaw"]) if mp else None
+            out = AG.planner.grid_view(x, y, r, robot=robot, as_json=want_json) if AG.planner else None
+            if out is None:
+                return self.send_json(503, {"error": "planner busy or no map; try again"})
+            if want_json:
+                return self.send_json(200, out)
+            self.send_bytes(out, "image/png")
         elif self.path.split("?")[0] == "/nav/plan":
             # preview a route: ?place=<id> or ?x=&y=, from where the robot is now
             q = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)

@@ -57,7 +57,7 @@ Bad arguments (missing `m`, not a number, `pose` other than stand/lie, unknown `
 | `done` | any other tool finished | carry on |
 | `obstacle` | something in the obstacle box (move), or not on the map (go_to) | photo, then go around: turn and move, or go_to again (it avoids that spot for 120 s) |
 | `stuck` | no progress for 2 s after one re-plant step: avoidance stopped the dog, or a foot is caught | photo; back up a little or turn; retry. Twice in a row: ask a person |
-| `no_route` | the planner found no route | near furniture this usually means the map pose is off: check `fit`/`lost`, relocalize, preview with `/nav/plan`. `why.cause` says whether the saved map alone had a route |
+| `no_route` | the planner found no route | work down the list in *When a go_to fails* below |
 | `timeout` | `timeout_s` ran out (default **30 s**) | the dog stopped where it was. Give `go_to` a longer `timeout_s` |
 | `stop` | someone's `/agent/stop`, or STOP pressed | check `status` before resuming |
 | `person` | a person took over | wait for hand-back; poll `status` |
@@ -221,6 +221,7 @@ good, try `global`. If nothing fits well, drive a little (turn 90°) so the lida
 | `/state.json` | everything at once. `odom {pos, yaw, vel}`, `imu {rpy}`, `state {body_height, obstacle [4 ranges], mode, ...}`, `map {mode, status, origin, resolution, room_deg, ...}`, `map_pose`, `loc`, `agents`, `nav`, `markers`, `battery {soc, ..., stale?}`, `control {avoid, speed, ...}`, `age` (seconds since each sensor). `/events` streams it at 10 Hz |
 | `/places` | `{id: {x, y, yaw_deg, target {x, y} or null, description, preview, ...}}`. `(x, y, yaw_deg)` is where the dog stands; `target` is where the thing is. `/places/<id>.jpg` is its view |
 | `/nav/plan?place=` or `?x=&y=` | `{path [[x, y]...], length_m, goal, tight, squeeze?, squeeze_at?, squeeze_along_m?, squeeze_clear_m?, fallback?}` or `{error, why?}`. 409 when not lined up |
+| `/nav/grid?x=&y=&r=2` | read-only PNG of the planner's grid around a point (default: the dog; r in m, max 4; 10 px per 10 cm, north up): saved obstacles black, cleared by live light green, new live red, hard live (chairs, under tops) purple, under-desk cost light orange, stall blocks orange, unknown grey, last route green with its narrowest point circled, the dog blue. `?json=1`: `{counts, clear_here_m, last_route {path, length_m, tight, squeeze, fallback, narrowest {clear_m, x, y, needs_m}}, last_failure}`. 503 if the planner is busy |
 | `/markers` | `{list: [...], age_s, err}`. Empty if the newest detection is older than 1 s. Each item: `id`, `mark` (A–D, spare 4/5), `z` (m along the camera axis), `x` (m, + right), `up`, `bearing_deg` (**+ right**), `dist` (m), `view_deg` (0 = head-on), `yaw_deg` (turn of the marker face), `reproj_px`, `ambig` (1.0 = two poses equally likely), `alt`, `side_px`, `min_side_px`, `edge` (1 = image border), `fix_ok`, `why` (`far`, `oblique`, `small`, `reproj`, `edge`, `unconfirmed`), `held`, `seen_age_s`. **`held: true`** means kept up to 0.5 s after the last sighting, so skip those for a live sighting. Use only `fix_ok` items for a position fix (≤ 3 m, ≤ 60° oblique, ≥ 30 px, reproj ≤ 2 px, not at the edge, confirmed in 2 of the last 3 frames) |
 | `/trail/near?x=&y=&radius=3&limit=12` | `{views: [{t, x, y, yaw_deg, dist, bearing_deg (+ left), facing, url}], spot: obstacle\|open\|unseen}`. Frames that faced the spot (\|bearing\| ≤ 40° or within 0.3 m) come first, nearest first. radius at most 20, limit 1–200 |
 | `/trail/since?t=&limit=500` | frames newer than t, oldest first (`more: true` → page with the last t). limit at most 2000 |
@@ -242,22 +243,35 @@ These belong to people at the console. Don't call them:
 - `POST /map/objects`, `/map/proposals`
 - `/label/*` (`/label/detect` also calls the 8B vision model)
 
-## Known failure signatures
+## When a go_to fails (`no_route`, `obstacle`, `stuck`)
 
-- **`no_route` near furniture, or right after a start**: the map pose is misaligned. Look at `fit`; relocalize
-  search; check `/nav/plan`.
-- **`obstacle`/`stuck` again and again in an open aisle**: lidar smear or a moved chair. Take a photo; go_to
-  again (the block lasts 120 s) or try another way.
-- **`track_fit` under 0.65 while standing still**: the view is mostly new things (people, moved chairs), or
-  the pose is off. Relocalize search before driving.
+Check in this order and stop at the first that explains it:
+
+1. **Localization:** `lost`, `suspect` (tool reply) and `loc.fresh_fit` / `loc.track_fit` (`/state.json`). If any is
+   bad, the route was planned from a wrong pose: relocalize first, and trust nothing else in the reply.
+2. **Planner state:** `why.cause` and `why.blocks`, plus `fallback`. `"live lidar or temporary blocks"` with
+   `saved_map_has_route: true` means stall blocks (120 s) or live cells closed it, not the map.
+3. **A photo:** chairs, people, bags. Since 10-25 chairs are seen live, so `no_route` in a desk aisle may simply
+   be correct. `GET /nav/grid?json=1` shows the narrowest clearance on the last route and what is around it.
+4. **Only then** a pose or map problem: relocalize search, `/nav/plan`, ask a person.
+
+Three failures that look alike:
+
+- **Start pocket** (e.g. `door_outside`): the only exit is narrower than 0.20 m within 1.5 m of the dog.
+  `why.saved_map_has_route: false`, the dog just drove in, and `/nav/grid` `clear_here_m` < 0.20. It can leave
+  the way it came if it walked in within 300 s; otherwise take a photo, then move or turn out a little and retry.
+- **Stall blocks**: `why.blocks` > 0 after a `stuck`/`obstacle` nearby in the last 120 s, and the saved map has
+  a route. The `live_noblocks` fallback retries without them; or wait 120 s.
+- **Lost**: `lost` or `suspect` on, low `fresh_fit`; routes and blocks may sit in the wrong place. Relocalize.
+
+## Other failure signatures
+
+- **Centring a marker**: `turn(-bearing_deg)`, since a marker's `bearing_deg` is + = right and turn is + = left.
 - **`stale_sensors` and `odom: null` in `/state.json`**: the dog or the driver container is off.
 - **`turned_deg` a few degrees short with `arrived`**: normal; the tolerance is 5° after one correction.
 - **`photo.still: false`**: it never settled within 5 s; take another.
 - **A marker with `held: true`, or `fix_ok: false` with `why: [unconfirmed]`**: a one-frame or slightly old
   sighting. Wait a moment and read again before using it as a fix.
-- **`no_route` in a desk aisle that worked before**: chairs are now seen live (since 10-25). A chair at the
-  aisle edge can make the gap narrower than the dog. Take a photo before forcing another way; ask a person
-  to push the chair in.
 - **An expected marker missing**: markers read reliably from the open room, not from under or next to dark
   furniture. Auto-exposure blows out the bright room behind, and marker patches brighter than about 230/255
   are mostly missed. Back out into the open, or turn so the camera isn't looking from a dark spot into a

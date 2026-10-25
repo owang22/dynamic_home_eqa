@@ -274,6 +274,27 @@ ENDPOINTS = [
                             "(live obstacles keep full clearance). Not used while loc.lost (nor the trail squeeze)",
                 "error": "why there is no route", "why": "as in go_to"},
      "errors": {"409": "{error: 'not lined up with the map'}", "400": "{error} unknown place or bad x/y"}},
+    {"method": "GET", "path": "/nav/grid", "for_agents": True, "blocks": False, "latency": "<10 ms",
+     "summary": "Read-only look at the planner's grid around a point, for diagnosing a no_route / blocked: no planning, "
+                "the planner's own arrays. PNG (10 px per 10 cm cell, north up): saved obstacles black, cleared by the "
+                "live view light green, new live obstacles red, hard live obstacles (under a top: chairs, legs) purple, "
+                "under-desk cost light orange, stall blocks orange, unknown grey, the last route green with its "
+                "narrowest point circled, the dog blue. ?json=1 instead: cell counts per class in the crop, the "
+                "clearance at (x, y), the last route with its narrowest clearance and where, and the last failure.",
+     "params": {"x": {"type": "number", "units": "m", "frame": "map", "text": "default: the dog"},
+                "y": {"type": "number", "units": "m", "frame": "map", "text": "default: the dog"},
+                "r": {"type": "number", "units": "m", "default": 2.0, "clamp": [0.5, 4.0]},
+                "json": {"type": "bool", "default": False}},
+     "returns": {"x": "number", "y": "number", "r": "number", "cell_m": "number", "tier": "integer", "counts": "object",
+                 "clear_here_m": "number|null", "last_route": "object|null", "last_failure": "object|null"},
+     "fields": {"counts": "{unknown, stall_block, live_new, live_hard, saved_obstacle, cleared_by_live, under_cost}: "
+                          "10 cm cells in the crop (json only)",
+                "clear_here_m": "planner clearance (m to the nearest blocked cell) at (x, y); the dog needs "
+                                "{ROBOT_R} normal, {ROBOT_R_TIGHT} tight",
+                "last_route": "{path, length_m, tight, squeeze, fallback, t, narrowest: {clear_m, x, y, needs_m}} of "
+                              "the planner's last successful plan (kept after a failure, so a no_route can be read against it), or null",
+                "last_failure": "{t, start, goal, error, why} if the planner's most recent plan failed, else null"},
+     "errors": {"400": "{error} no x/y and the dog has no map pose", "503": "{error} planner busy or no map"}},
     {"method": "GET", "path": "/markers", "for_agents": True, "blocks": False, "latency": "<50 ms",
      "summary": "ArUco markers in view now (DICT_4X4_50, {SIZE_M} m): ids {KNOWN}, detected up to {RATE_HZ} Hz on the "
                 "full-size frame. Empty list if the newest detection is older than 1 s. A marker missed in the newest "
@@ -368,8 +389,8 @@ STOP_REASONS = {
                 "around: turn and move, or go_to again (it plans around it for {BLOCK_S} s).",
     "stuck": "no progress for {STALL_S} s after one re-plant step: avoidance stopped the dog, or a foot or leg is caught. "
              "Photo first; back up a little (slowly) or turn, then retry. Twice in a row: ask a person.",
-    "no_route": "the planner found no route. Near furniture this often means the map pose is off: check fit/lost, "
-                "relocalize, then GET /nav/plan before trying again. why.cause says whether the saved map alone had a route.",
+    "no_route": "the planner found no route. Work down notes.when_go_to_fails in order: localization first, then "
+                "why.cause / why.blocks / fallback, then a photo (chairs are seen live since 10-25), only then the pose or map.",
     "timeout": "timeout_s ran out mid-way. The dog stopped where it was; give go_to a longer timeout_s.",
     "stop": "an agent's /agent/stop or someone pressed STOP. Don't resume blindly: check status first.",
     "person": "a person took over. Your claim is gone until they hand back (or {HUMAN_HOLD_S} s without console "
@@ -425,19 +446,29 @@ NOTES = {
     "localization_notice": "Agent replies (and GET /agent/status?client=) carry localization_notice when line-up "
                            "events happened since your previous call: {events, status, fit, runner_up, unsure, summary}. "
                            "A jump means poses you stored before it may be off.",
+    "when_go_to_fails": [
+        "for no_route, obstacle or stuck, check in order and stop at the first that explains it:",
+        "1. localization: lost and suspect (tool reply), loc.fresh_fit / loc.track_fit; if bad, the route came from a "
+        "wrong pose: relocalize first and trust nothing else in the reply.",
+        "2. planner state: why.cause, why.blocks and fallback; 'live lidar or temporary blocks' with saved_map_has_route "
+        "true = stall blocks ({BLOCK_S} s) or live cells closed it, not the map.",
+        "3. a photo: chairs, people, bags. Chairs are seen live since 10-25, so no_route in a desk aisle may be correct. "
+        "GET /nav/grid?json=1 gives the narrowest clearance on the last route and what is around it.",
+        "4. only then a pose or map problem: relocalize search, /nav/plan, ask a person.",
+        "start pocket (e.g. door_outside): the only exit is under {ROBOT_R_TIGHT} m within {SQUEEZE_NEAR_M} m of the dog; "
+        "why.saved_map_has_route false, it just drove in, /nav/grid clear_here_m < {ROBOT_R_TIGHT}. It may leave the way it "
+        "came within {TRAIL_S} s; otherwise photo, then move or turn out a little and retry.",
+        "stall blocks: why.blocks > 0 after a stuck/obstacle nearby in the last {BLOCK_S} s, and the saved map has a "
+        "route; the live_noblocks fallback retries without them, or wait.",
+        "lost: lost or suspect on, low fresh_fit; routes and blocks may sit in the wrong place. Relocalize.",
+    ],
     "failure_signatures": [
-        "no_route near furniture or right after start: map pose misaligned. Check fit; relocalize.",
-        "go_to obstacle/stuck repeatedly in the same open aisle: lidar smear or a moved chair; look with photo, "
-        "then go_to again (the block lasts {BLOCK_S} s) or a different place.",
-        "track_fit under 0.65 while the dog is still: the view is mostly new things (people, moved chairs) or the "
-        "pose is off; relocalize search before driving.",
+        "centring a marker: turn(-bearing_deg) (marker bearing + = right, turn + = left).",
         "stale_sensors with odom null in /state.json: the dog or the driver container is off.",
         "photo.still false: it never settled in 5 s (rocking, still turning); take another.",
         "turned_deg short of deg with result done: within the 5 degree tolerance after one correction.",
         "a marker in /markers with held: true is a sighting up to 0.5 s old, not a live one; use fix_ok items for "
         "positions (a single-frame sighting is unconfirmed).",
-        "no_route in a desk aisle that worked before: chairs are now seen live (10-25); a chair at the aisle edge "
-        "can leave a gap narrower than the dog. Check a photo before forcing another way.",
         "an expected marker missing: markers read reliably from the open room, not from under or next to dark "
         "furniture (auto-exposure blows out the bright room; patches brighter than ~230/255 are mostly missed). "
         "Back out into the open or turn so the camera isn't looking from dark into bright.",

@@ -214,6 +214,7 @@ class Planner:
             foot = np.hypot(cx - self.live[2], cy - self.live[3]) <= FOOTPRINT_R
             known[foot] = True
         self._parts = (hard, new_m, blk, foot)
+        self._saved0 = saved0
         self.known = known
         self.key = key
         self._set_tier(0)
@@ -338,6 +339,85 @@ class Planner:
             self.live_under = list(under)
             self.live_hard = list(hard)
 
+    def grid_view(self, x, y, r=2.0, robot=None, as_json=False):
+        """Read-only look at the planning grid around map point (x, y), r m (capped at 4): what the planner is
+        working with, for people and agents diagnosing a no_route / blocked. No planning; never waits on a plan
+        (returns None if the planner is busy). PNG (10 px per 10 cm cell, north up) or, as_json, the narrowest
+        clearance along the last route and cell counts in the crop. robot: (x, y, yaw) of the dog, drawn if given."""
+        if not self.lock.acquire(blocking=False):
+            return None
+        try:
+            self._grid()
+            if self.occ is None:
+                return {"error": "no map"} if as_json else None
+            r = max(0.5, min(4.0, float(r)))
+            hard, new_m, blk, foot = self._parts
+            saved0, known, dist = self._saved0, self.known, self.dist
+            under = self.under_cost if getattr(self, "under_cost", None) is not None else np.zeros(dist.shape, np.float32)
+            H, W = dist.shape
+            c0, c1 = max(0, int((x - r - self.origin[0]) / CELL)), min(W, int((x + r - self.origin[0]) / CELL) + 1)
+            r0, r1 = max(0, int((y - r - self.origin[1]) / CELL)), min(H, int((y + r - self.origin[1]) / CELL) + 1)
+            sl = (slice(r0, r1), slice(c0, c1))
+            classes = {                                 # each cell's class, first match wins (drawing order)
+                "unknown": ~known, "stall_block": blk, "live_new": new_m & ~foot,
+                "live_hard": hard & ~saved0 & ~foot, "saved_obstacle": saved0 & hard,
+                "cleared_by_live": saved0 & ~hard & ~new_m, "under_cost": (under > 0) & ~hard & ~new_m,
+            }
+            last = getattr(self, "last_ok", None)
+            fail = self.last if self.last and "path" not in self.last else None
+            narrow = None
+            if last:
+                best = None
+                for a, b in zip(last["path"], last["path"][1:]):
+                    n = max(1, int(math.hypot(b[0] - a[0], b[1] - a[1]) / 0.05))
+                    for i in range(n + 1):
+                        px, py = a[0] + (b[0] - a[0]) * i / n, a[1] + (b[1] - a[1]) * i / n
+                        rr, cc = self.cell(px, py)
+                        if self.inside(rr, cc) and (best is None or dist[rr, cc] < best[0]):
+                            best = (float(dist[rr, cc]), px, py)
+                if best:
+                    narrow = {"clear_m": round(best[0], 2), "x": round(best[1], 2), "y": round(best[2], 2),
+                              "needs_m": {"normal": ROBOT_R, "tight": ROBOT_R_TIGHT, "squeeze": ROBOT_R_SQUEEZE}}
+            if as_json:
+                return {"x": x, "y": y, "r": r, "cell_m": CELL, "tier": self.tier,
+                        "counts": {k: int(v[sl].sum()) for k, v in classes.items()},
+                        "clear_here_m": round(float(dist[self.cell(x, y)]), 2) if self.inside(*self.cell(x, y)) else None,
+                        "last_route": None if not last else {"path": last["path"], "length_m": last.get("length_m"),
+                                                             "tight": last.get("tight"), "squeeze": last.get("squeeze"),
+                                                             "fallback": last.get("fallback"), "t": round(last["t"], 1),
+                                                             "narrowest": narrow},
+                        "last_failure": fail and {"t": round(fail["t"], 1), "start": [round(v, 2) for v in fail.get("start") or []], "goal": [round(v, 2) for v in fail.get("want") or []],
+                                                  "error": fail.get("error"), "why": fail.get("why")}}
+            colours = {"unknown": (60, 60, 60), "stall_block": (0, 140, 255), "live_new": (40, 40, 230),
+                       "live_hard": (160, 40, 160), "saved_obstacle": (25, 25, 25), "cleared_by_live": (170, 235, 170),
+                       "under_cost": (130, 200, 255)}
+            img = np.full((r1 - r0, c1 - c0, 3), 245, np.uint8)
+            for k in ("under_cost", "cleared_by_live", "saved_obstacle", "live_hard", "live_new", "stall_block", "unknown"):
+                img[classes[k][sl]] = colours[k]
+            S = 10
+            img = cv2.resize(img[::-1], None, fx=S, fy=S, interpolation=cv2.INTER_NEAREST)
+
+            def px(a, b):
+                return int((a - self.origin[0]) / CELL - c0) * S + S // 2, int(r1 - 1 - (b - self.origin[1]) / CELL ) * S + S // 2
+            if last:
+                pts = [px(*q) for q in last["path"]]
+                for u, v in zip(pts, pts[1:]):
+                    cv2.line(img, u, v, (0, 170, 0), 2)
+                if narrow:
+                    cv2.circle(img, px(narrow["x"], narrow["y"]), 7, (0, 0, 255), 2)
+                    cv2.putText(img, f"{narrow['clear_m']:.2f} m", px(narrow["x"] + 0.1, narrow["y"]), cv2.FONT_HERSHEY_SIMPLEX, 0.45, (0, 0, 200), 1)
+            if robot is not None:
+                u = px(robot[0], robot[1])
+                cv2.circle(img, u, 6, (200, 120, 0), -1)
+                cv2.line(img, u, (u[0] + int(14 * math.cos(robot[2])), u[1] - int(14 * math.sin(robot[2]))), (200, 120, 0), 2)
+            cv2.drawMarker(img, px(x, y), (0, 0, 0), cv2.MARKER_CROSS, 12, 1)
+            cv2.rectangle(img, (0, 0), (min(img.shape[1] - 1, 260), 19), (255, 255, 255), -1)
+            cv2.putText(img, f"({x:.2f}, {y:.2f}) r {r:.1f} m  tier {self.tier}", (4, 14), cv2.FONT_HERSHEY_SIMPLEX, 0.45, (0, 0, 0), 1)
+            ok, buf = cv2.imencode(".png", img)
+            return buf.tobytes() if ok else None
+        finally:
+            self.lock.release()
+
     def overlay(self):
         """What the live lidar changed on the planning grid, for the console (never waits on a plan)."""
         if not self.lock.acquire(blocking=False):
@@ -404,6 +484,8 @@ class Planner:
             if "path" not in out and self.live is not None:
                 out["why"] = self._why_failed(sx, sy, gx, gy, out.get("error"))
             self.last = dict(out, t=time.time(), start=[sx, sy], want=[gx, gy])
+            if "path" in out:
+                self.last_ok = self.last       # for grid_view: the last route that existed
             return out
 
     def _plan(self, sx, sy, gx, gy, rr, use_trail=True):
