@@ -6,6 +6,7 @@ import json
 import sys
 from pathlib import Path
 
+from .generate import line, split_colour
 from .world import Config, World
 
 
@@ -46,7 +47,9 @@ def main(out):
         check(sorted(objs) == sorted(tr["objects"]), f"{ev['id']}: objects {objs} vs {tr['objects']}")
         for o in world.objects:
             if o.name in tr["objects"] and o.name not in tr["missed"] and o.name not in tr["misnamed"]:
-                check(o.desc in ev["text"], f"{ev['id']}: {o.desc} missing from text")
+                names = [x["name"] for x in ev["seen"]["objects"]]
+                check(split_colour(o.desc)[1] in names, f"{ev['id']}: {o.desc} missing from seen")
+        check(ev["text"] == line(ev["seen"]), f"{ev['id']}: text is not the rendering of seen")
 
     # 4. routines: owner-carried objects are out exactly when the owner is; weekday objects follow the weekday
     for o in world.objects:

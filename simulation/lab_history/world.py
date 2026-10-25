@@ -31,7 +31,7 @@ DEFAULT_PLACES = {
     "desk_6": (7.0, 3.5, "desk", "desk 6, the spare desk"),
     "meeting_table": (9.5, 2.5, "meeting", "the round meeting table"),
     "sink": (1.0, 5.5, "sink", "the sink and drying rack"),
-    "kitchen_counter": (2.5, 5.8, "common", "the kitchen counter by the fridge"),
+    "kitchen_counter": (2.5, 5.8, "lunch", "the kitchen counter by the fridge"),
     "sofa": (5.0, 6.0, "common", "the small sofa by the wall"),
     "shelf_A": (8.0, 6.0, "storage", "bookcase A"),
     "rack_B": (10.0, 5.5, "storage", "the metal rack B"),
@@ -125,12 +125,29 @@ class Obj:
     regimes: list             # [(from_day, routine dict)]; routine = {"type", "places", "owner", ...}
 
 
+REAL_PLACES = HERE.parents[1] / "go2" / "memory_lab" / "places_2026-10-25.json"
+# kinds for the real lab's places, by id (anything else: desk_* is a desk, the rest common)
+REAL_KINDS = {"door_outside": "entry", "door_stairwell": "entry", "conference_table": "meeting",
+              "water_cooler": "sink", "sofa": "lunch"}
+
+
 def load_places(path):
+    """The stand-in places (path None) or a lab places file: a list of {"id", "x", "y", "target": {"x", "y"}}
+    as in go2/memory_lab/places_2026-10-25.json, or a dict {name: {"x", "y", "kind", "desc"}}."""
     if not path:
-        return {k: {"x": v[0], "y": v[1], "kind": v[2], "desc": v[3]} for k, v in DEFAULT_PLACES.items()}
+        return {k: {"x": v[0], "y": v[1], "kind": v[2], "desc": v[3], "target": None}
+                for k, v in DEFAULT_PLACES.items()}
     raw = json.loads(Path(path).read_text())
-    return {k: {"x": v["x"], "y": v["y"], "kind": v.get("kind", "common"), "desc": v.get("desc", k)}
-            for k, v in raw.items()}
+    if isinstance(raw, dict):
+        return {k: {"x": v["x"], "y": v["y"], "kind": v.get("kind", "common"), "desc": v.get("desc", k),
+                    "target": v.get("target")} for k, v in raw.items()}
+    out = {}
+    for p in raw:
+        pid = p["id"]
+        kind = REAL_KINDS.get(pid, "desk" if pid.startswith("desk_") else "common")
+        desc = f"{pid[5:].capitalize()}'s desk" if kind == "desk" else pid.replace("_", " ")
+        out[pid] = {"x": p["x"], "y": p["y"], "kind": kind, "desc": desc, "target": p.get("target")}
+    return out
 
 
 class World:
@@ -147,6 +164,10 @@ class World:
         self._daily = {}       # (obj, day) -> place placed that morning (rule + noise), None = out
         self._noise = {}       # (obj, day) -> "moved" / "out" / None
         self._roll_days()
+
+    def role(self, kind):
+        """The first place of a kind (meeting, sink, lunch, entry), or None if the lab has none."""
+        return next((p for p, v in self.places.items() if v["kind"] == kind), None)
 
     # ---- calendar ----------------------------------------------------------------------------
     def day_start(self, day):
@@ -207,9 +228,9 @@ class World:
         if not times or not (times[0] <= h < times[1]):
             return None
         if self.weekday(day) == 1 and 14 <= h < 15:          # group meeting, Tuesdays 14:00
-            return "meeting_table" if "meeting_table" in self.places else self.desk_of(p, day)
-        if 12.25 <= h < 12.75 and "kitchen_counter" in self.places:   # lunch
-            return "kitchen_counter"
+            return self.role("meeting") or self.desk_of(p, day)
+        if 12.25 <= h < 12.75 and self.role("lunch"):                  # lunch
+            return self.role("lunch")
         return self.desk_of(p, day)
 
     # ---- objects -----------------------------------------------------------------------------
@@ -250,13 +271,13 @@ class World:
         if t in ("follows_owner", "use_return"):
             r = {"type": t, "owner": rng.choice(self.people).name}
             if t == "use_return":
-                r["places"] = ["sink" if "sink" in self.places else rng.choice(P)]
+                r["places"] = [self.role("sink") or rng.choice(P)]
             return r
         if t == "drift":
             return {"type": t, "places": rng.sample(P, 1), "p": 0.3}
         if t == "meeting":
-            home = rng.choice([p for p in P if p != "meeting_table"])
-            return {"type": t, "places": [home, "meeting_table" if "meeting_table" in self.places else rng.choice(P)]}
+            room = self.role("meeting") or rng.choice(P)
+            return {"type": t, "places": [rng.choice([p for p in P if p != room]), room]}
         raise ValueError(t)
 
     def _apply_shifts(self):

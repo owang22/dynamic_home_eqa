@@ -54,8 +54,8 @@ output is meant for cheetah's memory tests, which can currently only use real pi
 at what the dog actually saw). With a generator, those tests can run on 30–90 day histories with exact ground truth.
 
 **Inputs**
-- The 16 places, with names and map x, y (the lab agent's `places.json`). A copy goes in
-  `lab_history/places.json` once cheetah sends it. Until then, a stand-in list.
+- The 16 places, with names and map x, y, from
+  `go2/memory_lab/places_2026-10-25.json`, read in place. A stand-in list is kept for tests.
 - Days, seed, and the routine mix (below).
 
 **The hidden world, all from the seed**
@@ -74,14 +74,11 @@ at what the dog actually saw). With a generator, those tests can run on 30–90 
 
 **What the dog sees (the events)**
 - Patrols at set times (e.g. 3 a day on weekdays) visit some places in order, plus occasional unplanned visits.
-- One event per place visited: `id, t, place, x, y, text`, in the format of cheetah's `go2/memory_lab/data.py`.
-  The text is a short description listing what is visible there, with set rates for missed objects, wrong names
+- One event per place visited, in the event format of cheetah's `go2/memory_lab/data.py`. Its `seen` is a
+  description like the vision model's, listing what is visible there, with set rates for missed objects, wrong names
   ("black bag" for "black backpack") and an occasional object that isn't there.
 - Also written: questions with answers taken from the truth ("where is the red umbrella now?", "when was Alice's
   backpack last in the lab?", "which desk does Bob use since the 3rd week?"), for scoring.
 
-**Output** (not in git; under `/data/oliver/simulation_out/lab_history/<run>/`): `events.jsonl`, `truth.jsonl`,
-`routines.json`, `questions.jsonl`. Only the code and a small example (one week) are committed.
-
-**Open points for cheetah:** the exact event fields and the format of `t` (epoch or ISO), the 16 places, and whether
-the text should look like the 27B's describe JSON or like a short sentence.
+**Output:** see `lab_history/README.md`. Ready-made runs (30/60/90 days x 3 seeds) are in git under
+`lab_history/runs/`, since cheetah reads them from there.

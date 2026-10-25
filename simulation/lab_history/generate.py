@@ -3,7 +3,8 @@
     python -m simulation.lab_history.generate --days 60 --seed 0 --out /data/oliver/simulation_out/lab_history/d60_s0
 
 Output files:
-    events.jsonl         one per place the dog looked at: id, t, place, x, y, text
+    events.jsonl         one per place the dog looked at, in the event format of go2/memory_lab/data.py:
+                         id, t, real_t, kind, source, x, y, yaw_deg, place, place_m, path (null), seen, describer, text
     events_truth.jsonl   per event: what was really there, and what the camera missed, misnamed or invented
     truth.jsonl          every person's and object's place as intervals: entity, kind, place, t_start, t_end
     routines.json        places, people, each object's routine(s) in words, the shift log, off-routine days
@@ -14,11 +15,12 @@ from __future__ import annotations
 import argparse
 import dataclasses
 import json
+import math
 import random
 from collections import Counter
 from pathlib import Path
 
-from .world import Config, World, WEEKDAYS
+from .world import REAL_PLACES, Config, World, WEEKDAYS
 
 TICK = 600                       # truth is sampled every 10 minutes
 PATROL_HOURS = [9.5, 13.5, 17.5]  # workdays; weekends get one patrol at noon
@@ -26,19 +28,43 @@ PATROL_STOPS = 6                 # places per patrol besides the dock
 EXTRA_VISIT = 0.3                # per workday: an unplanned look at 2 places
 MISS_OBJECT, MISS_PERSON = 0.12, 0.05
 ALIAS, INVENT = 0.15, 0.03
+COLOURS = {"white", "red", "black", "green", "silver", "blue", "orange", "yellow", "grey", "brown", "pink", "purple"}
+ON = {"desk": ["desk", "desk", "floor", "chair"], "meeting": ["table"], "lunch": ["sofa", "floor"],
+      "sink": ["floor", "counter"], "entry": ["floor"], "common": ["floor", "shelf", "table"]}
+
+
+def split_colour(desc):
+    """'red umbrella' -> ('red', 'umbrella'); 'stuffed toy dog' -> ('', 'stuffed toy dog')."""
+    w = desc.split()
+    return (w[0], " ".join(w[1:])) if w[0] in COLOURS and len(w) > 1 else ("", desc)
+
+
+def line(seen):
+    """The one-line rendering go2/memory_lab/data.py uses for text."""
+    objs = ", ".join(f"{o['colour']} {o['name']} on {o['on']}".strip() for o in seen["objects"])
+    s = seen["summary"]
+    if objs:
+        s += f" Objects: {objs}."
+    if seen["people"]:
+        s += f" People: {seen['people']} ({seen['people_notes']})."
+    if seen["states"]:
+        s += " States: " + "; ".join(seen["states"]) + "."
+    return s
 
 
 def visits(world: World, rng: random.Random):
     """(t, place) for every look the dog takes, in time order."""
-    route = [p for p in world.places if p != "dock"]
+    dock = "dock" if "dock" in world.places else None
+    route = [p for p in world.places if p != dock]
     rng.shuffle(route)
+    n_stops = PATROL_STOPS if dock else PATROL_STOPS + 1
     k, out = 0, []
     for day in range(world.cfg.days):
         hours = PATROL_HOURS if world.is_workday(day) else [12.0]
         for h in hours:
             t = world.day_start(day) + (h + rng.gauss(0, 0.15)) * 3600
-            stops = ["dock"] + [route[(k + i) % len(route)] for i in range(PATROL_STOPS)]
-            k += PATROL_STOPS
+            stops = ([dock] if dock else []) + [route[(k + i) % len(route)] for i in range(n_stops)]
+            k += n_stops
             out += [(t + 60 * i, p) for i, p in enumerate(stops)]
         if world.is_workday(day) and rng.random() < EXTRA_VISIT:
             t = world.day_start(day) + rng.uniform(8, 19) * 3600
@@ -47,31 +73,38 @@ def visits(world: World, rng: random.Random):
 
 
 def observe(world: World, t, place, rng: random.Random):
-    """What the camera reports at a place: text, plus what was really there and what went wrong."""
+    """What the camera reports at a place, as a describe dict (seen), plus what was really there and what went wrong."""
     objs = [o for o in world.objects if world.object_place(o.name, t) == place]
     people = [p for p in world.people if world.person_place(p.name, t) == place]
-    seen, missed, aliased, invented = [], [], [], []
+    kind = world.places[place]["kind"]
+    seen_objs, looks, missed, aliased, invented = [], [], [], [], []
     for p in people:
         if rng.random() < MISS_PERSON:
             missed.append(p.name)
         else:
-            seen.append(p.look)
+            looks.append(p.look)
+
+    def report(desc):
+        colour, name = split_colour(desc)
+        seen_objs.append({"name": name, "colour": colour, "on": rng.choice(ON.get(kind, ON["common"])),
+                          "across": round(rng.uniform(0.05, 0.95), 2)})
     for o in objs:
         if rng.random() < MISS_OBJECT:
             missed.append(o.name)
         elif rng.random() < ALIAS:
-            seen.append(rng.choice(o.aliases))
+            report(rng.choice(o.aliases))
             aliased.append(o.name)
         else:
-            seen.append(o.desc)
+            report(o.desc)
     if rng.random() < INVENT:
         fake = rng.choice([o for o in world.objects if o not in objs])
-        seen.append(fake.desc)
+        report(fake.desc)
         invented.append(fake.name)
-    rng.shuffle(seen)
-    desc = world.places[place]["desc"]
-    text = f"{desc}: {', '.join(seen)}." if seen else f"{desc}: nothing besides the usual furniture."
-    return text, {"objects": [o.name for o in objs], "people": [p.name for p in people],
+    rng.shuffle(seen_objs)
+    states = ["monitor on"] if kind == "desk" and looks else []
+    seen = {"summary": f"View of {world.places[place]['desc']} in the lab.", "objects": seen_objs,
+            "people": len(looks), "people_notes": "; ".join(looks), "states": states}
+    return seen, {"objects": [o.name for o in objs], "people": [p.name for p in people],
                   "missed": missed, "misnamed": aliased, "invented": invented}
 
 
@@ -155,10 +188,15 @@ def generate(cfg: Config, out: Path, n_questions=300):
     rng = random.Random(f"lab-history-obs-{cfg.seed}")
     events = []
     for i, (t, place) in enumerate(visits(world, rng)):
-        text, tr = observe(world, t, place, rng)
+        seen, tr = observe(world, t, place, rng)
         pv = world.places[place]
-        ev = {"id": f"sim{cfg.seed}_{i:06d}", "t": round(t, 1), "place": place,
-              "x": round(pv["x"] + rng.gauss(0, 0.15), 2), "y": round(pv["y"] + rng.gauss(0, 0.15), 2), "text": text}
+        x, y = round(pv["x"] + rng.gauss(0, 0.15), 2), round(pv["y"] + rng.gauss(0, 0.15), 2)
+        tg = pv.get("target")
+        yaw = math.degrees(math.atan2(tg["y"] - y, tg["x"] - x)) if tg else rng.uniform(-180, 180)
+        ev = {"id": f"sim{cfg.seed}_{i:06d}", "t": round(t, 1), "real_t": round(t, 1), "kind": "picture",
+              "source": "sim_patrol", "x": x, "y": y, "yaw_deg": round(yaw, 1), "place": place,
+              "place_m": round(math.hypot(x - pv["x"], y - pv["y"]), 2), "path": None, "seen": seen,
+              "describer": "sim", "text": line(seen)}
         events.append((ev, {"id": ev["id"], **tr}))
     intervals = truth_intervals(world)
     qs = questions(world, events, intervals, n_questions, rng)
@@ -184,12 +222,14 @@ def main():
     ap.add_argument("--people", type=int, default=5)
     ap.add_argument("--objects", type=int, default=20)
     ap.add_argument("--shifts", type=int, default=2)
-    ap.add_argument("--places", default=None, help="places.json; default: the stand-in 16 places")
+    ap.add_argument("--places", default=str(REAL_PLACES),
+                    help="lab places file (default: the real lab, go2/memory_lab/places_2026-10-25.json); "
+                         "'standin' for the made-up list")
     ap.add_argument("--questions", type=int, default=300)
     ap.add_argument("--out", required=True)
     a = ap.parse_args()
     cfg = Config(days=a.days, seed=a.seed, n_people=a.people, n_objects=a.objects, shifts=a.shifts,
-                 places_file=a.places)
+                 places_file=None if a.places == "standin" else a.places)
     world, events, qs = generate(cfg, Path(a.out), a.questions)
     types = Counter(world.regime(o, 0)["type"] for o in world.objects)
     errs = Counter(k for _, tr in events for k in ("missed", "misnamed", "invented") for _ in tr[k])
