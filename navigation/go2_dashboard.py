@@ -35,7 +35,7 @@ from rclpy.qos import qos_profile_sensor_data
 from sensor_msgs.msg import Image, JointState, PointCloud2
 from sensor_msgs_py import point_cloud2
 
-from go2_agent import Agents
+from go2_agent import AGENT_LEASE_S, Agents
 from go2_mapper import Mapper
 from go2_nav import Planner
 from go2_trail import Trail
@@ -607,13 +607,13 @@ class Handler(BaseHTTPRequestHandler):
             return self.send_json(200, {"result": "done"})
         why = AG.agent_may_drive(client, ip)
         if why:
-            return self.send_json(409, {"result": "refused", "reason": why})
+            return self.send_json(409, {"result": "refused", "reason": why, "stop_reason": "refused"})
         if call == "claim":
-            return self.send_json(200, {"result": "done", "lease_s": 60})
+            return self.send_json(200, {"result": "done", "lease_s": AGENT_LEASE_S})
         try:
             code, out = AG.tool(call, client, req)
         except (KeyError, ValueError, TypeError) as e:
-            return self.send_json(400, {"result": "error", "reason": f"bad arguments: {e}"})
+            return self.send_json(400, {"result": "error", "reason": f"bad arguments: {e}", "stop_reason": "bad_arguments"})
         return self.send_json(code, out)
 
     def do_POST(self):

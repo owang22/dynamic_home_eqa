@@ -35,7 +35,9 @@ BUMP_H = (0.18, 0.60)                      # heights above the floor the dog can
                                            # reports the floor itself in ~10 cm steps, and the dog fits under
                                            # desk and table tops, so neither counts.
 LIVE_KEEP, LIVE_MIN_SEEN = 3, 2              # go_to: a live obstacle cell counts if seen in this many of the last clouds
-OVERHEAD_MAX = 0.6                         # m: tops between BUMP_H[1] and this (desk and table tops) block the route
+OVERHEAD_MAX = 0.6                         # m: tops between BUMP_H[1] and this would block the route. Equal to
+                                           # BUMP_H[1], so desk and table tops (~0.7 m) do NOT block: 1.0 closed every
+                                           # route to B on 10-23 and was reverted. Open: routes can pass under desks
 LIVE_R = 3.0                               # go_to: within this of the dog, plan on what the lidar sees now
 STALL_S, STALL_M = 2.0, 0.03               # blocked if moved less than this in this long
 TILT_LIMIT = 0.6                           # rad of roll/pitch that counts as fallen
@@ -77,7 +79,8 @@ def cut_path(path, upto_m):
 def stop_reason(call, out):
     """Why a tool call ended, as one word an agent can branch on (cheetah, 10-25): arrived (move, turn, go_to
     finished), done (other tools), obstacle, stuck (no progress), no_route, timeout, stop (STOP or the agent's
-    stop), person (a person took over), lost, not_standing, fallen, stale_sensors, refused, busy, error."""
+    stop), person (a person took over), lost, not_standing, fallen, stale_sensors, refused, busy, error.
+    The console adds bad_arguments (HTTP 400) and refused (409: a person or another agent has control)."""
     res, why = out.get("result"), str(out.get("reason") or "")
     if res == "done":
         return "arrived" if call in ("move", "turn", "go_to") else "done"
@@ -248,7 +251,7 @@ class Agents:
     # ---------- tool runner ----------
     def run(self, client, call, args, fn, stop=True):
         if not self.busy.acquire(blocking=False):
-            return 409, {"result": "error", "reason": "busy: another tool is running"}
+            return 409, {"result": "error", "reason": "busy: another tool is running", "stop_reason": "busy"}
         self.abort.clear()
         self.abort_reason = ""
         t0 = time.time()
