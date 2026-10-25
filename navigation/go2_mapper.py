@@ -38,6 +38,11 @@ HINT_R = 0.75              # "the dog is about here" (clicked on the map): searc
 HINT_YAW_TOL = math.radians(45)   # and, when a heading was dragged too, within this of it
 TRACK_RANGE_M, TRACK_STEP_CELLS = 0.20, 1    # drift correction: search ±20 cm in 5 cm steps
 TRACK_DEG, TRACK_DEG_STEP = 2.0, 0.5          # and ±2 degrees in half-degree steps, around the robot
+# After a turn in place the heading is often several degrees off (views are skipped while turning, and the gyro's
+# scale error adds up), and ±2 deg per view at TRACK_GAIN catches up slowly. So for the first POST_TURN_VIEWS views
+# after the odom heading changed by more than POST_TURN_DEG, search ±TRACK_DEG_WIDE (stops early once a
+# correction is under 1 deg).
+POST_TURN_DEG, POST_TURN_VIEWS, TRACK_DEG_WIDE = 45.0, 3, 5.0
 TRACK_SIGMA = 0.08         # m: how sharply a lidar point must sit on a mapped wall to count
 TRACK_MIN_PTS = 80         # need this many obstacle points in a view to correct from it
 TRACK_MIN_FIT = 0.35       # mean wall likelihood at the best fit
@@ -109,6 +114,8 @@ class Mapper:
         self._low = None                    # [since, last robot xy, metres walked] while the track fit is low
         self.lost_since = None              # time the dog was judged lost (see LOST_*), else None
         self._vox = (np.empty(0, np.int64), np.empty(0), np.empty(0))   # sorted voxel keys, birth, last seen
+        self._odom_yaw = self._track_yaw = None   # latest odom heading (pose()), heading at the last track()
+        self._wide = 0                            # views left with the wide heading search
         self._judged_at = None              # last time _judge_lost ran (see LOST_GAP_S)
         self._sus_obs = None                # obstacle points placed within SUSPECT_FRESH_S (from _fresh)
         self.fresh_fit = None               # their fit at the current T
@@ -181,6 +188,7 @@ class Mapper:
 
     def pose(self, odom):
         if odom is not None:
+            self._odom_yaw = odom["yaw"]
             self._note_T(odom)
         if self.T is None or odom is None:
             return None
@@ -550,7 +558,15 @@ class Mapper:
         dr, dc = [a.ravel() for a in np.meshgrid(offs, offs, indexing="ij")]
         H, W = L.shape
         best, zero = None, None
-        for deg in np.arange(-TRACK_DEG, TRACK_DEG + 1e-9, TRACK_DEG_STEP):
+        y = self._odom_yaw
+        if y is not None and self._track_yaw is not None and abs(wrap(y - self._track_yaw)) > math.radians(POST_TURN_DEG):
+            self._wide = POST_TURN_VIEWS
+        self._track_yaw = y
+        wide = self._wide > 0
+        span = TRACK_DEG_WIDE if wide else TRACK_DEG
+        if wide:
+            self._wide -= 1
+        for deg in np.arange(-span, span + 1e-9, TRACK_DEG_STEP):
             a = math.radians(deg)
             ca, sa = math.cos(a), math.sin(a)
             rel = q - (rx, ry)
@@ -567,12 +583,14 @@ class Mapper:
             if abs(deg) < 1e-9:
                 zero = float(vals[(dr == 0) & (dc == 0)][0])
         fit, a, dx, dy = best
+        if wide and abs(math.degrees(a)) < 1.0:
+            self._wide = 0                        # heading has caught up
         # how much of this view lands on area the map already knows (seen cells)
         cc = np.floor((q[:, 0] - self.origin[0]) / RES).astype(np.int64)
         rr = np.floor((q[:, 1] - self.origin[1]) / RES).astype(np.int64)
         inb = (rr >= 0) & (rr < SIZE) & (cc >= 0) & (cc < SIZE)
         known = float(self.seen[rr[inb], cc[inb]].mean()) if inb.any() else 0.0
-        info = {"fit": round(fit, 2), "fit_before": round(zero, 2), "points": int(len(pts)),
+        info = {"fit": round(fit, 2), "fit_before": round(zero, 2), "points": int(len(pts)), "wide": wide,
                 "known": round(known, 2), "at": time.strftime("%H:%M:%S")}
         matches = not (known >= MISMATCH_KNOWN and fit < MISMATCH_FIT)
         self._judge_lost(fit, robot)

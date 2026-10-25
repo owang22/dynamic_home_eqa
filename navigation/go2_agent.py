@@ -283,6 +283,7 @@ class Agents:
             li = self.mapper.loc_info(track_n=0)
             out.setdefault("fit", li.get("track_fit"))
             out.setdefault("lost", li.get("lost"))
+            out.setdefault("suspect", li.get("suspect"))
         # everything but bulky fields, so the console can show the whole call when a row is opened
         brief = {k: v for k, v in out.items() if k not in ("photo", "photos", "t", "odom", "image", "jpeg_b64", "map_png")
                  and len(json.dumps(v, default=str)) < 2000}
