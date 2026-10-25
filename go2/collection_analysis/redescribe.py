@@ -11,6 +11,7 @@ Backends (--backend):
   z690-8b   the control PC's Qwen3-VL-8B (z690:8000). Pauses while the dog is online or an agent holds control, since
             the 8B also serves the live tools (watch_go_to, scan_for, skills); ends at the stop time Z690 gave (08:00 PT
             on 2026-10-25, coordination/inbox/cheetah/).
+  h100-35b  the H100's Qwen3.6-35B-A3B-FP8 (:8302), the best describer in the 10-25 comparison (memory_lab/vlm_compare)
   h100-27b  the H100's Qwen3.8-27B (172.17.45.79:8300), the same model that wrote the 27B descriptions in the live
             index. On demand: the first request starts it (about 90 s), so one goes alone before the rest; 8 at a time.
 
@@ -35,7 +36,8 @@ sys.path.insert(0, str(HERE.parent / "lab_agent"))
 import memory as M  # noqa: E402
 
 BACKENDS = {"z690-8b": ("http://172.17.40.64:8000/v1/chat/completions", "qwen3-vl-8b", "qwen3-vl-8b", False),
-            "h100-27b": ("http://172.17.45.79:8300/v1/chat/completions", "Qwen/Qwen3.8-27B", "qwen3.8-27b-h100", True)}
+            "h100-27b": ("http://172.17.45.79:8300/v1/chat/completions", "Qwen/Qwen3.8-27B", "qwen3.8-27b-h100", True),
+            "h100-35b": ("http://172.17.45.79:8302/v1/chat/completions", "Qwen/Qwen3.6-35B-A3B-FP8", "qwen3.6-35b-a3b-h100", True)}
 URL, MODEL, OUT, QWEN38 = None, None, None, False
 
 
@@ -158,7 +160,7 @@ def main():
         todo = todo[:a.probe]
     print(f"{len(have)} already described, {len(todo)} to go, {a.workers} in flight", flush=True)
     t0, n, errs = time.time(), 0, 0
-    if a.backend == "h100-27b" and todo:          # wake the on-demand server with one request first
+    if a.backend.startswith("h100") and todo:          # wake the on-demand server with one request first
         print("warm-up:", describe(todo.pop(0)).get("seconds"), "s", flush=True)
     it = iter(todo)
 

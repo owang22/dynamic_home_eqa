@@ -15,6 +15,7 @@ Descriptions, three describers (collection_analysis/redescribe.py writes the two
   "27b-h100"  Qwen3.8-27B on the H100, every picture, overnight 2026-10-25 (descriptions_qwen3.8-27b-h100.jsonl)
   "27b"       the same model on cheetah, in the live index, 10-19 to 10-23 01:50 only
   "8b"        Qwen3-VL-8B on the control PC, overnight (descriptions_qwen3-vl-8b.jsonl)
+  "35b-h100"  Qwen3.6-35B-A3B on the H100, 2026-10-25 09:00, the best trade-off in vlm_compare (use only="35b-h100")
 prefer = the order to try them in (default 27b-h100, then 27b, then 8b); only = keep one describer, which is what a
 fair comparison needs. The overnight files grow during the night: call events() again to pick up new lines.
 
@@ -32,7 +33,24 @@ import memory as M  # noqa: E402
 DATA = M.DATA
 OUT = HERE.parent / "data" / "memory_lab"
 COLLECTION = HERE.parent / "data" / "collection"
-FILES = {"27b-h100": DATA / "descriptions_qwen3.8-27b-h100.jsonl", "8b": DATA / "descriptions_qwen3-vl-8b.jsonl"}
+FILES = {"27b-h100": DATA / "descriptions_qwen3.8-27b-h100.jsonl", "8b": DATA / "descriptions_qwen3-vl-8b.jsonl",
+         "35b-h100": DATA / "descriptions_qwen3.6-35b-a3b-h100.jsonl"}
+
+
+def dedupe(seen):
+    """Vision-model loops: with maxItems kept, a looping answer comes back as up to 30 copies of one object ('box' x29)
+    instead of a max_tokens failure (vlm subagent, 02:30). Keep at most 4 of each (name, colour), since a room really
+    can hold three black chairs (42% of the old 27B descriptions repeat something 3+ times), and mark the description
+    looped when one (name, colour) appears 8+ times. The files on disk keep the raw answer."""
+    if not seen or not seen.get("objects"):
+        return seen
+    keep, count = [], {}
+    for o in seen["objects"]:
+        k = (o.get("name", "").lower(), o.get("colour", "").lower())
+        count[k] = count.get(k, 0) + 1
+        if count[k] <= 4:
+            keep.append(o)
+    return dict(seen, objects=keep, looped=max(count.values()) >= 8)
 
 
 def descriptions(who):
@@ -43,7 +61,7 @@ def descriptions(who):
             if l.strip():
                 r = json.loads(l)
                 if r.get("seen"):
-                    out[r["id"]] = r["seen"]
+                    out[r["id"]] = dedupe(r["seen"])
     return out
 
 
@@ -68,7 +86,8 @@ def events(described_only=False, prefer=("27b-h100", "27b", "8b"), only=None):
     D = {w: descriptions(w) for w in FILES}
     out = []
     for r in sorted(M.load(), key=lambda r: r["t"]):
-        have = {"27b-h100": D["27b-h100"].get(r["id"]), "27b": r.get("seen"), "8b": D["8b"].get(r["id"])}
+        have = {"27b-h100": D["27b-h100"].get(r["id"]), "27b": r.get("seen"), "8b": D["8b"].get(r["id"]),
+                "35b-h100": D["35b-h100"].get(r["id"])}
         order = [only] if only else list(prefer)
         who, seen = next(((w, have[w]) for w in order if have[w]), (None, None))
         if described_only and not seen:
