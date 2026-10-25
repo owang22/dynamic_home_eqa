@@ -49,7 +49,62 @@ questions over the 9 runs; 95% Wilson intervals in the JSON.
   run), so `by_kind_phase` only compares the first week after a shift with later. Last seen gets 0.71 in both.
   A before/after comparison would need questions from before the first shift (a generator change).
 
-## Open-model answerer
+## Open-model answerer: `llm.py`
 
-Next: Qwen3.6-35B-A3B (already loaded on `:8302` for the vision comparison) given the flat event history, and
-then a compact per-object table, on about 100 stratified questions per history length.
+```
+python -m simulation.lab_history.baselines.llm --per-length 100 --workers 3   # needs :8302 (Qwen3.6-35B-A3B-FP8)
+```
+
+Qwen3.6-35B-A3B-FP8 (thinking off, temperature 0), answering one of the 16 places or "not in the lab"
+(json_schema enum), on a stratified sample: 100 questions per history length, 300 in all, pooled over seeds.
+- **flat:** the event lines up to the question's time, the most recent ~11k tokens of them (mean prompt 10.9k
+  tokens; 30-day histories mostly fit, 60/90-day ones are cut).
+- **table:** per object and person: last seen, the three most frequent places, the most frequent place per
+  weekday, and when each place was last looked at (mean prompt 2.7k tokens).
+
+The rules are scored on the same sample (`llm_results.json`, `by_stratum` and `by_stratum_days`):
+
+| stratum (n) | LLM, flat | LLM, table | last seen | recency vote | claims |
+|---|---|---|---|---|---|
+| where_now fresh (90) | 0.78 | 0.82 | **0.98** | 0.83 | 0.88 |
+| where_now stale (90) | 0.20 | 0.16 | 0.01 | 0.08 | **0.33** |
+| where_now, gold "not in the lab" (45) | 0 | 0 | 0 | 0 | 0 |
+| usual_place (45) | 0.64 | 0.67 | | | **0.78** (weekday, 4 weeks, or away) |
+| last_in_lab (15, thin) | 0.80 | 1.00 | 1.00 | 1.00 | 0.20 |
+| desk_now (15, thin) | 0.80 | 0.87 | 1.00 | 1.00 | 0.80 |
+
+**What this says:**
+- **The open model beats no rule** on any stratum. On fresh questions it loses to last seen (0.78-0.82 vs 0.98).
+  On stale ones it beats last seen but not claims (0.16-0.20 vs 0.33 on this sample; claims was 0.18 on all 529
+  stale questions, so the sample's claims number is on the high side).
+- **It almost never says "not in the lab"** (5 of 600 answers), so it scores 0 there too, like the rules.
+- **The table is no better than the raw history** (overall 0.49 vs 0.47), at a quarter of the tokens.
+
+## Before and after routine shifts: `runs_preshift/`
+
+cheetah asked for questions from before the first shift. `generate.py --questions-from 3` lets questions start on day
+3. Every question now has a `phase`: `before_first_shift`, `0-7d_after_shift` or `7d+_after_shift`.
+`../runs_preshift/` holds the same 9 histories as `../runs/` (identical events and truth) with questions drawn from
+day 3 on, about 30% of them before the first shift. Regenerating `../runs/` only added the `phase` field; no question
+or answer changed.
+
+```
+python -m simulation.lab_history.baselines.rules --runs runs_preshift    # -> rules_results_preshift.json
+```
+
+| where_now, by phase (n) | last seen | recency vote | claims |
+|---|---|---|---|
+| before the first shift (576) | 0.71 | 0.64 | 0.69 |
+| first week after a shift (575) | 0.72 | 0.67 | 0.63 |
+| later (740) | 0.70 | 0.65 | 0.61 |
+| stale only: before / first week / later (156 / 155 / 214) | 0 / 0 / 0 | | 0.24 / **0.12** / 0.21 |
+
+usual_place (weekday, 4 weeks, or away): 0.81 before, 0.77 in the first week after a shift, 0.88 later.
+
+**What this says:**
+- **Shifts barely move the overall numbers.** Each shift changes one person's desk and two objects' routines, out
+  of 25 tracked people and objects, so most questions aren't about a shifted thing.
+- **The visible effect is on stale questions:** claims halves in the week after a shift (0.24 to 0.12), because its
+  fallback, the usual place, is the old one.
+- To measure shifts directly, questions should target the shifted people and objects. This would be a generator
+  option, not done yet.

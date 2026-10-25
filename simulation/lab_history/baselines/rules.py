@@ -1,6 +1,7 @@
 """Rule baselines (no LLM) on the lab history runs: how hard are the questions, and what must a model beat?
 
-    python -m simulation.lab_history.baselines.rules            # all runs in ../runs, writes rules_results.json
+    python -m simulation.lab_history.baselines.rules                       # ../runs -> rules_results.json
+    python -m simulation.lab_history.baselines.rules --runs runs_preshift  # -> rules_results_preshift.json
 
 Each rule answers from the dog's events up to the question's t only. An object counts as seen when the camera
 named it exactly ("red umbrella"); misnamed sightings ("umbrella") are invisible to the rules, as they would be to
@@ -156,7 +157,7 @@ def run_one(run_dir):
             rows.append({"run": run_dir.name, "days": routines["config"]["days"], "q": q["id"], "kind": q["kind"],
                          "rule": rule, "answer": ans, "gold": g, "correct": ans == g,
                          "stale": q.get("stale") if q["kind"] == "where_now" else None,
-                         "gold_away": g == AWAY, "phase": shift_phase(q, routines, start_ts)})
+                         "gold_away": g == AWAY, "phase": q.get("phase") or shift_phase(q, routines, start_ts)})
     return rows
 
 
@@ -174,8 +175,14 @@ def table(rows, keys):
 
 
 def main():
+    import argparse
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--runs", default="runs", help="folder under simulation/lab_history with the runs")
+    a = ap.parse_args()
+    runs = RUNS.parent / a.runs
+    out = OUT if a.runs == "runs" else OUT.with_name(f"rules_results_{a.runs.removeprefix('runs_')}.json")
     rows = []
-    for d in sorted(RUNS.iterdir()):
+    for d in sorted(runs.iterdir()):
         if (d / "questions.jsonl").exists():
             rows += run_one(d)
     where = [r for r in rows if r["kind"] == "where_now"]
@@ -188,12 +195,13 @@ def main():
         "where_now_by_stale": table(where, ["stale", "rule"]),
         "where_now_by_gold_away": table(where, ["gold_away", "rule"]),
         "by_kind_phase": table(rows, ["kind", "phase", "rule"]),
+        "where_now_by_phase_stale": table(where, ["phase", "stale", "rule"]),
     }
-    OUT.write_text(json.dumps(res, indent=1))
-    rows_out = OUT.with_name("rules_answers.jsonl")
+    out.write_text(json.dumps(res, indent=1))
+    rows_out = out.with_name(out.stem.replace("results", "answers") + ".jsonl")
     with open(rows_out, "w") as f:
         f.writelines(json.dumps(r) + "\n" for r in rows)
-    print(f"{res['n_questions']} questions over {len(res['runs'])} runs -> {OUT.name}, {rows_out.name}")
+    print(f"{res['n_questions']} questions over {len(res['runs'])} runs -> {out.name}, {rows_out.name}")
     for r in res["by_kind"]:
         print(f"  {r['kind']:12} {r['rule']:26} {r['acc']:.3f}  {r['ci95']}  n={r['n']}{'  thin' if r['thin'] else ''}")
     for r in res["where_now_by_stale"]:

@@ -1,0 +1,758 @@
+{
+ "config": {
+  "days": 90,
+  "seed": 2,
+  "start": "2026-11-02",
+  "n_people": 5,
+  "n_objects": 20,
+  "shifts": 2,
+  "off_routine": 0.05,
+  "out_of_lab": 0.02,
+  "absent": 0.05,
+  "places_file": "/data/oliver/robot/dynamic_home_eqa/go2/memory_lab/places_2026-10-25.json"
+ },
+ "places": {
+  "sofa": {
+   "x": -0.44,
+   "y": 2.33,
+   "kind": "lunch",
+   "desc": "sofa",
+   "target": {
+    "x": -1.09,
+    "y": 2.95
+   }
+  },
+  "door_outside": {
+   "x": 0.07,
+   "y": -3.07,
+   "kind": "entry",
+   "desc": "door outside",
+   "target": {
+    "x": -0.49,
+    "y": -3.64
+   }
+  },
+  "desk_pragya": {
+   "x": 0.14,
+   "y": -0.38,
+   "kind": "desk",
+   "desc": "Pragya's desk",
+   "target": {
+    "x": -0.73,
+    "y": -0.13
+   }
+  },
+  "desk_gaofeng": {
+   "x": -0.69,
+   "y": -1.46,
+   "kind": "desk",
+   "desc": "Gaofeng's desk",
+   "target": {
+    "x": -1.88,
+    "y": -1.13
+   }
+  },
+  "desk_oliver": {
+   "x": 0.36,
+   "y": -0.44,
+   "kind": "desk",
+   "desc": "Oliver's desk",
+   "target": {
+    "x": 0.47,
+    "y": -1.28
+   }
+  },
+  "door_stairwell": {
+   "x": -5.38,
+   "y": 2.2,
+   "kind": "entry",
+   "desc": "door stairwell",
+   "target": {
+    "x": -5.93,
+    "y": 1.62
+   }
+  },
+  "podium": {
+   "x": -2.48,
+   "y": 1.04,
+   "kind": "common",
+   "desc": "podium",
+   "target": {
+    "x": -3.59,
+    "y": 0.57
+   }
+  },
+  "desk_joseph": {
+   "x": 1.73,
+   "y": 2.62,
+   "kind": "desk",
+   "desc": "Joseph's desk",
+   "target": {
+    "x": 1.68,
+    "y": 2.38
+   }
+  },
+  "workbench": {
+   "x": 0.35,
+   "y": 3.97,
+   "kind": "common",
+   "desc": "workbench",
+   "target": {
+    "x": -0.78,
+    "y": 4.33
+   }
+  },
+  "conference_table": {
+   "x": -1.07,
+   "y": 1.89,
+   "kind": "meeting",
+   "desc": "conference table",
+   "target": {
+    "x": -1.72,
+    "y": 2.52
+   }
+  },
+  "water_cooler": {
+   "x": 1.06,
+   "y": -0.3,
+   "kind": "sink",
+   "desc": "water cooler",
+   "target": {
+    "x": 1.78,
+    "y": 0.46
+   }
+  },
+  "desk_yuyang": {
+   "x": 3.84,
+   "y": 1.14,
+   "kind": "desk",
+   "desc": "Yuyang's desk",
+   "target": {
+    "x": 5.57,
+    "y": 1.38
+   }
+  },
+  "desk_kang": {
+   "x": 4.0,
+   "y": 1.89,
+   "kind": "desk",
+   "desc": "Kang's desk",
+   "target": {
+    "x": 4.18,
+    "y": 2.23
+   }
+  },
+  "desk_liying": {
+   "x": 2.96,
+   "y": 1.01,
+   "kind": "desk",
+   "desc": "Liying's desk",
+   "target": {
+    "x": 2.93,
+    "y": 1.48
+   }
+  },
+  "desk_khang": {
+   "x": 3.24,
+   "y": 0.6,
+   "kind": "desk",
+   "desc": "Khang's desk",
+   "target": {
+    "x": 4.22,
+    "y": 0.38
+   }
+  },
+  "desk_brian": {
+   "x": -0.9,
+   "y": -1.68,
+   "kind": "desk",
+   "desc": "Brian's desk",
+   "target": {
+    "x": -0.73,
+    "y": -2.52
+   }
+  }
+ },
+ "people": [
+  {
+   "name": "Alice",
+   "look": "a person in a red hoodie",
+   "desks": [
+    [
+     0,
+     "desk_yuyang"
+    ],
+    [
+     30,
+     "desk_brian"
+    ]
+   ],
+   "arrive_h": 9.71,
+   "leave_h": 18.04,
+   "wfh": [
+    "Monday"
+   ]
+  },
+  {
+   "name": "Bob",
+   "look": "a tall person in a grey sweater",
+   "desks": [
+    [
+     0,
+     "desk_joseph"
+    ]
+   ],
+   "arrive_h": 9.32,
+   "leave_h": 17.28,
+   "wfh": [
+    "Thursday",
+    "Monday"
+   ]
+  },
+  {
+   "name": "Chen",
+   "look": "a person with glasses and a green jacket",
+   "desks": [
+    [
+     0,
+     "desk_oliver"
+    ]
+   ],
+   "arrive_h": 9.77,
+   "leave_h": 17.33,
+   "wfh": [
+    "Tuesday"
+   ]
+  },
+  {
+   "name": "Dana",
+   "look": "a person in a denim jacket",
+   "desks": [
+    [
+     0,
+     "desk_kang"
+    ]
+   ],
+   "arrive_h": 10.47,
+   "leave_h": 19.21,
+   "wfh": [
+    "Friday"
+   ]
+  },
+  {
+   "name": "Eli",
+   "look": "a person in a black t-shirt",
+   "desks": [
+    [
+     0,
+     "desk_khang"
+    ],
+    [
+     60,
+     "desk_yuyang"
+    ]
+   ],
+   "arrive_h": 10.05,
+   "leave_h": 18.55,
+   "wfh": [
+    "Monday"
+   ]
+  }
+ ],
+ "objects": [
+  {
+   "name": "helmet",
+   "desc": "bike helmet",
+   "regimes": [
+    {
+     "from_day": 0,
+     "type": "follows_owner",
+     "owner": "Alice",
+     "text": "comes and goes with Alice; at Alice's desk while they are in"
+    }
+   ]
+  },
+  {
+   "name": "backpack_green",
+   "desc": "green backpack",
+   "regimes": [
+    {
+     "from_day": 0,
+     "type": "follows_owner",
+     "owner": "Dana",
+     "text": "comes and goes with Dana; at Dana's desk while they are in"
+    }
+   ]
+  },
+  {
+   "name": "headphones",
+   "desc": "black over-ear headphones",
+   "regimes": [
+    {
+     "from_day": 0,
+     "type": "follows_owner",
+     "owner": "Chen",
+     "text": "comes and goes with Chen; at Chen's desk while they are in"
+    }
+   ]
+  },
+  {
+   "name": "bottle_green",
+   "desc": "green water bottle",
+   "regimes": [
+    {
+     "from_day": 0,
+     "type": "use_return",
+     "owner": "Alice",
+     "places": [
+      "water_cooler"
+     ],
+     "text": "at Alice's desk in the morning, at water_cooler from after lunch until Alice comes in next"
+    }
+   ]
+  },
+  {
+   "name": "mug_blue",
+   "desc": "white mug with a blue stripe",
+   "regimes": [
+    {
+     "from_day": 0,
+     "type": "use_return",
+     "owner": "Chen",
+     "places": [
+      "water_cooler"
+     ],
+     "text": "at Chen's desk in the morning, at water_cooler from after lunch until Chen comes in next"
+    }
+   ]
+  },
+  {
+   "name": "projector",
+   "desc": "small white projector",
+   "regimes": [
+    {
+     "from_day": 0,
+     "type": "meeting",
+     "places": [
+      "workbench",
+      "conference_table"
+     ],
+     "text": "at workbench, taken to conference_table for the Tuesday 14:00 group meeting"
+    }
+   ]
+  },
+  {
+   "name": "plant",
+   "desc": "potted plant",
+   "regimes": [
+    {
+     "from_day": 0,
+     "type": "random",
+     "places": [
+      "sofa",
+      "water_cooler",
+      "desk_brian"
+     ],
+     "text": "at one of sofa, water_cooler, desk_brian at random each workday"
+    }
+   ]
+  },
+  {
+   "name": "bucket_blue",
+   "desc": "blue plastic bucket",
+   "regimes": [
+    {
+     "from_day": 0,
+     "type": "fixed",
+     "places": [
+      "desk_yuyang"
+     ],
+     "text": "always at desk_yuyang"
+    },
+    {
+     "from_day": 60,
+     "type": "fixed",
+     "places": [
+      "water_cooler"
+     ],
+     "text": "always at water_cooler"
+    }
+   ]
+  },
+  {
+   "name": "tripod",
+   "desc": "camera tripod",
+   "regimes": [
+    {
+     "from_day": 0,
+     "type": "away_days",
+     "places": [
+      "desk_gaofeng"
+     ],
+     "days": [
+      1,
+      4
+     ],
+     "text": "out of the lab on Tuesday, Friday; otherwise at desk_gaofeng"
+    },
+    {
+     "from_day": 30,
+     "type": "away_days",
+     "places": [
+      "desk_yuyang"
+     ],
+     "days": [
+      0,
+      1
+     ],
+     "text": "out of the lab on Monday, Tuesday; otherwise at desk_yuyang"
+    }
+   ]
+  },
+  {
+   "name": "kettle",
+   "desc": "electric kettle",
+   "regimes": [
+    {
+     "from_day": 0,
+     "type": "weekday",
+     "places": [
+      "desk_kang",
+      "desk_liying"
+     ],
+     "days": [
+      2,
+      4
+     ],
+     "text": "at desk_liying on Wednesday, Friday; otherwise at desk_kang"
+    },
+    {
+     "from_day": 60,
+     "type": "weekday",
+     "places": [
+      "desk_joseph",
+      "desk_pragya"
+     ],
+     "days": [
+      3,
+      4
+     ],
+     "text": "at desk_pragya on Thursday, Friday; otherwise at desk_joseph"
+    }
+   ]
+  },
+  {
+   "name": "speaker",
+   "desc": "small bluetooth speaker",
+   "regimes": [
+    {
+     "from_day": 0,
+     "type": "fixed",
+     "places": [
+      "desk_yuyang"
+     ],
+     "text": "always at desk_yuyang"
+    }
+   ]
+  },
+  {
+   "name": "whiteboard_markers",
+   "desc": "cup of whiteboard markers",
+   "regimes": [
+    {
+     "from_day": 0,
+     "type": "fixed",
+     "places": [
+      "conference_table"
+     ],
+     "text": "always at conference_table"
+    }
+   ]
+  },
+  {
+   "name": "notebook_stack",
+   "desc": "stack of lab notebooks",
+   "regimes": [
+    {
+     "from_day": 0,
+     "type": "drift",
+     "places": [
+      "desk_joseph"
+     ],
+     "p": 0.3,
+     "text": "starts at desk_joseph and moves to a nearby place on about 30% of workdays"
+    }
+   ]
+  },
+  {
+   "name": "tape_roll",
+   "desc": "roll of blue tape",
+   "regimes": [
+    {
+     "from_day": 0,
+     "type": "weekday",
+     "places": [
+      "desk_joseph",
+      "workbench"
+     ],
+     "days": [
+      2,
+      3
+     ],
+     "text": "at workbench on Wednesday, Thursday; otherwise at desk_joseph"
+    }
+   ]
+  },
+  {
+   "name": "drill",
+   "desc": "cordless drill",
+   "regimes": [
+    {
+     "from_day": 0,
+     "type": "random",
+     "places": [
+      "desk_liying",
+      "workbench",
+      "desk_yuyang"
+     ],
+     "text": "at one of desk_liying, workbench, desk_yuyang at random each workday"
+    }
+   ]
+  },
+  {
+   "name": "lunchbox",
+   "desc": "orange lunch box",
+   "regimes": [
+    {
+     "from_day": 0,
+     "type": "rotation",
+     "places": [
+      "desk_pragya",
+      "desk_yuyang",
+      "water_cooler"
+     ],
+     "text": "rotates desk_pragya -> desk_yuyang -> water_cooler, one step each workday"
+    }
+   ]
+  },
+  {
+   "name": "fan",
+   "desc": "desk fan",
+   "regimes": [
+    {
+     "from_day": 0,
+     "type": "drift",
+     "places": [
+      "desk_brian"
+     ],
+     "p": 0.3,
+     "text": "starts at desk_brian and moves to a nearby place on about 30% of workdays"
+    }
+   ]
+  },
+  {
+   "name": "laptop_silver",
+   "desc": "silver laptop",
+   "regimes": [
+    {
+     "from_day": 0,
+     "type": "rotation",
+     "places": [
+      "sofa",
+      "desk_liying",
+      "desk_brian"
+     ],
+     "text": "rotates sofa -> desk_liying -> desk_brian, one step each workday"
+    },
+    {
+     "from_day": 30,
+     "type": "rotation",
+     "places": [
+      "desk_khang",
+      "conference_table",
+      "desk_joseph"
+     ],
+     "text": "rotates desk_khang -> conference_table -> desk_joseph, one step each workday"
+    }
+   ]
+  },
+  {
+   "name": "toy_dog",
+   "desc": "stuffed toy dog",
+   "regimes": [
+    {
+     "from_day": 0,
+     "type": "drift",
+     "places": [
+      "desk_kang"
+     ],
+     "p": 0.3,
+     "text": "starts at desk_kang and moves to a nearby place on about 30% of workdays"
+    }
+   ]
+  },
+  {
+   "name": "backpack_black",
+   "desc": "black backpack",
+   "regimes": [
+    {
+     "from_day": 0,
+     "type": "away_days",
+     "places": [
+      "desk_oliver"
+     ],
+     "days": [
+      2,
+      4
+     ],
+     "text": "out of the lab on Wednesday, Friday; otherwise at desk_oliver"
+    }
+   ]
+  }
+ ],
+ "shift_days": [
+  30,
+  60
+ ],
+ "shifts": [
+  {
+   "day": 30,
+   "who": "Alice",
+   "kind": "desk",
+   "text": "Alice moves from desk_yuyang to desk_brian"
+  },
+  {
+   "day": 30,
+   "who": "laptop_silver",
+   "kind": "routine",
+   "text": "laptop_silver: was rotates sofa -> desk_liying -> desk_brian, one step each workday; now rotates desk_khang -> conference_table -> desk_joseph, one step each workday"
+  },
+  {
+   "day": 30,
+   "who": "tripod",
+   "kind": "routine",
+   "text": "tripod: was out of the lab on Tuesday, Friday; otherwise at desk_gaofeng; now out of the lab on Monday, Tuesday; otherwise at desk_yuyang"
+  },
+  {
+   "day": 60,
+   "who": "Eli",
+   "kind": "desk",
+   "text": "Eli moves from desk_khang to desk_yuyang"
+  },
+  {
+   "day": 60,
+   "who": "kettle",
+   "kind": "routine",
+   "text": "kettle: was at desk_liying on Wednesday, Friday; otherwise at desk_kang; now at desk_pragya on Thursday, Friday; otherwise at desk_joseph"
+  },
+  {
+   "day": 60,
+   "who": "bucket_blue",
+   "kind": "routine",
+   "text": "bucket_blue: was always at desk_yuyang; now always at water_cooler"
+  }
+ ],
+ "noise_days": {
+  "helmet": {},
+  "backpack_green": {},
+  "headphones": {},
+  "bottle_green": {},
+  "mug_blue": {},
+  "projector": {},
+  "plant": {
+   "35": "out",
+   "73": "moved",
+   "85": "moved"
+  },
+  "bucket_blue": {
+   "9": "moved",
+   "21": "moved",
+   "25": "out",
+   "28": "moved",
+   "44": "moved",
+   "52": "out",
+   "59": "out"
+  },
+  "tripod": {
+   "44": "out",
+   "64": "moved",
+   "70": "out",
+   "81": "moved"
+  },
+  "kettle": {
+   "4": "moved",
+   "16": "moved",
+   "17": "out",
+   "77": "moved"
+  },
+  "speaker": {
+   "30": "moved"
+  },
+  "whiteboard_markers": {
+   "21": "out",
+   "43": "moved",
+   "59": "moved",
+   "64": "out"
+  },
+  "notebook_stack": {
+   "1": "moved",
+   "46": "out",
+   "50": "out",
+   "80": "out"
+  },
+  "tape_roll": {
+   "17": "moved",
+   "30": "moved",
+   "31": "moved",
+   "37": "moved",
+   "38": "moved",
+   "70": "moved"
+  },
+  "drill": {
+   "2": "moved",
+   "14": "moved",
+   "25": "moved",
+   "65": "out",
+   "72": "moved"
+  },
+  "lunchbox": {
+   "2": "moved",
+   "25": "out",
+   "46": "out",
+   "49": "out",
+   "64": "moved",
+   "73": "moved",
+   "79": "moved"
+  },
+  "fan": {
+   "4": "out",
+   "28": "moved",
+   "32": "moved",
+   "35": "moved",
+   "38": "moved",
+   "50": "moved"
+  },
+  "laptop_silver": {
+   "4": "moved",
+   "16": "out",
+   "23": "moved",
+   "28": "moved",
+   "32": "moved",
+   "35": "moved"
+  },
+  "toy_dog": {
+   "18": "out",
+   "51": "moved",
+   "71": "out",
+   "72": "out"
+  },
+  "backpack_black": {
+   "22": "moved",
+   "24": "moved",
+   "39": "out",
+   "46": "moved",
+   "57": "out",
+   "74": "moved"
+  }
+ }
+}

@@ -126,8 +126,16 @@ def truth_intervals(world: World):
     return rows
 
 
-def questions(world: World, events, intervals, n, rng: random.Random):
-    """Questions at random lab-hour times in the last two thirds of the run."""
+def phase(world: World, t):
+    """Where t falls relative to the routine shifts: before the first, in the first week after one, or later."""
+    since = [t - world.day_start(d) for d in world.shift_days if world.day_start(d) <= t]
+    if not since:
+        return "before_first_shift"
+    return "0-7d_after_shift" if min(since) < 7 * 86400 else "7d+_after_shift"
+
+
+def questions(world: World, events, intervals, n, rng: random.Random, start_day=None):
+    """Questions at random lab-hour times from start_day on (default: the last two thirds of the run)."""
     sightings = {}                # object name -> [(t, place)] of correct-name sightings (misnamed ones don't count)
     for ev, tr in events:
         for name in tr["objects"]:
@@ -141,14 +149,15 @@ def questions(world: World, events, intervals, n, rng: random.Random):
         s = [x for x in sightings.get(name, []) if x[0] <= t]
         return {"t": s[-1][0], "place": s[-1][1]} if s else None
 
-    workdays = [d for d in range(world.cfg.days // 3, world.cfg.days) if world.is_workday(d)]
+    first = world.cfg.days // 3 if start_day is None else start_day
+    workdays = [d for d in range(first, world.cfg.days) if world.is_workday(d)]
     out = []
     kinds = ["where_now"] * 5 + ["last_in_lab"] * 2 + ["desk_now", "usual_place"]
     while len(out) < n:
         day = rng.choice(workdays)
         t = round(world.day_start(day) + rng.uniform(9, 18) * 3600)
         kind = rng.choice(kinds)
-        q = {"id": f"q{len(out):04d}", "t": t, "kind": kind}
+        q = {"id": f"q{len(out):04d}", "t": t, "kind": kind, "phase": phase(world, t)}
         if kind == "where_now":
             o = rng.choice(world.objects)
             ans = world.object_place(o.name, t)
@@ -183,7 +192,7 @@ def questions(world: World, events, intervals, n, rng: random.Random):
     return out
 
 
-def generate(cfg: Config, out: Path, n_questions=300):
+def generate(cfg: Config, out: Path, n_questions=300, questions_from=None):
     world = World(cfg)
     rng = random.Random(f"lab-history-obs-{cfg.seed}")
     events = []
@@ -199,7 +208,7 @@ def generate(cfg: Config, out: Path, n_questions=300):
               "describer": "sim", "text": line(seen)}
         events.append((ev, {"id": ev["id"], **tr}))
     intervals = truth_intervals(world)
-    qs = questions(world, events, intervals, n_questions, rng)
+    qs = questions(world, events, intervals, n_questions, rng, questions_from)
 
     out.mkdir(parents=True, exist_ok=True)
     with open(out / "events.jsonl", "w") as f:
@@ -226,17 +235,19 @@ def main():
                     help="lab places file (default: the real lab, go2/memory_lab/places_2026-10-25.json); "
                          "'standin' for the made-up list")
     ap.add_argument("--questions", type=int, default=300)
+    ap.add_argument("--questions-from", type=int, default=None,
+                    help="first day questions may fall on (default: days // 3, i.e. after the first shift)")
     ap.add_argument("--out", required=True)
     a = ap.parse_args()
     cfg = Config(days=a.days, seed=a.seed, n_people=a.people, n_objects=a.objects, shifts=a.shifts,
                  places_file=None if a.places == "standin" else a.places)
-    world, events, qs = generate(cfg, Path(a.out), a.questions)
+    world, events, qs = generate(cfg, Path(a.out), a.questions, a.questions_from)
     types = Counter(world.regime(o, 0)["type"] for o in world.objects)
     errs = Counter(k for _, tr in events for k in ("missed", "misnamed", "invented") for _ in tr[k])
     stale = [q for q in qs if q.get("stale")]
     print(f"{len(events)} events over {cfg.days} days; camera errors {dict(errs)}")
     print(f"routines: {dict(types)}; shift days {world.shift_days}")
-    print(f"{len(qs)} questions {dict(Counter(q['kind'] for q in qs))}; "
+    print(f"{len(qs)} questions {dict(Counter(q['kind'] for q in qs))}, phases {dict(Counter(q['phase'] for q in qs))}; "
           f"where_now with a stale last sighting: {len(stale)}")
     print(f"written to {a.out}")
 

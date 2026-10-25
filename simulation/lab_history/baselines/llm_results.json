@@ -1,0 +1,2217 @@
+{
+ "about": "Open-model answerer on the lab history runs: Qwen3.6-35B-A3B given the history as text, two ways.",
+ "model": "Qwen/Qwen3.6-35B-A3B-FP8",
+ "n_questions": 300,
+ "token_budget": 12000,
+ "mean_prompt_tokens": {
+  "flat": 10875,
+  "table": 2739
+ },
+ "by_stratum": [
+  {
+   "stratum": "away",
+   "rule": "claims",
+   "n": 45,
+   "correct": 0,
+   "acc": 0.0,
+   "ci95": [
+    0.0,
+    0.079
+   ],
+   "thin": false
+  },
+  {
+   "stratum": "away",
+   "rule": "last_seen",
+   "n": 45,
+   "correct": 0,
+   "acc": 0.0,
+   "ci95": [
+    0.0,
+    0.079
+   ],
+   "thin": false
+  },
+  {
+   "stratum": "away",
+   "rule": "llm_flat",
+   "n": 45,
+   "correct": 0,
+   "acc": 0.0,
+   "ci95": [
+    0.0,
+    0.079
+   ],
+   "thin": false
+  },
+  {
+   "stratum": "away",
+   "rule": "llm_table",
+   "n": 45,
+   "correct": 0,
+   "acc": 0.0,
+   "ci95": [
+    0.0,
+    0.079
+   ],
+   "thin": false
+  },
+  {
+   "stratum": "away",
+   "rule": "most_frequent_7d",
+   "n": 45,
+   "correct": 0,
+   "acc": 0.0,
+   "ci95": [
+    0.0,
+    0.079
+   ],
+   "thin": false
+  },
+  {
+   "stratum": "away",
+   "rule": "most_frequent_all",
+   "n": 45,
+   "correct": 0,
+   "acc": 0.0,
+   "ci95": [
+    0.0,
+    0.079
+   ],
+   "thin": false
+  },
+  {
+   "stratum": "away",
+   "rule": "recency_vote",
+   "n": 45,
+   "correct": 0,
+   "acc": 0.0,
+   "ci95": [
+    0.0,
+    0.079
+   ],
+   "thin": false
+  },
+  {
+   "stratum": "desk_now",
+   "rule": "claims",
+   "n": 15,
+   "correct": 12,
+   "acc": 0.8,
+   "ci95": [
+    0.548,
+    0.93
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "desk_now",
+   "rule": "last_seen",
+   "n": 15,
+   "correct": 15,
+   "acc": 1.0,
+   "ci95": [
+    0.796,
+    1.0
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "desk_now",
+   "rule": "llm_flat",
+   "n": 15,
+   "correct": 12,
+   "acc": 0.8,
+   "ci95": [
+    0.548,
+    0.93
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "desk_now",
+   "rule": "llm_table",
+   "n": 15,
+   "correct": 13,
+   "acc": 0.867,
+   "ci95": [
+    0.621,
+    0.963
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "desk_now",
+   "rule": "most_frequent_7d",
+   "n": 15,
+   "correct": 14,
+   "acc": 0.933,
+   "ci95": [
+    0.702,
+    0.988
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "desk_now",
+   "rule": "most_frequent_all",
+   "n": 15,
+   "correct": 12,
+   "acc": 0.8,
+   "ci95": [
+    0.548,
+    0.93
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "desk_now",
+   "rule": "recency_vote",
+   "n": 15,
+   "correct": 15,
+   "acc": 1.0,
+   "ci95": [
+    0.796,
+    1.0
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "fresh",
+   "rule": "claims",
+   "n": 90,
+   "correct": 79,
+   "acc": 0.878,
+   "ci95": [
+    0.794,
+    0.93
+   ],
+   "thin": false
+  },
+  {
+   "stratum": "fresh",
+   "rule": "last_seen",
+   "n": 90,
+   "correct": 88,
+   "acc": 0.978,
+   "ci95": [
+    0.923,
+    0.994
+   ],
+   "thin": false
+  },
+  {
+   "stratum": "fresh",
+   "rule": "llm_flat",
+   "n": 90,
+   "correct": 70,
+   "acc": 0.778,
+   "ci95": [
+    0.682,
+    0.851
+   ],
+   "thin": false
+  },
+  {
+   "stratum": "fresh",
+   "rule": "llm_table",
+   "n": 90,
+   "correct": 74,
+   "acc": 0.822,
+   "ci95": [
+    0.731,
+    0.888
+   ],
+   "thin": false
+  },
+  {
+   "stratum": "fresh",
+   "rule": "most_frequent_7d",
+   "n": 90,
+   "correct": 70,
+   "acc": 0.778,
+   "ci95": [
+    0.682,
+    0.851
+   ],
+   "thin": false
+  },
+  {
+   "stratum": "fresh",
+   "rule": "most_frequent_all",
+   "n": 90,
+   "correct": 53,
+   "acc": 0.589,
+   "ci95": [
+    0.486,
+    0.685
+   ],
+   "thin": false
+  },
+  {
+   "stratum": "fresh",
+   "rule": "recency_vote",
+   "n": 90,
+   "correct": 75,
+   "acc": 0.833,
+   "ci95": [
+    0.743,
+    0.896
+   ],
+   "thin": false
+  },
+  {
+   "stratum": "last_in_lab",
+   "rule": "claims",
+   "n": 15,
+   "correct": 3,
+   "acc": 0.2,
+   "ci95": [
+    0.07,
+    0.452
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "last_in_lab",
+   "rule": "last_seen",
+   "n": 15,
+   "correct": 15,
+   "acc": 1.0,
+   "ci95": [
+    0.796,
+    1.0
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "last_in_lab",
+   "rule": "llm_flat",
+   "n": 15,
+   "correct": 12,
+   "acc": 0.8,
+   "ci95": [
+    0.548,
+    0.93
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "last_in_lab",
+   "rule": "llm_table",
+   "n": 15,
+   "correct": 15,
+   "acc": 1.0,
+   "ci95": [
+    0.796,
+    1.0
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "last_in_lab",
+   "rule": "most_frequent_7d",
+   "n": 15,
+   "correct": 14,
+   "acc": 0.933,
+   "ci95": [
+    0.702,
+    0.988
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "last_in_lab",
+   "rule": "most_frequent_all",
+   "n": 15,
+   "correct": 11,
+   "acc": 0.733,
+   "ci95": [
+    0.48,
+    0.891
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "last_in_lab",
+   "rule": "recency_vote",
+   "n": 15,
+   "correct": 15,
+   "acc": 1.0,
+   "ci95": [
+    0.796,
+    1.0
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "stale",
+   "rule": "claims",
+   "n": 90,
+   "correct": 30,
+   "acc": 0.333,
+   "ci95": [
+    0.245,
+    0.436
+   ],
+   "thin": false
+  },
+  {
+   "stratum": "stale",
+   "rule": "last_seen",
+   "n": 90,
+   "correct": 1,
+   "acc": 0.011,
+   "ci95": [
+    0.002,
+    0.06
+   ],
+   "thin": false
+  },
+  {
+   "stratum": "stale",
+   "rule": "llm_flat",
+   "n": 90,
+   "correct": 18,
+   "acc": 0.2,
+   "ci95": [
+    0.13,
+    0.294
+   ],
+   "thin": false
+  },
+  {
+   "stratum": "stale",
+   "rule": "llm_table",
+   "n": 90,
+   "correct": 14,
+   "acc": 0.156,
+   "ci95": [
+    0.095,
+    0.244
+   ],
+   "thin": false
+  },
+  {
+   "stratum": "stale",
+   "rule": "most_frequent_7d",
+   "n": 90,
+   "correct": 17,
+   "acc": 0.189,
+   "ci95": [
+    0.121,
+    0.282
+   ],
+   "thin": false
+  },
+  {
+   "stratum": "stale",
+   "rule": "most_frequent_all",
+   "n": 90,
+   "correct": 25,
+   "acc": 0.278,
+   "ci95": [
+    0.196,
+    0.378
+   ],
+   "thin": false
+  },
+  {
+   "stratum": "stale",
+   "rule": "recency_vote",
+   "n": 90,
+   "correct": 7,
+   "acc": 0.078,
+   "ci95": [
+    0.038,
+    0.152
+   ],
+   "thin": false
+  },
+  {
+   "stratum": "usual_place",
+   "rule": "llm_flat",
+   "n": 45,
+   "correct": 29,
+   "acc": 0.644,
+   "ci95": [
+    0.498,
+    0.768
+   ],
+   "thin": false
+  },
+  {
+   "stratum": "usual_place",
+   "rule": "llm_table",
+   "n": 45,
+   "correct": 30,
+   "acc": 0.667,
+   "ci95": [
+    0.521,
+    0.786
+   ],
+   "thin": false
+  },
+  {
+   "stratum": "usual_place",
+   "rule": "most_frequent_all",
+   "n": 45,
+   "correct": 21,
+   "acc": 0.467,
+   "ci95": [
+    0.329,
+    0.609
+   ],
+   "thin": false
+  },
+  {
+   "stratum": "usual_place",
+   "rule": "weekday_4w_or_away",
+   "n": 45,
+   "correct": 35,
+   "acc": 0.778,
+   "ci95": [
+    0.637,
+    0.875
+   ],
+   "thin": false
+  },
+  {
+   "stratum": "usual_place",
+   "rule": "weekday_most_frequent_4w",
+   "n": 45,
+   "correct": 30,
+   "acc": 0.667,
+   "ci95": [
+    0.521,
+    0.786
+   ],
+   "thin": false
+  },
+  {
+   "stratum": "usual_place",
+   "rule": "weekday_most_frequent_all",
+   "n": 45,
+   "correct": 28,
+   "acc": 0.622,
+   "ci95": [
+    0.476,
+    0.749
+   ],
+   "thin": false
+  }
+ ],
+ "by_stratum_days": [
+  {
+   "stratum": "away",
+   "days": 30,
+   "rule": "claims",
+   "n": 15,
+   "correct": 0,
+   "acc": 0.0,
+   "ci95": [
+    -0.0,
+    0.204
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "away",
+   "days": 30,
+   "rule": "last_seen",
+   "n": 15,
+   "correct": 0,
+   "acc": 0.0,
+   "ci95": [
+    -0.0,
+    0.204
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "away",
+   "days": 30,
+   "rule": "llm_flat",
+   "n": 15,
+   "correct": 0,
+   "acc": 0.0,
+   "ci95": [
+    -0.0,
+    0.204
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "away",
+   "days": 30,
+   "rule": "llm_table",
+   "n": 15,
+   "correct": 0,
+   "acc": 0.0,
+   "ci95": [
+    -0.0,
+    0.204
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "away",
+   "days": 30,
+   "rule": "most_frequent_7d",
+   "n": 15,
+   "correct": 0,
+   "acc": 0.0,
+   "ci95": [
+    -0.0,
+    0.204
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "away",
+   "days": 30,
+   "rule": "most_frequent_all",
+   "n": 15,
+   "correct": 0,
+   "acc": 0.0,
+   "ci95": [
+    -0.0,
+    0.204
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "away",
+   "days": 30,
+   "rule": "recency_vote",
+   "n": 15,
+   "correct": 0,
+   "acc": 0.0,
+   "ci95": [
+    -0.0,
+    0.204
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "away",
+   "days": 60,
+   "rule": "claims",
+   "n": 15,
+   "correct": 0,
+   "acc": 0.0,
+   "ci95": [
+    -0.0,
+    0.204
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "away",
+   "days": 60,
+   "rule": "last_seen",
+   "n": 15,
+   "correct": 0,
+   "acc": 0.0,
+   "ci95": [
+    -0.0,
+    0.204
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "away",
+   "days": 60,
+   "rule": "llm_flat",
+   "n": 15,
+   "correct": 0,
+   "acc": 0.0,
+   "ci95": [
+    -0.0,
+    0.204
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "away",
+   "days": 60,
+   "rule": "llm_table",
+   "n": 15,
+   "correct": 0,
+   "acc": 0.0,
+   "ci95": [
+    -0.0,
+    0.204
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "away",
+   "days": 60,
+   "rule": "most_frequent_7d",
+   "n": 15,
+   "correct": 0,
+   "acc": 0.0,
+   "ci95": [
+    -0.0,
+    0.204
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "away",
+   "days": 60,
+   "rule": "most_frequent_all",
+   "n": 15,
+   "correct": 0,
+   "acc": 0.0,
+   "ci95": [
+    -0.0,
+    0.204
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "away",
+   "days": 60,
+   "rule": "recency_vote",
+   "n": 15,
+   "correct": 0,
+   "acc": 0.0,
+   "ci95": [
+    -0.0,
+    0.204
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "away",
+   "days": 90,
+   "rule": "claims",
+   "n": 15,
+   "correct": 0,
+   "acc": 0.0,
+   "ci95": [
+    -0.0,
+    0.204
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "away",
+   "days": 90,
+   "rule": "last_seen",
+   "n": 15,
+   "correct": 0,
+   "acc": 0.0,
+   "ci95": [
+    -0.0,
+    0.204
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "away",
+   "days": 90,
+   "rule": "llm_flat",
+   "n": 15,
+   "correct": 0,
+   "acc": 0.0,
+   "ci95": [
+    -0.0,
+    0.204
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "away",
+   "days": 90,
+   "rule": "llm_table",
+   "n": 15,
+   "correct": 0,
+   "acc": 0.0,
+   "ci95": [
+    -0.0,
+    0.204
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "away",
+   "days": 90,
+   "rule": "most_frequent_7d",
+   "n": 15,
+   "correct": 0,
+   "acc": 0.0,
+   "ci95": [
+    -0.0,
+    0.204
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "away",
+   "days": 90,
+   "rule": "most_frequent_all",
+   "n": 15,
+   "correct": 0,
+   "acc": 0.0,
+   "ci95": [
+    -0.0,
+    0.204
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "away",
+   "days": 90,
+   "rule": "recency_vote",
+   "n": 15,
+   "correct": 0,
+   "acc": 0.0,
+   "ci95": [
+    -0.0,
+    0.204
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "desk_now",
+   "days": 30,
+   "rule": "claims",
+   "n": 5,
+   "correct": 3,
+   "acc": 0.6,
+   "ci95": [
+    0.231,
+    0.882
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "desk_now",
+   "days": 30,
+   "rule": "last_seen",
+   "n": 5,
+   "correct": 5,
+   "acc": 1.0,
+   "ci95": [
+    0.566,
+    1.0
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "desk_now",
+   "days": 30,
+   "rule": "llm_flat",
+   "n": 5,
+   "correct": 3,
+   "acc": 0.6,
+   "ci95": [
+    0.231,
+    0.882
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "desk_now",
+   "days": 30,
+   "rule": "llm_table",
+   "n": 5,
+   "correct": 4,
+   "acc": 0.8,
+   "ci95": [
+    0.376,
+    0.964
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "desk_now",
+   "days": 30,
+   "rule": "most_frequent_7d",
+   "n": 5,
+   "correct": 4,
+   "acc": 0.8,
+   "ci95": [
+    0.376,
+    0.964
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "desk_now",
+   "days": 30,
+   "rule": "most_frequent_all",
+   "n": 5,
+   "correct": 3,
+   "acc": 0.6,
+   "ci95": [
+    0.231,
+    0.882
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "desk_now",
+   "days": 30,
+   "rule": "recency_vote",
+   "n": 5,
+   "correct": 5,
+   "acc": 1.0,
+   "ci95": [
+    0.566,
+    1.0
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "desk_now",
+   "days": 60,
+   "rule": "claims",
+   "n": 5,
+   "correct": 5,
+   "acc": 1.0,
+   "ci95": [
+    0.566,
+    1.0
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "desk_now",
+   "days": 60,
+   "rule": "last_seen",
+   "n": 5,
+   "correct": 5,
+   "acc": 1.0,
+   "ci95": [
+    0.566,
+    1.0
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "desk_now",
+   "days": 60,
+   "rule": "llm_flat",
+   "n": 5,
+   "correct": 4,
+   "acc": 0.8,
+   "ci95": [
+    0.376,
+    0.964
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "desk_now",
+   "days": 60,
+   "rule": "llm_table",
+   "n": 5,
+   "correct": 5,
+   "acc": 1.0,
+   "ci95": [
+    0.566,
+    1.0
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "desk_now",
+   "days": 60,
+   "rule": "most_frequent_7d",
+   "n": 5,
+   "correct": 5,
+   "acc": 1.0,
+   "ci95": [
+    0.566,
+    1.0
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "desk_now",
+   "days": 60,
+   "rule": "most_frequent_all",
+   "n": 5,
+   "correct": 5,
+   "acc": 1.0,
+   "ci95": [
+    0.566,
+    1.0
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "desk_now",
+   "days": 60,
+   "rule": "recency_vote",
+   "n": 5,
+   "correct": 5,
+   "acc": 1.0,
+   "ci95": [
+    0.566,
+    1.0
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "desk_now",
+   "days": 90,
+   "rule": "claims",
+   "n": 5,
+   "correct": 4,
+   "acc": 0.8,
+   "ci95": [
+    0.376,
+    0.964
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "desk_now",
+   "days": 90,
+   "rule": "last_seen",
+   "n": 5,
+   "correct": 5,
+   "acc": 1.0,
+   "ci95": [
+    0.566,
+    1.0
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "desk_now",
+   "days": 90,
+   "rule": "llm_flat",
+   "n": 5,
+   "correct": 5,
+   "acc": 1.0,
+   "ci95": [
+    0.566,
+    1.0
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "desk_now",
+   "days": 90,
+   "rule": "llm_table",
+   "n": 5,
+   "correct": 4,
+   "acc": 0.8,
+   "ci95": [
+    0.376,
+    0.964
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "desk_now",
+   "days": 90,
+   "rule": "most_frequent_7d",
+   "n": 5,
+   "correct": 5,
+   "acc": 1.0,
+   "ci95": [
+    0.566,
+    1.0
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "desk_now",
+   "days": 90,
+   "rule": "most_frequent_all",
+   "n": 5,
+   "correct": 4,
+   "acc": 0.8,
+   "ci95": [
+    0.376,
+    0.964
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "desk_now",
+   "days": 90,
+   "rule": "recency_vote",
+   "n": 5,
+   "correct": 5,
+   "acc": 1.0,
+   "ci95": [
+    0.566,
+    1.0
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "fresh",
+   "days": 30,
+   "rule": "claims",
+   "n": 30,
+   "correct": 28,
+   "acc": 0.933,
+   "ci95": [
+    0.787,
+    0.982
+   ],
+   "thin": false
+  },
+  {
+   "stratum": "fresh",
+   "days": 30,
+   "rule": "last_seen",
+   "n": 30,
+   "correct": 30,
+   "acc": 1.0,
+   "ci95": [
+    0.886,
+    1.0
+   ],
+   "thin": false
+  },
+  {
+   "stratum": "fresh",
+   "days": 30,
+   "rule": "llm_flat",
+   "n": 30,
+   "correct": 24,
+   "acc": 0.8,
+   "ci95": [
+    0.627,
+    0.905
+   ],
+   "thin": false
+  },
+  {
+   "stratum": "fresh",
+   "days": 30,
+   "rule": "llm_table",
+   "n": 30,
+   "correct": 24,
+   "acc": 0.8,
+   "ci95": [
+    0.627,
+    0.905
+   ],
+   "thin": false
+  },
+  {
+   "stratum": "fresh",
+   "days": 30,
+   "rule": "most_frequent_7d",
+   "n": 30,
+   "correct": 23,
+   "acc": 0.767,
+   "ci95": [
+    0.591,
+    0.882
+   ],
+   "thin": false
+  },
+  {
+   "stratum": "fresh",
+   "days": 30,
+   "rule": "most_frequent_all",
+   "n": 30,
+   "correct": 15,
+   "acc": 0.5,
+   "ci95": [
+    0.332,
+    0.668
+   ],
+   "thin": false
+  },
+  {
+   "stratum": "fresh",
+   "days": 30,
+   "rule": "recency_vote",
+   "n": 30,
+   "correct": 28,
+   "acc": 0.933,
+   "ci95": [
+    0.787,
+    0.982
+   ],
+   "thin": false
+  },
+  {
+   "stratum": "fresh",
+   "days": 60,
+   "rule": "claims",
+   "n": 30,
+   "correct": 25,
+   "acc": 0.833,
+   "ci95": [
+    0.664,
+    0.927
+   ],
+   "thin": false
+  },
+  {
+   "stratum": "fresh",
+   "days": 60,
+   "rule": "last_seen",
+   "n": 30,
+   "correct": 28,
+   "acc": 0.933,
+   "ci95": [
+    0.787,
+    0.982
+   ],
+   "thin": false
+  },
+  {
+   "stratum": "fresh",
+   "days": 60,
+   "rule": "llm_flat",
+   "n": 30,
+   "correct": 22,
+   "acc": 0.733,
+   "ci95": [
+    0.556,
+    0.858
+   ],
+   "thin": false
+  },
+  {
+   "stratum": "fresh",
+   "days": 60,
+   "rule": "llm_table",
+   "n": 30,
+   "correct": 26,
+   "acc": 0.867,
+   "ci95": [
+    0.703,
+    0.947
+   ],
+   "thin": false
+  },
+  {
+   "stratum": "fresh",
+   "days": 60,
+   "rule": "most_frequent_7d",
+   "n": 30,
+   "correct": 21,
+   "acc": 0.7,
+   "ci95": [
+    0.521,
+    0.833
+   ],
+   "thin": false
+  },
+  {
+   "stratum": "fresh",
+   "days": 60,
+   "rule": "most_frequent_all",
+   "n": 30,
+   "correct": 19,
+   "acc": 0.633,
+   "ci95": [
+    0.455,
+    0.781
+   ],
+   "thin": false
+  },
+  {
+   "stratum": "fresh",
+   "days": 60,
+   "rule": "recency_vote",
+   "n": 30,
+   "correct": 23,
+   "acc": 0.767,
+   "ci95": [
+    0.591,
+    0.882
+   ],
+   "thin": false
+  },
+  {
+   "stratum": "fresh",
+   "days": 90,
+   "rule": "claims",
+   "n": 30,
+   "correct": 26,
+   "acc": 0.867,
+   "ci95": [
+    0.703,
+    0.947
+   ],
+   "thin": false
+  },
+  {
+   "stratum": "fresh",
+   "days": 90,
+   "rule": "last_seen",
+   "n": 30,
+   "correct": 30,
+   "acc": 1.0,
+   "ci95": [
+    0.886,
+    1.0
+   ],
+   "thin": false
+  },
+  {
+   "stratum": "fresh",
+   "days": 90,
+   "rule": "llm_flat",
+   "n": 30,
+   "correct": 24,
+   "acc": 0.8,
+   "ci95": [
+    0.627,
+    0.905
+   ],
+   "thin": false
+  },
+  {
+   "stratum": "fresh",
+   "days": 90,
+   "rule": "llm_table",
+   "n": 30,
+   "correct": 24,
+   "acc": 0.8,
+   "ci95": [
+    0.627,
+    0.905
+   ],
+   "thin": false
+  },
+  {
+   "stratum": "fresh",
+   "days": 90,
+   "rule": "most_frequent_7d",
+   "n": 30,
+   "correct": 26,
+   "acc": 0.867,
+   "ci95": [
+    0.703,
+    0.947
+   ],
+   "thin": false
+  },
+  {
+   "stratum": "fresh",
+   "days": 90,
+   "rule": "most_frequent_all",
+   "n": 30,
+   "correct": 19,
+   "acc": 0.633,
+   "ci95": [
+    0.455,
+    0.781
+   ],
+   "thin": false
+  },
+  {
+   "stratum": "fresh",
+   "days": 90,
+   "rule": "recency_vote",
+   "n": 30,
+   "correct": 24,
+   "acc": 0.8,
+   "ci95": [
+    0.627,
+    0.905
+   ],
+   "thin": false
+  },
+  {
+   "stratum": "last_in_lab",
+   "days": 30,
+   "rule": "claims",
+   "n": 5,
+   "correct": 1,
+   "acc": 0.2,
+   "ci95": [
+    0.036,
+    0.624
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "last_in_lab",
+   "days": 30,
+   "rule": "last_seen",
+   "n": 5,
+   "correct": 5,
+   "acc": 1.0,
+   "ci95": [
+    0.566,
+    1.0
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "last_in_lab",
+   "days": 30,
+   "rule": "llm_flat",
+   "n": 5,
+   "correct": 3,
+   "acc": 0.6,
+   "ci95": [
+    0.231,
+    0.882
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "last_in_lab",
+   "days": 30,
+   "rule": "llm_table",
+   "n": 5,
+   "correct": 5,
+   "acc": 1.0,
+   "ci95": [
+    0.566,
+    1.0
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "last_in_lab",
+   "days": 30,
+   "rule": "most_frequent_7d",
+   "n": 5,
+   "correct": 4,
+   "acc": 0.8,
+   "ci95": [
+    0.376,
+    0.964
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "last_in_lab",
+   "days": 30,
+   "rule": "most_frequent_all",
+   "n": 5,
+   "correct": 2,
+   "acc": 0.4,
+   "ci95": [
+    0.118,
+    0.769
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "last_in_lab",
+   "days": 30,
+   "rule": "recency_vote",
+   "n": 5,
+   "correct": 5,
+   "acc": 1.0,
+   "ci95": [
+    0.566,
+    1.0
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "last_in_lab",
+   "days": 60,
+   "rule": "claims",
+   "n": 5,
+   "correct": 0,
+   "acc": 0.0,
+   "ci95": [
+    -0.0,
+    0.434
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "last_in_lab",
+   "days": 60,
+   "rule": "last_seen",
+   "n": 5,
+   "correct": 5,
+   "acc": 1.0,
+   "ci95": [
+    0.566,
+    1.0
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "last_in_lab",
+   "days": 60,
+   "rule": "llm_flat",
+   "n": 5,
+   "correct": 4,
+   "acc": 0.8,
+   "ci95": [
+    0.376,
+    0.964
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "last_in_lab",
+   "days": 60,
+   "rule": "llm_table",
+   "n": 5,
+   "correct": 5,
+   "acc": 1.0,
+   "ci95": [
+    0.566,
+    1.0
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "last_in_lab",
+   "days": 60,
+   "rule": "most_frequent_7d",
+   "n": 5,
+   "correct": 5,
+   "acc": 1.0,
+   "ci95": [
+    0.566,
+    1.0
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "last_in_lab",
+   "days": 60,
+   "rule": "most_frequent_all",
+   "n": 5,
+   "correct": 5,
+   "acc": 1.0,
+   "ci95": [
+    0.566,
+    1.0
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "last_in_lab",
+   "days": 60,
+   "rule": "recency_vote",
+   "n": 5,
+   "correct": 5,
+   "acc": 1.0,
+   "ci95": [
+    0.566,
+    1.0
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "last_in_lab",
+   "days": 90,
+   "rule": "claims",
+   "n": 5,
+   "correct": 2,
+   "acc": 0.4,
+   "ci95": [
+    0.118,
+    0.769
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "last_in_lab",
+   "days": 90,
+   "rule": "last_seen",
+   "n": 5,
+   "correct": 5,
+   "acc": 1.0,
+   "ci95": [
+    0.566,
+    1.0
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "last_in_lab",
+   "days": 90,
+   "rule": "llm_flat",
+   "n": 5,
+   "correct": 5,
+   "acc": 1.0,
+   "ci95": [
+    0.566,
+    1.0
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "last_in_lab",
+   "days": 90,
+   "rule": "llm_table",
+   "n": 5,
+   "correct": 5,
+   "acc": 1.0,
+   "ci95": [
+    0.566,
+    1.0
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "last_in_lab",
+   "days": 90,
+   "rule": "most_frequent_7d",
+   "n": 5,
+   "correct": 5,
+   "acc": 1.0,
+   "ci95": [
+    0.566,
+    1.0
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "last_in_lab",
+   "days": 90,
+   "rule": "most_frequent_all",
+   "n": 5,
+   "correct": 4,
+   "acc": 0.8,
+   "ci95": [
+    0.376,
+    0.964
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "last_in_lab",
+   "days": 90,
+   "rule": "recency_vote",
+   "n": 5,
+   "correct": 5,
+   "acc": 1.0,
+   "ci95": [
+    0.566,
+    1.0
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "stale",
+   "days": 30,
+   "rule": "claims",
+   "n": 30,
+   "correct": 8,
+   "acc": 0.267,
+   "ci95": [
+    0.142,
+    0.444
+   ],
+   "thin": false
+  },
+  {
+   "stratum": "stale",
+   "days": 30,
+   "rule": "last_seen",
+   "n": 30,
+   "correct": 0,
+   "acc": 0.0,
+   "ci95": [
+    -0.0,
+    0.114
+   ],
+   "thin": false
+  },
+  {
+   "stratum": "stale",
+   "days": 30,
+   "rule": "llm_flat",
+   "n": 30,
+   "correct": 4,
+   "acc": 0.133,
+   "ci95": [
+    0.053,
+    0.297
+   ],
+   "thin": false
+  },
+  {
+   "stratum": "stale",
+   "days": 30,
+   "rule": "llm_table",
+   "n": 30,
+   "correct": 3,
+   "acc": 0.1,
+   "ci95": [
+    0.035,
+    0.256
+   ],
+   "thin": false
+  },
+  {
+   "stratum": "stale",
+   "days": 30,
+   "rule": "most_frequent_7d",
+   "n": 30,
+   "correct": 2,
+   "acc": 0.067,
+   "ci95": [
+    0.018,
+    0.213
+   ],
+   "thin": false
+  },
+  {
+   "stratum": "stale",
+   "days": 30,
+   "rule": "most_frequent_all",
+   "n": 30,
+   "correct": 3,
+   "acc": 0.1,
+   "ci95": [
+    0.035,
+    0.256
+   ],
+   "thin": false
+  },
+  {
+   "stratum": "stale",
+   "days": 30,
+   "rule": "recency_vote",
+   "n": 30,
+   "correct": 1,
+   "acc": 0.033,
+   "ci95": [
+    0.006,
+    0.167
+   ],
+   "thin": false
+  },
+  {
+   "stratum": "stale",
+   "days": 60,
+   "rule": "claims",
+   "n": 30,
+   "correct": 10,
+   "acc": 0.333,
+   "ci95": [
+    0.192,
+    0.512
+   ],
+   "thin": false
+  },
+  {
+   "stratum": "stale",
+   "days": 60,
+   "rule": "last_seen",
+   "n": 30,
+   "correct": 1,
+   "acc": 0.033,
+   "ci95": [
+    0.006,
+    0.167
+   ],
+   "thin": false
+  },
+  {
+   "stratum": "stale",
+   "days": 60,
+   "rule": "llm_flat",
+   "n": 30,
+   "correct": 5,
+   "acc": 0.167,
+   "ci95": [
+    0.073,
+    0.336
+   ],
+   "thin": false
+  },
+  {
+   "stratum": "stale",
+   "days": 60,
+   "rule": "llm_table",
+   "n": 30,
+   "correct": 5,
+   "acc": 0.167,
+   "ci95": [
+    0.073,
+    0.336
+   ],
+   "thin": false
+  },
+  {
+   "stratum": "stale",
+   "days": 60,
+   "rule": "most_frequent_7d",
+   "n": 30,
+   "correct": 6,
+   "acc": 0.2,
+   "ci95": [
+    0.095,
+    0.373
+   ],
+   "thin": false
+  },
+  {
+   "stratum": "stale",
+   "days": 60,
+   "rule": "most_frequent_all",
+   "n": 30,
+   "correct": 8,
+   "acc": 0.267,
+   "ci95": [
+    0.142,
+    0.444
+   ],
+   "thin": false
+  },
+  {
+   "stratum": "stale",
+   "days": 60,
+   "rule": "recency_vote",
+   "n": 30,
+   "correct": 4,
+   "acc": 0.133,
+   "ci95": [
+    0.053,
+    0.297
+   ],
+   "thin": false
+  },
+  {
+   "stratum": "stale",
+   "days": 90,
+   "rule": "claims",
+   "n": 30,
+   "correct": 12,
+   "acc": 0.4,
+   "ci95": [
+    0.246,
+    0.577
+   ],
+   "thin": false
+  },
+  {
+   "stratum": "stale",
+   "days": 90,
+   "rule": "last_seen",
+   "n": 30,
+   "correct": 0,
+   "acc": 0.0,
+   "ci95": [
+    -0.0,
+    0.114
+   ],
+   "thin": false
+  },
+  {
+   "stratum": "stale",
+   "days": 90,
+   "rule": "llm_flat",
+   "n": 30,
+   "correct": 9,
+   "acc": 0.3,
+   "ci95": [
+    0.167,
+    0.479
+   ],
+   "thin": false
+  },
+  {
+   "stratum": "stale",
+   "days": 90,
+   "rule": "llm_table",
+   "n": 30,
+   "correct": 6,
+   "acc": 0.2,
+   "ci95": [
+    0.095,
+    0.373
+   ],
+   "thin": false
+  },
+  {
+   "stratum": "stale",
+   "days": 90,
+   "rule": "most_frequent_7d",
+   "n": 30,
+   "correct": 9,
+   "acc": 0.3,
+   "ci95": [
+    0.167,
+    0.479
+   ],
+   "thin": false
+  },
+  {
+   "stratum": "stale",
+   "days": 90,
+   "rule": "most_frequent_all",
+   "n": 30,
+   "correct": 14,
+   "acc": 0.467,
+   "ci95": [
+    0.302,
+    0.639
+   ],
+   "thin": false
+  },
+  {
+   "stratum": "stale",
+   "days": 90,
+   "rule": "recency_vote",
+   "n": 30,
+   "correct": 2,
+   "acc": 0.067,
+   "ci95": [
+    0.018,
+    0.213
+   ],
+   "thin": false
+  },
+  {
+   "stratum": "usual_place",
+   "days": 30,
+   "rule": "llm_flat",
+   "n": 15,
+   "correct": 7,
+   "acc": 0.467,
+   "ci95": [
+    0.248,
+    0.699
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "usual_place",
+   "days": 30,
+   "rule": "llm_table",
+   "n": 15,
+   "correct": 11,
+   "acc": 0.733,
+   "ci95": [
+    0.48,
+    0.891
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "usual_place",
+   "days": 30,
+   "rule": "most_frequent_all",
+   "n": 15,
+   "correct": 5,
+   "acc": 0.333,
+   "ci95": [
+    0.152,
+    0.583
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "usual_place",
+   "days": 30,
+   "rule": "weekday_4w_or_away",
+   "n": 15,
+   "correct": 13,
+   "acc": 0.867,
+   "ci95": [
+    0.621,
+    0.963
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "usual_place",
+   "days": 30,
+   "rule": "weekday_most_frequent_4w",
+   "n": 15,
+   "correct": 9,
+   "acc": 0.6,
+   "ci95": [
+    0.357,
+    0.802
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "usual_place",
+   "days": 30,
+   "rule": "weekday_most_frequent_all",
+   "n": 15,
+   "correct": 9,
+   "acc": 0.6,
+   "ci95": [
+    0.357,
+    0.802
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "usual_place",
+   "days": 60,
+   "rule": "llm_flat",
+   "n": 15,
+   "correct": 10,
+   "acc": 0.667,
+   "ci95": [
+    0.417,
+    0.848
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "usual_place",
+   "days": 60,
+   "rule": "llm_table",
+   "n": 15,
+   "correct": 8,
+   "acc": 0.533,
+   "ci95": [
+    0.301,
+    0.752
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "usual_place",
+   "days": 60,
+   "rule": "most_frequent_all",
+   "n": 15,
+   "correct": 6,
+   "acc": 0.4,
+   "ci95": [
+    0.198,
+    0.643
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "usual_place",
+   "days": 60,
+   "rule": "weekday_4w_or_away",
+   "n": 15,
+   "correct": 9,
+   "acc": 0.6,
+   "ci95": [
+    0.357,
+    0.802
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "usual_place",
+   "days": 60,
+   "rule": "weekday_most_frequent_4w",
+   "n": 15,
+   "correct": 8,
+   "acc": 0.533,
+   "ci95": [
+    0.301,
+    0.752
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "usual_place",
+   "days": 60,
+   "rule": "weekday_most_frequent_all",
+   "n": 15,
+   "correct": 8,
+   "acc": 0.533,
+   "ci95": [
+    0.301,
+    0.752
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "usual_place",
+   "days": 90,
+   "rule": "llm_flat",
+   "n": 15,
+   "correct": 12,
+   "acc": 0.8,
+   "ci95": [
+    0.548,
+    0.93
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "usual_place",
+   "days": 90,
+   "rule": "llm_table",
+   "n": 15,
+   "correct": 11,
+   "acc": 0.733,
+   "ci95": [
+    0.48,
+    0.891
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "usual_place",
+   "days": 90,
+   "rule": "most_frequent_all",
+   "n": 15,
+   "correct": 10,
+   "acc": 0.667,
+   "ci95": [
+    0.417,
+    0.848
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "usual_place",
+   "days": 90,
+   "rule": "weekday_4w_or_away",
+   "n": 15,
+   "correct": 13,
+   "acc": 0.867,
+   "ci95": [
+    0.621,
+    0.963
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "usual_place",
+   "days": 90,
+   "rule": "weekday_most_frequent_4w",
+   "n": 15,
+   "correct": 13,
+   "acc": 0.867,
+   "ci95": [
+    0.621,
+    0.963
+   ],
+   "thin": true
+  },
+  {
+   "stratum": "usual_place",
+   "days": 90,
+   "rule": "weekday_most_frequent_all",
+   "n": 15,
+   "correct": 11,
+   "acc": 0.733,
+   "ci95": [
+    0.48,
+    0.891
+   ],
+   "thin": true
+  }
+ ],
+ "overall": [
+  {
+   "rule": "claims",
+   "n": 255,
+   "correct": 124,
+   "acc": 0.486,
+   "ci95": [
+    0.426,
+    0.547
+   ],
+   "thin": false
+  },
+  {
+   "rule": "last_seen",
+   "n": 255,
+   "correct": 119,
+   "acc": 0.467,
+   "ci95": [
+    0.406,
+    0.528
+   ],
+   "thin": false
+  },
+  {
+   "rule": "llm_flat",
+   "n": 300,
+   "correct": 141,
+   "acc": 0.47,
+   "ci95": [
+    0.414,
+    0.527
+   ],
+   "thin": false
+  },
+  {
+   "rule": "llm_table",
+   "n": 300,
+   "correct": 146,
+   "acc": 0.487,
+   "ci95": [
+    0.431,
+    0.543
+   ],
+   "thin": false
+  },
+  {
+   "rule": "most_frequent_7d",
+   "n": 255,
+   "correct": 115,
+   "acc": 0.451,
+   "ci95": [
+    0.391,
+    0.512
+   ],
+   "thin": false
+  },
+  {
+   "rule": "most_frequent_all",
+   "n": 300,
+   "correct": 122,
+   "acc": 0.407,
+   "ci95": [
+    0.353,
+    0.463
+   ],
+   "thin": false
+  },
+  {
+   "rule": "recency_vote",
+   "n": 255,
+   "correct": 112,
+   "acc": 0.439,
+   "ci95": [
+    0.38,
+    0.501
+   ],
+   "thin": false
+  },
+  {
+   "rule": "weekday_4w_or_away",
+   "n": 45,
+   "correct": 35,
+   "acc": 0.778,
+   "ci95": [
+    0.637,
+    0.875
+   ],
+   "thin": false
+  },
+  {
+   "rule": "weekday_most_frequent_4w",
+   "n": 45,
+   "correct": 30,
+   "acc": 0.667,
+   "ci95": [
+    0.521,
+    0.786
+   ],
+   "thin": false
+  },
+  {
+   "rule": "weekday_most_frequent_all",
+   "n": 45,
+   "correct": 28,
+   "acc": 0.622,
+   "ci95": [
+    0.476,
+    0.749
+   ],
+   "thin": false
+  }
+ ]
+}
