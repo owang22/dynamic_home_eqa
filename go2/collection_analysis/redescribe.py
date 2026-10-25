@@ -14,9 +14,10 @@ Backends (--backend):
   h100-27b  the H100's Qwen3.8-27B (172.17.45.79:8300), the same model that wrote the 27B descriptions in the live
             index. On demand: the first request starts it (about 90 s), so one goes alone before the rest; 8 at a time.
 
-Same prompt as memory.describe. The schema is DESCRIBE_SCHEMA without its maxItems/maxLength/minimum/maximum caps,
-clamped in Python after parsing: Z690 measured the caps making xgrammar about 10x slower on the 8B (one CPU core
-computing token masks while the GPU idles), with the same answers without them (2026-10-25 01:51 message).
+Same prompt as memory.describe. The schema is DESCRIBE_SCHEMA without its maxLength caps, strings clamped in Python
+after parsing: Z690 measured maxLength alone making xgrammar about 10x slower on the 8B (one CPU core computing token
+masks while the GPU idles); maxItems and minimum/maximum cost nothing and stop object-list loops (2026-10-25 01:51 and
+02:18 messages).
 """
 import argparse
 import base64
@@ -40,7 +41,7 @@ URL, MODEL, OUT, QWEN38 = None, None, None, False
 
 def uncapped(schema):
     if isinstance(schema, dict):
-        return {k: uncapped(v) for k, v in schema.items() if k not in ("maxItems", "maxLength", "minimum", "maximum")}
+        return {k: uncapped(v) for k, v in schema.items() if k != "maxLength"}
     return schema
 
 
