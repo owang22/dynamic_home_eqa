@@ -10,7 +10,7 @@ import json, sys
 try: n = json.load(sys.stdin).get("notes", {})
 except ValueError: sys.exit()
 for c, v in sorted(n.items()):
-    if c != "control-pc": print(c, v.get("t"), v.get("text", "").replace("\n", " "))'; }
+    if c != "control-pc" and not c.startswith(("vlm-bench", "loc-research")): print(c, v.get("t"), v.get("text", "").replace("\n", " "))'; }
 inbox() { git -C "$REPO" ls-tree -r --name-only "$1" -- coordination/inbox/z690 coordination/inbox/all 2>/dev/null; }
 base=$(seen)
 git -C "$REPO" fetch -q 2>/dev/null; gbase=$(inbox origin/main)

@@ -1,10 +1,21 @@
 """Printed ArUco markers (DICT_4X4_50, 18 cm black square) seen by the front camera.
 
-A background thread runs the detector on the newest full-size camera frame, up to RATE_HZ, and keeps
-the latest result: for each marker its distance along the camera axis (z), sideways offset (x, + = right),
-bearing (+ = right of straight ahead) and size in pixels. Camera model: pinhole, ~79 deg horizontal
-field of view; tape-checked at 1.2 m to within 1 cm (10-23). No lens distortion model yet, so readings
-near the image edges are less exact.
+Drop-in replacement for go2_markers.py (same class, same constructor, same detect()/snapshot() and the same
+per-marker keys: id, mark, z, x, up, bearing_deg, side_px). Changes, see ~/go2_overnight/markers/REPORT.md:
+
+  * detection: perspectiveRemoveIgnoredMarginPerCell 0.13 -> 0.30 (read only the centre of each cell; the
+    default reads cell borders smeared by blur / blooming / lens distortion and fails to decode ~3% of
+    sightings, mostly marker A) and sub-pixel corner refinement (pose only; no effect on which markers decode).
+  * false positives: a decode must be upright (dog roll is small, markers hang upright), at least
+    MIN_SIDE_PX on its shortest side and a sane quad; this removes e.g. the printer panel that decodes as D.
+  * camera model: unchanged by default (79 deg pinhole, tape-checked at 1.2 m). CAMERA_MODEL can select the
+    bag's camera_info distortion; its focal length disagrees with the tape check by ~9%, see REPORT.md.
+  * pose: IPPE_SQUARE, both solutions kept; extra keys: dist, view_deg, reproj_px, ambig (err ratio
+    best/second, 1.0 = cannot tell the two poses apart), alt (the other solution) and fix_ok + why
+    (the gating rule for using a sighting as a position fix; needs the same id in >= 2 of the last 3 frames).
+  * display: snapshot() keeps a marker for HOLD_S after its last sighting (marked held: true, seen_age_s)
+    so the console does not flicker to "no markers in view" on single-frame misses.
+  * robustness: the detector thread survives any exception (last one in latest["err"]).
 
 Markers by the lab's line-up marks: 0 = A, 1 = B, 2 = C, 3 = D; 4 and 5 are spares (Oliver, 10-23).
 """
@@ -16,61 +27,191 @@ import cv2
 import numpy as np
 
 SIZE_M = 0.18
-HFOV_DEG = 79.0
+HFOV_DEG = 79.0          # only used for image sizes whose aspect differs from the calibration
 RATE_HZ = 10.0
 KNOWN = {0: "A", 1: "B", 2: "C", 3: "D", 4: "spare 4", 5: "spare 5"}
+
+# Front camera calibration (camera_info in go2_20261023_143157 bag), 1280x720, plumb_bob.
+CAL_W, CAL_H = 1280, 720
+CAL_K = np.array([[864.39938, 0.0, 639.19798], [0.0, 863.73849, 373.28118], [0.0, 0.0, 1.0]])
+CAL_D = np.array([-0.35463, 0.102054, -0.001614, -0.001249, 0.0])
+CAMERA_MODEL = "pinhole79"   # or "calibrated" -- see REPORT.md (which range scale is right is unresolved)
+
+MIN_SIDE_PX = 15         # shortest side (full-res px) for a detection to be reported at all
+HOLD_S = 0.5             # snapshot keeps a marker this long after it was last seen (flagged held)
+# Gate for using a sighting as an absolute position fix (see REPORT.md, measured on the 10-23 drive).
+FIX_MAX_DIST_M = 3.0
+FIX_MAX_VIEW_DEG = 60.0
+FIX_MIN_SIDE_PX = 30
+FIX_MAX_REPROJ_PX = 2.0
+FIX_MAX_EDGE = 0.85      # marker centre within 85% of the half-width/height from the image centre
+FIX_HISTORY = 3          # same id in >= 2 of the last 3 processed frames, ranges within 15% of each other
+
+
+def make_detector():
+    p = cv2.aruco.DetectorParameters()
+    p.perspectiveRemoveIgnoredMarginPerCell = 0.30
+    p.cornerRefinementMethod = cv2.aruco.CORNER_REFINE_SUBPIX
+    return cv2.aruco.ArucoDetector(cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_4X4_50), p)
+
+
+def intrinsics(w, h, model=None):
+    """K, D for a frame of this size.
+    pinhole79 (default, as before): ~79 deg horizontal FOV pinhole, no distortion; tape-checked at 1.2 m.
+    calibrated: the bag's camera_info K, D (fx 864: ranges ~9% longer than pinhole79 at the image centre)."""
+    model = model or CAMERA_MODEL
+    if model != "pinhole79" and abs(w * CAL_H - h * CAL_W) <= max(w, h) // 100:
+        K = CAL_K.copy()
+        K[:2] *= w / CAL_W
+        return K, CAL_D
+    f = (w / 2) / math.tan(math.radians(HFOV_DEG / 2))
+    return np.array([[f, 0, w / 2], [0, f, h / 2], [0, 0, 1]], float), None
+
+
+def upright(c):
+    """Marker's own 'up' (bottom-edge midpoint -> top-edge midpoint) within 45 deg of image up."""
+    up = (c[0] + c[1]) / 2 - (c[3] + c[2]) / 2
+    return up[1] < 0 and abs(up[0]) < -up[1]
+
+
+def quad_ok(c):
+    s = [float(np.linalg.norm(c[k] - c[(k + 1) % 4])) for k in range(4)]
+    area = 0.5 * abs(np.cross(c[2] - c[0], c[3] - c[1]))
+    return min(s), s, area > 0.3 * min(s) * max(s) and cv2.isContourConvex(c.astype(np.float32).reshape(-1, 1, 2))
+
+
+def marker_pose(obj, c, K, D):
+    """IPPE_SQUARE on undistorted corners. Returns [(rvec, tvec, reproj_px)] best first (normally 2)."""
+    n = cv2.undistortPoints(c.reshape(-1, 1, 2).astype(np.float64), K, D)          # normalised coords
+    ok, rvs, tvs, errs = cv2.solvePnPGeneric(obj, n, np.eye(3), None, flags=cv2.SOLVEPNP_IPPE_SQUARE)
+    if not ok:
+        return []
+    out = []
+    f = (K[0, 0] + K[1, 1]) / 2
+    for rv, tv in zip(rvs, tvs):
+        if not np.all(np.isfinite(tv)) or tv[2, 0] <= 0:
+            continue
+        pr, _ = cv2.projectPoints(obj, rv, tv, np.eye(3), None)
+        e = float(np.sqrt(np.mean(np.sum((pr.reshape(-1, 2) - n.reshape(-1, 2)) ** 2, 1)))) * f
+        out.append((rv, tv, e))
+    return sorted(out, key=lambda s: s[2])
+
+
+def yaw_deg(rv):
+    """Signed turn of the marker's face about the camera's vertical axis (0 = facing the camera squarely).
+    The two IPPE solutions of a near-frontal marker usually differ mainly in this sign (the 'flip')."""
+    n = cv2.Rodrigues(rv)[0][:, 2]
+    return math.degrees(math.atan2(float(n[0]), float(-n[2])))
+
+
+def view_deg(rv, tv):
+    """Angle between the marker's normal and the line of sight (0 = seen head-on)."""
+    R, _ = cv2.Rodrigues(rv)
+    nrm = R[:, 2]
+    los = -tv.ravel() / np.linalg.norm(tv)
+    return math.degrees(math.acos(min(1.0, abs(float(nrm @ los)))))
 
 
 class Markers:
     def __init__(self, full, lock):
         self.full, self.lock = full, lock          # the console's latest full-size frame {"img", "t"}
         self.latest = {"t": 0.0, "frame_t": 0.0, "list": [], "ms": None}
-        self.det = cv2.aruco.ArucoDetector(cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_4X4_50),
-                                           cv2.aruco.DetectorParameters())
+        self.det = make_detector()
         h = SIZE_M / 2
         self.obj = np.array([[-h, h, 0], [h, h, 0], [h, -h, 0], [-h, -h, 0]], np.float32)
+        self.hist = []        # [(frame_t, {id: dist})] of the last FIX_HISTORY processed frames
+        self.seen = {}        # id -> (frame_t, item) last sighting, for the display hold
+        self.err = None
         threading.Thread(target=self._loop, daemon=True).start()
 
     def _loop(self):
         last = 0.0
         while True:
             time.sleep(1.0 / RATE_HZ)
-            with self.lock:
-                img, t = self.full["img"], self.full["t"]
-            if img is None or t == last:
-                continue
-            last = t
             try:
+                with self.lock:
+                    img, t = self.full["img"], self.full["t"]
+                if img is None or t == last:
+                    continue
+                last = t
                 self.latest = self.detect(img, t)
-            except cv2.error:
-                pass
+            except Exception as e:  # never let the thread die silently
+                self.err = f"{type(e).__name__}: {e}"
 
     def detect(self, img, frame_t):
         t0 = time.time()
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) if img.ndim == 3 else img
         h, w = gray.shape
-        f = (w / 2) / math.tan(math.radians(HFOV_DEG / 2))
-        K = np.array([[f, 0, w / 2], [0, f, h / 2], [0, 0, 1]], float)
+        K, D = intrinsics(w, h)
+        s = w / CAL_W                                  # pixel thresholds are for full-res frames
         corners, ids, _ = self.det.detectMarkers(gray)
         out = []
         for c, i in zip(corners or [], [] if ids is None else ids.ravel()):
             i = int(i)
             if i not in KNOWN:           # stray patterns sometimes decode as other ids at a distance
                 continue
-            ok, rv, tv = cv2.solvePnP(self.obj, c.reshape(4, 2), K, None, flags=cv2.SOLVEPNP_IPPE_SQUARE)
-            if not ok:
+            c = c.reshape(4, 2).astype(np.float64)
+            smin, sides, sane = quad_ok(c)
+            if smin < MIN_SIDE_PX * s or not sane or not upright(c):
                 continue
+            sols = marker_pose(self.obj, c, K, D)
+            if not sols:
+                continue
+            rv, tv, e = sols[0]
             x, y, z = (float(v) for v in tv.ravel())
+            alt = None
+            ambig = None
+            if len(sols) > 1:
+                rv2, tv2, e2 = sols[1]
+                ambig = round(e / e2, 3) if e2 > 0 else 1.0
+                alt = {"view_deg": round(view_deg(rv2, tv2), 1), "yaw_deg": round(yaw_deg(rv2), 1), "reproj_px": round(e2, 2)}
+            ctr = c.mean(0)
+            edge = max(abs(ctr[0] - w / 2) / (w / 2), abs(ctr[1] - h / 2) / (h / 2))
             out.append({"id": i, "mark": KNOWN[i], "z": round(z, 3), "x": round(x, 3), "up": round(-y, 3),
                         "bearing_deg": round(math.degrees(math.atan2(x, z)), 1),
-                        "side_px": round(float(np.hypot(*(c[0][0] - c[0][1]))))})
+                        "side_px": round(float(np.hypot(*(c[0] - c[1])))),
+                        "dist": round(math.sqrt(x * x + y * y + z * z), 3),
+                        "view_deg": round(view_deg(rv, tv), 1), "yaw_deg": round(yaw_deg(rv), 1),
+                        "reproj_px": round(e, 2), "ambig": ambig,
+                        "alt": alt, "min_side_px": round(smin / s, 1), "edge": round(float(edge), 2)})
+        self._gate(out, frame_t)
         return {"t": round(time.time(), 3), "frame_t": round(frame_t, 3), "list": out,
-                "ms": round((time.time() - t0) * 1000, 1)}
+                "ms": round((time.time() - t0) * 1000, 1), "err": self.err}
+
+    def _gate(self, out, frame_t):
+        """fix_ok/why on each item: the single-frame rules plus 2-of-3 frame consistency."""
+        self.hist = (self.hist + [(frame_t, {m["id"]: m["dist"] for m in out})])[-FIX_HISTORY:]
+        for m in out:
+            why = []
+            if m["dist"] > FIX_MAX_DIST_M:
+                why.append("far")
+            if m["view_deg"] > FIX_MAX_VIEW_DEG:
+                why.append("oblique")
+            if m["min_side_px"] < FIX_MIN_SIDE_PX:
+                why.append("small")
+            if m["reproj_px"] > FIX_MAX_REPROJ_PX:
+                why.append("reproj")
+            if m["edge"] > FIX_MAX_EDGE:
+                why.append("edge")
+            prev = [d[m["id"]] for t, d in self.hist[:-1] if m["id"] in d and frame_t - t < 1.0]
+            if not any(abs(p - m["dist"]) <= 0.15 * m["dist"] for p in prev):
+                why.append("unconfirmed")
+            m["fix_ok"], m["why"] = not why, why
+            self.seen[m["id"]] = (frame_t, m)
 
     def snapshot(self, max_age=1.0):
-        """The latest detections if they're from a recent frame, else an empty list (with the age)."""
+        """The latest detections if they're from a recent frame, else an empty list (with the age).
+        Markers missed in the newest frame but seen within HOLD_S are kept, flagged held (never fix_ok)."""
         m = dict(self.latest)
-        m["age_s"] = round(time.time() - m["frame_t"], 2) if m["frame_t"] else None
+        now = time.time()
+        m["age_s"] = round(now - m["frame_t"], 2) if m["frame_t"] else None
         if m["age_s"] is None or m["age_s"] > max_age:
             m["list"] = []
+            return m
+        lst = [dict(k, held=False, seen_age_s=m["age_s"]) for k in m["list"]]
+        have = {k["id"] for k in lst}
+        for i, (t, k) in list(self.seen.items()):
+            if i not in have and now - t <= HOLD_S + m["age_s"] and t >= m["frame_t"] - HOLD_S:
+                lst.append(dict(k, held=True, fix_ok=False, seen_age_s=round(now - t, 2)))
+        m["list"] = sorted(lst, key=lambda k: k["id"])
         return m
