@@ -7,7 +7,8 @@ edits this folder and pushes it. Others propose changes with a message in `coord
 The code that runs the dog from the control PC: the console (port 8080), its agent API, the map and
 localization, the route planner, gait, markers, labelling and the camera-frame trail.
 
-Route-planning notes, failure summaries and offline studies are in `route_planning/` (the planner code itself
+Localization notes and studies are in `localization/`. Route-planning notes, failure summaries and offline
+studies are in `route_planning/` (the planner code itself
 stays flat here, see below). High-level decisions (where to go and why) are cheetah's `../planning/`.
 
 ## Where it runs

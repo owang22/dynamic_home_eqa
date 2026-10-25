@@ -25,3 +25,9 @@ offline studies.
 
 Related on cheetah: `go2/console/nav_proto.py` is cheetah's offline prototype of a graded-clearance planner and
 stand selection (proposed in board #18), not the control PC's code.
+
+## Studies
+
+| folder | what |
+|---|---|
+| `2026-10-25_go_to_failures/` | The 90 logged `no_route`/`blocked` records (46 episodes). Half were fixed by the 10-23 19:00 planner change; the 45 since then have these causes: lost localization 15, start pocket at `door_outside` (no squeeze within 1.5 m of the dog) 11, temporary stall blocks closing an open aisle 11, live cells + blocks 5, live cells alone 3. A prototype with fallback tiers fixes 39/45 and changes none of 240 normal routes. Also found: `OVERHEAD_MAX == BUMP_H[1]` (0.6) in `go2_agent.py`, so desk tops in live lidar never block a route. Proposed diffs, **not deployed**. |

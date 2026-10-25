@@ -1,0 +1,94 @@
+--- /home/nesl/oliver/go2_agent.py	2026-10-25 01:22:28.000112368 -0700
++++ proto/go2_agent.py	2026-10-25 01:54:48.029576296 -0700
+@@ -51,6 +51,7 @@
+ STEER_GAIN, STEER_MAX = 1.5, 0.8           # go_to: turn rate (rad/s) per rad of heading error, and its cap
+ TURN_IN_PLACE = math.radians(45)           # go_to: heading error above this: stop and turn in place
+ MAX_REPLANS = 3                            # go_to: plan around new obstacles this many times
++TRAIL_S, TRAIL_JUMP_M = 300.0, 0.3           # go_to: remember where the dog walked this long; forget it after a line-up jump
+ SQUEEZE_STOP_M = 1.0                       # go_to on a squeeze route: stop this far before the narrow part, look, re-plan
+ MAPS_DIR = "/maps"
+ MAP_NAME = os.environ.get("MAP_NAME", "lab")
+@@ -100,6 +101,8 @@
+         self.live_hist = deque(maxlen=LIVE_KEEP)   # recent lidar clouds in map frame, for the planner
+         self._live_cloud = None
+         self._live_lock = threading.Lock()
++        self.trail = deque()            # (t, x, y) map poses while walking, for the planner's set_trail
++        self._trail_T = None
+ 
+     # ---------- ownership ----------
+     def owner_now(self):
+@@ -168,7 +171,7 @@
+             return "not_standing: the dog is lying down; call posture {\"pose\": \"stand\"} first"
+         return None
+ 
+-    def obstacle(self, direction):
++    def obstacle(self, direction, force=False):
+         """Nearest obstacle distance in a box ahead (direction=+1) or behind (-1), from the lidar grid.
+         Ahead: None while the dog's own obstacle avoidance is on (it slows and stops the dog itself, and
+         a stall then counts as blocked). Behind: always checked, also against the saved map, because
+@@ -177,7 +180,7 @@
+             hit = self._map_behind()
+             if hit is not None:
+                 return hit
+-        elif self.node.avoid:
++        elif self.node.avoid and not force:
+             return None
+         odom, _, _, cloud, _, ages = self.snap()
+         if not cloud or not cloud["obs"] or ages.get("cloud", 99) > 3.0 or cloud["frame"] == "base_link":
+@@ -593,6 +596,20 @@
+         free_now = self.live_hist[-1][1]
+         mp = self.mapper.to_map(odom["pos"][0], odom["pos"][1])
+         self.planner.set_live(steady(0), free_now, mp[0], mp[1], LIVE_R, over=steady(2))
++        # where the dog walked (map frame): squeezing out the way it came in is allowed near the dog.
++        # A line-up jump (T moved the dog > 0.3 m) makes the old trail meaningless: start over.
++        T, now = self.mapper.T, time.time()
++        if self._trail_T is not None:
++            o = odom["pos"]
++            c0, s0, c1, s1 = math.cos(self._trail_T[2]), math.sin(self._trail_T[2]), math.cos(T[2]), math.sin(T[2])
++            a = (self._trail_T[0] + c0 * o[0] - s0 * o[1], self._trail_T[1] + s0 * o[0] + c0 * o[1])
++            if math.hypot(a[0] - mp[0], a[1] - mp[1]) > TRAIL_JUMP_M:
++                self.trail.clear()
++        self._trail_T = tuple(T)
++        self.trail.append((now, mp[0], mp[1]))
++        while self.trail and now - self.trail[0][0] > TRAIL_S:
++            self.trail.popleft()
++        self.planner.set_trail([(x, y) for _, x, y in self.trail])
+ 
+     def _goal(self, args):
+         """(x, y, yaw or None, place or None) for a go_to: a saved place, or x/y[/yaw_deg] on the map."""
+@@ -626,6 +643,10 @@
+             plan = self.planner.plan(mp["x"], mp["y"], gx, gy)
+             if "error" in plan:
+                 why = {"why": plan["why"]} if plan.get("why") else {}
++                if self.mapper.lost_since is not None:
++                    # 10-24 16:23-16:34: 13 failed plans on a pose 3 m / 55 deg off. Re-align before blaming the map.
++                    return {"result": "no_route", "reason": "localization lost: relocalize first (" + plan["error"] + ")",
++                            "loc_lost": True, "moved_m": round(moved, 2), "replans": replans, **why}
+                 if replans:
+                     return {"result": "blocked", "moved_m": round(moved, 2), "replans": replans,
+                             "reason": "something not on the map blocks the way, and there is no other route", **why}
+@@ -647,6 +668,15 @@
+                 continue
+             if r["result"] == "blocked" and r.get("at") and replans < MAX_REPLANS:
+                 replans += 1
++                ob = self.obstacle(1, force=True) if r.get("stall") else None
++                if r.get("stall") and ob is None:
++                    # a stall with nothing in the front box (a dragging foot, a slip): don't wall the aisle off
++                    # (10-23/24: 11 failed plans were stall marks closing an open aisle); just try again
++                    self._settle(0.5)
++                    continue
++                if ob is not None:
++                    mp2 = self.map_pose_now()
++                    r["at"] = [mp2["x"] + math.cos(mp2["yaw"]) * (ob + 0.1), mp2["y"] + math.sin(mp2["yaw"]) * (ob + 0.1)]
+                 self.planner.block(*r["at"], r=0.15)
+                 self._settle(0.5)
+                 continue
+@@ -720,7 +750,7 @@
+                         hist.clear()
+                         prev = self.map_pose_now()
+                         continue
+-                    return {"result": "blocked", "side": "front", "moved_m": moved,
++                    return {"result": "blocked", "side": "front", "moved_m": moved, "stall": True,
+                             "reason": "not making progress (something is in the way, or avoidance stopped it)",
+                             "at": [mp["x"] + math.cos(mp["yaw"]) * 0.5, mp["y"] + math.sin(mp["yaw"]) * 0.5]}
+                 v = MOVE_SPEED if not last else max(MIN_SPEED, min(MOVE_SPEED, dist * 1.2))

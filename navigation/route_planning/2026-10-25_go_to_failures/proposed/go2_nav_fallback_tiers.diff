@@ -1,0 +1,176 @@
+--- orig/go2_nav.py	2026-10-25 01:37:54.767399560 -0700
++++ proto/go2_nav.py	2026-10-25 01:50:25.168665289 -0700
+@@ -40,6 +40,18 @@
+ LIVE_NEW_R = 1.2           # live obstacles that aren't on the saved map count only this close to the dog
+ MID_BLOCKS = False         # use the map's desk/table-top layer as obstacles (see _grid)
+ SPECK_CELLS = 2            # obstacle specks this small (5 cm map cells, nothing touching) are lidar smear, not furniture
++# Fallbacks when nothing fits (offline study 10-25, route_planning/REPORT.md): live obstacles that are not on the saved
++# map, and temporary blocks, may not cut the dog off by themselves. Each tier: (name, keep live-new obstacles within
++# this many m of the dog, keep temporary blocks (True, False, or "thin": treat them like live-new obstacles),
++# clearance bonus for live-new obstacles: the route may pass this much
++# closer to them than to mapped ones, never through them). The first tier is the normal plan. A route from a later
++# tier is marked "fallback": the dog's own obstacle avoidance and go_to's stall/replan handle what is really there.
++LIVE_THIN_BONUS = 0.16     # ROBOT_R - ROBOT_R_SQUEEZE: pass unconfirmed live obstacles at squeeze distance
++FALLBACK_TIERS = [("live", 99.0, True, 0.0), ("thin_live", 99.0, True, LIVE_THIN_BONUS),
++                  ("thin_live_noblocks", 99.0, False, LIVE_THIN_BONUS)]
++TRAIL_R = 0.20             # squeeze near the dog is allowed on cells this close to where the dog walked recently
++                           # (set_trail): it got in that way, so it can get out (10-24: stuck in the door_outside pocket)
++SNAP_REACHABLE = False     # when the goal is cut off, end at the reachable cell nearest the goal (within GOAL_SNAP_M)
+ SQ2 = math.sqrt(2)
+ 
+ 
+@@ -55,6 +67,8 @@
+         self.last_fail = None      # why the last failed plan failed (see _why_failed)
+         self.live_over = []        # overhead cells (desk/table tops) from the live lidar
+         self.fail_log = None       # jsonl file for failed plans, set by the agent
++        self.trail = []            # recent map xy where the dog walked (set_trail), for squeezing out of a pocket
++        self.tier = 0
+ 
+     # ---------- grid ----------
+     def _grid(self):
+@@ -124,21 +138,48 @@
+             # desk and table tops block wherever the lidar sees them nearby (don't walk under desks)
+             rr, cc, _ = cells(self.live_over, rad)
+             occ[rr, cc], known[rr, cc] = True, True
++            base = saved & occ          # saved obstacles the live view did not clear
++            new_m = occ & ~saved        # live obstacles that are not on the saved map
+             near = np.hypot(cx - rx, cy - ry) <= rad
+             self.live_view = {"t": lt,
+                               "new": np.c_[cx[occ & ~saved & near], cy[occ & ~saved & near]].round(2).tolist(),
+                               "cleared": np.c_[cx[saved & ~occ & near], cy[saved & ~occ & near]].round(2).tolist()}
++        else:
++            base, new_m = occ.copy(), np.zeros_like(occ)
++        blk = np.zeros_like(occ)
+         for _, bx, by, br in self.blocks:
+-            occ |= np.hypot(cx - bx, cy - by) < br
++            blk |= np.hypot(cx - bx, cy - by) < br
++        foot = np.zeros_like(occ)
++        new_d = np.full(occ.shape, 99.0)
+         if self.live is not None:
+             # the dog is standing here, so nothing else is
+             foot = np.hypot(cx - self.live[2], cy - self.live[3]) <= FOOTPRINT_R
+-            occ[foot], known[foot] = False, True
+-        blocked = occ | ~known
++            known[foot] = True
++            new_d = np.hypot(cx - self.live[2], cy - self.live[3])
++        self._parts = (base, new_m, new_d, blk, foot)
++        self.known = known
++        self.key = key
++        self._set_tier(0)
++
++    def _set_tier(self, t):
++        """Planning grid for fallback tier t (see FALLBACK_TIERS); tier 0 is the normal one."""
++        base, new_m, new_d, blk, foot = self._parts
++        _, new_r, use_blocks, bonus = FALLBACK_TIERS[t]
++        new_m = new_m & (new_d <= new_r) & ~foot
++        if use_blocks == "thin":        # temporary blocks count like unconfirmed live obstacles
++            new_m = new_m | (blk & ~foot)
++        occ = (base | blk) if use_blocks is True else base.copy()
++        occ &= ~foot
++        if not bonus:
++            occ |= new_m
++        blocked = occ | ~self.known
+         # distance (m) from each cell to the nearest blocked cell
+         self.dist = cv2.distanceTransform((~blocked).astype(np.uint8), cv2.DIST_L2, 5) * CELL
+-        self.occ, self.known = occ, known
+-        self.key = key
++        if bonus and new_m.any():
++            dn = cv2.distanceTransform((~new_m).astype(np.uint8), cv2.DIST_L2, 5) * CELL
++            self.dist = np.minimum(self.dist, np.where(new_m, 0.0, dn + bonus))
++            occ = occ | new_m
++        self.occ, self.tier = occ, t
+ 
+     def _why_failed(self, sx, sy, gx, gy, error):
+         """Diagnose a failed plan (lock held): would the saved map alone have had a route, and which
+@@ -262,6 +303,11 @@
+                 return round(px, 2), round(py, 2)
+         return None
+ 
++    def set_trail(self, pts):
++        """Where the dog walked recently (map xy, e.g. its map poses over the last few minutes)."""
++        with self.lock:
++            self.trail = [tuple(p) for p in pts]
++
+     def block(self, x, y, r=0.25):
+         """Treat a spot as an obstacle for a while (something the dog ran into that isn't on the map)."""
+         with self.lock:
+@@ -274,19 +320,37 @@
+             self._grid()
+             if self.occ is None:
+                 return {"error": "no map"}
+-            for rr in (ROBOT_R, ROBOT_R_TIGHT, ROBOT_R_SQUEEZE):
+-                out = self._plan(sx, sy, gx, gy, rr)
++            first = None
++            for t in range(len(FALLBACK_TIERS) if self.live is not None or self.blocks else 1):
++                if t:
++                    self._set_tier(t)
++                for rr in (ROBOT_R, ROBOT_R_TIGHT, ROBOT_R_SQUEEZE):
++                    out = self._plan(sx, sy, gx, gy, rr)
++                    if "path" in out:
++                        out["tight"] = rr < ROBOT_R
++                        if rr == ROBOT_R_SQUEEZE:
++                            self._mark_squeeze(out, sx, sy)
++                        break
++                first = first or out
+                 if "path" in out:
+-                    out["tight"] = rr < ROBOT_R
+-                    if rr == ROBOT_R_SQUEEZE:
+-                        self._mark_squeeze(out, sx, sy)
++                    if t:
++                        out["fallback"] = FALLBACK_TIERS[t][0]
+                     break
++            if self.tier:
++                self._set_tier(0)
++            if "path" not in out and SNAP_REACHABLE:
++                # still nothing: drive to the reachable spot nearest the goal (the live view there may open it up)
++                out = self._plan(sx, sy, gx, gy, ROBOT_R_TIGHT, snap=True)
++                if "path" in out:
++                    out["tight"], out["goal_cut_off"] = True, True
++            if "path" not in out:
++                out = first
+             if "path" not in out and self.live is not None:
+                 out["why"] = self._why_failed(sx, sy, gx, gy, out.get("error"))
+             self.last = dict(out, t=time.time(), start=[sx, sy], want=[gx, gy])
+             return out
+ 
+-    def _plan(self, sx, sy, gx, gy, rr):
++    def _plan(self, sx, sy, gx, gy, rr, snap=False):
+         g = self._nearest_free(gx, gy, GOAL_SNAP_M, rr)
+         if g is None:
+             return {"error": f"no open floor within {GOAL_SNAP_M} m of the goal"}
+@@ -308,7 +372,17 @@
+         free = self.dist >= rr
+         if rr < ROBOT_R_TIGHT:      # squeeze: only away from the dog, where the map is all we know
+             yy, xx = np.mgrid[0:free.shape[0], 0:free.shape[1]]
+-            free &= (self.dist >= ROBOT_R_TIGHT) | (np.hypot(yy - sr, xx - sc) * CELL > SQUEEZE_NEAR_M)
++            ok = (self.dist >= ROBOT_R_TIGHT) | (np.hypot(yy - sr, xx - sc) * CELL > SQUEEZE_NEAR_M)
++            if self.trail:      # ... or where the dog has just walked
++                tr = np.zeros_like(ok)
++                for tx, ty in self.trail:
++                    r_, c_ = self.cell(tx, ty)
++                    if self.inside(r_, c_):
++                        tr[r_, c_] = True
++                k = 2 * int(TRAIL_R / CELL) + 1
++                tr = cv2.dilate(tr.astype(np.uint8), cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (k, k))).astype(bool)
++                ok |= tr
++            free &= ok
+         # the dog may be standing close to something: let it leave through any cell it can reach
+         # within half a metre, even if that cell is tighter than rr
+         start_ok = self.dist >= min(rr, 0.12)
+@@ -340,6 +414,16 @@
+                     best[nr, nc] = nd
+                     prev[nr, nc] = r * W + c
+                     heapq.heappush(heap, (nd + math.hypot(gr - nr, gc - nc), nd, nr, nc))
++        if not found and snap:
++            # the goal is cut off: end at the reachable cell nearest to it, if one is within GOAL_SNAP_M
++            reach = np.isfinite(best) & free
++            gr0, gc0 = self.cell(gx, gy)
++            yy, xx = np.nonzero(reach)
++            if len(yy):
++                dd = np.hypot(yy - gr0, xx - gc0) * CELL
++                k = int(np.argmin(dd))
++                if dd[k] <= GOAL_SNAP_M:
++                    gr, gc, found = int(yy[k]), int(xx[k]), True
+         if not found:
+             return {"error": "no route: the goal is not connected to where the robot is on the map"}
+         cells = [(gr, gc)]

@@ -1,0 +1,117 @@
+--- go2_mapper_live_0157.py	2026-10-25 01:57:50.499769908 -0700
++++ go2_mapper_fresh_hold.py	2026-10-25 02:01:43.899698253 -0700
+@@ -44,6 +44,21 @@
+ TRACK_MIN_GAIN = 0.03      # best fit must beat "no correction" by this much
+ TRACK_GAIN = 0.6           # apply this fraction of each correction (smooths noise)
+ TRACK_MAX_PTS = 700
++# The dog's /point_cloud2 is its own persistent voxel map: a view is mostly voxels placed tens of seconds to
++# minutes ago, each with the (drifting) heading the dog had then. The drift tracker therefore matches only
++# voxels that first appeared within TRACK_FRESH_S (replay of the 10-23 drive: holds 0.07 m median at
++# +6 deg/min extra gyro drift where all voxels end 1.9 m off). Falls back to all voxels when fewer than
++# TRACK_FRESH_MIN fresh obstacle points. TRACK_FRESH_S = 0 turns it off.
++TRACK_FRESH_S = 20.0
++TRACK_FRESH_MIN = 200
++VOXEL_KEEP_S = 120.0       # forget a voxel's birth time after it has been out of view this long
++# Heading hold: the dog's odom yaw drifts with an uncorrected gyro bias (pose logs 10-23..25: median +1.2 deg/min
++# while standing, -4..+6 per period). While the dog stands still and isn't turning, any odom yaw change is that
++# drift and is cancelled in T; while it walks, the bias measured in the last still period is cancelled.
++HOLD = True
++HOLD_STILL_S, HOLD_STILL_M, HOLD_TURN_DEG = 2.0, 0.01, 0.5   # still: moved < 1 cm and turned < 0.5 deg in 2 s
++HOLD_BIAS_MIN_S = 5.0      # a still period this long gives a bias estimate
++HOLD_BIAS_MAX = 10.0       # deg/min: larger "bias" is a slow real turn, not drift; ignored
+ MISMATCH_KNOWN = 0.6       # a view whose points mostly fall on mapped area (this fraction)...
+ MISMATCH_FIT = 0.25        # ...but sit this poorly on its walls even after correcting is off: don't map it
+ LOST_FIT = 0.65            # "lost": the drift tracker's fit stays under this...
+@@ -92,6 +107,8 @@
+         self._next = ("unknown", {})        # (kind, extra) set where T is changed
+         self._low = None                    # [since, last robot xy, metres walked] while the track fit is low
+         self.lost_since = None              # time the dog was judged lost (see LOST_*), else None
++        self._vox = (np.empty(0, np.int64), np.empty(0), np.empty(0))   # sorted voxel keys, birth, last seen
++        self._hold = {"hist": deque(), "prev": None, "since": None, "bias": 0.0}
+         if self.load_unsaved():
+             self.status = "restored the unsaved map from before the console restarted; lining up with it"
+         elif self.load():
+@@ -154,8 +171,45 @@
+                 "lost": self.lost_since is not None, "lost_since": self.lost_since,
+                 "track_fit": (self.track_info or {}).get("fit")}
+ 
++    def _hold_heading(self, odom):
++        """Cancel gyro drift in T (see HOLD): rotate T about the dog so its map position stays put."""
++        hd = self._hold
++        t, x, y, yaw = time.monotonic(), odom["pos"][0], odom["pos"][1], odom["yaw"]
++        prev, hd["prev"] = hd["prev"], (t, x, y, yaw)
++        hist = hd["hist"]
++        hist.append((t, x, y, yaw))
++        while hist and t - hist[0][0] > HOLD_STILL_S:
++            hist.popleft()
++        if prev is None or self.T is None or self.mapping or t - prev[0] > 1.0:
++            hd["since"] = None
++            return
++        h0 = hist[0]
++        still = (t - h0[0] >= 0.8 * HOLD_STILL_S and math.hypot(x - h0[1], y - h0[2]) < HOLD_STILL_M
++                 and abs(wrap(yaw - h0[3])) < math.radians(HOLD_TURN_DEG))
++        if still:
++            a = -wrap(yaw - prev[3])
++            if hd["since"] is None:
++                hd["since"] = (t, yaw)
++            elif t - hd["since"][0] >= HOLD_BIAS_MIN_S:
++                b = wrap(yaw - hd["since"][1]) / (t - hd["since"][0])
++                if abs(math.degrees(b) * 60) <= HOLD_BIAS_MAX:
++                    hd["bias"] = b
++        else:
++            hd["since"] = None
++            a = -hd["bias"] * (t - prev[0])
++        if a == 0.0:
++            return
++        tx, ty, th = self.T
++        c, s = math.cos(th), math.sin(th)
++        mx, my = tx + c * x - s * y, ty + s * x + c * y          # the dog on the map: stays put
++        th2 = wrap(th + a)
++        c2, s2 = math.cos(th2), math.sin(th2)
++        self._set_T((mx - (c2 * x - s2 * y), my - (s2 * x + c2 * y), th2), "drift_correction", hold=True)
++
+     def pose(self, odom):
+         if odom is not None:
++            if HOLD:
++                self._hold_heading(odom)
+             self._note_T(odom)
+         if self.T is None or odom is None:
+             return None
+@@ -179,7 +233,7 @@
+         self.recent = (self.recent + [obs[::2].copy()])[-4:]
+         ok = True
+         if self.T is not None and robot is not None and self.tracking and not self._aligning:
+-            ok = self.track(obs, robot)
++            ok = self.track(self._fresh(pts[(h > MIN_H) & (h < MAX_H)], obs), robot)
+         if not self.mapping or self.T is None:
+             return
+         if not ok:
+@@ -481,6 +535,28 @@
+         self.field = (np.exp(-d * d / (2 * TRACK_SIGMA ** 2)).astype(np.float32), r0, c0, key)
+         return self.field
+ 
++    def _fresh(self, pts3, obs):
++        """obs (pts3[:, :2]) limited to voxels that first appeared within TRACK_FRESH_S, or all of obs when
++        too few are fresh. Keeps first-seen times per 5 cm voxel of the dog's cloud (pts3: odom-frame xyz)."""
++        if TRACK_FRESH_S <= 0 or len(pts3) == 0:
++            return obs
++        now = time.monotonic()
++        k = np.floor(pts3 / RES).astype(np.int64) + 2 ** 20
++        key = (k[:, 0] << 42) | (k[:, 1] << 21) | k[:, 2]
++        uk, inv = np.unique(key, return_inverse=True)
++        keys, born, seen = self._vox
++        i = np.minimum(np.searchsorted(keys, uk), max(len(keys) - 1, 0))
++        known = (keys[i] == uk) if len(keys) else np.zeros(len(uk), bool)
++        b = np.where(known, born[i] if len(keys) else now, now)
++        old = np.ones(len(keys), bool)
++        old[i[known]] = False
++        old &= now - seen < VOXEL_KEEP_S
++        keys, born, seen = np.r_[keys[old], uk], np.r_[born[old], b], np.r_[seen[old], np.full(len(uk), now)]
++        o = np.argsort(keys, kind="stable")
++        self._vox = (keys[o], born[o], seen[o])
++        fresh = now - b[inv] <= TRACK_FRESH_S
++        return obs[fresh] if fresh.sum() >= TRACK_FRESH_MIN else obs
++
+     def track(self, obs, robot):
+         """Nudge T so this lidar view's obstacles sit on the map's walls (odometry drifts, the walls don't).
+         Returns False if the view clearly doesn't match the map where it lands (so it shouldn't be mapped)."""
