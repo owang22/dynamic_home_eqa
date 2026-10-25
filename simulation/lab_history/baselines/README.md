@@ -108,3 +108,25 @@ usual_place (weekday, 4 weeks, or away): 0.81 before, 0.77 in the first week aft
   fallback, the usual place, is the old one.
 - To measure shifts directly, questions should target the shifted people and objects. This would be a generator
   option, not done yet.
+
+## Questions about the shifted people and objects only: `runs_shift/`
+
+`generate.py --shift-targeted --questions 150` asks only about the person and two objects each shift changes, a
+third of the questions before the first shift, a third in the week after a shift, and a third later. Same 9
+histories as `../runs/`. `rules.py --runs runs_shift` -> `rules_results_shift.json` (1,350 questions);
+`llm.py --runs runs_shift --per-length 50` -> `llm_results_shift.json` (150 questions).
+
+| rules, shifted entities only (n per phase ≈ 80-290) | before first shift | week after a shift | later |
+|---|---|---|---|
+| usual_place: weekday, 4 weeks, or away | 0.84 | **0.37** | 0.78 |
+| desk_now: most frequent desk | 1.00 | **0.40** | 0.48 |
+| desk_now: last seen | 1.00 | 0.85 | 1.00 |
+| where_now: last seen | 0.65 | 0.69 | 0.72 |
+| where_now: most frequent | 0.50 | **0.26** | 0.33 |
+
+**What this says:**
+- **Here the shifts show.** Rules built on counts (most frequent, weekday habits) collapse in the week after a shift
+  and recover slowly; most-frequent desk never does, since old sightings keep outvoting new ones. Last seen is
+  hardly affected.
+- **The 35B on 150 of these questions:** most phase x kind cells have n < 30, so read only the pooled numbers. It
+  stays below last seen here too. Per-phase numbers are in `llm_results_shift.json` (`by_kind_phase`, marked thin).

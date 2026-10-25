@@ -48,9 +48,15 @@ def stratum(q):
     return ("where_now", "stale" if q["stale"] else "fresh")
 
 
-def sample(per_length, rng):
-    """About per_length questions per history length, pooled over seeds, in the STRATA proportions."""
+def sample(per_length, rng, runs=RUNS):
+    """About per_length questions per history length, pooled over seeds, in the STRATA proportions
+    (for runs other than runs/: drawn at random, which keeps the phase balance of the shift-targeted runs)."""
     out = []
+    if runs != RUNS:
+        for days in (30, 60, 90):
+            pool = [(d, q) for d in sorted(runs.glob(f"d{days}_s*")) for q in load(d / "questions.jsonl")]
+            out += rng.sample(pool, min(per_length, len(pool)))
+        return out
     scale = per_length / sum(n for *_, n in STRATA)
     for days in (30, 60, 90):
         pool = defaultdict(list)
@@ -140,8 +146,11 @@ def main():
     ap.add_argument("--per-length", type=int, default=100)
     ap.add_argument("--workers", type=int, default=3)
     ap.add_argument("--seed", type=int, default=0)
+    ap.add_argument("--runs", default="runs", help="folder under simulation/lab_history with the runs")
     a = ap.parse_args()
-    items = sample(a.per_length, random.Random(a.seed))
+    runs = RUNS.parent / a.runs
+    tag = "" if a.runs == "runs" else "_" + a.runs.removeprefix("runs_")
+    items = sample(a.per_length, random.Random(a.seed), runs)
     hist = {}
     for d, _ in items:
         if d not in hist:
@@ -170,22 +179,23 @@ def main():
         d, q = qmap[(r["run"], r["q"])]
         kind, sub = stratum(q)
         rows.append({"run": r["run"], "days": int(r["run"][1:].split("_")[0]), "kind": kind, "stratum": sub or kind,
-                     "rule": f"llm_{r['mode']}", "answer": r["answer"], "gold": gold(q),
+                     "phase": q.get("phase"), "rule": f"llm_{r['mode']}", "answer": r["answer"], "gold": gold(q),
                      "correct": r["answer"] == gold(q)})
     for d, q in items:                 # the rules on the same sample
         kind, sub = stratum(q)
         for rule, ans in answer_rules(hist[d][0], q).items():
             rows.append({"run": d.name, "days": int(d.name[1:].split("_")[0]), "kind": kind, "stratum": sub or kind,
-                         "rule": rule, "answer": ans, "gold": gold(q), "correct": ans == gold(q)})
+                         "phase": q.get("phase"), "rule": rule, "answer": ans, "gold": gold(q), "correct": ans == gold(q)})
     res = {"about": __doc__.strip().split("\n\n")[0], "model": MODEL, "n_questions": len(items),
            "token_budget": TOKEN_BUDGET,
            "mean_prompt_tokens": {m: round(sum(r["prompt_tokens"] for r in answers if r["mode"] == m) /
                                            max(1, sum(r["mode"] == m for r in answers))) for m in ("flat", "table")},
            "by_stratum": table(rows, ["stratum", "rule"]),
            "by_stratum_days": table(rows, ["stratum", "days", "rule"]),
+           "by_kind_phase": table(rows, ["kind", "phase", "rule"]),
            "overall": table(rows, ["rule"])}
-    (HERE / "llm_results.json").write_text(json.dumps(res, indent=1))
-    with open(HERE / "llm_answers.jsonl", "w") as f:
+    (HERE / f"llm_results{tag}.json").write_text(json.dumps(res, indent=1))
+    with open(HERE / f"llm_answers{tag}.jsonl", "w") as f:
         f.writelines(json.dumps(r) + "\n" for r in answers)
     for r in res["by_stratum"]:
         if r["rule"].startswith("llm") or r["rule"] in ("last_seen", "claims", "weekday_4w_or_away", "recency_vote"):

@@ -17,6 +17,7 @@ Run from the repo root. Standard library only. 60 days take under a second.
 | `check.py` | checks one output against its world: truth covers every minute, event texts match the truth, routines hold |
 | `runs/d{30,60,90}_s{0,1,2}/` | ready-made runs: 30, 60 and 90 days, seeds 0-2, default settings, 300 questions each (7.8 MB in all) |
 | `runs_preshift/` | the same 9 histories, questions from day 3 on (`--questions-from 3`), so about 30% fall before the first shift |
+| `runs_shift/` | the same 9 histories, 150 questions each about the shifted people and objects only, balanced before / week after / later (`--shift-targeted`) |
 
 **Output files:**
 - `events.jsonl`: one per place the dog looked at, in the event format of `go2/memory_lab/data.py`: `id, t,

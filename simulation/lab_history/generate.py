@@ -17,7 +17,7 @@ import dataclasses
 import json
 import math
 import random
-from collections import Counter
+from collections import Counter, defaultdict
 from pathlib import Path
 
 from .world import REAL_PLACES, Config, World, WEEKDAYS
@@ -134,8 +134,10 @@ def phase(world: World, t):
     return "0-7d_after_shift" if min(since) < 7 * 86400 else "7d+_after_shift"
 
 
-def questions(world: World, events, intervals, n, rng: random.Random, start_day=None):
-    """Questions at random lab-hour times from start_day on (default: the last two thirds of the run)."""
+def questions(world: World, events, intervals, n, rng: random.Random, start_day=None, shift_targeted=False):
+    """Questions at random lab-hour times from start_day on (default: the last two thirds of the run).
+    shift_targeted: only about the people and objects a shift changed, a third each before the first shift, in
+    the week after a shift, and later (start_day is then ignored; questions start on day 3)."""
     sightings = {}                # object name -> [(t, place)] of correct-name sightings (misnamed ones don't count)
     for ev, tr in events:
         for name in tr["objects"]:
@@ -149,17 +151,25 @@ def questions(world: World, events, intervals, n, rng: random.Random, start_day=
         s = [x for x in sightings.get(name, []) if x[0] <= t]
         return {"t": s[-1][0], "place": s[-1][1]} if s else None
 
-    first = world.cfg.days // 3 if start_day is None else start_day
+    first = 3 if shift_targeted else world.cfg.days // 3 if start_day is None else start_day
     workdays = [d for d in range(first, world.cfg.days) if world.is_workday(d)]
+    shifted = {s["who"] for s in world.shift_log}
+    objects = [o for o in world.objects if o.name in shifted] if shift_targeted else world.objects
+    people = [p for p in world.people if p.name in shifted] if shift_targeted else world.people
+    by_phase = defaultdict(list)
+    for d in workdays:
+        by_phase[phase(world, world.day_start(d) + 12 * 3600)].append(d)
     out = []
     kinds = ["where_now"] * 5 + ["last_in_lab"] * 2 + ["desk_now", "usual_place"]
+    if shift_targeted:
+        kinds = ["where_now"] * 3 + ["desk_now", "usual_place"]
     while len(out) < n:
-        day = rng.choice(workdays)
+        day = rng.choice(by_phase[rng.choice(sorted(by_phase))]) if shift_targeted else rng.choice(workdays)
         t = round(world.day_start(day) + rng.uniform(9, 18) * 3600)
         kind = rng.choice(kinds)
         q = {"id": f"q{len(out):04d}", "t": t, "kind": kind, "phase": phase(world, t)}
         if kind == "where_now":
-            o = rng.choice(world.objects)
+            o = rng.choice(objects)
             ans = world.object_place(o.name, t)
             ls = last_sighting(o.name, t)
             q.update(entity=o.name, question=f"Where is the {o.desc} now?", answer=ans or "not in the lab",
@@ -175,11 +185,13 @@ def questions(world: World, events, intervals, n, rng: random.Random, start_day=
                      answer={"t": past[-1]["t_end"], "place": past[-1]["place"]},
                      last_sighting=last_sighting(o.name, t))
         elif kind == "desk_now":
-            p = rng.choice(world.people)
+            p = rng.choice(people)
             q.update(entity=p.name, question=f"Which desk does {p.name} ({p.look}) use now?",
                      answer=world.desk_of(p, day))
         else:
-            cands = [o for o in world.objects if world.regime(o, day)["type"] in ("weekday", "away_days", "fixed")]
+            cands = [o for o in objects if world.regime(o, day)["type"] in ("weekday", "away_days", "fixed")]
+            if not cands:
+                continue
             o = rng.choice(cands)
             wd = rng.randrange(5)
             r = world.regime(o, day)
@@ -192,7 +204,7 @@ def questions(world: World, events, intervals, n, rng: random.Random, start_day=
     return out
 
 
-def generate(cfg: Config, out: Path, n_questions=300, questions_from=None):
+def generate(cfg: Config, out: Path, n_questions=300, questions_from=None, shift_targeted=False):
     world = World(cfg)
     rng = random.Random(f"lab-history-obs-{cfg.seed}")
     events = []
@@ -208,7 +220,7 @@ def generate(cfg: Config, out: Path, n_questions=300, questions_from=None):
               "describer": "sim", "text": line(seen)}
         events.append((ev, {"id": ev["id"], **tr}))
     intervals = truth_intervals(world)
-    qs = questions(world, events, intervals, n_questions, rng, questions_from)
+    qs = questions(world, events, intervals, n_questions, rng, questions_from, shift_targeted)
 
     out.mkdir(parents=True, exist_ok=True)
     with open(out / "events.jsonl", "w") as f:
@@ -237,11 +249,13 @@ def main():
     ap.add_argument("--questions", type=int, default=300)
     ap.add_argument("--questions-from", type=int, default=None,
                     help="first day questions may fall on (default: days // 3, i.e. after the first shift)")
+    ap.add_argument("--shift-targeted", action="store_true",
+                    help="questions only about shifted people and objects, balanced before / week after / later")
     ap.add_argument("--out", required=True)
     a = ap.parse_args()
     cfg = Config(days=a.days, seed=a.seed, n_people=a.people, n_objects=a.objects, shifts=a.shifts,
                  places_file=None if a.places == "standin" else a.places)
-    world, events, qs = generate(cfg, Path(a.out), a.questions, a.questions_from)
+    world, events, qs = generate(cfg, Path(a.out), a.questions, a.questions_from, a.shift_targeted)
     types = Counter(world.regime(o, 0)["type"] for o in world.objects)
     errs = Counter(k for _, tr in events for k in ("missed", "misnamed", "invented") for _ in tr[k])
     stale = [q for q in qs if q.get("stale")]
