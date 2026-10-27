@@ -24,7 +24,7 @@ came from the 10-23 mapping drive's own poses: go2_straighten fixed heading only
 |---|---|---|
 | odometry, between consecutive nodes | odom increment × K (1.157) | heading σ from the gyro-drift study (~1.2°/min, wandering −4..+6) |
 | lidar scan-match, between nodes ≤ 3 m apart (also across bags) | ICP / correlative match of each node's *fresh* voxels (born ≤ 20 s, each in its own odom frame, so stale ones don't enter) | from the match's curvature; degenerate directions (aisles) get near-zero information, as in the degeneracy study |
-| marker, node to a marker landmark node | camera range and bearing only: marker yaw is unusable, MAD 9° | ~2% of range plus 1° bearing; gated fix_ok, ambig < 0.5, view ≤ 45° |
+| marker, node to a marker landmark node | camera range and bearing only: marker yaw is unusable, MAD 9° | ~2% of range plus a bearing σ to be measured (good-window residuals were 4–5°, which include heading error); gated fix_ok, ambig < 0.5, view ≤ 45° |
 | tape (optional), a few pinned distances | Oliver's spans | |
 
 - Marker landmarks A–D (and more) are free nodes. Their map positions come out of the solve, not from the old survey.
@@ -38,9 +38,9 @@ pose, as go2_straighten.rebuild does now (birth-pose placement, `p' = pose_birth
 
 - **No GTSAM or g2o installed** (Python 3.11 go2 env; rosrobot has only a Ceres plugin).
 - **Options:**
-  - (a) `pip install gtsam` in a separate env: wheels exist for py3.11; this needs your OK to install;
+  - (a) `pip install gtsam` in a separate env: wheels for py3.11 not yet checked; this needs your OK to install;
   - (b) our own solver: scipy.optimize.least_squares with a sparse Jacobian and Huber loss. A 2-D graph of about
-    3–5k nodes solves in seconds, needs no new dependencies, and is about 200 lines.
+    3–5k nodes should solve in seconds (estimate, not measured), needs no new dependencies, and is about 200 lines.
 - **Recommendation: (b) first.** It's enough at this size. Move to GTSAM if graphs grow (many bags) or we want
   incremental iSAM2 online.
 - **Scan matching:** reuse the console's wall-field correlative matcher (go2_mapper `_wall_field` / `track` search),
@@ -73,7 +73,7 @@ About 3 days of compute and analysis. Replays run 2 at a time at nice 19 while t
 ## Validation: decided before looking, on held-out data
 
 - **Tape:** span A (9.93 m), A→cabinet (4.216 m), and any new spans Oliver tapes, measured on the new map. Target:
-  within 2%. The current map gives 0.93 / 0.94.
+  within 2%. The current map gives 0.94 on both (9.33/9.93, 3.96/4.216).
 - **Held-out markers:**
   - leave out all sightings from one bag, or the stand window, when solving;
   - then replay that bag on the new map and measure the camera-range residual to the solved landmarks;
@@ -110,3 +110,13 @@ corrections from bad by fit curvature rather than by size.
   never moved.
 - The marker table comes from hand-placed objects with an aruco_id, then the survey files.
 - Deploy step: copy `~/go2_overnight/markers_survey/{A,B}.json` into `/maps/lab_markers_survey/`.
+
+## Unvalidated assumptions (checked 10-26 night)
+
+- GTSAM wheel availability for py3.11; scipy solve time for 3–5k nodes; the 3-day effort: all estimates.
+- Scan-match information from fit curvature: on the current map, curvatures are about 25× shallower than ideal
+  (thick walls, from the degeneracy study), so information from curvature is badly scaled until the walls are thin.
+  It needs normalising, or a fixed per-axis σ, in the first solve.
+- Marker bearing σ: not measured on its own. Measure it from still periods where the pose is pinned by tape stops.
+- "Today's bag revisits every 10-23 area": not checked; compare trajectory coverage before relying on cross-bag loops.
+
