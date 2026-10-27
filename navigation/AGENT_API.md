@@ -157,7 +157,8 @@ place's own `yaw_deg` when it has no target). It is close enough within 0.20 m.
 - It re-plans up to 3 times around obstacles that aren't on the map. Each blocking spot is avoided for 120 s.
 - It stops with `lost` when `loc.lost` comes on, including when it is already on as the drive starts.
 - Returns `moved_m` and `replans`; when `done`, also `route_m` and the place's `target`; `fallback` when any
-  plan of the drive needed a fallback tier. On a failed plan it
+  plan of the drive needed a fallback tier; `pose_suspect {dx, dy, dyaw_deg, strength, text, marker}` when the
+  shift guard was on (see *When the live view looks shifted*). On a failed plan it
   returns `why {saved_map_has_route, cause: "saved map" | "live lidar or temporary blocks", live_new_cells,
   blocks}`; when blocked while driving, `at [x, y]`.
 - **Set `timeout_s`**: the default 30 s covers about 10 m. Allow route length / 0.4 m/s plus 5 s per turn.
@@ -210,7 +211,12 @@ good, try `global`. If nothing fits well, drive a little (turn 90°) so the lida
 - `loc.fit`, `runner_up` and `unsure` describe the *last line-up* only. `unsure` means a score under 0.3, or
   less than 0.05 ahead of the next-best heading.
 - `loc.events` kinds: `hand_placement`, `auto_align`, `session_restore`, `new_map`, `drift_correction` (only
-  jumps over 0.3 m or 10°), `agent_relocalize`, `unknown` (frame set by hand).
+  jumps over 0.3 m or 10°), `agent_relocalize`, `marker_disagree`, `unknown` (frame set by hand).
+- **Marker checks (logging only, never move the dog):** fix_ok sightings of surveyed markers A–D (≤ 2.5 m, ≤ 45°
+  oblique) are pooled over 3 s. Each check is logged in `loc.marker` (last 5: `{t, n, marks, dx, dy, shift, spread,
+  action}`, where (dx, dy) is how far the marker says the pose should move). A disagreement of 0.15–1.0 m that
+  the lidar doesn't contradict is a `marker_disagree` event (action `would_move`, `lidar_disagrees` or
+  `too_far`). At 0.30 m or more it also raises `suspect`. Other actions: `agree`, `spread`.
 - `map.mode` in `/state.json`: `localized`, `not_aligned` (no map pose: go_to fails with `no_map_pose`,
   `/nav/plan` gives 409), or `mapping`.
 
@@ -220,7 +226,7 @@ good, try `global`. If nothing fits well, drive a little (turn 90°) so the lida
 |---|---|
 | `/state.json` | everything at once. `odom {pos, yaw, vel}`, `imu {rpy}`, `state {body_height, obstacle [4 ranges], mode, ...}`, `map {mode, status, origin, resolution, room_deg, ...}`, `map_pose`, `loc`, `agents`, `nav`, `markers`, `battery {soc, ..., stale?}`, `control {avoid, speed, ...}`, `age` (seconds since each sensor). `/events` streams it at 10 Hz |
 | `/places` | `{id: {x, y, yaw_deg, target {x, y} or null, description, preview, ...}}`. `(x, y, yaw_deg)` is where the dog stands; `target` is where the thing is. `/places/<id>.jpg` is its view |
-| `/nav/plan?place=` or `?x=&y=` | `{path [[x, y]...], length_m, goal, tight, squeeze?, squeeze_at?, squeeze_along_m?, squeeze_clear_m?, fallback?}` or `{error, why?}`. 409 when not lined up |
+| `/nav/plan?place=` or `?x=&y=` | `{path [[x, y]...], length_m, goal, tight, squeeze?, squeeze_at?, squeeze_along_m?, squeeze_clear_m?, fallback?, pose_suspect?, live_shift?}` or `{error, why?}`. 409 when not lined up |
 | `/nav/grid?x=&y=&r=2` | read-only PNG of the planner's grid around a point (default: the dog; r in m, max 4; 10 px per 10 cm, north up): saved obstacles black, cleared by live light green, new live red, hard live (chairs, under tops) purple, under-desk cost light orange, stall blocks orange, unknown grey, last route green with its narrowest point circled, the dog blue. `?json=1`: `{counts, clear_here_m, last_route {path, length_m, tight, squeeze, fallback, narrowest {clear_m, x, y, needs_m}}, last_failure}`. 503 if the planner is busy |
 | `/markers` | `{list: [...], age_s, err}`. Empty if the newest detection is older than 1 s. Each item: `id`, `mark` (A–D, spare 4/5), `z` (m along the camera axis), `x` (m, + right), `up`, `bearing_deg` (**+ right**), `dist` (m), `view_deg` (0 = head-on), `yaw_deg` (turn of the marker face), `reproj_px`, `ambig` (1.0 = two poses equally likely), `alt`, `side_px`, `min_side_px`, `edge` (1 = image border), `fix_ok`, `why` (`far`, `oblique`, `small`, `reproj`, `edge`, `unconfirmed`), `held`, `seen_age_s`. **`held: true`** means kept up to 0.5 s after the last sighting, so skip those for a live sighting. Use only `fix_ok` items for a position fix (≤ 3 m, ≤ 60° oblique, ≥ 30 px, reproj ≤ 2 px, not at the edge, confirmed in 2 of the last 3 frames) |
 | `/trail/near?x=&y=&radius=3&limit=12` | `{views: [{t, x, y, yaw_deg, dist, bearing_deg (+ left), facing, url}], spot: obstacle\|open\|unseen}`. Frames that faced the spot (\|bearing\| ≤ 40° or within 0.3 m) come first, nearest first. radius at most 20, limit 1–200 |
@@ -239,7 +245,7 @@ These belong to people at the console. Don't call them:
 
 - `POST /cmd` (drive channel, takeover, hand back, speed, record)
 - `POST /map` (mapping, save, line-up, `localize_at`; use `relocalize`)
-- `POST /places`, `/places/move`, `/places/delete`
+- `POST /places`, `/places/move`, `/places/rename`, `/places/delete`
 - `POST /map/objects`, `/map/proposals`
 - `/label/*` (`/label/detect` also calls the 8B vision model)
 
@@ -263,6 +269,17 @@ Three failures that look alike:
 - **Stall blocks**: `why.blocks` > 0 after a `stuck`/`obstacle` nearby in the last 120 s, and the saved map has
   a route. The `live_noblocks` fallback retries without them; or wait 120 s.
 - **Lost**: `lost` or `suspect` on, low `fresh_fit`; routes and blocks may sit in the wrong place. Relocalize.
+
+### When the live view looks shifted (`pose_suspect`)
+
+If the live lidar view fits the saved map much better moved by a constant offset (strength ≥ 0.06, ≥ 0.15 m, on
+2 checks in a row), the planner **keeps the saved obstacles** instead of letting the live view clear them. Plans
+and go_to replies carry `pose_suspect`. The shift is in `/state.json` `live.shift` (`live_shift` on plans):
+`{dx, dy, dyaw_deg, strength, text, marker, ...}`, where (dx, dy) is how far the pose (or the map here) seems off.
+It means **pose or map**: the guard can't tell which (near B's door the map itself is ~0.3 m off). `marker` pairs
+it with a marker check within 10 s, and the text says whether markers agree, disagree or say the pose is right
+(then the map is likely off). What to do: stop, take a photo, look for fix_ok markers, run `relocalize search`.
+Don't force a route through space the live view would have cleared. On 10-26 all 6 fires were real pose errors.
 
 ## Other failure signatures
 

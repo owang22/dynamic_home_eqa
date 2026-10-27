@@ -66,7 +66,8 @@ def routes(path):
                         if isinstance(s, ast.Constant) and isinstance(s.value, str) and s.value.startswith("/"):
                             found.add((method, s.value))
             if (method == "GET" and isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute)
-                    and node.func.attr == "startswith" and node.args and isinstance(node.args[0], ast.Constant)):
+                    and node.func.attr == "startswith" and node.args and isinstance(node.args[0], ast.Constant)
+                    and str(node.args[0].value).startswith("/")):     # not guards like name.startswith(".")
                 found.add((method, node.args[0].value + "*"))   # /trail/<...>.jpg and the like
     calls = constants(path).get("AGENT_CALLS", ())
     found |= {("POST", f"/agent/{c}") for c in calls}
@@ -179,14 +180,16 @@ ENDPOINTS = [
                       "text": "heading to end at (x, y goals only; a place uses its target or yaw_deg)"},
           "timeout_s": TIMEOUT},
          {"moved_m": "number", "replans": "integer", "route_m?": "number", "target?": "object|null", "why?": "object",
-          "fallback?": "string",
+          "fallback?": "string", "pose_suspect?": "object",
           "side?": "string", "at?": "array"}, True, "route_m / ~0.4 m/s + turns; set timeout_s to fit (default 30 s is short)",
          {"fields": {"route_m": "length of the first planned route (done only)",
                      "target": "the place's target {x, y} (done, place goals with a target)",
                      "why": "on a failed plan: {saved_map_has_route, cause: 'saved map' | 'live lidar or temporary blocks', "
                             "live_new_cells, blocks}",
                      "at": "map spot [x, y] where it was blocked",
-                     "fallback": "the planner's fallback tier (live_noblocks) if any plan of this drive needed one"}}),
+                     "fallback": "the planner's fallback tier (live_noblocks) if any plan of this drive needed one",
+                     "pose_suspect": "{dx, dy, dyaw_deg, strength, text, marker} if the shift guard was on for any plan of "
+                                     "this drive (see notes.pose_suspect)"}}),
     tool("/agent/posture", "Stand up or lie down, as the console buttons do; waits until the body height shows it "
          "(stand: >= {STAND_H} m, lie: < {MIN_BODY_H} m; at most {POSTURE_S} s). The dog is not stopped afterwards. "
          "Anything but pose stand|lie (or a body_height field) is a 400 bad arguments.",
@@ -233,8 +236,9 @@ ENDPOINTS = [
                 "map_pose": "{x, y, yaw (rad)} on the map, 5 Hz, or null when not lined up",
                 "age": "seconds since each sensor's last message: odom, imu, state, cloud, camera, map, map_pose, ...",
                 "loc": "{status, seq, events, track, fit, runner_up, unsure, lost, lost_since, track_fit, fresh_fit, suspect, "
-                       "suspect_since}",
+                       "suspect_since, marker (last 5 marker checks, see notes.marker_checks)}",
                 "nav": "{path, goal, t} of the last plan (5 min)",
+                "live": "the planner's live overlay {t, new, cleared, shift (live_shift, see notes.pose_suspect)} (5 s)",
                 "markers": "as GET /markers", "battery": "{soc %, current_ma, cycles, voltage, bms_temp_c, age_s, stale?}",
                 "control": "{avoid, speed, speeds, look_deg, driver, driver_ip}"}},
     {"method": "GET", "path": "/events", "for_agents": True, "blocks": False, "latency": "stream",
@@ -263,7 +267,7 @@ ENDPOINTS = [
                 "y": {"type": "number", "units": "m", "frame": "map"}},
      "returns": {"path?": "array", "length_m?": "number", "goal?": "array", "tight?": "bool", "squeeze?": "bool",
                  "squeeze_at?": "array", "squeeze_along_m?": "number", "squeeze_clear_m?": "number",
-                 "error?": "string", "why?": "object", "fallback?": "string"},
+                 "error?": "string", "why?": "object", "fallback?": "string", "pose_suspect?": "bool", "live_shift?": "object"},
      "fields": {"path": "[[x, y], ...] map m, first point = the dog (or its spot, then the nearest open floor)",
                 "goal": "the goal actually used: moved up to {GOAL_SNAP_M} m off furniture onto open floor",
                 "tight": "true: no route with {ROBOT_R} m clearance, this one keeps {ROBOT_R_TIGHT} m (or less if squeeze)",
@@ -374,6 +378,8 @@ ENDPOINTS = [
     {"method": "POST", "path": "/places/move", "for_agents": False,
      "summary": "A person dragged a place: {id, x?, y?, yaw_deg?, target?: {x, y} | null}."},
     {"method": "POST", "path": "/places/delete", "for_agents": False, "summary": "{id}: delete a place."},
+    {"method": "POST", "path": "/places/rename", "for_agents": False,
+     "summary": "{id, to, client}: rename a place, keeping its spot, target, photo and description."},
     {"method": "POST", "path": "/label/example", "for_agents": False,
      "summary": "A person boxes an object in a trail frame: {url, box, name, label?, place?}."},
     {"method": "POST", "path": "/label/remove", "for_agents": False, "summary": "{id}: remove a labelling example."},
@@ -443,6 +449,22 @@ NOTES = {
                     "fix_ok marker or a relocalize search before a long go_to. In /state.json loc and (suspect) in every tool "
                     "reply; not in /history. The lost and "
                     "suspect timers restart after a gap > {LOST_GAP_S} s between judged views.",
+    "pose_suspect": "Shift guard (go2_nav, 10-26): each live update (at most every {SHIFT_EVERY_S} s) the live view's "
+                    "obstacle and floor cells are matched against the saved grid over small shifts and +-{SHIFT_YAW_DEG} deg. "
+                    "If the best fit beats no shift by >= {SHIFT_MIN_STRENGTH} (scores in [0, 1]) at >= {SHIFT_MIN_M} m, "
+                    "with >= {SHIFT_MIN_OBS} live obstacle cells, on {SHIFT_PERSIST} checks in a row, the planner keeps the "
+                    "saved obstacles (live floor doesn't clear them), plans carry pose_suspect + live_shift, go_to replies "
+                    "pose_suspect, /state.json live.shift and the console status line show the text. live_shift = {t, dx, dy "
+                    "(how far the pose, or the map here, seems off), dyaw_deg, peak, zero, strength, n_obs, n_free, robot, T, "
+                    "suspect, marker, text}. It means pose OR map (near B's door the map is ~0.3 m off). marker: the mapper's "
+                    "marker check within {SHIFT_MARKER_S} s; agree = within {SHIFT_MARKER_AGREE_M} m. Agent: stop, photo, "
+                    "fix_ok markers, relocalize search; don't force a route through cleared space.",
+    "marker_checks": "Logging only (MK_MOVE {MK_MOVE}: never moves the dog). fix_ok sightings of surveyed markers (<= "
+                     "{MK_MAX_DIST} m, <= {MK_MAX_VIEW} deg oblique, ambig < {MK_MAX_AMBIG}) pooled over {MK_WINDOW_S} s (>= "
+                     "{MK_MIN_N}, spread <= {MK_MAX_SPREAD} m). loc.marker: the last 5 checks {t, n, marks, dx, dy (how far "
+                     "the marker says the pose should move), shift, spread, action}. A disagreement of {MK_MIN_SHIFT}-"
+                     "{MK_MAX_SHIFT} m is a marker_disagree loc event (action would_move / lidar_disagrees / too_far); >= "
+                     "{MK_SUSPECT_M} m also raises suspect. Other actions: agree, spread.",
     "localization_notice": "Agent replies (and GET /agent/status?client=) carry localization_notice when line-up "
                            "events happened since your previous call: {events, status, fit, runner_up, unsure, summary}. "
                            "A jump means poses you stored before it may be off.",
@@ -461,6 +483,8 @@ NOTES = {
         "stall blocks: why.blocks > 0 after a stuck/obstacle nearby in the last {BLOCK_S} s, and the saved map has a "
         "route; the live_noblocks fallback retries without them, or wait.",
         "lost: lost or suspect on, low fresh_fit; routes and blocks may sit in the wrong place. Relocalize.",
+        "pose_suspect on the plan / go_to reply: the live view looks shifted against the map (pose OR map off); stop, "
+        "photo, check fix_ok markers, relocalize search; don't force a route through space the live view would clear.",
     ],
     "failure_signatures": [
         "centring a marker: turn(-bearing_deg) (marker bearing + = right, turn + = left).",
