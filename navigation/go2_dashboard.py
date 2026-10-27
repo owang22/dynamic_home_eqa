@@ -15,6 +15,7 @@ import ipaddress
 import json
 import math
 import os
+import re
 import shutil
 import signal
 import subprocess
@@ -35,7 +36,7 @@ from rclpy.qos import qos_profile_sensor_data
 from sensor_msgs.msg import Image, JointState, PointCloud2
 from sensor_msgs_py import point_cloud2
 
-from go2_agent import AGENT_LEASE_S, BUMP_H, UNDER_TOP_MAX, Agents
+from go2_agent import AGENT_LEASE_S, BUMP_H, UNDER_TOP_MAX, Agents, check_name
 from go2_mapper import Mapper
 from go2_nav import Planner
 from go2_trail import Trail
@@ -649,7 +650,7 @@ class Handler(BaseHTTPRequestHandler):
             # a place to stand (where the best photo was taken from, facing the object).
             by = str(req.get("client") or "console")[:60]
             try:
-                ex = EXAMPLES.add(req.get("url"), req.get("box") or [], str(req.get("name", "")).strip().lower(),
+                ex = EXAMPLES.add(req.get("url"), req.get("box") or [], str(req.get("name", "")).strip(),
                                   req.get("label"), by)
             except (ValueError, TypeError) as e:
                 return self.send_json(400, {"result": "error", "reason": str(e)})
@@ -669,16 +670,57 @@ class Handler(BaseHTTPRequestHandler):
             obj, _ = EXAMPLES.upsert_object(objects_path(), exs[0]["name"], str(req.get("client") or "console")[:60])
             return self.send_json(200, {"result": "done", "object": obj})
         if path == "/map/objects":
-            # people correct the labelling: {action: rename|relabel|delete|confirm, id, name?, label?}
+            # people correct the labelling: {action: rename|relabel|delete|confirm|move|set, id, name?, label?},
+            # or add one by hand: {action: add, name, label, x, y, w?, h?, yaw?, aruco_id?}.
+            # aruco_id (0-49, DICT_4X4_50) makes the object a marker; yaw is the way its printed face looks out.
             data = load_objects()
-            obj = next((o for o in data["objects"] if o.get("id") == req.get("id")), None)
             act = req.get("action")
-            if obj is None:
-                return self.send_json(404, {"result": "error", "reason": "no object with that id"})
+
+            def aruco(v):
+                if v is None or v == "":
+                    return None
+                try:
+                    f = float(v)
+                except (TypeError, ValueError):
+                    f = -1.0
+                if isinstance(v, bool) or f != int(f) or not 0 <= f <= 49:
+                    raise ValueError("aruco_id must be a whole number 0-49")
+                return int(f)
+            try:
+                if act == "add":
+                    name = check_name(req.get("name"))
+                    slug = re.sub(r"[^a-z0-9]+", "_", name.lower()).strip("_")[:30] or "object"
+                    ids = {o.get("id") for o in data["objects"]}
+                    oid, n = f"hand_{slug}", 2
+                    while oid in ids:
+                        oid, n = f"hand_{slug}_{n}", n + 1
+                    obj = {"id": oid, "name": name, "label": str(req.get("label") or "").strip().lower()[:40],
+                           "x": round(float(req["x"]), 3), "y": round(float(req["y"]), 3),
+                           "w": round(float(req.get("w") or 0.4), 3), "h": round(float(req.get("h") or 0.4), 3),
+                           "yaw": round(float(req.get("yaw") or 0.0), 4), "source": "hand"}
+                    if aruco(req.get("aruco_id")) is not None:
+                        obj["aruco_id"] = aruco(req.get("aruco_id"))
+                    data["objects"].append(obj)
+                else:
+                    obj = next((o for o in data["objects"] if o.get("id") == req.get("id")), None)
+                    if obj is None:
+                        return self.send_json(404, {"result": "error", "reason": "no object with that id"})
+                    if act == "set":         # {aruco_id: 0-49, or null to clear}
+                        a = aruco(req.get("aruco_id"))
+                        if a is None:
+                            obj.pop("aruco_id", None)
+                        else:
+                            obj["aruco_id"] = a
+            except (KeyError, TypeError, ValueError) as e:
+                return self.send_json(400, {"result": "error", "reason": str(e) if not isinstance(e, KeyError) else "add needs name, x and y"})
             if act == "delete":
                 data["objects"].remove(obj)
             elif act == "rename":
-                obj["name"] = str(req.get("name") or "")[:60]
+                name = str(req.get("name") or "").strip()
+                try:
+                    obj["name"] = check_name(name) if name else ""
+                except ValueError as e:
+                    return self.send_json(400, {"result": "error", "reason": str(e)})
             elif act == "relabel":
                 obj["label"] = str(req.get("label") or obj.get("label", ""))[:40]
             elif act == "move":          # {x?, y?, yaw? (rad), w?, h?}: a person dragged or resized it
@@ -688,8 +730,8 @@ class Handler(BaseHTTPRequestHandler):
                             obj[k] = round(float(req[k]), 3)
                 except (TypeError, ValueError):
                     return self.send_json(400, {"result": "error", "reason": "x, y, yaw, w, h must be numbers"})
-            elif act != "confirm":
-                return self.send_json(400, {"result": "error", "reason": "action must be rename, relabel, move, delete or confirm"})
+            elif act not in ("confirm", "add", "set"):
+                return self.send_json(400, {"result": "error", "reason": "action must be add, rename, relabel, move, set, delete or confirm"})
             if act != "delete":
                 obj["confirmed_by"] = str(req.get("client") or "console")[:60]
                 obj["confirmed_t"] = round(time.time(), 1)
@@ -810,6 +852,13 @@ class Handler(BaseHTTPRequestHandler):
             except (KeyError, TypeError, ValueError) as e:
                 return self.send_json(400, {"result": "error", "reason": f"bad arguments: {e}"})
             return self.send_json(200 if p else 404, {"result": "done", "place": p} if p else {"result": "not_found"})
+        if path == "/places/rename":
+            # {id, to, client}: keeps the spot, target, photo and description
+            try:
+                p = AG.rename_place(str(req.get("id", "")), req.get("to"), str(req.get("client") or "console")[:60])
+            except ValueError as e:
+                return self.send_json(400, {"result": "error", "reason": str(e)})
+            return self.send_json(200 if p else 404, {"result": "done", "place": p} if p else {"result": "not_found"})
         if path == "/places/delete":
             return self.send_json(200, {"result": "done" if AG.delete_place(str(req.get("id", ""))) else "not_found"})
         try:
@@ -916,7 +965,10 @@ class Handler(BaseHTTPRequestHandler):
         elif self.path.split("?")[0] == "/places":
             self.send_json(200, AG.places())
         elif self.path.startswith("/places/") and self.path.endswith(".jpg"):
-            name = os.path.basename(self.path)
+            # names may hold spaces and quotes, so the URL is percent-encoded; never leave the places folder
+            name = urllib.parse.unquote(self.path.split("?")[0][len("/places/"):])
+            if "/" in name or "\\" in name or name.startswith("."):
+                return self.send_error(404)
             try:
                 with open(os.path.join("/maps", f"{os.environ.get('MAP_NAME', 'lab')}_places", name), "rb") as fh:
                     self.send_bytes(fh.read(), "image/jpeg")
@@ -1177,7 +1229,7 @@ main>section.dragging{opacity:.55;outline:2px dashed var(--accent);outline-offse
 .pev{display:flex;gap:4px;margin-top:4px}.pev img{width:84px;aspect-ratio:16/9;object-fit:cover;border-radius:2px;background:#000;cursor:zoom-in}
 .pbtns{display:flex;flex-direction:column;gap:4px}.pstat{font:11px var(--mono);color:var(--dim)}#propbig{margin-top:8px}#propbig img{width:100%;border-radius:4px;display:block;margin-bottom:6px}
 .mapzoom button.on{border-color:var(--accent);color:var(--accent)}
-.edithint[hidden]{display:none}.edithint{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;margin:0 0 8px;padding:6px 8px;border:1px dashed var(--accent);border-radius:5px;font:11px var(--mono);color:var(--fg)}.edithint label{display:inline-flex;gap:4px;align-items:center;color:var(--accent)}.edithint small{color:var(--dim)}
+.edithint[hidden]{display:none}.edithint{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;margin:0 0 8px;padding:6px 8px;border:1px dashed var(--accent);border-radius:5px;font:11px var(--mono);color:var(--fg)}.edithint label{display:inline-flex;gap:4px;align-items:center;color:var(--accent)}.edithint small{color:var(--dim)}.edithint button{font:11px var(--mono);padding:2px 7px;border-radius:4px;border:1px solid var(--accent);background:var(--bg);color:var(--fg);cursor:pointer}.edithint button.on{background:var(--accent);color:var(--bg)}
 .mapctl button{font:12px var(--sans);padding:5px 9px;border-radius:5px;border:1px solid var(--line);background:var(--bg);color:var(--fg);cursor:pointer}
 .mapstatus{flex-basis:100%;font:12px var(--mono);color:var(--dim)}
 .maprow{display:grid;gap:6px;border-top:1px solid var(--line);padding-top:10px}
@@ -1200,7 +1252,7 @@ main>section.dragging{opacity:.55;outline:2px dashed var(--accent);outline-offse
 .thumbs img{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:3px;cursor:pointer;border:2px solid transparent}
 .thumbs img.sel{border-color:var(--accent)}
 #aglog{width:100%;border-collapse:collapse;table-layout:fixed;font:12px var(--mono);font-variant-numeric:tabular-nums}#aglog td{text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:2px 8px 2px 0;vertical-align:baseline;line-height:1.45}#aglog td:nth-child(1){width:calc(8ch + 10px);color:var(--dim)}#aglog td:nth-child(2){width:calc(17ch + 10px);color:var(--dim)}#aglog td:nth-child(4){width:32%;padding-right:2px}#aglog b{font-weight:600;color:var(--fg)}#aglog .lgargs{color:var(--dim)}#aglog td.ok{color:var(--accent)}#aglog tr.row{cursor:pointer}#aglog tr.row:hover td{background:var(--line)}#aglog tr.row.open td{background:var(--panel);border-top:1px solid var(--line)}#aglog tr.det td{white-space:normal;padding:0 0 6px calc(8ch + 10px);border-bottom:1px solid var(--line)}.lgnote{margin:2px 0 4px;font:13px/1.45 var(--sans);color:var(--fg);overflow-wrap:anywhere}.lgkv{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,24em),1fr));gap:0 20px;font:12px/1.45 var(--mono)}.lgkv>div{display:grid;grid-template-columns:9ch minmax(0,1fr);gap:0 8px}.lgkv>div>span:first-child{color:var(--dim);font-size:11px;overflow:hidden;text-overflow:ellipsis}.lgkv>div>span+span{overflow-wrap:anywhere;color:var(--fg)}.lgkv .ok{color:var(--accent)!important}.lgkv .err{color:var(--bad)!important}.aglogw{margin-top:6px}@media (max-width:520px){#aglog td:nth-child(2){display:none}#aglog tr.det td{padding-left:0}}.loghd{display:flex;gap:8px;align-items:center;margin-top:8px;font-size:12px;color:var(--dim)}.loghd button{font:12px var(--sans);padding:2px 8px}
-.pl{display:grid;grid-template-columns:64px 1fr auto;gap:8px;align-items:center;font-size:13px;padding:4px 0;border-top:1px solid var(--line)}
+.pl{display:grid;grid-template-columns:64px 1fr auto auto;gap:8px;align-items:center;font-size:13px;padding:4px 0;border-top:1px solid var(--line)}
 .pl img{width:64px;aspect-ratio:16/9;object-fit:cover;border-radius:3px;background:#000}.pl small{color:var(--dim);font:11px var(--mono);display:block}
 .pl button,#plform button{font:12px var(--sans);padding:5px 9px;border-radius:5px;border:1px solid var(--line);background:var(--bg);color:var(--fg);cursor:pointer}
 #plform,#dropform{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
@@ -1220,9 +1272,10 @@ main>section.dragging{opacity:.55;outline:2px dashed var(--accent);outline-offse
 .lbox.sel{border:3px solid var(--accent)}.lbox.sel span{color:var(--accent)}
 .lblexs{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:6px;margin-top:6px}.lblexs .exw{position:relative;line-height:0}.lblexs img{width:100%;display:block;border-radius:2px;background:#000}
 .lblexs .lbox{border-width:2px;border-style:solid;border-color:var(--accent)}#lblsec .lblexs button{font:10px var(--mono);padding:1px 6px}
-#objp{margin-top:10px;padding-top:10px;border-top:1px solid var(--line);font-size:13px}#objp .droph{display:flex;flex-wrap:wrap;gap:8px;align-items:center}#objp small{color:var(--dim);font:11px var(--mono)}
-#objp form{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}#objp input{flex:1 1 120px;min-width:0;font:13px var(--sans);padding:6px 8px;border-radius:5px;border:1px solid var(--line);background:var(--bg);color:var(--fg)}
-#objp button{font:12px var(--sans);padding:5px 9px;border-radius:5px;border:1px solid var(--line);background:var(--bg);color:var(--fg);cursor:pointer}#objp .objsw{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px}
+#objp,#addp{margin-top:10px;padding-top:10px;border-top:1px solid var(--line);font-size:13px}:is(#objp,#addp) .droph{display:flex;flex-wrap:wrap;gap:8px;align-items:center}:is(#objp,#addp) small{color:var(--dim);font:11px var(--mono)}
+:is(#objp,#addp) form{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}:is(#objp,#addp) input{flex:1 1 120px;min-width:0;font:13px var(--sans);padding:6px 8px;border-radius:5px;border:1px solid var(--line);background:var(--bg);color:var(--fg)}
+:is(#objp,#addp) form label{display:inline-flex;gap:4px;align-items:center;font:11px var(--mono);color:var(--dim)}:is(#objp,#addp) label input{flex:0 0 72px;width:72px}
+:is(#objp,#addp) button{font:12px var(--sans);padding:5px 9px;border-radius:5px;border:1px solid var(--line);background:var(--bg);color:var(--fg);cursor:pointer}#objp .objsw{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px}
 #drop{margin-top:10px;padding-top:10px;border-top:1px solid var(--line);font-size:13px}
 #drop .droph{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 #drop small{color:var(--dim);font:11px var(--mono)}
@@ -1284,7 +1337,7 @@ main>section.dragging{opacity:.55;outline:2px dashed var(--accent);outline-offse
 <section><h2>Lidar, top view <span id="cloudinfo"></span></h2><canvas id="cloud" width="600" height="600"></canvas>
 <div class="legend">grid lines every 2 m · grey = open floor seen · yellow→red = obstacle 10 cm→1.2 m tall · arrow = robot heading</div></section>
 <section class="wide"><h2>Map <span id="mapinfo"></span></h2><div class="mapzoom"><button id="zin" type="button" title="Zoom in (or scroll on the map)">+</button><button id="zout" type="button" title="Zoom out">−</button><button id="zfit" type="button" title="Show the whole map">Fit</button><label><input type="checkbox" id="zfollow"> follow dog</label><span>labels</span><button id="lsm" type="button" title="Smaller labels">A−</button><button id="llg" type="button" title="Bigger labels">A+</button><label title="Turn the drawing so the room's walls run straight across and up; the map itself is unchanged">view <select id="zrot"><option value="north">North up</option><option value="room">Room square</option></select></label><button id="editpl" type="button" title="Drag places (and a selected object) on the map">Edit places</button><span id="zinfo"></span></div>
-<div class="edithint" id="edithint" hidden><span>drag a place's dot to move it · drag its arrow tip to turn it · drag the ◆ thing marker to move the thing · drag a selected object's centre ■ to move it · Esc or the button to finish</span><label><input type="checkbox" id="snapw" checked> snap to walls</label><small>hold Shift to place freely</small></div>
+<div class="edithint" id="edithint" hidden><span>drag a place's dot to move it · drag its arrow tip to turn it · drag the ◆ thing marker to move the thing · drag a selected object's centre ■ to move it (a marker's tick to turn it) · Esc or the button to finish</span><button type="button" id="addobj" title="Then click the map where the object or marker is">Add object</button><label><input type="checkbox" id="snapw" checked> snap to walls</label><small>hold Shift to place freely</small></div>
 <div class="maplayers"><span>Show:</span><label title="Desk and table tops"><input type="checkbox" data-layer="mid"><i style="background:rgb(230,140,40)"></i>Desk tops</label><label title="Shelves, cabinet tops, door frames"><input type="checkbox" data-layer="high"><i style="background:rgb(160,90,220)"></i>High</label><label title="Ceiling height: darker = lower"><input type="checkbox" data-layer="ceiling"><i style="background:linear-gradient(90deg,#444,#ccc)"></i>Ceiling</label><label title="Labelled objects; click one to rename, relabel, confirm or delete it"><input type="checkbox" data-layer="objects"><i style="border:1.5px dashed var(--warn)"></i>Objects</label></div><canvas id="map" width="600" height="600"></canvas>
 <div class="legend" id="maplegend">white = open floor · black = walls and furniture · grey = not seen yet · arrow = robot · dots = places (line to where the dog stands to see it) · dashed = agent route · green / red squares = what the lidar sees now clears / adds for route planning · click the map to mark a place</div>
 <div class="mapctl"><span id="mapstatus" class="mapstatus"></span>
@@ -1296,7 +1349,7 @@ main>section.dragging{opacity:.55;outline:2px dashed var(--accent);outline-offse
 <img id="dropbig" alt="Camera view picked for this place" hidden>
 <div id="dropviews"></div>
 <small id="dropstandnote"></small>
-<form id="dropform"><input type="text" id="dropid" placeholder="name, e.g. shelf_2" pattern="[a-z0-9_]{1,40}" required><input type="text" id="droppdesc" placeholder="what is here"><button>Save place</button></form>
+<form id="dropform"><input type="text" id="dropid" placeholder="name, e.g. Joseph's desk" maxlength="60" required><input type="text" id="droppdesc" placeholder="what is here"><button>Save place</button></form>
 <small id="dropmsg"></small>
 </div>
 <div id="objp" hidden>
@@ -1304,7 +1357,15 @@ main>section.dragging{opacity:.55;outline:2px dashed var(--accent);outline-offse
 <form id="objren"><input type="text" id="objname" placeholder="name, e.g. oliver's desk"><button>Rename</button></form>
 <form id="objrel"><input type="text" id="objlabel" list="objlabels" placeholder="label, e.g. desk"><datalist id="objlabels"></datalist><button>Relabel</button>
 <button type="button" id="objrot" title="Line its sides up with the room's walls">Rotate to room</button><button type="button" id="objok">Confirm</button><button type="button" id="objdel">Delete</button></form>
+<form id="objset"><label title="ArUco id 0-49 (4x4_50); empty = not a marker">marker id <input type="number" id="objaruco" min="0" max="49" step="1" placeholder="none"></label><label>w m <input type="number" id="objw" min="0.05" max="30" step="0.05" required></label><label>h m <input type="number" id="objh" min="0.05" max="30" step="0.05" required></label><label title="map degrees, 0 = map +x, 90 = +y; for a marker, the way its printed face looks out">faces ° <input type="number" id="objyaw" step="1" required></label><button>Save</button></form>
 <small id="objmsg"></small>
+</div>
+<div id="addp" hidden>
+<div class="droph"><strong>New object at <span id="addxy"></span></strong><button id="addx" type="button">Cancel</button></div>
+<form id="addform"><input type="text" id="addname" placeholder="name, e.g. marker_A or Joseph's desk" maxlength="60" required autocomplete="off"><input type="text" id="addlabel" list="objlabels" placeholder="label, e.g. aruco marker" maxlength="40">
+<label title="ArUco id 0-49 (4x4_50); leave empty for a plain object">marker id <input type="number" id="addaruco" min="0" max="49" step="1" placeholder="none"></label><label title="map degrees, 0 = map +x, 90 = +y">faces ° <input type="number" id="addyaw" step="1" value="0"></label><button>Add</button></form>
+<small>A marker is an object with a marker id. Mount it flat on furniture or a wall; "faces" is the way its printed face looks out, away from the wall (drag the tick in Edit places to turn it). Size defaults to 0.4 × 0.4 m.</small>
+<small id="addmsg"></small>
 </div></section>
 <section class="wide" id="lblsec"><h2>Label from photos <span id="lblnote"></span></h2>
 <div class="lblsrc"><label>Days <select id="lbldays"><option value="today">Today</option><option value="drive">Today since 14:31 (mapping drive)</option><option value="2d">Last 2 days</option><option value="all">All</option></select></label><label>Photos since <input type="time" id="lblsince" value="00:00"></label><button id="lblload" type="button">Load</button>
@@ -1313,7 +1374,7 @@ main>section.dragging{opacity:.55;outline:2px dashed var(--accent);outline-offse
 <div id="lblwork" hidden>
 <div class="lblstage"><img id="lblimg" alt="Camera photo to label"><div id="lblov"></div></div>
 <small id="lbldet"></small>
-<form id="lblform"><input type="text" id="lblname" list="lblnames" placeholder="name, e.g. oliver_desk" pattern="[a-z0-9_]{1,40}" required autocomplete="off"><datalist id="lblnames"></datalist>
+<form id="lblform"><input type="text" id="lblname" list="lblnames" placeholder="name, e.g. Oliver's desk" maxlength="60" required autocomplete="off"><datalist id="lblnames"></datalist>
 <select id="lbllabel"></select><label><input type="checkbox" id="lblplace"> also save as a place to go to</label><button>Add example</button></form>
 <small id="lblmsg"></small>
 </div>
@@ -1326,7 +1387,7 @@ main>section.dragging{opacity:.55;outline:2px dashed var(--accent);outline-offse
 <div id="propbig" hidden><img id="propbigimg" alt="Evidence photo"><button id="propbigx" type="button">Close photo</button></div>
 <div class="legend">An automatic tidy pass suggests moving places and adding or moving objects. Point at or click a suggestion to see it on the map in purple: an arrow from where the place is now to where it would go, its new heading and ◆ thing, or the object's new outline.</div></section>
 <section><h2>Places <span id="plnote"></span></h2><div id="places"></div>
-<form id="plform"><input id="plid" type="text" placeholder="name, e.g. shelf_2" pattern="[a-z0-9_]{1,40}" required><input id="pldesc" type="text" placeholder="what is here"><button>Save this spot</button></form>
+<form id="plform"><input id="plid" type="text" placeholder="name, e.g. Sofa 2" maxlength="60" required><input id="pldesc" type="text" placeholder="what is here"><button>Save this spot</button></form>
 <div class="legend">Saves where the dog stands now, and guesses where the thing is: the first wall or furniture straight ahead of the camera. To mark a place later, click the thing on the map instead. Click a place here to show its camera cone. Agents read this list.</div></section>
 <section><h2>Orientation (IMU)</h2><canvas id="rpyplot" width="600" height="180"></canvas>
 <div class="legend"><b class="lx">roll</b><b class="ly">pitch</b><b class="lz">yaw</b> · last 20 s, degrees</div>
@@ -1378,6 +1439,7 @@ let EDIT={on:false,drag:null,cross:null,handles:[],msg:'',msgT:0};   // Edit pla
 const LAY={on:{},img:{},t:{},last:{}};try{Object.assign(LAY.on,JSON.parse(localStorage.getItem('go2layers')||'{}'))}catch(e){}
 const LAYTINT={mid:[230,140,40],high:[160,90,220]};let OBJS=[],SELOBJ=null;
 const OBJLABELS=['desk','table','chair','sofa','cabinet','shelf','door','box','bin','plant','monitor','bed','counter','fridge'];
+const MARKCOL='#ff5fa2';   // saved markers (objects with an aruco_id); live detections stay orange
 const OBJPAL=['#e0a84a','#5b9be0','#7cc46d','#d46ad4','#e06a5a','#4fb3a9','#c9b458','#9a8cf0','#e08a5a','#6ac4d4'];
 const objCol=l=>{let i=OBJLABELS.indexOf(l);if(i<0){i=0;for(const ch of String(l))i=(i*31+ch.charCodeAt(0))>>>0}return OBJPAL[i%OBJPAL.length]};
 // fetch a layer when its toggle is on and the map changed, at most every 5 s; keep only the useful cells, tinted
@@ -1444,7 +1506,12 @@ function plotMap(m,p){const c=$('map'),[W,H]=fit(c),g=c.getContext('2d');g.clear
    g.strokeStyle=css('--warn');g.setLineDash([4,3]);g.beginPath();g.moveTo(vx,vy);g.lineTo(dx,dy);g.stroke();g.setLineDash([]);arrow(vx,vy,v.yaw_deg*Math.PI/180,css('--warn'))}
   g.strokeStyle=css('--warn');g.lineWidth=2;g.beginPath();g.arc(dx,dy,8,0,7);g.moveTo(dx-12,dy);g.lineTo(dx+12,dy);g.moveTo(dx,dy-12);g.lineTo(dx,dy+12);g.stroke()}
  const LS=VIEW.label/11;g.font=`${VIEW.label}px monospace`;
- if(LAY.on.objects)for(const o0 of OBJS){const o=EDIT.drag&&EDIT.drag.kind==='obj'&&EDIT.drag.id===o0.id?{...o0,...EDIT.drag.cur}:o0,col=objCol(o.label),c=Math.cos(o.yaw||0),sn=Math.sin(o.yaw||0),hw=o.w/2,hh=o.h/2;
+ if(LAY.on.objects)for(const o0 of OBJS){const o=objDrag(o0.id)?{...o0,...EDIT.drag.cur}:o0,col=objCol(o.label),c=Math.cos(o.yaw||0),sn=Math.sin(o.yaw||0),hw=o.w/2,hh=o.h/2;
+  // a marker (object with an aruco_id): dark square with a pink rim and white corner, a tick the way its printed face looks out, and "#id name"
+  if(o.aruco_id!=null){const sel=SELOBJ&&o.id===SELOBJ.id,mc=sel?css('--accent'):MARKCOL,[kx,ky]=mp(o.x,o.y),q=6*Math.sqrt(LS);g.save();g.translate(kx,ky);g.rotate(RR-(o.yaw||0));
+   g.fillStyle='#16191c';g.strokeStyle=mc;g.lineWidth=sel?3:2;g.fillRect(-q,-q,2*q,2*q);g.strokeRect(-q,-q,2*q,2*q);g.fillStyle='#fff';g.fillRect(-q*.6,-q*.6,q*.6,q*.6);
+   g.lineWidth=2.5;g.beginPath();g.moveTo(q,0);g.lineTo(q+10*LS,0);g.stroke();g.restore();
+   label(`#${o.aruco_id}${o.name?' '+o.name:''}`,kx+q+4*LS,ky-q-2*LS,mc);continue}
   // light by default: thin outline only; the selected object gets a faint fill and a thicker line
   const sel=SELOBJ&&o.id===SELOBJ.id;g.save();g.strokeStyle=col;g.lineWidth=sel?3:1.25;g.globalAlpha=sel?1:.7;if(!o.confirmed_by)g.setLineDash([4,4]);g.beginPath();
   [[hw,hh],[-hw,hh],[-hw,-hh],[hw,-hh]].forEach(([u,v],i)=>{const [px,py]=mp(o.x+u*c-v*sn,o.y+u*sn+v*c);i?g.lineTo(px,py):g.moveTo(px,py)});
@@ -1580,7 +1647,7 @@ fetch('/control').then(r=>r.json()).then(c=>{allowed=c.allowed;
 setArmed(false);
 
 const ago=t=>{const s=Date.now()/1000-t;return s<60?Math.round(s)+' s ago':Math.round(s/60)+' min ago'};
-const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const esc=t=>String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmtPose=m=>m&&m.map_pose?`map ${m.map_pose.x.toFixed(2)}, ${m.map_pose.y.toFixed(2)} · ${deg(m.map_pose.yaw)}°`:'no map pose';
 let agSel=null,agLatest=null;
 function showPhoto(m){if(!m)return;agSel=m.id;$('agimg').src=m.url;$('agimg').hidden=false;
@@ -1632,11 +1699,14 @@ $('takeover').addEventListener('click',()=>{held.clear();paint();post({takeover:
 $('handback').addEventListener('click',()=>{stop();post({handback:true})});
 async function loadPlaces(){try{PLACES=await (await fetch('/places')).json()}catch(e){return}
  const v=Object.values(PLACES);$('plnote').textContent=v.length?v.length+' saved':'';
- $('places').innerHTML=v.length?v.map(p=>`<div class="pl"><img src="${p.preview||''}" alt=""><div data-sel="${esc(p.id)}" style="cursor:pointer">${esc(p.id)}<small>${esc(p.description||'')}${p.target?` · thing at ${p.target.x.toFixed(1)}, ${p.target.y.toFixed(1)}`:''} · stand ${p.x.toFixed(1)}, ${p.y.toFixed(1)} facing ${Math.round(p.yaw_deg)}°</small></div><button data-del="${esc(p.id)}">Delete</button></div>`).join('')
+ $('places').innerHTML=v.length?v.map(p=>`<div class="pl"><img src="${esc(p.preview||'')}" alt=""><div data-sel="${esc(p.id)}" style="cursor:pointer">${esc(p.id)}<small>${esc(p.description||'')}${p.target?` · thing at ${p.target.x.toFixed(1)}, ${p.target.y.toFixed(1)}`:''} · stand ${p.x.toFixed(1)}, ${p.y.toFixed(1)} facing ${Math.round(p.yaw_deg)}°</small></div><button data-ren="${esc(p.id)}">Rename</button><button data-del="${esc(p.id)}">Delete</button></div>`).join('')
   :'<div class="legend">No places yet.</div>';
  document.querySelectorAll('[data-sel]').forEach(d=>d.onclick=()=>{SELPLACE=SELPLACE===d.dataset.sel?null:d.dataset.sel;plotMap(lastMap,lastPose)});
  document.querySelectorAll('[data-del]').forEach(b=>b.onclick=async()=>{if(!confirm('Delete place '+b.dataset.del+'?'))return;
-  await fetch('/places/delete',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:b.dataset.del})});loadPlaces()})}
+  await fetch('/places/delete',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:b.dataset.del})});loadPlaces()});
+ document.querySelectorAll('[data-ren]').forEach(b=>b.onclick=async()=>{const id=b.dataset.ren,to=(prompt('New name for '+id,id)||'').trim();if(!to||to===id)return;
+  const r=await fetch('/places/rename',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id,to,client:'console '+CLIENT})});
+  const j=await r.json().catch(()=>({}));if(!r.ok){$('plnote').innerHTML=`<span class="err">${esc(j.reason||r.status)}</span>`;return}if(SELPLACE===id)SELPLACE=to;loadPlaces()})}
 $('plform').addEventListener('submit',async e=>{e.preventDefault();
  const r=await fetch('/places',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:$('plid').value.trim(),description:$('pldesc').value,client:'console '+CLIENT})});
  if(!r.ok){const j=await r.json().catch(()=>({}));$('plnote').innerHTML=`<span class="err">${esc(j.reason||r.status)}</span>`;return}
@@ -1738,6 +1808,7 @@ addEventListener('resize',redrawAll);
 $('map').addEventListener('click',async e=>{if(!mapXf||PLACING||Date.now()-PLACED<500)return;
  const {x,y,inside}=mapAt(e);if(!inside)return;
  if(LBLPICK){lblPick(false);lblNear(x,y);return}
+ if(ADDING){addAt(x,y);return}
  const hit=LAY.on.objects&&objAt(x,y);if(hit){DROP=null;$('drop').hidden=true;showObj(hit);plotMap(lastMap,lastPose);return}
  if(SELOBJ){SELOBJ=null;$('objp').hidden=true}
  DROP={x,y,view:null,spot:null};$('drop').hidden=false;$('dropxy').textContent=`${x.toFixed(2)}, ${y.toFixed(2)}`;
@@ -1753,21 +1824,44 @@ $('map').addEventListener('click',async e=>{if(!mapXf||PLACING||Date.now()-PLACE
  if(r.views[0]&&r.views[0].facing)pickView(r.views[0]);else plotMap(lastMap,lastPose);$('dropid').focus()});
 $('dropx').addEventListener('click',()=>{DROP=null;$('drop').hidden=true;plotMap(lastMap,lastPose)});
 // object panel: rename, relabel, confirm, delete (POST /map/objects; allowed while someone else drives)
-$('objlabels').innerHTML=OBJLABELS.map(l=>`<option value="${l}">`).join('');
+$('objlabels').innerHTML=['aruco marker',...OBJLABELS].map(l=>`<option value="${l}">`).join('');
+// Add object (Edit places): press the button, click the map, fill in the form; the object is drawn and draggable like the others
+let ADDING=false,ADDAT=null;
+function setAdding(on){ADDING=on;$('addobj').classList.toggle('on',on);$('addobj').textContent=on?'Cancel add':'Add object';if(on){editMsg('click the map where the object or marker is');ADDAT=null;$('addp').hidden=true}plotMap(lastMap,lastPose)}
+$('addobj').addEventListener('click',()=>setAdding(!ADDING));
+function addAt(x,y){setAdding(false);ADDAT={x,y};DROP=null;$('drop').hidden=true;$('addp').hidden=false;$('addxy').textContent=`${x.toFixed(2)}, ${y.toFixed(2)}`;$('addmsg').textContent='';plotMap(lastMap,lastPose);$('addname').focus()}
+const addClose=()=>{ADDAT=null;$('addp').hidden=true;plotMap(lastMap,lastPose)};
+$('addx').addEventListener('click',addClose);
+$('addform').addEventListener('submit',async e=>{e.preventDefault();if(!ADDAT)return;const av=$('addaruco').value.trim();
+ const body={action:'add',name:$('addname').value.trim(),label:$('addlabel').value.trim().toLowerCase()||(av!==''?'aruco marker':''),x:+ADDAT.x.toFixed(2),y:+ADDAT.y.toFixed(2),
+  yaw:+((+$('addyaw').value||0)*Math.PI/180).toFixed(4),aruco_id:av===''?null:+av,client:'console '+CLIENT};
+ $('addmsg').textContent='…';let r,j={};try{r=await fetch('/map/objects',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});j=await r.json().catch(()=>({}))}
+ catch(err){$('addmsg').innerHTML='<span class="err">failed: is the console running?</span>';return}
+ if(!r.ok){$('addmsg').innerHTML=`<span class="err">${esc(j.reason||('failed '+r.status))}</span>`;return}
+ $('addname').value=$('addlabel').value=$('addaruco').value='';addClose();editMsg(`added ${j.object.name}`);
+ const cb=document.querySelector('[data-layer=objects]');if(!cb.checked){cb.checked=true;cb.dispatchEvent(new Event('change'))}
+ await loadObjects();const o=OBJS.find(o=>o.id===j.object.id);if(o)showObj(o);plotMap(lastMap,lastPose)});
 function showObj(o,keep){SELOBJ=o;$('objp').hidden=false;if(!keep)$('objmsg').textContent='';
  $('objtitle').innerHTML=`<span class="objsw" style="background:${objCol(o.label)}"></span>${esc(o.name||o.label)}`;
- $('objmeta').textContent=`${o.label} · ${o.votes??0} votes · ${o.w.toFixed(1)}×${o.h.toFixed(1)} m at ${o.x.toFixed(1)}, ${o.y.toFixed(1)}`+(o.confirmed_by?` · confirmed by ${o.confirmed_by}`:' · not confirmed');
- if(document.activeElement!==$('objname'))$('objname').value=o.name||'';if(document.activeElement!==$('objlabel'))$('objlabel').value=o.label||''}
+ $('objmeta').textContent=`${o.label}${o.aruco_id!=null?` · marker ${o.aruco_id}`:''} · ${o.source==='hand'?'added by hand':`${o.votes??0} votes`} · ${o.w.toFixed(1)}×${o.h.toFixed(1)} m at ${o.x.toFixed(1)}, ${o.y.toFixed(1)}`+(o.confirmed_by?` · confirmed by ${o.confirmed_by}`:' · not confirmed');
+ if(document.activeElement!==$('objname'))$('objname').value=o.name||'';if(document.activeElement!==$('objlabel'))$('objlabel').value=o.label||'';
+ if(!$('objset').contains(document.activeElement)){$('objaruco').value=o.aruco_id??'';$('objw').value=+o.w.toFixed(2);$('objh').value=+o.h.toFixed(2);$('objyaw').value=Math.round((o.yaw||0)*180/Math.PI)}}
 async function objPost(b){if(!SELOBJ)return;const id=SELOBJ.id;$('objmsg').textContent='…';let r,j={};
  try{r=await fetch('/map/objects',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...b,id,client:'console '+CLIENT})});j=await r.json().catch(()=>({}))}
  catch(e){$('objmsg').innerHTML='<span class="err">failed: is the console running?</span>';return}
  if(!r.ok){$('objmsg').innerHTML=`<span class="err">${esc(j.reason||('failed '+r.status))}</span>`;return}
- if(b.action==='delete'){SELOBJ=null;$('objp').hidden=true}else if(j.object){$('objname').blur();$('objlabel').blur();showObj(j.object);$('objmsg').textContent={rename:'Renamed',relabel:'Relabelled',move:'Moved',confirm:'Confirmed'}[b.action]||'Done'}
- loadObjects()}
+ if(b.action==='delete'){SELOBJ=null;$('objp').hidden=true}else if(j.object){document.activeElement.blur();showObj(j.object);$('objmsg').textContent={rename:'Renamed',relabel:'Relabelled',move:'Moved',confirm:'Confirmed',set:'Saved'}[b.action]||'Done'}
+ loadObjects();return true}
 $('objx').addEventListener('click',()=>{SELOBJ=null;$('objp').hidden=true;plotMap(lastMap,lastPose)});
 $('objren').addEventListener('submit',e=>{e.preventDefault();objPost({action:'rename',name:$('objname').value.trim()})});
 $('objrel').addEventListener('submit',e=>{e.preventDefault();const l=$('objlabel').value.trim().toLowerCase();if(l)objPost({action:'relabel',label:l})});
 $('objok').addEventListener('click',()=>objPost({action:'confirm'}));
+// marker id (set) and size / facing (move), only what changed
+$('objset').addEventListener('submit',async e=>{e.preventDefault();const o=SELOBJ;if(!o)return;const av=$('objaruco').value.trim(),aid=av===''?null:+av;
+ const w=+$('objw').value,h=+$('objh').value,yaw=+(+$('objyaw').value*Math.PI/180).toFixed(4),mv={};
+ if(Math.abs(w-o.w)>0.004)mv.w=w;if(Math.abs(h-o.h)>0.004)mv.h=h;if(Math.round((o.yaw||0)*180/Math.PI)!==+$('objyaw').value)mv.yaw=yaw;
+ if(aid!==(o.aruco_id??null)&&!await objPost({action:'set',aruco_id:aid}))return;
+ if(Object.keys(mv).length)await objPost({action:'move',...mv})});
 $('objrot').addEventListener('click',()=>objPost({action:'move',yaw:+(ROOM_DEG*Math.PI/180).toFixed(4)}));
 $('objdel').addEventListener('click',()=>{if(SELOBJ&&confirm(`Delete ${SELOBJ.name||SELOBJ.label} from the map?`))objPost({action:'delete'})});
 document.querySelectorAll('[data-layer]').forEach(b=>{const n=b.dataset.layer;b.checked=!!LAY.on[n];b.addEventListener('change',()=>{LAY.on[n]=b.checked;
@@ -1830,7 +1924,8 @@ $('propbigx').addEventListener('click',()=>{$('propbig').hidden=true});
 try{new IntersectionObserver(es=>{PROPS.vis=es[0].isIntersecting;if(PROPS.vis)loadProps()}).observe($('propsec'))}catch(e){}
 loadProps();setInterval(()=>{if(PROPS.vis&&!document.hidden)loadProps()},15000);
 // ---- Edit places: drag stand dots, heading tips, thing markers (and a selected object) with mouse or touch; snaps to walls
-const editCur=q=>EDIT.drag&&EDIT.drag.kind!=='obj'&&EDIT.drag.id===q.id?EDIT.drag.cur:q;
+const OBJKINDS=['obj','objyaw'],objDrag=id=>EDIT.drag&&OBJKINDS.includes(EDIT.drag.kind)&&EDIT.drag.id===id;
+const editCur=q=>EDIT.drag&&!OBJKINDS.includes(EDIT.drag.kind)&&EDIT.drag.id===q.id?EDIT.drag.cur:q;
 function editDraw(g,mp,RR){const H=[];g.save();g.lineWidth=1.5;
  for(const q0 of Object.values(PLACES)){const q=editCur(q0),[sx,sy]=mp(q.x,q.y),a=RR-(q.yaw_deg||0)*Math.PI/180,tx=sx+30*Math.cos(a),ty=sy+30*Math.sin(a);
   if(q.target){const [gx,gy]=mp(q.target.x,q.target.y);g.strokeStyle=css('--accent');g.setLineDash([3,3]);g.beginPath();g.moveTo(sx,sy);g.lineTo(gx,gy);g.stroke();g.setLineDash([]);
@@ -1838,8 +1933,12 @@ function editDraw(g,mp,RR){const H=[];g.save();g.lineWidth=1.5;
   g.strokeStyle=css('--warn');g.beginPath();g.moveTo(sx,sy);g.lineTo(tx,ty);g.stroke();
   g.fillStyle=css('--warn');g.strokeStyle='rgba(15,18,20,.9)';g.beginPath();g.arc(tx,ty,5,0,7);g.fill();g.stroke();H.push({kind:'yaw',id:q.id,px:tx,py:ty});
   g.fillStyle='#fff';g.strokeStyle=css('--accent');g.lineWidth=2.5;g.beginPath();g.arc(sx,sy,6,0,7);g.fill();g.stroke();g.lineWidth=1.5;H.push({kind:'stand',id:q.id,px:sx,py:sy})}
- if(SELOBJ&&LAY.on.objects){const o0=OBJS.find(o=>o.id===SELOBJ.id);if(o0){const o=EDIT.drag&&EDIT.drag.kind==='obj'?{...o0,...EDIT.drag.cur}:o0,[ox,oy]=mp(o.x,o.y);
+ if(SELOBJ&&LAY.on.objects){const o0=OBJS.find(o=>o.id===SELOBJ.id);if(o0){const o=objDrag(o0.id)?{...o0,...EDIT.drag.cur}:o0,[ox,oy]=mp(o.x,o.y);
+  // a marker also gets a round handle on its facing tick, to turn it
+  if(o.aruco_id!=null){const a=RR-(o.yaw||0),tx=ox+28*Math.cos(a),ty=oy+28*Math.sin(a);g.strokeStyle=css('--warn');g.beginPath();g.moveTo(ox,oy);g.lineTo(tx,ty);g.stroke();
+   g.fillStyle=css('--warn');g.strokeStyle='rgba(15,18,20,.9)';g.beginPath();g.arc(tx,ty,5,0,7);g.fill();g.stroke();H.push({kind:'objyaw',id:o.id,px:tx,py:ty})}
   g.fillStyle='#fff';g.strokeStyle=objCol(o.label);g.lineWidth=2.5;g.fillRect(ox-5,oy-5,10,10);g.strokeRect(ox-5,oy-5,10,10);H.push({kind:'obj',id:o.id,px:ox,py:oy})}}
+ if(ADDAT){const [ax,ay]=mp(ADDAT.x,ADDAT.y);g.strokeStyle=css('--warn');g.lineWidth=2;g.beginPath();g.arc(ax,ay,8,0,7);g.moveTo(ax-12,ay);g.lineTo(ax+12,ay);g.moveTo(ax,ay-12);g.lineTo(ax,ay+12);g.stroke()}
  if(EDIT.cross){const [cx,cy]=mp(...EDIT.cross);g.strokeStyle=css('--bad');g.lineWidth=2.5;g.beginPath();g.moveTo(cx-7,cy-7);g.lineTo(cx+7,cy+7);g.moveTo(cx+7,cy-7);g.lineTo(cx-7,cy+7);g.stroke()}
  g.restore();EDIT.handles=H}
 function editHit(e){if(!EDIT.on||!mapXf)return null;const b=$('map').getBoundingClientRect(),px=e.clientX-b.left,py=e.clientY-b.top;let best=null;
@@ -1870,20 +1969,22 @@ function wallSnap(x,y,off){const P=mapPx(),m=lastMap;if(!P)return null;const res
   const dc=Math.hypot(eu-cu,ev-cv);if(!best||dc<best.d)best={eu,ev,d:dc}}
  return {w,p:best?toM(best.eu,best.ev):[x,y]}}
 function editMsg(t){EDIT.msg=t;EDIT.msgT=Date.now();$('mapstatus').textContent=t}
-function setEdit(on){EDIT.on=on;EDIT.drag=null;EDIT.cross=null;$('editpl').classList.toggle('on',on);$('editpl').textContent=on?'Done editing':'Edit places';$('edithint').hidden=!on;
+function setEdit(on){EDIT.on=on;EDIT.drag=null;EDIT.cross=null;if(!on&&ADDING)setAdding(false);$('editpl').classList.toggle('on',on);$('editpl').textContent=on?'Done editing':'Edit places';$('edithint').hidden=!on;
  if(!on)$('map').style.cursor='';if(on&&PLACING)setPlacing(false);plotMap(lastMap,lastPose)}
 $('editpl').addEventListener('click',()=>setEdit(!EDIT.on));
-addEventListener('keydown',e=>{if(e.key==='Escape'&&EDIT.on){if(EDIT.drag){EDIT.drag=null;EDIT.cross=null;plotMap(lastMap,lastPose)}else setEdit(false)}});
+addEventListener('keydown',e=>{if(e.key==='Escape'&&EDIT.on){if(ADDING)setAdding(false);else if(EDIT.drag){EDIT.drag=null;EDIT.cross=null;plotMap(lastMap,lastPose)}else setEdit(false)}});
 // these listen on the map's parent in the capture phase, so a grabbed handle never reaches the pan / click / place-marking handlers
 const MAPBOX=$('map').parentNode;
 MAPBOX.addEventListener('pointerdown',e=>{if(e.target!==$('map')||e.button)return;const h=editHit(e);if(!h)return;
  e.stopPropagation();e.preventDefault();$('map').setPointerCapture(e.pointerId);const a=mapAt(e);
- if(h.kind==='obj'){const o=OBJS.find(o=>o.id===h.id);EDIT.drag={kind:'obj',id:h.id,orig:{x:o.x,y:o.y},cur:{x:o.x,y:o.y},off:[o.x-a.x,o.y-a.y],name:o.name||o.label}}
+ if(OBJKINDS.includes(h.kind)){const o=OBJS.find(o=>o.id===h.id);EDIT.drag={kind:h.kind,id:h.id,orig:{x:o.x,y:o.y,yaw:o.yaw||0},cur:{x:o.x,y:o.y,yaw:o.yaw||0},off:[o.x-a.x,o.y-a.y],name:o.name||o.label}}
  else{const q=PLACES[h.id],t=q.target;EDIT.drag={kind:h.kind,id:h.id,orig:q,cur:{...q,target:t?{...t}:null},off:h.kind==='target'?[t.x-a.x,t.y-a.y]:[q.x-a.x,q.y-a.y]}}
  $('map').style.cursor='grabbing';plotMap(lastMap,lastPose)},true);
 MAPBOX.addEventListener('pointermove',e=>{const d=EDIT.drag;if(!d){if(EDIT.on&&e.target===$('map'))$('map').style.cursor=editHit(e)?'grab':'';return}
  e.stopPropagation();const a=mapAt(e),x=a.x+d.off[0],y=a.y+d.off[1],snap=$('snapw').checked&&!e.shiftKey;EDIT.cross=null;
  if(d.kind==='obj'){d.cur.x=x;d.cur.y=y}
+ else if(d.kind==='objyaw'){let ang=Math.atan2(a.y-d.cur.y,a.x-d.cur.x)*180/Math.PI;
+  if(!e.shiftKey){const r=ang-ROOM_DEG,k=Math.round(r/90);if(Math.abs(r-k*90)<=8)ang=ROOM_DEG+k*90}d.cur.yaw=ang*Math.PI/180}
  else if(d.kind==='yaw'){let ang=Math.atan2(a.y-d.cur.y,a.x-d.cur.x)*180/Math.PI;
   if(!e.shiftKey){const r=ang-ROOM_DEG,k=Math.round(r/90);if(Math.abs(r-k*90)<=8)ang=ROOM_DEG+k*90}   // square to the room within 8 degrees
   d.cur.yaw_deg=+((((ang+180)%360+360)%360)-180).toFixed(1)}
@@ -1895,6 +1996,8 @@ MAPBOX.addEventListener('pointerup',async e=>{const d=EDIT.drag;if(!d)return;e.s
  const r2=v=>+(+v).toFixed(2),o=d.orig,c=d.cur;let url,body,name=d.id;
  if(d.kind==='obj'){if(c.x===o.x&&c.y===o.y){plotMap(lastMap,lastPose);return}url='/map/objects';body={action:'move',id:d.id,x:r2(c.x),y:r2(c.y)};name=d.name;
   const ob=OBJS.find(x=>x.id===d.id);if(ob){ob.x=body.x;ob.y=body.y}}
+ else if(d.kind==='objyaw'){if(c.yaw===o.yaw){plotMap(lastMap,lastPose);return}url='/map/objects';body={action:'move',id:d.id,yaw:+c.yaw.toFixed(4)};name=d.name;
+  const ob=OBJS.find(x=>x.id===d.id);if(ob)ob.yaw=body.yaw}
  else{url='/places/move';body={id:d.id};
   if(d.kind==='stand'&&(c.x!==o.x||c.y!==o.y)){body.x=r2(c.x);body.y=r2(c.y)}
   if(d.kind==='yaw'&&c.yaw_deg!==o.yaw_deg)body.yaw_deg=c.yaw_deg;
@@ -1904,7 +2007,7 @@ MAPBOX.addEventListener('pointerup',async e=>{const d=EDIT.drag;if(!d)return;e.s
  body.client='console '+CLIENT;plotMap(lastMap,lastPose);editMsg(`moving ${name}…`);let r=null,j={};
  try{r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});j=await r.json().catch(()=>({}))}catch(err){}
  editMsg(r&&r.ok?`moved ${name}`:`could not move ${name}: ${j.reason||(r?r.status:'no answer')}`);
- if(d.kind==='obj'){await loadObjects();if(SELOBJ&&SELOBJ.id===d.id)showObj(OBJS.find(x=>x.id===d.id)||SELOBJ,1)}else await loadPlaces();plotMap(lastMap,lastPose)},true);
+ if(OBJKINDS.includes(d.kind)){await loadObjects();if(SELOBJ&&SELOBJ.id===d.id)showObj(OBJS.find(x=>x.id===d.id)||SELOBJ,1)}else await loadPlaces();plotMap(lastMap,lastPose)},true);
 // label from photos: pick trail photos (since a time, or of a map spot), box the thing, name it; the server places it
 const LBLLABELS=['desk','office chair','sofa','conference table','table','cabinet','shelf','door','box','printer','water cooler','trash bin','monitor','other'];
 let LBLPICK=false,LBL={frame:null,boxes:[],sel:null,drag:null,last:0};
@@ -1960,10 +2063,10 @@ $('lblov').addEventListener('pointerup',e=>{const d=LBL.drag;if(!d)return;LBL.dr
    const o=LBLLABELS.find(x=>x===l)||LBLLABELS.find(x=>x.split(' ').includes(l)||l.includes(x))||'other';$('lbllabel').value=o}}
  lblDraw()});
 $('lblov').addEventListener('pointercancel',()=>{LBL.drag=null;lblDraw()});
-$('lblname').addEventListener('input',e=>{const v=e.target.value.toLowerCase().replace(/[^a-z0-9_]+/g,'_');if(v!==e.target.value)e.target.value=v;clearTimeout(LBL.nt);LBL.nt=setTimeout(()=>lblExamples(v),400)});
+$('lblname').addEventListener('input',e=>{const v=e.target.value.trim();clearTimeout(LBL.nt);LBL.nt=setTimeout(()=>lblExamples(v),400)});
 $('lblname').addEventListener('focus',()=>{const ns=new Set([...OBJS.map(o=>o.name).filter(Boolean),...Object.keys(PLACES)]);$('lblnames').innerHTML=[...ns].sort().map(n=>`<option value="${esc(n)}">`).join('')});
 async function lblExamples(name){if(!name){$('lblexwrap').hidden=true;return}let j;try{j=await (await fetch('/label/examples?name='+encodeURIComponent(name))).json()}catch(e){return}
- if($('lblname').value!==name)return;const ex=j.examples||[];$('lblexwrap').hidden=false;
+ if($('lblname').value.trim()!==name)return;const ex=j.examples||[];$('lblexwrap').hidden=false;
  $('lblexnote').textContent=ex.length?`${name}: ${ex.length} example photo${ex.length>1?'s':''}`:`${name}: no examples yet`;
  $('lblexs').innerHTML=ex.map(x=>`<figure><div class="exw"><img src="${esc(x.url)}" alt="example photo" loading="lazy">${boxDiv(x.box,'')}</div><figcaption><span>${x.t?clock(x.t):''} · ${esc(x.label||'')}</span><button type="button" data-rm="${esc(x.id)}" title="Remove this example">remove</button></figcaption></figure>`).join('');
  $('lblexs').querySelectorAll('[data-rm]').forEach(b=>b.onclick=async()=>{b.disabled=true;try{await fetch('/label/remove',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:b.dataset.rm,client:'console '+CLIENT})})}catch(e){}

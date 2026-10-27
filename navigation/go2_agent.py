@@ -12,10 +12,22 @@ import os
 import re
 import threading
 import time
+import urllib.parse
 from collections import deque
 
 import cv2
 import numpy as np
+
+
+def check_name(name):
+    """A place or object name as people type it ("Joseph's desk", "marker_A"): 1-60 characters after trimming,
+    any case and spaces. It is also a file name and a URL part, so no / or \\, no control characters, no leading '.'.
+    Returns the trimmed name."""
+    name = str(name or "").strip()
+    if not 1 <= len(name) <= 60 or name.startswith(".") or re.search(r"[/\\\x00-\x1f\x7f-\x9f]", name):
+        raise ValueError("name must be 1-60 characters, with no / or \\ or control characters, and not start with .")
+    return name
+
 
 AGENT_LEASE_S = 60.0       # an agent's claim lapses after this long with no call
 HUMAN_HOLD_S = 300.0       # a takeover lasts until Hand back, or this long with no console command
@@ -826,8 +838,7 @@ class Agents:
           straight ahead, if any within 4 m.
         - pose {x, y, yaw}: a stand spot picked on the map, with target (x, y) or None and image
           (an earlier camera frame) or None."""
-        if not re.fullmatch(r"[a-z0-9_]{1,40}", pid or ""):
-            raise ValueError("id must be 1-40 characters of a-z, 0-9 or _")
+        pid = check_name(pid)
         if pose is not None:
             mp, img = pose, image
         else:
@@ -855,7 +866,7 @@ class Agents:
                            "yaw_deg": round(math.degrees(mp["yaw"]), 1),
                            "pitch_deg": float(mp.get("pitch_deg", 0.0)), "description": str(description or "")[:300],
                            "target": {"x": round(target[0], 2), "y": round(target[1], 2)} if target else None,
-                           "preview": f"/places/{preview}" if preview else None, "map": MAP_NAME,
+                           "preview": f"/places/{urllib.parse.quote(preview)}" if preview else None, "map": MAP_NAME,
                            "saved_by": by, "saved_at": time.strftime("%Y-%m-%d %H:%M:%S"),
                            "marked_on_map": pose is not None}
             self._write(places)
@@ -881,6 +892,26 @@ class Agents:
             elif target is not None:
                 p["target"] = {"x": round(float(target["x"]), 2), "y": round(float(target["y"]), 2)}
             p["moved_by"], p["moved_at"] = by, time.strftime("%Y-%m-%d %H:%M:%S")
+            self._write(places)
+            return p
+
+    def rename_place(self, pid, new, by):
+        """Give a place a new name, keeping everything else; its photo file follows. None if there is no such place."""
+        new = check_name(new)
+        prev_dir = os.path.join(MAPS_DIR, f"{MAP_NAME}_places")
+        with self.places_lock:
+            places = self.places()
+            p = places.get(pid)
+            if p is None:
+                return None
+            if new != pid and new in places:
+                raise ValueError(f"a place called {new} already exists")
+            if p.get("preview") and os.path.exists(os.path.join(prev_dir, f"{pid}.jpg")):
+                os.replace(os.path.join(prev_dir, f"{pid}.jpg"), os.path.join(prev_dir, f"{new}.jpg"))
+                p["preview"] = f"/places/{urllib.parse.quote(new)}.jpg"
+            del places[pid]
+            p["id"], p["renamed_by"], p["renamed_at"] = new, by, time.strftime("%Y-%m-%d %H:%M:%S")
+            places[new] = p
             self._write(places)
             return p
 

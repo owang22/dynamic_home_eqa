@@ -24,6 +24,8 @@ import urllib.request
 import cv2
 import numpy as np
 
+from go2_agent import check_name
+
 HFOV_DEG = 79.0
 CAM_AHEAD_M = 0.33
 MAX_RANGE_M = 6.0
@@ -187,8 +189,7 @@ class Examples:
 
     # ---------- people's examples ----------
     def add(self, url, box, name, label, by):
-        if not re.fullmatch(r"[a-z0-9_]{1,40}", name or ""):
-            raise ValueError("name must be 1-40 characters of a-z, 0-9 or _")
+        name = check_name(name)
         x1, y1, x2, y2 = (float(v) for v in box)
         if not (0 <= x1 < x2 <= 1 and 0 <= y1 < y2 <= 1):
             raise ValueError("box must be [x1, y1, x2, y2] as fractions of the image, x1 < x2, y1 < y2")
