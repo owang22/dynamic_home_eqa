@@ -49,6 +49,32 @@ TRACK_MIN_FIT = 0.35       # mean wall likelihood at the best fit
 TRACK_MIN_GAIN = 0.03      # best fit must beat "no correction" by this much
 TRACK_GAIN = 0.6           # apply this fraction of each correction (smooths noise)
 TRACK_MAX_PTS = 700
+# Marker re-anchor (marker_fix): a surveyed ArUco marker seen well gives the dog's map position from the camera's
+# range and bearing, with the map heading kept (a marker's own yaw is too noisy for heading: MAD ~9 deg, 10-26).
+# Only fix_ok, unambiguous, near and head-on sightings count; several must agree; the shift is capped; and the lidar
+# must not clearly prefer the current pose (oblique sightings at 2.5 m read 0.4 m long on 10-26 while the lidar fit
+# the current pose). A refused fix raises suspect instead of moving the dog.
+MK_CAM_AHEAD = 0.30        # m, camera ahead of base_link (the survey's convention)
+MK_MAX_VIEW = 45.0         # deg between the marker's normal and the line of sight (IPPE; reads ~10 deg high at 2.5 m)
+MK_MAX_DIST = 2.5          # m
+MK_MAX_AMBIG = 0.5         # IPPE best/second reprojection error ratio
+MK_YAW_SANITY = 35.0       # deg: heading implied by the marker's yaw must be within this of the map heading
+MK_WINDOW_S = 3.0          # sightings within this window are pooled
+MK_MIN_N = 3               # ...need this many
+MK_MAX_SPREAD = 0.10       # m: and they must agree to within this (median distance from their median)
+MK_MIN_SHIFT = 0.15        # m: smaller disagreements are left to the lidar tracker
+MK_MAX_SHIFT = 1.0         # m: larger ones are refused (a mis-surveyed or moved marker; or the wrong one)
+MK_LIDAR_MARGIN = 0.05     # the recent views' wall fit at the marker pose may be at most this much worse
+MK_COOLDOWN_S = 5.0
+MK_SUSPECT_M = 0.30        # a disagreement this large also raises suspect (smaller ones are only logged)
+MK_MOVE = False            # logging only: a fix that passes every gate is logged as "would_move" (loc event + suspect)
+                           # and the dog is NOT moved. True = re-anchor (not yet: 10-26 B-stand case, map off at B's door)
+MK_GATE = "joint"          # lidar check: "all" (recent views, every voxel), "fresh" (voxels placed in the last
+                           # TRACK_FRESH_S; abstains below MK_FRESH_MIN cells: a standing dog's old voxels agree with
+                           # whatever pose placed them), "joint" (as fresh, and the heading is chosen along the
+                           # marker's range-bearing curve where the fresh voxels fit best, +-MK_JOINT_DEG)
+MK_FRESH_MIN = 40          # fresh wall cells needed for the lidar to vote
+MK_JOINT_DEG = 10.0
 # The dog's /point_cloud2 is its own persistent voxel map: a view is mostly voxels placed tens of seconds to
 # minutes ago, each with the (drifting) heading the dog had then. The drift tracker therefore matches only
 # voxels that first appeared within TRACK_FRESH_S (replay of the 10-23 drive: holds 0.07 m median at
@@ -184,7 +210,8 @@ class Mapper:
                 "lost": self.lost_since is not None, "lost_since": self.lost_since,
                 "track_fit": (self.track_info or {}).get("fit"),
                 "fresh_fit": None if self.fresh_fit is None else round(self.fresh_fit, 3),
-                "suspect": self.suspect_since is not None, "suspect_since": self.suspect_since}
+                "suspect": self.suspect_since is not None, "suspect_since": self.suspect_since,
+                "marker": list(getattr(self, "marker_log", []))[-5:]}
 
     def pose(self, odom):
         if odom is not None:
@@ -534,6 +561,7 @@ class Mapper:
         o = np.argsort(keys, kind="stable")
         self._vox = (keys[o], born[o], seen[o])
         fresh = now - b[inv] <= TRACK_FRESH_S
+        self._fresh_obs = obs[fresh]           # marker_fix's lidar check
         self._sus_obs = obs[now - b[inv] <= SUSPECT_FRESH_S]
         return obs[fresh] if fresh.sum() >= TRACK_FRESH_MIN else obs
 
@@ -734,6 +762,102 @@ class Mapper:
         H, W = L.shape
         ok = (rr >= 0) & (rr < H) & (cc >= 0) & (cc < W)
         return round(float(np.where(ok, L[np.clip(rr, 0, H - 1), np.clip(cc, 0, W - 1)], 0.0).mean()), 3)
+
+    def marker_fix(self, odom, sightings, survey):
+        """Re-anchor the dog's map position to surveyed markers. sightings: go2_markers items (z, x, yaw_deg,
+        view_deg, dist, ambig, fix_ok, held, mark); survey: {mark: {"x", "y", "facing_deg"}} (map frame, facing =
+        where the marker's front looks). Returns a dict describing what was done (also kept in marker_log)."""
+        now = time.time()
+        if self.T is None or odom is None:
+            return None
+        if not hasattr(self, "_mk_buf"):
+            self._mk_buf, self._mk_last, self.marker_log = [], -1e9, deque(maxlen=200)
+        mp = self.pose(odom)
+        psi = mp["yaw"]
+        for m in sightings or []:
+            sv = survey.get(m.get("id"))
+            why = []
+            if sv is None: why.append("unsurveyed")
+            if not m.get("fix_ok") or m.get("held"): why.append("not_fix_ok")
+            if m.get("ambig") is not None and m["ambig"] >= MK_MAX_AMBIG: why.append("ambiguous")
+            if m.get("view_deg", 90) > MK_MAX_VIEW: why.append("oblique")
+            if m.get("dist", 9) > MK_MAX_DIST: why.append("far")
+            if sv is not None and abs(math.degrees(wrap(math.radians(sv["facing_deg"] - 180 + m.get("yaw_deg", 0)) - psi))) > MK_YAW_SANITY:
+                why.append("yaw")
+            if why:
+                continue
+            f, l = MK_CAM_AHEAD + m["z"], -m["x"]
+            bx = sv["x"] - (math.cos(psi) * f - math.sin(psi) * l)
+            by = sv["y"] - (math.sin(psi) * f + math.cos(psi) * l)
+            self._mk_buf.append((now, m["mark"], bx - mp["x"], by - mp["y"], f, l, sv["x"], sv["y"]))
+        self._mk_buf = [b for b in self._mk_buf if now - b[0] <= MK_WINDOW_S]
+        if len(self._mk_buf) < MK_MIN_N or now - self._mk_last < MK_COOLDOWN_S:
+            return None
+        d = np.array([(b[2], b[3]) for b in self._mk_buf])
+        md = np.median(d, axis=0)
+        spread = float(np.median(np.hypot(*(d - md).T)))
+        shift = float(math.hypot(*md))
+        rec = {"t": round(now, 2), "n": len(d), "marks": sorted({b[1] for b in self._mk_buf}), "dx": round(float(md[0]), 3),
+               "dy": round(float(md[1]), 3), "shift": round(shift, 3), "spread": round(spread, 3)}
+        if spread > MK_MAX_SPREAD:
+            rec["action"] = "spread"
+        elif shift < MK_MIN_SHIFT:
+            rec["action"] = "agree"
+        else:
+            T = self.T
+            T2 = (T[0] + float(md[0]), T[1] + float(md[1]), T[2])
+            fo = getattr(self, "_fresh_obs", None)
+            nf = 0 if fo is None or not len(fo) else len(np.unique(np.floor(fo / RES), axis=0))
+            if MK_GATE == "all":
+                f0, f1 = self.view_fit(T), self.view_fit(T2)
+            elif nf < MK_FRESH_MIN:
+                f0 = f1 = None                     # too few fresh voxels: the lidar abstains
+            else:
+                f0, f1 = self._fit_at(fo, T), self._fit_at(fo, T2)
+                if MK_GATE == "joint" and f1 is not None:
+                    # dog pose for heading offset a: marker position minus the rotated camera offset
+                    ox_, oy_ = odom["pos"][0], odom["pos"][1]
+                    last = self._mk_buf[-1]
+                    ff, ll, mx, my = last[4], last[5], last[6], last[7]
+                    best = (f1, 0.0, T2)
+                    for a in np.arange(-MK_JOINT_DEG, MK_JOINT_DEG + 1e-9, 1.0):
+                        p2 = psi + math.radians(a)
+                        X = mx - (math.cos(p2) * ff - math.sin(p2) * ll)
+                        Y = my - (math.sin(p2) * ff + math.cos(p2) * ll)
+                        Tc = self.T_for(odom, X, Y, p2)
+                        fc = self._fit_at(fo, Tc)
+                        if fc is not None and fc > best[0] + 1e-6:
+                            best = (fc, float(a), Tc)
+                    f1, T2 = best[0], best[2]
+                    rec["joint_deg"] = best[1]
+                    md = np.array([T2[0] + math.cos(T2[2]) * ox_ - math.sin(T2[2]) * oy_ - mp["x"],
+                                   T2[1] + math.sin(T2[2]) * ox_ + math.cos(T2[2]) * oy_ - mp["y"]])
+                    shift = float(math.hypot(*md))
+                    rec.update(dx=round(float(md[0]), 3), dy=round(float(md[1]), 3), shift=round(shift, 3))
+            rec.update(fit_now=f0, fit_marker=f1, fresh_cells=nf)
+            if shift > MK_MAX_SHIFT:
+                rec["action"] = "too_far"
+            elif f0 is not None and f1 is not None and f1 < f0 - MK_LIDAR_MARGIN:
+                rec["action"] = "lidar_disagrees"
+            elif not MK_MOVE:
+                rec["action"] = "would_move"
+            else:
+                rec["action"] = "moved"
+                self._set_T(T2, "marker", marks=rec["marks"], shift_m=rec["shift"], gate=MK_GATE)
+        if rec["action"] in ("too_far", "lidar_disagrees", "would_move"):
+            if self.suspect_since is None and rec["shift"] >= MK_SUSPECT_M:
+                self.suspect_since = round(now, 2)
+            mp2 = self.pose(odom)
+            self.event_seq += 1
+            self.events.append({"t": rec["t"], "kind": "marker_disagree", "seq": self.event_seq, "action": rec["action"],
+                                "marks": rec["marks"], "pose": mp2, "marker_dx": rec["dx"], "marker_dy": rec["dy"],
+                                "shift_m": rec["shift"], "spread_m": rec["spread"], "n": rec["n"],
+                                "fit_now": rec.get("fit_now"), "fit_marker": rec.get("fit_marker"),
+                                "fresh_cells": rec.get("fresh_cells"), "joint_deg": rec.get("joint_deg"),
+                                "jump": False, "status": self.status})
+        self._mk_buf, self._mk_last = [], now
+        self.marker_log.append(rec)
+        return rec
 
     def T_for(self, odom, x, y, yaw):
         """The odom-to-map transform that puts the dog (at odom) at map pose (x, y, yaw)."""

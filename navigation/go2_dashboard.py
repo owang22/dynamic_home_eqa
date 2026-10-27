@@ -41,6 +41,7 @@ from go2_mapper import Mapper
 from go2_nav import Planner
 from go2_trail import Trail
 from go2_markers import Markers
+from go2_marker_table import MarkerTable
 from go2_examples import Examples
 from go2_history import History, sample_from
 
@@ -74,6 +75,7 @@ MAPPER = None              # lab map built from the lidar clouds (go2_mapper.py)
 EXAMPLES = None            # objects labelled by example from camera frames (go2_examples.py)
 HIST = None                # state once a second over the last hours (go2_history.py)
 MARKERS = None             # printed ArUco markers in view (go2_markers.py)
+MARKER_TABLE = None        # where they are on the map (go2_marker_table.py): re-anchors the pose
 TRAIL = None               # camera frames along the way, with map poses (go2_trail.py)
 AGENT_CALLS = ("claim", "release", "stop", "say", "status", "move", "turn", "photo", "look_around", "go_to", "look",
                "posture", "relocalize")
@@ -194,6 +196,7 @@ class Collector(Node):
         self.create_subscription(PointCloud2, "/point_cloud2", self.on_cloud, q)
         self.create_subscription(Image, "/camera/image_raw", self.on_image, q)
         self.create_timer(0.2, self.update_map_pose)
+        self.create_timer(0.25, self.marker_fix_tick)
         self.create_timer(2.0, self.refresh_map)
         self.create_timer(20.0, lambda: MAPPER.autosave(latest["odom"]))
         self.create_timer(5.0, lambda: MAPPER.save_session(latest["odom"]))
@@ -406,6 +409,20 @@ class Collector(Node):
             latest["map"] = meta
             if meta:
                 self.stamp("map")
+
+    def marker_fix_tick(self):
+        """Each new detector frame: surveyed markers seen well re-anchor the map position (Mapper.marker_fix)."""
+        if not (MARKERS and MARKER_TABLE and MAPPER):
+            return
+        snap = MARKERS.latest
+        if snap.get("frame_t") == getattr(self, "_mk_frame", None) or not snap.get("list"):
+            return
+        self._mk_frame = snap.get("frame_t")
+        with lock:
+            odom = latest["odom"]
+        rec = MAPPER.marker_fix(odom, snap["list"], MARKER_TABLE.get())
+        if rec and rec.get("action") not in (None, "agree"):
+            print(f"[markers] {rec}", flush=True)
 
     def update_map_pose(self):
         """Robot pose on the lab map; also lines a new session up with the saved map when needed."""
@@ -2112,6 +2129,8 @@ def main():
     MAPPER = Mapper("/maps", os.environ.get("MAP_NAME", "lab"))
     TRAIL = Trail("/maps", os.environ.get("MAP_NAME", "lab"))
     MARKERS = Markers(full, lock)
+    global MARKER_TABLE
+    MARKER_TABLE = MarkerTable("/maps", os.environ.get("MAP_NAME", "lab"), log=lambda m: print(m, flush=True))
     EXAMPLES = Examples("/maps", os.environ.get("MAP_NAME", "lab"), MAPPER, TRAIL)
     AG.mapper, AG.planner = MAPPER, Planner(MAPPER)
     AG.planner.fail_log = os.path.join("/maps", f"{os.environ.get('MAP_NAME', 'lab')}_nav_failures.jsonl")
