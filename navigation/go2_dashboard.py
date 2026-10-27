@@ -703,6 +703,12 @@ class Handler(BaseHTTPRequestHandler):
                 if isinstance(v, bool) or f != int(f) or not 0 <= f <= 49:
                     raise ValueError("aruco_id must be a whole number 0-49")
                 return int(f)
+
+            def taken(a, me=None):
+                # one saved marker per id: the marker checks look markers up by id
+                o = next((o for o in data["objects"] if o.get("aruco_id") == a and o.get("id") != me), None)
+                if o:
+                    raise ValueError(f"marker id {a} is already used by {o.get('name') or o.get('id')}")
             try:
                 if act == "add":
                     name = check_name(req.get("name"))
@@ -716,6 +722,7 @@ class Handler(BaseHTTPRequestHandler):
                            "w": round(float(req.get("w") or 0.4), 3), "h": round(float(req.get("h") or 0.4), 3),
                            "yaw": round(float(req.get("yaw") or 0.0), 4), "source": "hand"}
                     if aruco(req.get("aruco_id")) is not None:
+                        taken(aruco(req.get("aruco_id")))
                         obj["aruco_id"] = aruco(req.get("aruco_id"))
                     data["objects"].append(obj)
                 else:
@@ -727,6 +734,7 @@ class Handler(BaseHTTPRequestHandler):
                         if a is None:
                             obj.pop("aruco_id", None)
                         else:
+                            taken(a, obj.get("id"))
                             obj["aruco_id"] = a
             except (KeyError, TypeError, ValueError) as e:
                 return self.send_json(400, {"result": "error", "reason": str(e) if not isinstance(e, KeyError) else "add needs name, x and y"})
@@ -1354,7 +1362,7 @@ main>section.dragging{opacity:.55;outline:2px dashed var(--accent);outline-offse
 <section><h2>Lidar, top view <span id="cloudinfo"></span></h2><canvas id="cloud" width="600" height="600"></canvas>
 <div class="legend">grid lines every 2 m · grey = open floor seen · yellow→red = obstacle 10 cm→1.2 m tall · arrow = robot heading</div></section>
 <section class="wide"><h2>Map <span id="mapinfo"></span></h2><div class="mapzoom"><button id="zin" type="button" title="Zoom in (or scroll on the map)">+</button><button id="zout" type="button" title="Zoom out">−</button><button id="zfit" type="button" title="Show the whole map">Fit</button><label><input type="checkbox" id="zfollow"> follow dog</label><span>labels</span><button id="lsm" type="button" title="Smaller labels">A−</button><button id="llg" type="button" title="Bigger labels">A+</button><label title="Turn the drawing so the room's walls run straight across and up; the map itself is unchanged">view <select id="zrot"><option value="north">North up</option><option value="room">Room square</option></select></label><button id="editpl" type="button" title="Drag places (and a selected object) on the map">Edit places</button><span id="zinfo"></span></div>
-<div class="edithint" id="edithint" hidden><span>drag a place's dot to move it · drag its arrow tip to turn it · drag the ◆ thing marker to move the thing · drag a selected object's centre ■ to move it (a marker's tick to turn it) · Esc or the button to finish</span><button type="button" id="addobj" title="Then click the map where the object or marker is">Add object</button><label><input type="checkbox" id="snapw" checked> snap to walls</label><small>hold Shift to place freely</small></div>
+<div class="edithint" id="edithint" hidden><span>drag a place's dot to move it · drag its arrow tip to turn it · drag the ◆ to move the thing itself · drag a selected object's centre ■ to move it · drag a tag's spot to move it, and drag the circle at the arrow tip so the arrow points out of the tag's printed face, into the room · Esc or the button to finish</span><button type="button" id="addobj" title="Then click the map where the object or marker is">Add object</button><label><input type="checkbox" id="snapw" checked> snap to walls</label><small>hold Shift to place freely</small></div>
 <div class="maplayers"><span>Show:</span><label title="Desk and table tops"><input type="checkbox" data-layer="mid"><i style="background:rgb(230,140,40)"></i>Desk tops</label><label title="Shelves, cabinet tops, door frames"><input type="checkbox" data-layer="high"><i style="background:rgb(160,90,220)"></i>High</label><label title="Ceiling height: darker = lower"><input type="checkbox" data-layer="ceiling"><i style="background:linear-gradient(90deg,#444,#ccc)"></i>Ceiling</label><label title="Labelled objects; click one to rename, relabel, confirm or delete it"><input type="checkbox" data-layer="objects"><i style="border:1.5px dashed var(--warn)"></i>Objects</label></div><canvas id="map" width="600" height="600"></canvas>
 <div class="legend" id="maplegend">white = open floor · black = walls and furniture · grey = not seen yet · arrow = robot · dots = places (line to where the dog stands to see it) · dashed = agent route · green / red squares = what the lidar sees now clears / adds for route planning · click the map to mark a place</div>
 <div class="mapctl"><span id="mapstatus" class="mapstatus"></span>
@@ -1374,14 +1382,14 @@ main>section.dragging{opacity:.55;outline:2px dashed var(--accent);outline-offse
 <form id="objren"><input type="text" id="objname" placeholder="name, e.g. oliver's desk"><button>Rename</button></form>
 <form id="objrel"><input type="text" id="objlabel" list="objlabels" placeholder="label, e.g. desk"><datalist id="objlabels"></datalist><button>Relabel</button>
 <button type="button" id="objrot" title="Line its sides up with the room's walls">Rotate to room</button><button type="button" id="objok">Confirm</button><button type="button" id="objdel">Delete</button></form>
-<form id="objset"><label title="ArUco id 0-49 (4x4_50); empty = not a marker">marker id <input type="number" id="objaruco" min="0" max="49" step="1" placeholder="none"></label><label>w m <input type="number" id="objw" min="0.05" max="30" step="0.05" required></label><label>h m <input type="number" id="objh" min="0.05" max="30" step="0.05" required></label><label title="map degrees, 0 = map +x, 90 = +y; for a marker, the way its printed face looks out">faces ° <input type="number" id="objyaw" step="1" required></label><button>Save</button></form>
+<form id="objset"><label title="ArUco tag id 0-49 (4x4_50); empty = not a tag">tag id <input type="number" id="objaruco" min="0" max="49" step="1" placeholder="none"></label><label>w m <input type="number" id="objw" min="0.05" max="30" step="0.05" required></label><label>h m <input type="number" id="objh" min="0.05" max="30" step="0.05" required></label><label title="map degrees, 0 = map +x, 90 = +y; for a marker, the way its printed face looks out">faces ° <input type="number" id="objyaw" step="1" required></label><button>Save</button></form>
 <small id="objmsg"></small>
 </div>
 <div id="addp" hidden>
 <div class="droph"><strong>New object at <span id="addxy"></span></strong><button id="addx" type="button">Cancel</button></div>
-<form id="addform"><input type="text" id="addname" placeholder="name, e.g. marker_A or Joseph's desk" maxlength="60" required autocomplete="off"><input type="text" id="addlabel" list="objlabels" placeholder="label, e.g. aruco marker" maxlength="40">
-<label title="ArUco id 0-49 (4x4_50); leave empty for a plain object">marker id <input type="number" id="addaruco" min="0" max="49" step="1" placeholder="none"></label><label title="map degrees, 0 = map +x, 90 = +y">faces ° <input type="number" id="addyaw" step="1" value="0"></label><button>Add</button></form>
-<small>A marker is an object with a marker id. Mount it flat on furniture or a wall; "faces" is the way its printed face looks out, away from the wall (drag the tick in Edit places to turn it). Size defaults to 0.4 × 0.4 m.</small>
+<form id="addform"><input type="text" id="addname" placeholder="name, e.g. tag_A or Joseph's desk" maxlength="60" required autocomplete="off"><input type="text" id="addlabel" list="objlabels" placeholder="label, e.g. aruco marker" maxlength="40">
+<label title="ArUco tag id 0-49 (4x4_50); leave empty for a plain object">tag id <input type="number" id="addaruco" min="0" max="49" step="1" placeholder="none"></label><label title="map degrees, 0 = map +x, 90 = +y">faces ° <input type="number" id="addyaw" step="1" value="0"></label><button>Add</button></form>
+<small>A tag (the printed ArUco square) is an object with a tag id. Mount it flat on furniture or a wall; "faces" is the way its printed face looks out, away from the wall (in Edit places, drag the circle at the arrow tip so the arrow points out of the tag's printed face, into the room). Size defaults to 0.4 × 0.4 m.</small>
 <small id="addmsg"></small>
 </div></section>
 <section class="wide" id="lblsec"><h2>Label from photos <span id="lblnote"></span></h2>
@@ -1456,7 +1464,9 @@ let EDIT={on:false,drag:null,cross:null,handles:[],msg:'',msgT:0};   // Edit pla
 const LAY={on:{},img:{},t:{},last:{}};try{Object.assign(LAY.on,JSON.parse(localStorage.getItem('go2layers')||'{}'))}catch(e){}
 const LAYTINT={mid:[230,140,40],high:[160,90,220]};let OBJS=[],SELOBJ=null;
 const OBJLABELS=['desk','table','chair','sofa','cabinet','shelf','door','box','bin','plant','monitor','bed','counter','fridge'];
-const MARKCOL='#ff5fa2';   // saved markers (objects with an aruco_id); live detections stay orange
+const MARKCOL='#d81b8c';   // saved markers (objects with an aruco_id): a magenta arrow; live detections stay orange squares
+// a saved marker's arrow: from its spot, the way its printed face looks out; longer in Edit places so the tip circle is easy to grab
+const markLen=LS=>EDIT.on?30:16*Math.sqrt(LS),markName=o=>o.name||`#${o.aruco_id}`;
 const OBJPAL=['#e0a84a','#5b9be0','#7cc46d','#d46ad4','#e06a5a','#4fb3a9','#c9b458','#9a8cf0','#e08a5a','#6ac4d4'];
 const objCol=l=>{let i=OBJLABELS.indexOf(l);if(i<0){i=0;for(const ch of String(l))i=(i*31+ch.charCodeAt(0))>>>0}return OBJPAL[i%OBJPAL.length]};
 // fetch a layer when its toggle is on and the map changed, at most every 5 s; keep only the useful cells, tinted
@@ -1524,11 +1534,16 @@ function plotMap(m,p){const c=$('map'),[W,H]=fit(c),g=c.getContext('2d');g.clear
   g.strokeStyle=css('--warn');g.lineWidth=2;g.beginPath();g.arc(dx,dy,8,0,7);g.moveTo(dx-12,dy);g.lineTo(dx+12,dy);g.moveTo(dx,dy-12);g.lineTo(dx,dy+12);g.stroke()}
  const LS=VIEW.label/11;g.font=`${VIEW.label}px monospace`;
  if(LAY.on.objects)for(const o0 of OBJS){const o=objDrag(o0.id)?{...o0,...EDIT.drag.cur}:o0,col=objCol(o.label),c=Math.cos(o.yaw||0),sn=Math.sin(o.yaw||0),hw=o.w/2,hh=o.h/2;
-  // a marker (object with an aruco_id): dark square with a pink rim and white corner, a tick the way its printed face looks out, and "#id name"
-  if(o.aruco_id!=null){const sel=SELOBJ&&o.id===SELOBJ.id,mc=sel?css('--accent'):MARKCOL,[kx,ky]=mp(o.x,o.y),q=6*Math.sqrt(LS);g.save();g.translate(kx,ky);g.rotate(RR-(o.yaw||0));
-   g.fillStyle='#16191c';g.strokeStyle=mc;g.lineWidth=sel?3:2;g.fillRect(-q,-q,2*q,2*q);g.strokeRect(-q,-q,2*q,2*q);g.fillStyle='#fff';g.fillRect(-q*.6,-q*.6,q*.6,q*.6);
-   g.lineWidth=2.5;g.beginPath();g.moveTo(q,0);g.lineTo(q+10*LS,0);g.stroke();g.restore();
-   label(`#${o.aruco_id}${o.name?' '+o.name:''}`,kx+q+4*LS,ky-q-2*LS,mc);continue}
+  // a marker (object with an aruco_id): one small arrow from its spot, pointing out of its printed face, and its name; selected = thicker
+  if(o.aruco_id!=null){const sel=SELOBJ&&o.id===SELOBJ.id,[kx,ky]=mp(o.x,o.y),L=markLen(LS),hd=(sel?7:5)*Math.sqrt(LS),a=RR-(o.yaw||0),ca=Math.cos(a),sa=Math.sin(a);
+   g.save();g.translate(kx,ky);g.rotate(a);g.lineCap='round';g.lineJoin='round';
+   const shape=()=>{g.beginPath();g.moveTo(0,0);g.lineTo(L-hd*.6,0);g.stroke();g.beginPath();g.moveTo(L,0);g.lineTo(L-hd,hd*.6);g.lineTo(L-hd,-hd*.6);g.closePath();g.fill();g.stroke()};
+   g.strokeStyle=g.fillStyle='rgba(15,18,20,.6)';g.lineWidth=sel?6:4.5;shape();   // thin dark edge so it reads on white floor
+   g.strokeStyle=g.fillStyle=MARKCOL;g.lineWidth=sel?3.5:2;shape();
+   g.beginPath();g.arc(0,0,(sel?3:2.2)*Math.sqrt(LS),0,7);g.fill();g.restore();
+   // name on the side away from the arrow, so the two never overlap
+   g.save();g.font=`${Math.round(VIEW.label*.85)}px monospace`;const t=markName(o),tw=g.measureText(t).width,r=9*Math.sqrt(LS)+tw/2;
+   label(t,kx-ca*r-tw/2,ky-sa*r+VIEW.label*.3,MARKCOL);g.restore();continue}
   // light by default: thin outline only; the selected object gets a faint fill and a thicker line
   const sel=SELOBJ&&o.id===SELOBJ.id;g.save();g.strokeStyle=col;g.lineWidth=sel?3:1.25;g.globalAlpha=sel?1:.7;if(!o.confirmed_by)g.setLineDash([4,4]);g.beginPath();
   [[hw,hh],[-hw,hh],[-hw,-hh],[hw,-hh]].forEach(([u,v],i)=>{const [px,py]=mp(o.x+u*c-v*sn,o.y+u*sn+v*c);i?g.lineTo(px,py):g.moveTo(px,py)});
@@ -1590,7 +1605,7 @@ function render(d){const a=d.age||{};
    `<tr><td>${l}</td><td>${f(p.hip)}</td><td>${f(p.thigh)}</td><td>${f(p.calf)}</td></tr>`).join('')}
  if(d.cloud)$('cloudinfo').textContent=`${d.cloud.obs.length} obstacle cells · ${d.cloud.n_total} pts`;
  if(d.markers){MARKERS=d.markers.list||[];$('mknote').innerHTML=MARKERS.length?MARKERS.map(k=>{const b=Math.round(k.bearing_deg);
-  return `marker <b>${String(k.mark).replace(/[<&]/g,'')}</b>: ${k.z.toFixed(2)} m, ${b?Math.abs(b)+'° '+(b>0?'right':'left'):'straight ahead'}`}).join(' · '):'no markers in view'}
+  return `tag <b>${String(k.mark).replace(/[<&]/g,'')}</b>: ${k.z.toFixed(2)} m, ${b?Math.abs(b)+'° '+(b>0?'right':'left'):'straight ahead'}`}).join(' · '):'no tags in view'}
  plotCloud(d.cloud,d.odom);lastCloud=[d.cloud,d.odom];lastMap=d.map;lastPose=d.map_pose;NAV=d.nav;LIVE=d.live;plotMap(d.map,d.map_pose);$('camage').textContent=a.camera!=null?`${a.camera.toFixed(1)} s old`:'no frames'}
 
 // The camera <img> stream does not reconnect by itself when the console restarts; restart it whenever the event stream (re)connects.
@@ -1841,16 +1856,16 @@ $('map').addEventListener('click',async e=>{if(!mapXf||PLACING||Date.now()-PLACE
  if(r.views[0]&&r.views[0].facing)pickView(r.views[0]);else plotMap(lastMap,lastPose);$('dropid').focus()});
 $('dropx').addEventListener('click',()=>{DROP=null;$('drop').hidden=true;plotMap(lastMap,lastPose)});
 // object panel: rename, relabel, confirm, delete (POST /map/objects; allowed while someone else drives)
-$('objlabels').innerHTML=['aruco marker',...OBJLABELS].map(l=>`<option value="${l}">`).join('');
+$('objlabels').innerHTML=['tag',...OBJLABELS].map(l=>`<option value="${l}">`).join('');
 // Add object (Edit places): press the button, click the map, fill in the form; the object is drawn and draggable like the others
 let ADDING=false,ADDAT=null;
-function setAdding(on){ADDING=on;$('addobj').classList.toggle('on',on);$('addobj').textContent=on?'Cancel add':'Add object';if(on){editMsg('click the map where the object or marker is');ADDAT=null;$('addp').hidden=true}plotMap(lastMap,lastPose)}
+function setAdding(on){ADDING=on;$('addobj').classList.toggle('on',on);$('addobj').textContent=on?'Cancel add':'Add object';if(on){editMsg('click the map where the object or tag is');ADDAT=null;$('addp').hidden=true}plotMap(lastMap,lastPose)}
 $('addobj').addEventListener('click',()=>setAdding(!ADDING));
 function addAt(x,y){setAdding(false);ADDAT={x,y};DROP=null;$('drop').hidden=true;$('addp').hidden=false;$('addxy').textContent=`${x.toFixed(2)}, ${y.toFixed(2)}`;$('addmsg').textContent='';plotMap(lastMap,lastPose);$('addname').focus()}
 const addClose=()=>{ADDAT=null;$('addp').hidden=true;plotMap(lastMap,lastPose)};
 $('addx').addEventListener('click',addClose);
 $('addform').addEventListener('submit',async e=>{e.preventDefault();if(!ADDAT)return;const av=$('addaruco').value.trim();
- const body={action:'add',name:$('addname').value.trim(),label:$('addlabel').value.trim().toLowerCase()||(av!==''?'aruco marker':''),x:+ADDAT.x.toFixed(2),y:+ADDAT.y.toFixed(2),
+ const body={action:'add',name:$('addname').value.trim(),label:$('addlabel').value.trim().toLowerCase()||(av!==''?'tag':''),x:+ADDAT.x.toFixed(2),y:+ADDAT.y.toFixed(2),
   yaw:+((+$('addyaw').value||0)*Math.PI/180).toFixed(4),aruco_id:av===''?null:+av,client:'console '+CLIENT};
  $('addmsg').textContent='…';let r,j={};try{r=await fetch('/map/objects',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});j=await r.json().catch(()=>({}))}
  catch(err){$('addmsg').innerHTML='<span class="err">failed: is the console running?</span>';return}
@@ -1860,7 +1875,7 @@ $('addform').addEventListener('submit',async e=>{e.preventDefault();if(!ADDAT)re
  await loadObjects();const o=OBJS.find(o=>o.id===j.object.id);if(o)showObj(o);plotMap(lastMap,lastPose)});
 function showObj(o,keep){SELOBJ=o;$('objp').hidden=false;if(!keep)$('objmsg').textContent='';
  $('objtitle').innerHTML=`<span class="objsw" style="background:${objCol(o.label)}"></span>${esc(o.name||o.label)}`;
- $('objmeta').textContent=`${o.label}${o.aruco_id!=null?` · marker ${o.aruco_id}`:''} · ${o.source==='hand'?'added by hand':`${o.votes??0} votes`} · ${o.w.toFixed(1)}×${o.h.toFixed(1)} m at ${o.x.toFixed(1)}, ${o.y.toFixed(1)}`+(o.confirmed_by?` · confirmed by ${o.confirmed_by}`:' · not confirmed');
+ $('objmeta').textContent=`${o.label}${o.aruco_id!=null?` · tag ${o.aruco_id}`:''} · ${o.source==='hand'?'added by hand':`${o.votes??0} votes`} · ${o.w.toFixed(1)}×${o.h.toFixed(1)} m at ${o.x.toFixed(1)}, ${o.y.toFixed(1)}`+(o.confirmed_by?` · confirmed by ${o.confirmed_by}`:' · not confirmed');
  if(document.activeElement!==$('objname'))$('objname').value=o.name||'';if(document.activeElement!==$('objlabel'))$('objlabel').value=o.label||'';
  if(!$('objset').contains(document.activeElement)){$('objaruco').value=o.aruco_id??'';$('objw').value=+o.w.toFixed(2);$('objh').value=+o.h.toFixed(2);$('objyaw').value=Math.round((o.yaw||0)*180/Math.PI)}}
 async function objPost(b){if(!SELOBJ)return;const id=SELOBJ.id;$('objmsg').textContent='…';let r,j={};
@@ -1951,10 +1966,12 @@ function editDraw(g,mp,RR){const H=[];g.save();g.lineWidth=1.5;
   g.fillStyle=css('--warn');g.strokeStyle='rgba(15,18,20,.9)';g.beginPath();g.arc(tx,ty,5,0,7);g.fill();g.stroke();H.push({kind:'yaw',id:q.id,px:tx,py:ty});
   g.fillStyle='#fff';g.strokeStyle=css('--accent');g.lineWidth=2.5;g.beginPath();g.arc(sx,sy,6,0,7);g.fill();g.stroke();g.lineWidth=1.5;H.push({kind:'stand',id:q.id,px:sx,py:sy})}
  if(SELOBJ&&LAY.on.objects){const o0=OBJS.find(o=>o.id===SELOBJ.id);if(o0){const o=objDrag(o0.id)?{...o0,...EDIT.drag.cur}:o0,[ox,oy]=mp(o.x,o.y);
-  // a marker also gets a round handle on its facing tick, to turn it
-  if(o.aruco_id!=null){const a=RR-(o.yaw||0),tx=ox+28*Math.cos(a),ty=oy+28*Math.sin(a);g.strokeStyle=css('--warn');g.beginPath();g.moveTo(ox,oy);g.lineTo(tx,ty);g.stroke();
-   g.fillStyle=css('--warn');g.strokeStyle='rgba(15,18,20,.9)';g.beginPath();g.arc(tx,ty,5,0,7);g.fill();g.stroke();H.push({kind:'objyaw',id:o.id,px:tx,py:ty})}
-  g.fillStyle='#fff';g.strokeStyle=objCol(o.label);g.lineWidth=2.5;g.fillRect(ox-5,oy-5,10,10);g.strokeRect(ox-5,oy-5,10,10);H.push({kind:'obj',id:o.id,px:ox,py:oy})}}
+  if(o.aruco_id==null){g.fillStyle='#fff';g.strokeStyle=objCol(o.label);g.lineWidth=2.5;g.fillRect(ox-5,oy-5,10,10);g.strokeRect(ox-5,oy-5,10,10);H.push({kind:'obj',id:o.id,px:ox,py:oy})}}}
+ // every marker: drag its spot to move it, the circle at its arrow tip to turn it (the arrow itself is drawn with the objects)
+ if(LAY.on.objects)for(const o0 of OBJS){if(o0.aruco_id==null)continue;const o=objDrag(o0.id)?{...o0,...EDIT.drag.cur}:o0,[ox,oy]=mp(o.x,o.y),a=RR-(o.yaw||0),L=markLen(VIEW.label/11)+6,tx=ox+L*Math.cos(a),ty=oy+L*Math.sin(a);
+  g.lineWidth=1.5;g.strokeStyle='rgba(15,18,20,.9)';g.fillStyle=css('--warn');g.beginPath();g.arc(tx,ty,5,0,7);g.fill();g.stroke();
+  g.strokeStyle=MARKCOL;g.lineWidth=2;g.beginPath();g.arc(ox,oy,6,0,7);g.stroke();
+  H.push({kind:'objyaw',id:o.id,px:tx,py:ty},{kind:'obj',id:o.id,px:ox,py:oy})}
  if(ADDAT){const [ax,ay]=mp(ADDAT.x,ADDAT.y);g.strokeStyle=css('--warn');g.lineWidth=2;g.beginPath();g.arc(ax,ay,8,0,7);g.moveTo(ax-12,ay);g.lineTo(ax+12,ay);g.moveTo(ax,ay-12);g.lineTo(ax,ay+12);g.stroke()}
  if(EDIT.cross){const [cx,cy]=mp(...EDIT.cross);g.strokeStyle=css('--bad');g.lineWidth=2.5;g.beginPath();g.moveTo(cx-7,cy-7);g.lineTo(cx+7,cy+7);g.moveTo(cx+7,cy-7);g.lineTo(cx-7,cy+7);g.stroke()}
  g.restore();EDIT.handles=H}
