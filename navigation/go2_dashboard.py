@@ -1476,7 +1476,7 @@ function objAt(x,y){for(let i=OBJS.length-1;i>=0;i--){const o=OBJS[i],dx=x-o.x,d
 function plotMap(m,p){const c=$('map'),[W,H]=fit(c),g=c.getContext('2d');g.clearRect(0,0,W,H);
  if(!m){$('mapinfo').textContent='no map';$('mapstatus').textContent='No map yet. Press Start mapping, then drive slowly around the lab.';
   $('mapstate').textContent='off · no map yet';document.querySelectorAll('[data-map]').forEach(b=>{const w=b.dataset.when;b.hidden=w==='mapping'||b.dataset.map==='extend'||b.dataset.map==='align'});return}
- $('mapstatus').textContent=PLACING?PLACE_HINT:EDIT.msg&&Date.now()-EDIT.msgT<8000?EDIT.msg:m.status+(m.mode==='mapping'?' · drive slowly to fill it in':'');
+ $('mapstatus').textContent=PLACING?PLACE_HINT:EDIT.msg&&Date.now()-EDIT.msgT<8000?EDIT.msg:m.status+(m.mode==='mapping'?' · drive slowly to fill it in':'')+(LIVE&&LIVE.shift&&LIVE.shift.suspect?' · ⚠ '+(LIVE.shift.text||'live view looks shifted against the map'):'');
  const mapping=m.mode==='mapping';
  $('mapstate').textContent=mapping?`on · ${m.mapped_m2} m² seen`:m.mode==='localized'?'off · lined up with the saved map':'off · '+m.status;$('mapstate').className='mapstate'+(mapping?' on':'');
  document.querySelectorAll('[data-map]').forEach(b=>{const w=b.dataset.when;b.hidden=w==='any'?false:(w==='mapping')!==mapping});

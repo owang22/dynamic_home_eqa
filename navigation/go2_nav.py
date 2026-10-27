@@ -15,6 +15,7 @@ reason no ray clearing: points in it may have been seen from somewhere else.)
 The dog's own footprint is always clear: it is standing there.
 """
 import heapq
+from collections import deque
 import json
 import math
 import threading
@@ -64,6 +65,20 @@ LIVE_THIN_BONUS = 0.16     # ROBOT_R - ROBOT_R_SQUEEZE: pass unconfirmed live ob
 FALLBACK_TIERS = [("live", 0.0, True), ("live_noblocks", 0.0, False)]
 TRAIL_R = 0.20             # squeeze near the dog is allowed this close to where it walked recently (set_trail):
                            # it got in that way, so it can get out (10-24 15:28: stuck at door_outside)
+# Pose-shift guard (10-26: in the corridor to B the pose was ~0.3 m sideways, and the live view "cleared" the desk
+# backs it saw in the wrong place, as if the map were wrong). Each live update, the live view's obstacle and floor
+# cells are matched against the saved grid over small shifts. If a clear best fit lies away from zero, the
+# disagreement is a pose error, not moved furniture: keep the saved obstacles (don't clear them), mark plans
+# pose_suspect, and publish the shift (live_shift) for the localization side to check against the camera.
+SHIFT_R, SHIFT_STEP = 0.6, 0.05        # m: search range and step (coarse pass at 2 x step)
+SHIFT_YAW_DEG = 4.0                    # +- yaw searched about the dog (1 deg steps, fine pass only)
+SHIFT_MIN_STRENGTH = 0.06              # best score - score at no shift (scores in [0, 1]) to call it a shift
+SHIFT_MIN_M = 0.15                     # ... and the shift at least this large
+SHIFT_MIN_OBS = 150                    # live obstacle cells within LIVE_R needed to judge
+SHIFT_PERSIST = 2                      # consecutive estimates before the guard acts
+SHIFT_EVERY_S = 1.0                    # at most this often
+SHIFT_MARKER_S = 10.0                  # pair a guard estimate with a marker re-anchor record this close in time
+SHIFT_MARKER_AGREE_M = 0.20            # ... the two pose corrections agree when this close (logging only, 10-26)
 SQ2 = math.sqrt(2)
 
 
@@ -83,6 +98,9 @@ class Planner:
         self.under_cost = None     # per planning cell extra cost from live_under / the mid layer
         self.fail_log = None       # jsonl file for failed plans, set by the agent
         self.trail = []            # recent map xy where the dog walked (set_trail), for squeezing out of a pocket
+        self.live_shift = None     # pose-shift guard: latest estimate (see SHIFT_*); suspect = acting on it
+        self._shift_run, self._shift_at = 0, 0.0
+        self.shift_log = deque(maxlen=200)  # guard estimates while suspect, with the marker record they pair with
         self.tier = 0              # fallback tier the grid is built for (0 = normal)
 
     # ---------- grid ----------
@@ -152,9 +170,14 @@ class Planner:
                 ok = (d <= radius) & (rr >= 0) & (rr < h) & (cc >= 0) & (cc < w)
                 return rr[ok], cc[ok], d[ok]
 
-            # open floor it sees now clears old obstacles
+            self._update_shift(occ, known, lo, lf, rx, ry, rad, cells)
+            suspect = bool(self.live_shift and self.live_shift["suspect"])
+            # open floor it sees now clears old obstacles, unless the view is merely shifted (pose error)
             rr, cc, _ = cells(lf, rad)
-            occ[rr, cc], known[rr, cc] = False, True
+            if suspect:
+                known[rr, cc] = True
+            else:
+                occ[rr, cc], known[rr, cc] = False, True
             # obstacles it sees: ones the saved map has too, anywhere near; new ones only close by
             # (further out, the dog's smeared cloud makes phantom walls)
             rr, cc, d = cells(lo, rad)
@@ -166,7 +189,8 @@ class Planner:
             near = np.hypot(cx - rx, cy - ry) <= rad
             self.live_view = {"t": lt,
                               "new": np.c_[cx[occ & ~saved & near], cy[occ & ~saved & near]].round(2).tolist(),
-                              "cleared": np.c_[cx[saved & ~occ & near], cy[saved & ~occ & near]].round(2).tolist()}
+                              "cleared": np.c_[cx[saved & ~occ & near], cy[saved & ~occ & near]].round(2).tolist(),
+                              "shift": self.live_shift}
         # under desks and tables: a routing cost (or, UNDER_HARD, a block), grown by the dog's half width
         under = np.zeros((h, w), np.float32)
         if self.live is not None and self.live_under:
@@ -330,6 +354,91 @@ class Planner:
             _, x, y = best
             return x, y, math.atan2(ty - y, tx - x)
 
+    def _update_shift(self, occ, known, lo, lf, rx, ry, rad, cells):
+        """Match the live view against the saved grid (occ, known: before the live view) over small shifts; sets
+        self.live_shift = {t, dx, dy, dyaw_deg, peak, zero, strength, n_obs, n_free, robot, T, suspect}. The view
+        moves by +(dx, dy) (and dyaw about the dog) to fit the saved map, i.e. the pose is off by that much."""
+        now = time.time()
+        if now - self._shift_at < SHIFT_EVERY_S and self.live_shift is not None:
+            return
+        self._shift_at = now
+        rr_o, cc_o, _ = cells(lo, rad)
+        rr_f, cc_f, _ = cells(lf, rad)
+        if len(rr_o) < SHIFT_MIN_OBS:
+            self._shift_run = 0
+            self.live_shift = None
+            return
+        h, w = occ.shape
+        sat = cv2.dilate(occ.astype(np.uint8), np.ones((3, 3), np.uint8)).astype(bool)
+        openf = known & ~occ
+        O = np.c_[(cc_o + 0.5) * CELL + self.origin[0], (rr_o + 0.5) * CELL + self.origin[1]]
+        F = np.c_[(cc_f + 0.5) * CELL + self.origin[0], (rr_f + 0.5) * CELL + self.origin[1]]
+        n = len(O) + len(F)
+
+        def hits(P, grid):
+            c = np.floor((P[:, 0] - self.origin[0]) / CELL).astype(int); r = np.floor((P[:, 1] - self.origin[1]) / CELL).astype(int)
+            ok = (r >= 0) & (r < h) & (c >= 0) & (c < w)
+            return int(grid[r[ok], c[ok]].sum())
+
+        def score(dx, dy, a):
+            if a:
+                ca, sa = math.cos(a), math.sin(a)
+                rot = np.array([[ca, sa], [-sa, ca]])
+                Oa, Fa = (O - (rx, ry)) @ rot + (rx, ry), (F - (rx, ry)) @ rot + (rx, ry)
+            else:
+                Oa, Fa = O, F
+            return (hits(Oa + (dx, dy), sat) + hits(Fa + (dx, dy), openf)) / n
+        zero = score(0.0, 0.0, 0.0)
+        best = (zero, 0.0, 0.0, 0.0)
+        for dx in np.arange(-SHIFT_R, SHIFT_R + 1e-9, 2 * SHIFT_STEP):           # coarse: 10 cm, no yaw
+            for dy in np.arange(-SHIFT_R, SHIFT_R + 1e-9, 2 * SHIFT_STEP):
+                v = score(dx, dy, 0.0)
+                if v > best[0]:
+                    best = (v, dx, dy, 0.0)
+        _, bx, by, _ = best
+        for a in np.radians(np.arange(-SHIFT_YAW_DEG, SHIFT_YAW_DEG + 1e-9, 1.0)):   # fine: 5 cm and yaw around it
+            for dx in (bx - SHIFT_STEP, bx, bx + SHIFT_STEP):
+                for dy in (by - SHIFT_STEP, by, by + SHIFT_STEP):
+                    v = score(dx, dy, a)
+                    if v > best[0]:
+                        best = (v, dx, dy, a)
+        peak, dx, dy, a = best
+        big = (peak - zero >= SHIFT_MIN_STRENGTH and math.hypot(dx, dy) >= SHIFT_MIN_M)
+        self._shift_run = self._shift_run + 1 if big else 0
+        T = getattr(self.mapper, "T", None)
+        self.live_shift = {"t": round(now, 2), "dx": round(float(dx), 2), "dy": round(float(dy), 2),
+                           "dyaw_deg": round(math.degrees(a), 1), "peak": round(peak, 3), "zero": round(zero, 3),
+                           "strength": round(peak - zero, 3), "n_obs": int(len(O)), "n_free": int(len(F)),
+                           "robot": [round(rx, 2), round(ry, 2)], "T": [round(v, 4) for v in T] if T else None,
+                           "suspect": self._shift_run >= SHIFT_PERSIST}
+        if self.live_shift["suspect"]:
+            self.live_shift["marker"] = mk = self._marker_pair(now, dx, dy)
+            d = math.hypot(dx, dy)
+            if mk is None:
+                say = "no recent marker check"
+            elif mk["action"] == "agree":
+                say = "markers say the pose is right here, so the map is likely off"
+            elif mk["agree"]:
+                say = f"markers agree ({mk['marks']} say {mk['shift_m']:.2f} m)"
+            else:
+                say = f"markers disagree ({mk['marks']} say ({mk['dx']:+.2f}, {mk['dy']:+.2f}))"
+            self.live_shift["text"] = (f"live view disagrees with the map as if the dog (or the map here) were {d:.2f} m off "
+                                       f"({dx:+.2f}, {dy:+.2f}); {say}. Saved obstacles kept.")
+            self.shift_log.append(dict(self.live_shift))
+
+    def _marker_pair(self, now, dx, dy):
+        """The mapper's latest marker re-anchor record (mapper.marker_log, 10-26) within SHIFT_MARKER_S, and whether
+        its pose correction (marker-implied minus console pose, the same sign as live_shift) agrees with (dx, dy)."""
+        log = getattr(self.mapper, "marker_log", None)
+        if not log:
+            return None
+        rec = log[-1]
+        if abs(now - rec.get("t", 0)) > SHIFT_MARKER_S:
+            return None
+        agree = math.hypot(rec.get("dx", 0) - dx, rec.get("dy", 0) - dy) <= SHIFT_MARKER_AGREE_M
+        return {"t": rec.get("t"), "action": rec.get("action"), "marks": rec.get("marks"), "dx": rec.get("dx"), "dy": rec.get("dy"),
+                "shift_m": rec.get("shift"), "agree": bool(agree and rec.get("action") != "agree")}
+
     def set_live(self, obs, free, rx, ry, radius, over=(), under=(), hard=()):
         """The lidar's current view around the robot, map-frame xy: obstacle cells (seen in recent
         clouds), open-floor cells, and overhead cells (desk/table tops) that block anywhere in radius."""
@@ -481,6 +590,9 @@ class Planner:
                 self._set_tier(0)
             if "path" not in out:
                 out = first
+            if self.live is not None and self.live_shift and self.live_shift["suspect"]:
+                out["pose_suspect"] = True          # the live view looks shifted against the map; see live_shift
+                out["live_shift"] = self.live_shift
             if "path" not in out and self.live is not None:
                 out["why"] = self._why_failed(sx, sy, gx, gy, out.get("error"))
             self.last = dict(out, t=time.time(), start=[sx, sy], want=[gx, gy])

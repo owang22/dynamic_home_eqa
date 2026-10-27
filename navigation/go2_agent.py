@@ -699,8 +699,11 @@ class Agents:
         moved, replans, first_plan, squeezes = 0.0, 0, None, 0
         fallback = None                    # the planner's fallback tier, if any plan of this drive needed one
 
+        pose_suspect = None                # the planner's pose-shift guard, if it was on for any plan of this drive
+
         def fb(out):
-            return dict(out, fallback=fallback) if fallback else out
+            out = dict(out, fallback=fallback) if fallback else out
+            return dict(out, pose_suspect=pose_suspect) if pose_suspect else out
         while True:
             mp = self.map_pose_now()
             if mp is None:
@@ -718,6 +721,9 @@ class Agents:
                 return fb({"result": "no_route", "reason": plan["error"], "moved_m": round(moved, 2), "replans": replans, **why})
             first_plan = first_plan or plan
             fallback = plan.get("fallback") or fallback
+            if plan.get("pose_suspect"):
+                ls = plan.get("live_shift") or {}
+                pose_suspect = {k: ls.get(k) for k in ("dx", "dy", "dyaw_deg", "strength", "text", "marker")}
             gx, gy = plan["goal"]          # may have moved off furniture onto open floor
             path = plan["path"]
             if plan.get("squeeze_along_m") is not None:
