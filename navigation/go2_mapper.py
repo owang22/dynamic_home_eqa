@@ -49,6 +49,14 @@ TRACK_MIN_FIT = 0.35       # mean wall likelihood at the best fit
 TRACK_MIN_GAIN = 0.03      # best fit must beat "no correction" by this much
 TRACK_GAIN = 0.6           # apply this fraction of each correction (smooths noise)
 TRACK_MAX_PTS = 700
+# While the dog stands still (odom within STILL_M of where it stopped), the tracker may keep turning (it cancels the
+# gyro drift: 20 deg in 7 min at B on 10-26) but its translation is limited: few points can walk the pose along a
+# smeared wall (10-26 16:53: 0.36 m of map motion from views of 91-131 cells while odom moved 0.06 m).
+STILL_MODE = "both"        # "off", "pts" (translate only with >= STILL_MIN_PTS cells), "cap" (at most STILL_CAP_M of
+                           # translation in total per still period), "both"
+STILL_M = 0.10             # m of odom motion that ends a still period
+STILL_MIN_PTS = 200        # cells in the view needed to translate while still
+STILL_CAP_M = 0.10         # m of translation allowed per still period
 # Marker re-anchor (marker_fix): a surveyed ArUco marker seen well gives the dog's map position from the camera's
 # range and bearing, with the map heading kept (a marker's own yaw is too noisy for heading: MAD ~9 deg, 10-26).
 # Only fix_ok, unambiguous, near and head-on sightings count; several must agree; the shift is capped; and the lidar
@@ -163,6 +171,8 @@ class Mapper:
 
     def _set_T(self, T, kind, **extra):
         self._next = (kind, extra)
+        if kind != "drift_correction":
+            self._still_ref, self._still_acc = None, np.zeros(2)
         self.T = T
         if kind != "drift_correction":     # a new placement or line-up: judge lost afresh
             self._low, self.lost_since = None, None
@@ -632,6 +642,23 @@ class Mapper:
                                        best_dy=round(dy, 3), best_ddeg=round(math.degrees(a), 2)))
             return matches
         a, dx, dy = a * TRACK_GAIN, dx * TRACK_GAIN, dy * TRACK_GAIN
+        if STILL_MODE != "off":
+            ref = getattr(self, "_still_ref", None)
+            if ref is None or math.hypot(robot[0] - ref[0], robot[1] - ref[1]) > STILL_M:
+                self._still_ref, self._still_acc = (robot[0], robot[1]), np.zeros(2)     # moving: new reference
+            else:                                                                        # still
+                d = np.array([dx, dy])
+                if STILL_MODE in ("pts", "both") and len(pts) < STILL_MIN_PTS:
+                    d[:] = 0.0
+                    info["still"] = "pts"
+                if STILL_MODE in ("cap", "both") and d.any():
+                    room = STILL_CAP_M - float(np.hypot(*self._still_acc))
+                    n = float(np.hypot(*d))
+                    if n > max(room, 0.0):
+                        d *= max(room, 0.0) / n
+                        info["still"] = "cap"
+                self._still_acc = self._still_acc + d
+                dx, dy = float(d[0]), float(d[1])
         ca, sa = math.cos(a), math.sin(a)
         # map' = Ra (map - robot) + robot + d, applied to the transform's translation and rotation
         nx = ca * (tx - rx) - sa * (ty - ry) + rx + dx
