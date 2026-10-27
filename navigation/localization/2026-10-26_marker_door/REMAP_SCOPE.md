@@ -86,6 +86,22 @@ About 3 days of compute and analysis. Replays run 2 at a time at nice 19 while t
 - **Then** the marker logging-only version (below) runs on the new map for a few drives. Its `marker_disagree` events
   should become rare before re-anchoring is switched on.
 
+## Tracker translation limits: folded into this plan (10-26 night)
+
+The still-dog limit ("both": translation while still only with ≥ 200 cells, at most 0.1 m per still period) is
+deployed (21:00). It halved the 16:53 false shift (0.36 → 0.18 m) without regressions, but did not block it.
+
+A per-correction limit tied to odom motion (|d| ≤ a + b·distance since the last correction) was calibrated on 10-23
+(+0, +4, 3 varying-drift seeds; 288 corrections) and is not separable:
+- good corrections made with almost no motion are as large as the bad ones (p95 0.14 m; steps are capped near
+  0.12 m by the search anyway);
+- every (a, b) tried clipped more good corrections than bad: 17 vs 5 at (0.06, 0.2), 7 vs 0 at (0.10, 0.3);
+- a flat-direction (aisle) limit had only 17 degenerate cases, too few to judge.
+
+Not tested held-out and not deployed. The false shifts come from the smeared, thick walls near B's door, not from
+step size, so the remap above is the fix. After the remap, re-run this calibration: thin walls should separate good
+corrections from bad by fit curvature rather than by size.
+
 ## Meanwhile: logging-only marker check (diff ready, not deployed)
 
 `proposed_log/marker_log_only.diff`:
