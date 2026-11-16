@@ -24,6 +24,7 @@ from mcp.types import ToolAnnotations
 
 CONSOLE = "http://127.0.0.1:8080"
 CLIENT = "claude.ai remote"
+L515 = "http://127.0.0.1:8081"   # RealSense L515 bridge page (l515_go2_pi4_bridge); may be off
 HERE = os.path.dirname(os.path.abspath(__file__))
 SECRET = open(os.path.join(HERE, "secret")).read().strip()
 STEP = {"forward": (0.3, 0, 0), "back": (-0.3, 0, 0), "left": (0, 0.2, 0), "right": (0, -0.2, 0),
@@ -77,6 +78,8 @@ def state():
         "body_height": st["body_height"] if st else None,
         "avoid": (s.get("control") or {}).get("avoid"),
         "recording": (s.get("rec") or {}).get("running"),
+        # seconds with no motion, posture change or command (from the console's auto recorder; None when unknown)
+        "idle_s": ((s.get("rec") or {}).get("auto_info") or {}).get("idle_s"),
         "agent_photos": a.get("photos", []),
     }
     try:
@@ -128,6 +131,27 @@ def go2_map() -> dict[str, Any]:
 def go2_agent_photo(photo_id: str) -> dict[str, Any]:
     """One photo an agent took, full size (base64 JPEG)."""
     return {"id": photo_id, "jpeg_b64": base64.b64encode(get(f"/agent/photos/{photo_id}.jpg")).decode()}
+
+
+@mcp.tool(annotations=READ, structured_output=True)
+def go2_l515() -> dict[str, Any]:
+    """The RealSense L515 depth camera on the dog, when its bridge is running: the latest colour frame and a
+    colour-coded depth frame (640 px JPEGs, base64), with frame times. online is false when the bridge is off."""
+    out = {"t": time.time(), "online": False, "color_jpeg_b64": None, "depth_jpeg_b64": None, "frame_t": {}}
+    try:
+        cam = json.loads(urllib.request.urlopen(L515 + "/status.json", timeout=3).read()).get("camera")
+    except (urllib.error.URLError, OSError, ValueError):
+        return out
+    out["online"], out["camera"] = True, cam
+    for kind in ("color", "depth"):
+        try:
+            with urllib.request.urlopen(f"{L515}/{kind}.jpg", timeout=3) as r:
+                if r.status == 200:
+                    out[f"{kind}_jpeg_b64"] = jpeg_b64(r.read(), 640)
+                    out["frame_t"][kind] = float(r.headers.get("X-Frame-T") or 0) or None
+        except (urllib.error.URLError, OSError, ValueError):
+            pass
+    return out
 
 
 @mcp.tool(annotations=WRITE, structured_output=True)
