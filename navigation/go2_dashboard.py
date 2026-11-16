@@ -11,6 +11,7 @@ Then open http://localhost:8080 on this machine (or http://<this-machine-ip>:808
 import os
 os.environ.setdefault("OMP_NUM_THREADS", "2")        # numpy's thread pools otherwise grab every core
 os.environ.setdefault("OPENBLAS_NUM_THREADS", "2")
+import array
 import ipaddress
 import json
 import math
@@ -23,6 +24,7 @@ import sys
 import threading
 import time
 import urllib.parse
+from collections import deque
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 import cv2
@@ -33,7 +35,7 @@ from go2_interfaces.msg import IMU, Go2State, WebRtcReq
 from nav_msgs.msg import Odometry
 from rclpy.node import Node
 from rclpy.qos import qos_profile_sensor_data
-from sensor_msgs.msg import Image, JointState, PointCloud2
+from sensor_msgs.msg import CompressedImage, Image, JointState, PointCloud2
 from sensor_msgs_py import point_cloud2
 
 from go2_agent import AGENT_LEASE_S, BUMP_H, UNDER_TOP_MAX, Agents, check_name
@@ -87,6 +89,23 @@ REC_TOPICS = {"camera": ["/camera/image_raw", "/camera/camera_info"],
 REC_MIN_FREE_GB = 20       # refuse to start below this, stop automatically below half of it
 HOST_UID = 1000            # recordings are handed to the host user when they finish
 
+# Automatic run recording (AutoRecorder below): every session with the dog is saved, whoever sets it up.
+# Off switch: GO2_AUTO_REC=0 in the container's environment (or `docker exec -e`), default on.
+AUTO_REC = os.environ.get("GO2_AUTO_REC", "1").strip().lower() not in ("0", "false", "off", "no")
+AUTO_REC_IDLE_S = float(os.environ.get("GO2_AUTO_REC_IDLE_S", 240))  # no motion and no commands this long: stop
+AUTO_REC_FRESH_S = 2.0     # /go2_states and camera both newer than this: the dog is connected
+AUTO_REC_LOST_S = 15.0     # no /go2_states for this long: the dog disconnected
+AUTO_REC_MIN_FREE_GB = 50  # don't start below this; stop cleanly below AUTO_REC_MIN_FREE_GB - 5
+AUTO_REC_MOVE = (0.08, 0.15)   # odom speed m/s, turn rad/s above which the dog counts as moving
+AUTO_REC_POSTURE_M = 0.05  # body height change (standing up, lying down) that counts as activity
+AUTO_REC_JPEG_Q = 80       # camera saved as full-size JPEG (~80 KB/frame) instead of raw 2.7 MB frames
+AUTO_REC_TOPICS = (["/camera/image_raw/compressed", "/camera/camera_info", "/point_cloud2"] + REC_TOPICS["pose"])
+# zstd per message shrinks lidar clouds ~5x. rosbag2's compression queue defaults to 1 and then drops messages
+# (most clouds were lost in a replay test), so give it room and two threads.
+AUTO_REC_ARGS = ["--compression-mode", "message", "--compression-format", "zstd",
+                 "--compression-queue-size", "200", "--compression-threads", "2"]
+AUTO_INDEX = "auto_index.jsonl"   # one line per finished auto session, in REC_DIR
+
 
 class Recorder:
     """Runs `ros2 bag record` for the chosen sensor groups."""
@@ -94,31 +113,46 @@ class Recorder:
     def __init__(self):
         self.proc, self.name, self.groups, self.started = None, None, [], 0.0
         self.size, self.size_t, self.by, self.error = 0, 0.0, None, None
+        self.auto = False          # True while the running recording belongs to AutoRecorder
         self.lock = threading.Lock()
 
     def free_gb(self):
         return shutil.disk_usage(REC_DIR).free / 1e9
 
-    def start(self, groups, by):
+    def running(self):
+        return bool(self.proc and self.proc.poll() is None)
+
+    def start(self, groups, by, auto=None):
+        """Manual: groups from REC_TOPICS. auto={"name": bag path under REC_DIR, "topics": [...], "args": [...],
+        "min_free": GB} is AutoRecorder's session: same recorder, its own topics and bag options."""
         with self.lock:
             if self.proc and self.proc.poll() is None:
+                if self.auto and not auto:
+                    return "Auto recording is already saving this session; press Stop recording first for a manual one"
                 return "Already recording"
-            groups = [g for g in REC_TOPICS if g in groups]
-            if not any(g in groups for g in ("camera", "lidar")):
-                return "Choose camera, lidar or both in Settings"
-            if self.free_gb() < REC_MIN_FREE_GB:
-                return f"Less than {REC_MIN_FREE_GB} GB free on disk"
-            self.name = time.strftime("go2_%Y%m%d_%H%M%S_") + "_".join(g for g in groups if g != "pose")
-            topics = " ".join(t for g in groups for t in REC_TOPICS[g])
+            if auto:
+                groups, extra, topics = ["camera", "lidar", "pose"], " ".join(auto.get("args", [])), " ".join(auto["topics"])
+                if self.free_gb() < auto.get("min_free", REC_MIN_FREE_GB):
+                    return f"Less than {auto.get('min_free', REC_MIN_FREE_GB)} GB free on disk"
+                self.name = auto["name"]
+            else:
+                groups = [g for g in REC_TOPICS if g in groups]
+                if not any(g in groups for g in ("camera", "lidar")):
+                    return "Choose camera, lidar or both in Settings"
+                if self.free_gb() < REC_MIN_FREE_GB:
+                    return f"Less than {REC_MIN_FREE_GB} GB free on disk"
+                self.name = time.strftime("go2_%Y%m%d_%H%M%S_") + "_".join(g for g in groups if g != "pose")
+                extra, topics = "", " ".join(t for g in groups for t in REC_TOPICS[g])
             env = dict(os.environ, HOME="/tmp", ROS_LOG_DIR="/tmp/roslog_rec")
             # Runs as root like the driver: ROS's shared-memory transport delivers nothing between
             # different users, so a recorder running as the host user saved empty bags.
             self.proc = subprocess.Popen(
                 ["bash", "-c", "source /opt/ros/humble/setup.bash && source /ros2_ws/install/setup.bash"
-                 f" && exec ros2 bag record -o {REC_DIR}/{self.name} {topics}"],
+                 f" && exec ros2 bag record {extra} -o {REC_DIR}/{self.name} {topics}"],
                 env=env, stdout=subprocess.DEVNULL, stderr=open("/tmp/rec.log", "w"))
             self.handed = False
             self.groups, self.started, self.size, self.by, self.error = groups, time.time(), 0, by, None
+            self.auto = bool(auto)
             return None
 
     def stop(self):
@@ -165,12 +199,269 @@ class Recorder:
                  for n in os.listdir(REC_DIR) if os.path.isdir(os.path.join(REC_DIR, n))),
                 key=lambda x: x["name"], reverse=True)[:8]
             self._free = round(self.free_gb())
-        return {"running": running, "name": self.name, "groups": self.groups, "by": self.by,
+        return {"running": running, "auto": running and self.auto, "name": self.name, "groups": self.groups, "by": self.by,
                 "secs": round(now - self.started) if running else 0, "mb": round(self.size / 1e6, 1),
                 "error": self.error, "past": getattr(self, "_past", []), "free_gb": getattr(self, "_free", None)}
 
 
+
+
+def _trim_snapshot(snap):
+    """The console state for a session's events.jsonl: what /events streams, minus the bulky parts (lidar cells,
+    localization history, photos, notes) and minus who is driving (not needed for the dataset)."""
+    out = {}
+    for k, v in snap.items():
+        if k == "live":
+            continue
+        if v and k == "cloud":
+            v = {"frame": v.get("frame"), "n_total": v.get("n_total"), "floor_z": v.get("floor_z"),
+                 "obs_cells": len(v.get("obs") or [])}
+        elif v and k == "loc":
+            v = {kk: vv for kk, vv in v.items() if kk not in ("events", "track", "marker")}
+        elif v and k == "agents":
+            v = {"call": (v.get("current") or {}).get("call")}
+        elif v and k == "control":
+            v = {kk: vv for kk, vv in v.items() if kk not in ("driver", "driver_ip", "speeds")}
+        elif v and k == "rec":
+            v = {kk: v.get(kk) for kk in ("running", "auto", "name", "mb", "free_gb")}
+        out[k] = v
+    return out
+
+
+def _chown_tree(path):
+    for d, _, files in os.walk(path):
+        for f in [d] + [os.path.join(d, x) for x in files]:
+            try:
+                os.chown(f, HOST_UID, HOST_UID)
+            except OSError:
+                pass
+
+
+class AutoRecorder:
+    """Saves every session with the dog, whoever sets it up (Oliver, lab board #50, 2026-11-08).
+
+    Starts when the console has both /go2_states and camera frames after a connect. Stops when the dog disconnects
+    (no /go2_states for AUTO_REC_LOST_S), after AUTO_REC_IDLE_S with no motion and no commands (standing still or
+    lying down), or cleanly when free disk drops below min_free - 5 GB (and won't start below min_free). A new
+    connect, or activity after an idle stop, starts a new session.
+    Each session is REC_DIR/auto_YYYYMMDD_HHMMSS/ holding bag/ (the Recorder's ros2 bag: camera as JPEG, lidar,
+    pose topics, zstd per message) and events.jsonl (console state once a second plus discrete events; no driver
+    identity). REC_DIR/auto_index.jsonl gets one line per finished session.
+    With the manual Record button: Stop recording during an auto session ends it and pauses auto recording until the
+    dog reconnects; Record during an auto session is refused (no double recording); while a manual recording runs
+    auto recording waits, and resumes after it if the dog is active.
+    """
+
+    def __init__(self, rec, enabled=AUTO_REC, idle_s=AUTO_REC_IDLE_S, min_free=AUTO_REC_MIN_FREE_GB, rec_dir=None):
+        self.rec, self.enabled, self.idle_s, self.min_free = rec, enabled, idle_s, min_free
+        self.rec_dir = rec_dir or REC_DIR
+        self.connected, self.paused, self.disk_low = False, False, False
+        self.last_active, self.retry_at, self.height = 0.0, 0.0, None
+        self.session = None        # {"name", "dir", "start", "fh"}
+        self.last = None           # the previous session's index line
+        self.events = deque(maxlen=12)
+        self.loc_seq, self.agent_t = None, 0.0
+        self.lock = threading.RLock()
+
+    # ---------- state machine (one tick a second) ----------
+    def tick(self, now, sig, snap=None):
+        """sig: state_age, camera_age (s), vel [vx, vy, wz] or None, cmd_age (s since the last motion command),
+        body_height (m) or None, free_gb. snap: callable giving the console snapshot, for events.jsonl."""
+        with self.lock:
+            self._tick(now, sig)
+            if self.session and snap:
+                self._write_state(now, snap())
+
+    def _tick(self, now, sig):
+        st_age, cam_age = sig.get("state_age", 1e9), sig.get("camera_age", 1e9)
+        if not self.connected and st_age < AUTO_REC_FRESH_S and cam_age < AUTO_REC_FRESH_S:
+            self.connected, self.paused, self.disk_low, self.height = True, False, False, None
+            self.last_active = now
+            self._event(now, "connected")
+        elif self.connected and st_age > AUTO_REC_LOST_S:
+            self.connected = False
+            self._event(now, "disconnected")
+            if self.session:
+                self._stop(now, "disconnected")
+        if self.connected:
+            v, h = sig.get("vel"), sig.get("body_height")
+            active = sig.get("cmd_age", 1e9) < 2.0
+            if v and (math.hypot(v[0], v[1]) > AUTO_REC_MOVE[0] or abs(v[2]) > AUTO_REC_MOVE[1]):
+                active = True
+            if h is not None:
+                if self.height is None:
+                    self.height = h
+                elif abs(h - self.height) > AUTO_REC_POSTURE_M:     # stood up or lay down (also from the app/remote)
+                    self.height, active = h, True
+            if active:
+                self.last_active = now
+        free = sig.get("free_gb")
+        if self.session:
+            if not (self.rec.running() and self.rec.auto):
+                self._stop(now, "recorder_exited" + (f": {self.rec.error}" if self.rec.error else ""))
+                self.retry_at = now + 60.0          # don't spin on a recorder that keeps failing
+            elif free is not None and free < self.min_free - 5:
+                self._stop(now, f"disk_low: {free:.0f} GB free")
+                self.disk_low = True
+            elif now - self.last_active > self.idle_s:
+                lying = sig.get("body_height") is not None and sig["body_height"] < 0.18   # go2_agent.MIN_BODY_H
+                self._stop(now, "lying_down" if lying else "idle")
+        elif (self.enabled and self.connected and not self.paused and now >= self.retry_at
+              and now - self.last_active <= self.idle_s and not self.rec.running()):
+            if free is not None and free < self.min_free:
+                if not self.disk_low:
+                    self._event(now, "not_started", reason=f"disk_low: {free:.0f} GB free, need {self.min_free}")
+                    self.disk_low = True
+            else:
+                self.disk_low = False
+                self._start(now)
+
+    def _start(self, now):
+        name = time.strftime("auto_%Y%m%d_%H%M%S", time.localtime(now))
+        d = os.path.join(self.rec_dir, name)
+        try:
+            os.makedirs(d, exist_ok=True)
+            fh = open(os.path.join(d, "events.jsonl"), "a")
+        except OSError as e:
+            self._event(now, "not_started", reason=str(e))
+            self.retry_at = now + 60.0
+            return
+        err = self.rec.start([], "auto", auto={"name": f"{name}/bag", "topics": AUTO_REC_TOPICS,
+                                               "args": AUTO_REC_ARGS, "min_free": self.min_free})
+        if err:
+            fh.close()
+            shutil.rmtree(d, ignore_errors=True)
+            self._event(now, "not_started", reason=err)
+            self.retry_at = now + 60.0
+            return
+        self.session = {"name": name, "dir": d, "start": now, "fh": fh}
+        self.loc_seq, self.agent_t = None, now
+        self._event(now, "auto_rec_start", session=name, topics=AUTO_REC_TOPICS)
+
+    def _stop(self, now, reason):
+        s = self.session
+        if self.rec.running() and self.rec.auto:
+            self.rec.stop()                 # SIGINT: rosbag2 finishes its metadata
+        self.rec.auto = False
+        self._event(now, "auto_rec_stop", session=s["name"], reason=reason)
+        self.session = None
+        try:
+            s["fh"].close()
+        except OSError:
+            pass
+        _chown_tree(s["dir"])
+        self.last = self._index(s["name"], s["start"], now, reason, self.rec.dir_size(s["dir"]) if os.path.isdir(s["dir"]) else 0)
+
+    def _index(self, name, start, end, reason, size):
+        line = {"name": name, "start": time.strftime("%Y-%m-%dT%H:%M:%S", time.localtime(start)),
+                "end": time.strftime("%Y-%m-%dT%H:%M:%S", time.localtime(end)), "start_t": round(start, 2),
+                "end_t": round(end, 2), "secs": round(end - start), "reason": reason, "bytes": size,
+                "gb": round(size / 1e9, 3), "gb_per_hour": round(size / 1e9 * 3600 / (end - start), 2) if end - start > 60 else None,
+                "topics": AUTO_REC_TOPICS, "camera": f"jpeg q{AUTO_REC_JPEG_Q}", "bag_compression": "zstd per message"}
+        p = os.path.join(self.rec_dir, AUTO_INDEX)
+        try:
+            with open(p, "a") as fh:
+                fh.write(json.dumps(line) + "\n")
+            os.chown(p, HOST_UID, HOST_UID)
+        except OSError as e:
+            print(f"[autorec] could not write {p}: {e}", flush=True)
+        return line
+
+    def _event(self, now, kind, **kw):
+        e = {"t": round(now, 2), "at": time.strftime("%H:%M:%S", time.localtime(now)), "event": kind, **kw}
+        self.events.append(e)
+        print(f"[autorec] {json.dumps(e)}", flush=True)
+        if self.session:
+            self._write({"kind": "event", **e})
+
+    def _write(self, obj):
+        try:
+            self.session["fh"].write(json.dumps(obj, default=str) + "\n")
+            self.session["fh"].flush()
+        except (OSError, ValueError):
+            pass
+
+    def _write_state(self, now, snap):
+        """Console state once a second, plus new line-up events and agent calls since the last line."""
+        loc = snap.get("loc") or {}
+        evs = loc.get("events") or []
+        if self.loc_seq is None:                      # only events from this session on
+            self.loc_seq = max((e.get("seq", 0) for e in evs), default=0)
+        for e in evs:
+            if e.get("seq", 0) > self.loc_seq:
+                self._write({"kind": "loc_event", **e})
+        self.loc_seq = max([self.loc_seq] + [e.get("seq", 0) for e in evs])
+        for e in (snap.get("agents") or {}).get("log") or []:
+            if e.get("t", 0) > self.agent_t:
+                self._write({"kind": "agent_call", **{k: v for k, v in e.items() if k != "client"}})
+                self.agent_t = e["t"]
+        self._write({"kind": "state", "t": round(now, 2), **_trim_snapshot(snap)})
+
+    # ---------- console hooks ----------
+    def user_stop(self, now=None):
+        """A person pressed Stop recording during an auto session: end it, no auto recording until a reconnect."""
+        with self.lock:
+            if self.session:
+                self._stop(now or time.time(), "stopped_by_user")
+                self.paused = True
+                self._event(now or time.time(), "paused_until_reconnect")
+            else:
+                self.rec.stop()
+
+    def shutdown(self):
+        with self.lock:
+            if self.session:
+                self._stop(time.time(), "console_stopped")
+
+    def recover(self):
+        """At console start: index sessions that a crash or kill left without an index line."""
+        p = os.path.join(self.rec_dir, AUTO_INDEX)
+        try:
+            done = {json.loads(x)["name"] for x in open(p) if x.strip()}
+        except (OSError, ValueError, KeyError):
+            done = set()
+        try:
+            names = sorted(n for n in os.listdir(self.rec_dir) if n.startswith("auto_") and os.path.isdir(os.path.join(self.rec_dir, n)))
+        except OSError:
+            return
+        for n in names:
+            if n in done:
+                continue
+            d = os.path.join(self.rec_dir, n)
+            try:
+                start = time.mktime(time.strptime(n, "auto_%Y%m%d_%H%M%S"))
+            except ValueError:
+                continue
+            end = max([os.path.getmtime(os.path.join(a, f)) for a, _, fs in os.walk(d) for f in fs] + [start])
+            _chown_tree(d)
+            self.last = self._index(n, start, end, "console_ended_unexpectedly", self.rec.dir_size(d))
+
+    def status(self):
+        """For /state.json and /events (rec.auto_info). Lock-free so a stopping recorder never stalls the console."""
+        s, now = self.session, time.time()
+        if not self.enabled:
+            state = "off"
+        elif s:
+            state = "recording"
+        elif not self.connected:
+            state = "waiting_for_dog"
+        elif self.paused:
+            state = "paused_until_reconnect"
+        elif self.disk_low:
+            state = "disk_low"
+        elif self.rec.running():
+            state = "manual_recording"
+        else:
+            state = "idle"
+        return {"enabled": self.enabled, "state": state, "session": s and s["name"],
+                "secs": round(now - s["start"]) if s else 0,
+                "idle_s": round(now - self.last_active) if self.connected else None,
+                "idle_limit_s": self.idle_s, "min_free_gb": self.min_free, "last": self.last,
+                "events": list(self.events)[-6:]}
+
+
 REC = Recorder()
+AUTO = AutoRecorder(REC)
 
 lock = threading.Lock()
 latest = {"imu": None, "odom": None, "state": None, "joints": None, "cloud": None,
@@ -203,6 +494,8 @@ class Collector(Node):
         self._map_key = None
         self.last_cloud = 0.0
         self.vel_pub = self.create_publisher(Twist, "cmd_vel_out", 10)
+        self.jpeg_pub = self.create_publisher(CompressedImage, "/camera/image_raw/compressed", 10)  # auto recording
+        self.last_cmd = 0.0      # monotonic time of the last motion/posture command: AutoRecorder's idle check
         self.req_pub = self.create_publisher(WebRtcReq, "webrtc_req", 10)
         self.moving, self.last_move = False, 0.0
         self.avoid = False
@@ -245,6 +538,7 @@ class Collector(Node):
     def look(self, rad):
         """Tilt the body so the camera looks up (+) or down (-); only while standing still."""
         self.head = max(-HEAD_MAX, min(HEAD_MAX, float(rad)))
+        self.last_cmd = time.monotonic()
         self.moving = False
         self.send("BalanceStand")
         time.sleep(0.1)
@@ -261,6 +555,7 @@ class Collector(Node):
     def move(self, x, y, z):
         x, y, z = (max(-l, min(l, float(v))) for v, l in zip((x, y, z), SPEEDS[self.speed]))
         x = max(-BACK_MAX, x)
+        self.last_cmd = time.monotonic()
         if self.head and (x or y or z):     # level off before walking
             self.head = 0.0
             self.send_head()
@@ -283,6 +578,7 @@ class Collector(Node):
 
     def action(self, name):
         self.moving = False
+        self.last_cmd = time.monotonic()
         self.head = 0.0      # standing up or lying down resets the body pose
         self.stop()
         for c in ACTIONS[name]:
@@ -447,6 +743,13 @@ class Collector(Node):
             img = img[:, :, ::-1]
         with lock:
             full["img"], full["t"] = img, time.time()
+        if REC.auto and REC.running():   # auto recording saves the camera as full-size JPEG (~35x smaller than raw)
+            ok, buf = cv2.imencode(".jpg", img, [cv2.IMWRITE_JPEG_QUALITY, AUTO_REC_JPEG_Q])
+            if ok:
+                c = CompressedImage()
+                c.header, c.format = m.header, "bgr8; jpeg compressed bgr8"
+                c.data = array.array("B", buf.tobytes())
+                self.jpeg_pub.publish(c)
         img = cv2.resize(img, (640, int(640 * m.height / m.width)))
         ok, buf = cv2.imencode(".jpg", img, [cv2.IMWRITE_JPEG_QUALITY, 70])
         if ok:
@@ -572,6 +875,7 @@ def snapshot():
         snap["age"] = {k: r(now - t, 2) for k, t in latest["stamps"].items()}
     mono = time.monotonic()
     snap["rec"] = REC.status()
+    snap["rec"]["auto_info"] = AUTO.status()   # rec.auto is true while auto recording runs
     snap["agents"] = AG.status()
     last = AG.planner.last if AG.planner else None
     snap["nav"] = {k: last[k] for k in ("path", "goal", "t") if k in last} if last and time.time() - last["t"] < 300 else None
@@ -891,9 +1195,11 @@ class Handler(BaseHTTPRequestHandler):
             console = bool(req.get("console"))       # sent by the console page: a person
             if "record" in req:                      # recording is independent of driving
                 if req["record"]:
-                    err = REC.start(req.get("groups", []), ip)
+                    err = REC.start(req.get("groups", []), ip)     # refused while an auto session runs
                     if err:
                         return self.send_error(409, err)
+                elif REC.auto and REC.running():
+                    AUTO.user_stop()      # ends the auto session; auto recording pauses until the dog reconnects
                 else:
                     REC.stop()
             elif req.get("action") == "stop":        # anyone may stop the dog, always
@@ -1223,7 +1529,7 @@ button:disabled{opacity:.4;cursor:not-allowed}
 #settings{margin-top:12px;padding:12px;border:1px solid var(--line);border-radius:6px;display:grid;gap:8px;max-width:520px}
 #settings label{display:flex;gap:8px;align-items:baseline}#settings small{color:var(--dim)}
 .past{margin-top:10px;font:12px var(--mono);color:var(--dim);display:grid;gap:2px}
-.err{color:var(--bad)}
+.err{color:var(--bad)}.autorec{display:inline-flex;gap:6px;align-items:center;font:600 12px var(--sans);color:#fff;background:var(--bad);border-radius:10px;padding:2px 10px}.autorec[hidden]{display:none}.autorec i{width:8px;height:8px;border-radius:50%;background:#fff}
 .full{grid-column:1/-1}
 section.sz2{grid-column:span 2}section.sz3{grid-column:1/-1}@media (max-width:700px){section.sz2{grid-column:auto}}
 h2 .szc{display:inline-flex;gap:2px;margin-left:8px}h2>span:first-of-type{margin-left:auto}
@@ -1314,7 +1620,7 @@ main>section.dragging{opacity:.55;outline:2px dashed var(--accent);outline-offse
 #dropform input[type=text],#plform input{flex:1 1 120px;min-width:0;font:13px var(--sans);padding:6px 8px;border-radius:5px;border:1px solid var(--line);background:var(--bg);color:var(--fg)}
 .legend b{font-weight:400}.lx{color:var(--x)}.ly{color:var(--y)}.lz{color:var(--z)}
 </style></head><body>
-<header><h1>Go2 Live Sensors</h1><span class="sub" id="conn">connecting…</span>
+<header><h1>Go2 Live Sensors</h1><span class="sub" id="conn">connecting…</span><span id="autorec" class="autorec" role="status" title="Every session with the dog is saved automatically to ~/oliver/go2_recordings (auto_*)" hidden><i></i>auto recording</span>
 <div class="chips" id="chips"></div><button id="resetlayout" type="button" title="Put every panel back in its default place and size">Reset layout</button></header>
 <main>
 <section class="full ctlbar" id="ctlbar"><div id="ctltext">Control: checking…</div>
@@ -1357,6 +1663,7 @@ main>section.dragging{opacity:.55;outline:2px dashed var(--accent);outline-offse
 <label><input type="checkbox" id="r_lidar" checked> Lidar <small>point cloud at ~7 Hz, about 25 GB/hour</small></label>
 <label><input type="checkbox" id="r_pose" checked> Robot pose <small>odometry, IMU, joints, transforms; tiny, needed to line lidar frames up</small></label>
 <small>Saved as ROS 2 bags in ~/oliver/go2_recordings on the control PC. These settings are remembered in this browser.</small>
+<small>Auto recording saves every session by itself (auto_* folders: camera as JPEG, lidar, pose, console events; about 4 GB/hour). It starts when the dog connects and stops when it disconnects or has been idle for 4 minutes. Stop recording during it pauses it until the dog reconnects.</small>
 </div>
 <div class="past" id="past"></div></section>
 <section><h2>Lidar, top view <span id="cloudinfo"></span></h2><canvas id="cloud" width="600" height="600"></canvas>
@@ -1630,9 +1937,13 @@ $('recbtn').addEventListener('click',async()=>{const body=recRunning?{record:fal
   if(!r.ok){const t=await r.text();const m=t.match(/<p>Message: (.*?)\./);$('recnote').innerHTML=`<span class="err">${m?m[1]:'Could not start ('+r.status+')'}</span>`}else $('recnote').textContent=''}
  finally{$('recbtn').disabled=false}});
 const hms=s=>[Math.floor(s/3600),Math.floor(s/60)%60,s%60].map(v=>String(v).padStart(2,'0')).join(':');
+const AUTOTXT={off:'Auto recording is off (GO2_AUTO_REC=0)',waiting_for_dog:'Auto recording starts when the dog connects',
+ paused_until_reconnect:'Auto recording paused until the dog reconnects',disk_low:'Auto recording not started: disk below the free-space floor',
+ manual_recording:'Auto recording waits for this manual recording',idle:'Auto recording stopped while the dog is idle; resumes when it moves'};
 function renderRec(r){recRunning=r.running;$('recbtn').classList.toggle('on',r.running);$('recbtn').querySelector('span').textContent=r.running?'Stop recording':'Record';
- $('recinfo').innerHTML=r.running?`<b>${hms(r.secs)}</b> · ${r.mb>1000?(r.mb/1000).toFixed(1)+' GB':r.mb+' MB'} · ${r.groups.join(', ')} · started from ${r.by}`
-  :(r.error?`<span class="err">${r.error}</span> · `:'')+(r.free_gb!=null?`${r.free_gb} GB free`:'');
+ const a=r.auto_info||{};$('autorec').hidden=!r.auto;
+ $('recinfo').innerHTML=r.running?`${r.auto?'<b class="err">auto recording</b> · ':''}<b>${hms(r.secs)}</b> · ${r.mb>1000?(r.mb/1000).toFixed(1)+' GB':r.mb+' MB'} · ${r.auto?'camera (JPEG), lidar, pose':r.groups.join(', ')+' · started from '+r.by}`
+  :(r.error?`<span class="err">${r.error}</span> · `:'')+(AUTOTXT[a.state]?AUTOTXT[a.state]+' · ':'')+(r.free_gb!=null?`${r.free_gb} GB free`:'');
  $('past').innerHTML=r.past.length?'Saved recordings:<br>'+r.past.map(p=>`${p.name} · ${p.mb>1000?(p.mb/1000).toFixed(1)+' GB':p.mb+' MB'}`).join('<br>'):''}
 
 const DIR={w:[1,0,0],s:[-1,0,0],a:[0,1,0],d:[0,-1,0],q:[0,0,1],e:[0,0,-1]},SPEEDS={slow:[0.3,0.2,0.5],normal:[0.5,0.25,0.8],fast:[0.6,0.3,1.0]};let SPEED='slow',LIM=SPEEDS[SPEED];
@@ -2136,6 +2447,31 @@ document.querySelectorAll('[data-map]').forEach(b=>b.addEventListener('click',as
 </script></body></html>"""
 
 
+def auto_rec_signals():
+    """What AutoRecorder.tick needs from the live console."""
+    now = time.time()
+    with lock:
+        st, odom, state = latest["stamps"], latest["odom"], latest["state"]
+        sig = {"state_age": now - st.get("state", 0.0), "camera_age": now - st.get("camera", 0.0),
+               "vel": odom["vel"] if odom and now - st.get("odom", 0.0) < 2.0 else None,
+               "body_height": state["body_height"] if state and now - st.get("state", 0.0) < 2.0 else None}
+    sig["cmd_age"] = time.monotonic() - NODE.last_cmd
+    try:
+        sig["free_gb"] = REC.free_gb()
+    except OSError:
+        sig["free_gb"] = None
+    return sig
+
+
+def auto_rec_loop():
+    while True:
+        time.sleep(1.0)
+        try:
+            AUTO.tick(time.time(), auto_rec_signals(), snapshot)
+        except Exception as e:      # never let the recorder take the console down
+            print(f"[autorec] tick failed: {e!r}", flush=True)
+
+
 def main():
     rclpy.init()
     signal.signal(signal.SIGTERM, lambda *_: sys.exit(0))  # rclpy otherwise swallows SIGTERM
@@ -2152,6 +2488,8 @@ def main():
     AG.mapper, AG.planner = MAPPER, Planner(MAPPER)
     AG.planner.fail_log = os.path.join("/maps", f"{os.environ.get('MAP_NAME', 'lab')}_nav_failures.jsonl")
     threading.Thread(target=rclpy.spin, args=(node,), daemon=True).start()
+    AUTO.recover()
+    threading.Thread(target=auto_rec_loop, daemon=True).start()
     HIST = History("/maps", os.environ.get("MAP_NAME", "lab"), sample_from(latest, lock, MAPPER, AG, MARKERS, battery))
     srv = ThreadingHTTPServer(("0.0.0.0", PORT), Handler)
     srv.daemon_threads = True
@@ -2161,6 +2499,7 @@ def main():
     except KeyboardInterrupt:
         pass
     finally:
+        AUTO.shutdown()
         REC.stop()
         MAPPER.autosave(latest["odom"])
         MAPPER.save_session(latest["odom"])

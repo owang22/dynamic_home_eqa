@@ -28,6 +28,20 @@ docker exec -d go2_test bash -c "source /opt/ros/humble/setup.bash && source /ro
   && exec python3 /root/go2_dashboard.py 8080 > /tmp/dash.log 2>&1"
 ```
 
+## Automatic run recording
+
+Since 2026-11-15 the console records every session with the dog by itself (Oliver's request, board #50). It starts
+when the console has both `/go2_states` and camera frames after a connect, and stops when the dog disconnects (no
+state for 15 s), after 4 min with no motion and no commands (standing or lying; `GO2_AUTO_REC_IDLE_S`), or cleanly
+when free disk falls below 45 GB (it won't start below 50 GB). Activity or a reconnect starts a new session.
+Each session is `~/oliver/go2_recordings/auto_YYYYMMDD_HHMMSS/` with `bag/` (camera as full-size JPEG on
+`/camera/image_raw/compressed`, `/camera/camera_info`, `/point_cloud2`, `/odom`, `/imu`, `/tf`, `/tf_static`,
+`/joint_states`, `/go2_states`; zstd per message, about 4 GB/hour) and `events.jsonl` (console state once a second,
+line-up events, agent calls; no driver identity). `auto_index.jsonl` in that folder has one line per session
+(start, end, reason, bytes). The page shows **auto recording** in its header; `/state.json` has `rec.auto`.
+Stop recording during an auto session ends it and pauses auto recording until the dog reconnects; Record is
+refused while an auto session runs. Off switch: start the console with `docker exec -e GO2_AUTO_REC=0 ...`.
+
 ## Files
 
 | file | what |
