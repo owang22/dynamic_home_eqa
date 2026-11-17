@@ -77,6 +77,17 @@ best there; inside the arrow's ±45°) and the one closest to the click (+0.5 m 
 passes, the position is left unchanged and the status says so. Events: `marker_lineup` with `clicked`, `click_dist_m`,
 `click_conflict`, or `hand_placement` with `via: "lidar"`, `click_dist_m`, `score`, `best_score`, `n_good`.
 
+**Dog status** (2026-11-16): the header shows **DOG OFF** (odom over 10 s old), **IDLE** (no motion, posture change or
+command for 30 s) or **ACTIVE**, plus L515 online/offline/asleep; `/state.json` and `/events` have
+`dog_status {state, for_s, odom_age_s, idle_s}`. `POST /watchdog` (localhost only) stores go2_watchdog.py's JSON, shown
+as `watchdog` and as "watchdog: <last_action>" in the header.
+
+**Marker line-ups refuse a tag that clashes** with a confident lidar pose (track/fresh fit >= 0.7, not lost or suspect)
+by more than 1.5 m, and fall back to the lidar with the reason. Found 2026-11-16: the marker table lists detector id 3
+("D") as `tag_C` at (-6.08, 1.33); D's sightings put it at (0.60, 2.53), next to the table's `tag_D` (id 4).
+Lidar snapping of tag sightings (`tools/marker_snap_eval/`) was evaluated on 418 logged sightings and is not enabled:
+it did not reduce the spread of implied tag positions for any tag.
+
 ## Deploying the console (always `~/oliver/deploy_console.sh [git-ref]`)
 
 Since 2026-11-16 (the dog kept walking when the console was killed mid-move): the driver has **no command timeout**

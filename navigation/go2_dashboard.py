@@ -78,6 +78,10 @@ NODE = None
 # the last obstacle-avoid Move velocity, so the console must stop the dog itself before it goes away (stop_dog).
 DEPLOYING = None           # {"t", "msg"} while a deploy is under way
 BOOT_ID = f"{time.strftime('%Y%m%d-%H%M%S')}-{os.getpid()}"
+WATCHDOG = None           # last POST /watchdog from ~/oliver/go2_watchdog.py (host): {dog, for_s, ..., last_action, received_t}
+DOG_ST = {"state": None, "since": 0.0, "active_t": 0.0}
+DOG_OFF_S = 10.0          # odom older than this: the dog is off (same rule as go2_watchdog.py)
+DOG_IDLE_S = 30.0         # no motion, posture change or command for this long: idle
 MOTION_AGENT_CALLS = ("claim", "move", "turn", "look_around", "go_to", "look", "posture", "relocalize")
 AG = None                  # agent tools and who has control (go2_agent.py)
 MAPPER = None              # lab map built from the lidar clouds (go2_mapper.py)
@@ -958,8 +962,35 @@ def marker_lineup_choice():
     else:
         pose, used, rej = marker_lineup_pose(snap.get("list") or [], MARKER_TABLE.get() if MARKER_TABLE else {}, age)
     if pose:
+        clash = marker_clash(pose)
+        if clash:
+            return {"via": "lidar", "note": clash, "rejected": rej, "marker_pose": pose}
         return {"via": "marker", "pose": pose, "used": used, "rejected": rej}
     return {"via": "lidar", "note": lineup_reject_text(rej), "rejected": rej}
+
+
+MARKER_CLASH_M = 1.5     # a marker pose this far from a confident lidar pose is not used for a line-up
+MARKER_CLASH_FIT = 0.7   # confident: track or fresh fit at least this, not lost, not suspect
+
+
+def marker_clash(pose):
+    """Why a marker pose should not be used, or None. Guards against a wrong marker table entry: on 2026-11-16 the
+    detector's tag D (id 3) was listed in the table as tag_C 6 m away, so a line-up from D would have put the dog
+    6 m off. Only refuses when the current lidar pose is confident and far from the marker's."""
+    with lock:
+        odom = latest["odom"]
+    cur = MAPPER.pose(odom) if MAPPER and odom else None
+    if not cur:
+        return None
+    loc = MAPPER.loc_info(track_n=0)
+    fit = loc.get("track_fit") or loc.get("fresh_fit") or 0.0
+    if loc.get("lost") or loc.get("suspect") or fit < MARKER_CLASH_FIT:
+        return None
+    d = math.hypot(pose["x"] - cur["x"], pose["y"] - cur["y"])
+    if d <= MARKER_CLASH_M:
+        return None
+    return (f"tag {pose['best']['mark']} puts the dog {d:.1f} m from the current lidar pose (fit {fit:.2f}); not used,"
+            " check the marker table")
 
 
 def objects_path():
@@ -1047,6 +1078,39 @@ def log_pose(odom, pose):
         pass
 
 
+def dog_status(snap):
+    """{state: off|idle|active, for_s, odom_age_s, idle_s}: off when odom is older than DOG_OFF_S; idle when nothing
+    moved and no command or posture change for DOG_IDLE_S (the auto recorder's activity rule, plus odom motion and
+    console commands); else active."""
+    now = time.time()
+    age = (snap.get("age") or {}).get("odom")
+    od = snap.get("odom") or {}
+    v = od.get("vel")
+    if v and (math.hypot(v[0], v[1]) > AUTO_REC_MOVE[0] or abs(v[2]) > AUTO_REC_MOVE[1]):
+        DOG_ST["active_t"] = now
+    if NODE and time.monotonic() - NODE.last_cmd < 2.0:
+        DOG_ST["active_t"] = now
+    if AUTO.connected and AUTO.last_active:
+        DOG_ST["active_t"] = max(DOG_ST["active_t"], AUTO.last_active)
+    idle = now - DOG_ST["active_t"] if DOG_ST["active_t"] else None
+    if age is None or age > DOG_OFF_S:
+        state = "off"
+    elif idle is None or idle >= DOG_IDLE_S:
+        state = "idle"
+    else:
+        state = "active"
+    if state != DOG_ST["state"]:
+        DOG_ST["state"], DOG_ST["since"] = state, now
+    if state == "off":
+        for_s = age
+    elif state == "idle":
+        for_s = idle
+    else:
+        for_s = now - DOG_ST["since"]
+    return {"state": state, "for_s": None if for_s is None else round(for_s, 1),
+            "odom_age_s": None if age is None else round(age, 1), "idle_s": None if idle is None else round(idle, 1)}
+
+
 _STOPPED_AT_EXIT = []
 
 
@@ -1100,6 +1164,8 @@ def snapshot():
     snap["battery"] = battery()
     snap["l515"] = L515.status()
     snap["boot_id"] = BOOT_ID
+    snap["dog_status"] = dog_status(snap)
+    snap["watchdog"] = WATCHDOG
     snap["deploying"] = DEPLOYING
     lv = AG.planner.overlay() if AG.planner else None
     snap["live"] = lv if lv and time.time() - lv["t"] < 5 else None
@@ -1171,8 +1237,24 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_POST(self):
         path = self.path.split("?")[0]
-        if not (path in ("/cmd", "/map", "/map/objects", "/map/proposals", "/deploying") or path.startswith(("/agent/", "/places", "/label/"))):
+        if not (path in ("/cmd", "/map", "/map/objects", "/map/proposals", "/deploying", "/watchdog") or path.startswith(("/agent/", "/places", "/label/"))):
             return self.send_error(404)
+        if path == "/watchdog":     # ~/oliver/go2_watchdog.py on this machine: its latest status, shown on the page
+            try:
+                ip = ipaddress.ip_address(self.client_address[0].removeprefix("::ffff:"))
+            except ValueError:
+                ip = None
+            if not (ip and ip.is_loopback):
+                return self.send_error(403, "/watchdog is for this machine only")
+            try:
+                req = json.loads(self.rfile.read(int(self.headers.get("Content-Length", 0))) or b"{}")
+                if not isinstance(req, dict):
+                    raise ValueError("expected a JSON object")
+            except ValueError as e:
+                return self.send_error(400, str(e))
+            global WATCHDOG
+            WATCHDOG = dict(req, received_t=round(time.time(), 2))
+            return self.send_json(200, {"result": "done"})
         if path == "/deploying":    # deploy_console.sh, this machine only: stop the dog, refuse motion until restart
             try:
                 ip = ipaddress.ip_address(self.client_address[0].removeprefix("::ffff:"))
@@ -1846,6 +1928,10 @@ section.sz2{grid-column:span 2}section.sz3{grid-column:1/-1}@media (max-width:70
 h2 .szc{display:inline-flex;gap:2px;margin-left:8px}h2>span:first-of-type{margin-left:auto}
 h2 .szc button{font:10px var(--mono);padding:1px 5px;border:1px solid var(--line);border-radius:3px;background:var(--bg);color:var(--dim);cursor:pointer}
 h2 .szc button.on{color:var(--accent);border-color:var(--accent)}
+.dogst{display:flex;gap:8px;align-items:center;font:12px var(--mono);color:var(--dim);flex-wrap:wrap}
+.dogst b{font:700 14px var(--sans);letter-spacing:.06em;padding:4px 12px;border-radius:6px;border:1px solid var(--line);color:var(--fg)}
+.dogst b.off{background:#5a1f1f;border-color:#a33;color:#ffd7d7}.dogst b.idle{background:#4d3b12;border-color:#a77d1c;color:#ffe6a8}
+.dogst b.active{background:#1f4d36;border-color:#2f8a5f;color:#c9f5dc}
 #deployov{position:fixed;inset:0;z-index:1000;background:rgba(10,12,14,.93);display:grid;place-items:center;padding:16px}#deployov[hidden]{display:none}
 #deployov>div{max-width:34em;text-align:center;display:grid;gap:12px;font:15px/1.5 var(--sans);color:var(--fg)}#deployov b{font-size:19px}
 #deployov small{color:var(--dim);font:12px var(--mono)}#deployov button{justify-self:center;padding:8px 22px;font-weight:600}
@@ -1950,7 +2036,7 @@ main>section.dragging{z-index:5;box-shadow:0 8px 30px rgba(0,0,0,.45);opacity:.8
 .legend b{font-weight:400}.lx{color:var(--x)}.ly{color:var(--y)}.lz{color:var(--z)}
 </style></head><body>
 <header><h1>Go2 Live Sensors</h1><span class="sub" id="conn">connecting…</span><span id="autorec" class="autorec" role="status" title="Every session with the dog is saved automatically to ~/oliver/go2_recordings (auto_*)" hidden><i></i>auto recording</span>
-<div class="chips" id="chips"></div><button id="resetlayout" type="button" title="Put every panel back in its default place and size">Reset layout</button></header>
+<div class="dogst" id="dogst" role="status"><b id="dogstb">…</b><span id="dogstt"></span><span id="l515stc"></span><span id="wdst"></span></div><div class="chips" id="chips"></div><button id="resetlayout" type="button" title="Put every panel back in its default place and size">Reset layout</button></header>
 <main>
 <section class="full ctlbar" id="ctlbar"><div id="ctltext">Control: checking…</div>
 <div class="ctlbtns"><button id="takeover">Take over</button><button id="handback" hidden>Hand back to agents</button></div><div class="battwarn" id="battwarn" role="alert" hidden><span id="battwarntxt"></span><button type="button" id="battwarnx" title="Hide until the next 10% drop">ok</button></div></section>
@@ -2229,6 +2315,7 @@ $('battwarnx').addEventListener('click',()=>{$('battwarn').hidden=true});
 const FEET=['FR','FL','RR','RL'];const SENS=['imu','odom','state','joints','cloud','camera'];
 function render(d){const a=d.age||{};
  if(deployCheck(d))return;
+ renderDog(d,a);
  if(d.l515)renderL515(d.l515);
  if(d.rec)renderRec(d.rec);if(d.agents)renderAgents(d.agents);
  if(d.control){ctl=d.control;$('avoid').checked=ctl.avoid;if(ctl.speed)showSpeed(ctl.speed,ctl.speeds);
@@ -2280,6 +2367,16 @@ function renderL515(l){L515ON=!!l.online;
 // outside the free layout the iframe takes its content's height (same origin through the proxy)
 $('l515f').addEventListener('load',()=>{try{const d=$('l515f').contentDocument;if(!d||!d.body)return;
  new ResizeObserver(()=>{if(!FREE)$('l515f').style.height=d.documentElement.scrollHeight+'px'}).observe(d.body)}catch(e){}});
+// Dog on/off/idle, computed here from the ages the page already gets: off when odom is over 10 s old, idle after
+// 30 s with no motion, posture change or command (the server's idle clock), else active.
+const dur=s=>s==null?'?':s<90?Math.round(s)+' s':s<5400?Math.round(s/60)+' min':(s/3600).toFixed(1)+' h';
+function renderDog(d,a){const ds=d.dog_status||{},odom=a.odom,idle=ds.idle_s!=null?ds.idle_s:(d.rec&&d.rec.auto_info||{}).idle_s;
+ const st=odom==null||odom>10?'off':idle==null||idle>=30?'idle':'active',b=$('dogstb');
+ b.className=st;b.textContent=st==='off'?'DOG OFF':st==='idle'?'IDLE':'ACTIVE';
+ $('dogstt').textContent=st==='off'?(odom==null?'no data':`no data for ${dur(odom)}`):st==='idle'?`idle ${dur(idle)}`:'';
+ const l=d.l515||{},w=d.watchdog,wfresh=w&&Date.now()/1000-w.received_t<60;
+ $('l515stc').textContent='L515 '+(wfresh&&w.l515_asleep?'asleep':l.online?'online':'offline');
+ $('wdst').textContent=wfresh&&w.last_action?'watchdog: '+w.last_action:''}
 // Deploys: the console sends boot_id (new per start) and deploying {t, msg}. While deploying: overlay, no driving.
 // A new boot id, or getting data again after the console was down, reloads the page (new page code).
 var DEPLOY=false,BOOT=null,lastMsg=Date.now(),wasDown=false;
