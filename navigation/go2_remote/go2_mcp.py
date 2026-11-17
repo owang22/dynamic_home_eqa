@@ -84,6 +84,8 @@ def state():
         # seconds with no motion, posture change or command (from the console's auto recorder; None when unknown)
         "idle_s": ((s.get("rec") or {}).get("auto_info") or {}).get("idle_s"),
         "agent_photos": a.get("photos", []),
+        # {t, msg} while the console is being redeployed (driving paused); boot_id changes on every console start
+        "deploying": s.get("deploying"), "boot_id": s.get("boot_id"),
     }
     try:
         out["camera_jpeg_b64"] = jpeg_b64(get("/frame.jpg"), 640)

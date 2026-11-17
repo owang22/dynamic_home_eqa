@@ -70,6 +70,20 @@ best there; inside the arrow's ±45°) and the one closest to the click (+0.5 m 
 passes, the position is left unchanged and the status says so. Events: `marker_lineup` with `clicked`, `click_dist_m`,
 `click_conflict`, or `hand_placement` with `via: "lidar"`, `click_dist_m`, `score`, `best_score`, `n_good`.
 
+## Deploying the console (always `~/oliver/deploy_console.sh [git-ref]`)
+
+Since 2026-11-16 (the dog kept walking when the console was killed mid-move): the driver has **no command timeout**
+and the dog keeps the last obstacle-avoid Move velocity, so the console stops the dog itself. Its SIGTERM/SIGINT/exit
+path first sends what STOP does (agents interrupted, avoid-zero move, StopMove, zero Twist) 4 times over 0.3 s, then
+closes the auto session. `deploy_console.sh` takes `navigation/go2_dashboard.py` and `go2_mapper.py` from the git
+ref (default HEAD; commit first), POSTs `/deploying` (localhost only: stops the dog, every motion request from people
+and agents gets 503 "console is deploying", `/state.json` and `/events` carry `deploying {t, msg}`, the page shows a
+full-screen overlay), checks odom speed and re-sends STOP, copies the files into `go2_test` (and `~/oliver`), SIGTERMs
+the console by PID, starts it like `run_go2_keys.sh` and prints the new `boot_id`, L515 and auto-recording state.
+It never restarts the driver or the container. Pages reload themselves on a new `boot_id` or when the console comes
+back after being down. Older consoles without `/deploying` get a STOP and, after they exit, a StopMove straight to
+the driver.
+
 ## Files
 
 | file | what |

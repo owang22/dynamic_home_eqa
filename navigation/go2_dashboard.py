@@ -12,6 +12,7 @@ import os
 os.environ.setdefault("OMP_NUM_THREADS", "2")        # numpy's thread pools otherwise grab every core
 os.environ.setdefault("OPENBLAS_NUM_THREADS", "2")
 import array
+import atexit
 import ipaddress
 import json
 import math
@@ -72,6 +73,12 @@ DEADMAN_S = 0.3            # stop if the browser stops sending moves for this lo
 BACK_MAX = 0.25            # m/s backwards for everyone: the dog barely sees behind itself
 AVOID_DEFAULT = True       # the dog's obstacle avoidance starts on; agent motions rely on it
 NODE = None
+# Deploys (deploy_console.sh): POST /deploying stops the dog and refuses all motion until this process ends; the page
+# shows an overlay and reloads itself when it sees a new BOOT_ID. The driver has no command timeout and the dog keeps
+# the last obstacle-avoid Move velocity, so the console must stop the dog itself before it goes away (stop_dog).
+DEPLOYING = None           # {"t", "msg"} while a deploy is under way
+BOOT_ID = f"{time.strftime('%Y%m%d-%H%M%S')}-{os.getpid()}"
+MOTION_AGENT_CALLS = ("claim", "move", "turn", "look_around", "go_to", "look", "posture", "relocalize")
 AG = None                  # agent tools and who has control (go2_agent.py)
 MAPPER = None              # lab map built from the lidar clouds (go2_mapper.py)
 EXAMPLES = None            # objects labelled by example from camera frames (go2_examples.py)
@@ -643,6 +650,8 @@ class Collector(Node):
 
     def look(self, rad):
         """Tilt the body so the camera looks up (+) or down (-); only while standing still."""
+        if DEPLOYING:
+            return
         self.head = max(-HEAD_MAX, min(HEAD_MAX, float(rad)))
         self.last_cmd = time.monotonic()
         self.moving = False
@@ -659,6 +668,9 @@ class Collector(Node):
         return True
 
     def move(self, x, y, z):
+        if DEPLOYING:            # backstop for agent loops still running: no motion while deploying
+            self.moving = False
+            return
         x, y, z = (max(-l, min(l, float(v))) for v, l in zip((x, y, z), SPEEDS[self.speed]))
         x = max(-BACK_MAX, x)
         self.last_cmd = time.monotonic()
@@ -684,6 +696,8 @@ class Collector(Node):
 
     def action(self, name):
         self.moving = False
+        if DEPLOYING:
+            return
         self.last_cmd = time.monotonic()
         self.head = 0.0      # standing up or lying down resets the body pose
         self.stop()
@@ -1014,6 +1028,40 @@ def log_pose(odom, pose):
         pass
 
 
+_STOPPED_AT_EXIT = []
+
+
+def stop_dog(reason, times=4, gap=0.1):
+    """What the STOP button does (interrupt agents, obstacle-avoid zero move if avoidance is on, StopMove, plus a zero
+    Twist), sent `times` times over ~0.3 s so it gets through. Safe to call from any thread and at shutdown."""
+    print(f"[stop] stopping the dog: {reason}", flush=True)
+    try:
+        if AG:
+            AG.interrupt(reason)
+    except Exception as e:
+        print(f"[stop] interrupt failed: {e!r}", flush=True)
+    for i in range(times):
+        try:
+            NODE.moving = False
+            NODE.stop()
+            NODE.vel_pub.publish(Twist())
+        except Exception as e:
+            print(f"[stop] publish failed: {e!r}", flush=True)
+        if i < times - 1:
+            time.sleep(gap)
+
+
+def stop_at_exit(reason="console shutting down"):
+    """Once per process: refuse motion, then stop the dog (before the auto session is closed)."""
+    global DEPLOYING
+    if _STOPPED_AT_EXIT or NODE is None:
+        return
+    _STOPPED_AT_EXIT.append(time.time())
+    DEPLOYING = DEPLOYING or {"t": round(time.time(), 2), "msg": reason}
+    stop_dog(reason)
+    time.sleep(0.1)          # let DDS hand the last stop to the driver before the node goes away
+
+
 def snapshot():
     """Everything the console shows, as one JSON-able dict (sent on /events and /state.json)."""
     with lock:
@@ -1032,6 +1080,8 @@ def snapshot():
     snap["markers"] = MARKERS.snapshot() if MARKERS else None
     snap["battery"] = battery()
     snap["l515"] = L515.status()
+    snap["boot_id"] = BOOT_ID
+    snap["deploying"] = DEPLOYING
     lv = AG.planner.overlay() if AG.planner else None
     snap["live"] = lv if lv and time.time() - lv["t"] < 5 else None
     snap["control"] = {"avoid": NODE.avoid, "speed": NODE.speed, "speeds": SPEEDS, "look_deg": round(math.degrees(NODE.head)),
@@ -1102,8 +1152,23 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_POST(self):
         path = self.path.split("?")[0]
-        if not (path in ("/cmd", "/map", "/map/objects", "/map/proposals") or path.startswith(("/agent/", "/places", "/label/"))):
+        if not (path in ("/cmd", "/map", "/map/objects", "/map/proposals", "/deploying") or path.startswith(("/agent/", "/places", "/label/"))):
             return self.send_error(404)
+        if path == "/deploying":    # deploy_console.sh, this machine only: stop the dog, refuse motion until restart
+            try:
+                ip = ipaddress.ip_address(self.client_address[0].removeprefix("::ffff:"))
+            except ValueError:
+                ip = None
+            if not (ip and ip.is_loopback):
+                return self.send_error(403, "/deploying is for this machine only")
+            try:
+                req = json.loads(self.rfile.read(int(self.headers.get("Content-Length", 0))) or b"{}")
+            except ValueError:
+                req = {}
+            global DEPLOYING
+            DEPLOYING = {"t": round(time.time(), 2), "msg": str(req.get("msg") or "deploying a new console version")[:200]}
+            stop_dog(f"console is deploying: {DEPLOYING['msg']}")
+            return self.send_json(200, {"result": "done", "deploying": DEPLOYING, "boot_id": BOOT_ID})
         if not self.can_control():
             return self.send_error(403, "Drive controls only work from the lab network")
         try:
@@ -1114,6 +1179,9 @@ class Handler(BaseHTTPRequestHandler):
             call = path[len("/agent/"):]
             if call not in AGENT_CALLS:
                 return self.send_error(404)
+            if DEPLOYING and call in MOTION_AGENT_CALLS:
+                return self.send_json(503, {"result": "refused", "reason": "console is deploying", "stop_reason": "deploying",
+                                            "deploying": DEPLOYING})
             return self.agent_post(call, req)
         if path == "/label/example":
             # {url: trail frame, box: [x1, y1, x2, y2] fractions, name, label?, place: bool, client}: a person says
@@ -1404,6 +1472,8 @@ class Handler(BaseHTTPRequestHandler):
                 NODE.stop()
             elif req.get("handback"):
                 AG.hand_back()
+            elif DEPLOYING and any(k in req for k in ("move", "avoid", "look_deg")) or (DEPLOYING and req.get("action") in ACTIONS):
+                return self.send_error(503, "console is deploying")
             elif console and (AG.human_drives(client, ip) or not NODE.claim(client, ip)):
                 return self.send_error(409, f"Someone at {NODE.driver_ip} is driving")
             elif not console and AG.agent_may_drive(client or ip, ip):
@@ -1735,6 +1805,9 @@ section.sz2{grid-column:span 2}section.sz3{grid-column:1/-1}@media (max-width:70
 h2 .szc{display:inline-flex;gap:2px;margin-left:8px}h2>span:first-of-type{margin-left:auto}
 h2 .szc button{font:10px var(--mono);padding:1px 5px;border:1px solid var(--line);border-radius:3px;background:var(--bg);color:var(--dim);cursor:pointer}
 h2 .szc button.on{color:var(--accent);border-color:var(--accent)}
+#deployov{position:fixed;inset:0;z-index:1000;background:rgba(10,12,14,.93);display:grid;place-items:center;padding:16px}#deployov[hidden]{display:none}
+#deployov>div{max-width:34em;text-align:center;display:grid;gap:12px;font:15px/1.5 var(--sans);color:var(--fg)}#deployov b{font-size:19px}
+#deployov small{color:var(--dim);font:12px var(--mono)}#deployov button{justify-self:center;padding:8px 22px;font-weight:600}
 .l515v{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:10px}.l515v figure{margin:0;min-width:0}
 .l515v img{width:100%;display:block;border-radius:4px;background:#000}.l515v figcaption{font:11px var(--mono);color:var(--dim);margin-top:4px}
 .l515off{aspect-ratio:4/3;display:grid;place-items:center;border-radius:4px;background:var(--bg);border:1px dashed var(--line);color:var(--dim);font:12px var(--mono);text-align:center;padding:8px}
@@ -1936,6 +2009,9 @@ main>section.dragging{opacity:.55;outline:2px dashed var(--accent);outline-offse
 <section><h2>Foot contact force</h2><div class="feet" id="feet"></div></section>
 <section><h2>Joint angles (rad)</h2><table id="joints"></table></section>
 </main>
+<div id="deployov" role="alertdialog" aria-live="assertive" hidden><div><b>Deploying a new console version, driving is paused.</b>
+<span id="deploytxt">This page reloads by itself.</span><small id="deploymsg"></small>
+<button type="button" id="deploystop" title="The console already stopped the dog; this sends STOP again">STOP the dog</button></div></div>
 <script>
 const $=id=>document.getElementById(id);
 const deg=v=>(v*180/Math.PI).toFixed(1);
@@ -2095,6 +2171,7 @@ function battWarn(b){const el=$('battwarn');if(!b||b.soc==null||b.stale){el.hidd
 $('battwarnx').addEventListener('click',()=>{$('battwarn').hidden=true});
 const FEET=['FR','FL','RR','RL'];const SENS=['imu','odom','state','joints','cloud','camera'];
 function render(d){const a=d.age||{};
+ if(deployCheck(d))return;
  if(d.l515)renderL515(d.l515);
  if(d.rec)renderRec(d.rec);if(d.agents)renderAgents(d.agents);
  if(d.control){ctl=d.control;$('avoid').checked=ctl.avoid;if(ctl.speed)showSpeed(ctl.speed,ctl.speeds);
@@ -2149,6 +2226,19 @@ async function l515Loop(kind,img,off){let after=0;
   catch(e){after=0;await new Promise(f=>setTimeout(f,1000))}
   await new Promise(f=>setTimeout(f,Math.max(0,250-(Date.now()-t0))))}}
 l515Loop('color',$('l515c'),$('l515co'));l515Loop('depth',$('l515d'),$('l515do'));
+// Deploys: the console sends boot_id (new per start) and deploying {t, msg}. While deploying: overlay, no driving.
+// A new boot id, or getting data again after the console was down, reloads the page (new page code).
+var DEPLOY=false,BOOT=null,lastMsg=Date.now(),wasDown=false;
+function deployCheck(d){lastMsg=Date.now();
+ if(d.boot_id){if(BOOT&&d.boot_id!==BOOT){location.reload();return true}BOOT=d.boot_id}
+ if(wasDown){location.reload();return true}
+ DEPLOY=!!d.deploying;$('deployov').hidden=!DEPLOY;
+ if(DEPLOY){if(armed||held.size)setArmed(false);$('deploymsg').textContent=d.deploying.msg||''}
+ return false}
+setInterval(()=>{const down=Date.now()-lastMsg;
+ if(down>5000){wasDown=true;fetch('/state.json',{cache:'no-store'}).then(r=>r.ok&&location.reload()).catch(()=>{})}
+ if(DEPLOY){setArmed(false);$('deploytxt').textContent=down>60000?'The console has not come back after a minute. Reload this page by hand; if it still does not load, check the console on the control PC.':'This page reloads by itself.'}},3000);
+$('deploystop').addEventListener('click',()=>post({action:'stop'}));
 function connect(){const es=new EventSource('/events');es.onopen=()=>{$('conn').textContent='streaming from '+location.host};
  es.onmessage=e=>render(JSON.parse(e.data));es.onerror=()=>{$('conn').textContent='disconnected, retrying…'}}
 connect();
@@ -2178,7 +2268,7 @@ const CLIENT=Math.random().toString(36).slice(2);let ctl={};
 const post=b=>fetch('/cmd',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...b,client:CLIENT,console:true})})
  .then(async r=>{if(r.status===409){held.clear();paint();$('dstat').textContent='Someone else is driving. Wait for them to stop.';return}
   if(!r.ok)throw new Error(r.status)}).catch(e=>{$('dstat').textContent='Command failed ('+e.message+'). Is the dashboard still running?'});
-function setArmed(v){armed=v&&allowed;$('armed').checked=armed;held.clear();paint();
+function setArmed(v){armed=v&&allowed&&!DEPLOY;$('armed').checked=armed;held.clear();paint();
  document.querySelectorAll('#pad button,.acts button').forEach(b=>b.disabled=!armed&&b.id!=='bstop');$('avoid').disabled=!armed;
  $('dstat').textContent=armed?'Armed: hold a direction':'Disarmed';$('dstat').className='dstat'+(armed?' live':'')}
 function paint(){document.querySelectorAll('#pad [data-k]').forEach(b=>b.classList.toggle('on',held.has(b.dataset.k)))}
@@ -2702,6 +2792,7 @@ def auto_rec_loop():
 def main():
     rclpy.init()
     signal.signal(signal.SIGTERM, lambda *_: sys.exit(0))  # rclpy otherwise swallows SIGTERM
+    atexit.register(stop_at_exit, "console exiting")
     global NODE
     node = NODE = Collector()
     global AG, MAPPER, TRAIL, MARKERS, EXAMPLES, HIST
@@ -2727,6 +2818,7 @@ def main():
     except KeyboardInterrupt:
         pass
     finally:
+        stop_at_exit("console shutting down")     # first: the dog keeps its last velocity otherwise
         AUTO.shutdown()
         REC.stop()
         MAPPER.autosave(latest["odom"])
