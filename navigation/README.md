@@ -62,6 +62,13 @@ can't confirm there (no map, low score, worse fit), the marker pose is applied a
 usable marker it falls back to the whole-map lidar line-up and the status says why (`no marker in view`, or per tag:
 unsurveyed, oblique, far, ambiguous, unsteady). Events: `marker_lineup` (`via: "marker"`, `marker`, `marker_id`,
 `fit_before`, `fit_marker`, `fit_after`, `lidar_refined`, `lidar_note`) or `auto_align` with `via: "lidar"`.
+**Set dog position uses markers too** (2026-11-16): the click only narrows the region. With a usable marker in view
+the marker line-up above runs; if it puts the dog more than 1.5 m from the click (or > 45° from a dragged arrow) it is
+still used and the status leads with the conflict ("tag B puts the dog 2.3 m from your click; used tag B"). Without one,
+the lidar's line-ups within 0.75 m of the click are filtered to good-enough fits (score >= 0.3 and within 0.10 of the
+best there; inside the arrow's ±45°) and the one closest to the click (+0.5 m per rad off the arrow) is applied; if none
+passes, the position is left unchanged and the status says so. Events: `marker_lineup` with `clicked`, `click_dist_m`,
+`click_conflict`, or `hand_placement` with `via: "lidar"`, `click_dist_m`, `score`, `best_score`, `n_good`.
 
 ## Files
 

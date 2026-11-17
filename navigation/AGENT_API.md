@@ -210,9 +210,10 @@ good, try `global`. If nothing fits well, drive a little (turn 90°) so the lida
   (for example while the dog stands), so standing still never accumulates time toward them.
 - `loc.fit`, `runner_up` and `unsure` describe the *last line-up* only. `unsure` means a score under 0.3, or
   less than 0.05 ahead of the next-best heading.
-- `loc.events` kinds: `hand_placement`, `auto_align` (`via: "lidar"`), `marker_lineup` (`via: "marker"`, `marker`,
+- `loc.events` kinds: `auto_align` (`via: "lidar"`), `marker_lineup` (`via: "marker"`, `marker`,
   `marker_id`, `fit_before`/`fit_marker`/`fit_after`, `lidar_refined`; the console's Line up again seeds from a
-  surveyed marker in view, <= 30° off face-on, and the lidar refines within 0.5 m), `session_restore`, `new_map`,
+  surveyed marker in view, <= 30° off face-on, and the lidar refines within 0.5 m), `hand_placement` from Set dog position is `via: "lidar"` (closest good-enough fit to the click; with a marker in view
+  it is a `marker_lineup` with `click_dist_m`/`click_conflict` instead), `session_restore`, `new_map`,
   `drift_correction` (only jumps over 0.3 m or 10°), `agent_relocalize`, `marker_disagree`, `unknown` (frame set by hand).
 - **Marker checks (logging only, never move the dog):** fix_ok sightings of surveyed markers A–D (≤ 2.5 m, ≤ 45°
   oblique) are pooled over 3 s. Each check is logged in `loc.marker` (last 5: `{t, n, marks, dx, dy, shift, spread,

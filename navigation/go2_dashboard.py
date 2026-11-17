@@ -39,7 +39,7 @@ from sensor_msgs.msg import CompressedImage, Image, JointState, PointCloud2
 from sensor_msgs_py import point_cloud2
 
 from go2_agent import AGENT_LEASE_S, BUMP_H, UNDER_TOP_MAX, Agents, check_name
-from go2_mapper import MK_LINEUP_FRESH_S, Mapper, marker_lineup_pose
+from go2_mapper import CLICK_MARKER_R, HINT_YAW_TOL, Mapper, marker_lineup_pose, wrap
 from go2_nav import Planner
 from go2_trail import Trail
 from go2_markers import Markers
@@ -897,6 +897,23 @@ def lineup_reject_text(rejected):
     return "no usable marker (" + "; ".join(f"tag {r['mark']}: {', '.join(r['why'])}" for r in rejected) + ")"
 
 
+def click_vs_marker(click, pose):
+    """How a Set-dog-position click compares with the marker pose: {x, y, yaw, dist_m, turn_deg, conflict}; conflict
+    is the status text when the marker puts the dog outside the clicked region (CLICK_MARKER_R, HINT_YAW_TOL)."""
+    x, y, yaw = click
+    tag = pose["best"]["mark"]
+    dist = math.hypot(pose["x"] - x, pose["y"] - y)
+    turn = None if yaw is None else abs(math.degrees(wrap(pose["yaw"] - yaw)))
+    conflict = []
+    if dist > CLICK_MARKER_R:
+        conflict.append(f"tag {tag} puts the dog {dist:.1f} m from your click")
+    if turn is not None and turn > math.degrees(HINT_YAW_TOL):
+        conflict.append(f"tag {tag} has the dog facing {turn:.0f}° away from your arrow")
+    return {"x": round(x, 3), "y": round(y, 3), "yaw": None if yaw is None else round(yaw, 4), "dist_m": round(dist, 3),
+            "turn_deg": None if turn is None else round(turn, 1),
+            "conflict": ("; ".join(conflict) + f"; used tag {tag}") if conflict else None}
+
+
 def marker_lineup_choice():
     """For "Line up again": {"via": "marker", "pose", "used", "rejected"} from the latest detector frame, or
     {"via": "lidar", "note": why no marker was used, "rejected"}."""
@@ -1269,13 +1286,29 @@ class Handler(BaseHTTPRequestHandler):
                     return self.send_json(409, {"result": "error", "reason": err, "lineup": lineup})
                 return self.send_json(200, {"result": "done", "lineup": lineup, **MAPPER.info()})
             elif act == "localize_at":   # a person clicked where the dog is: {"x", "y", "yaw_deg"?}
+                # The click only narrows the region (Oliver, 2026-11-16). A usable marker in view decides the pose
+                # (a conflict with the click is reported, not hidden); without one, the lidar's good-enough line-up
+                # closest to the click (and dragged heading) wins.
                 try:
                     yaw = req.get("yaw_deg")
-                    err = MAPPER.localize_at(odom, float(req["x"]), float(req["y"]),
-                                             None if yaw is None else math.radians(float(yaw)),
-                                             by=str(req.get("client") or "console")[:60])
+                    click = (float(req["x"]), float(req["y"]), None if yaw is None else math.radians(float(yaw)))
                 except (KeyError, TypeError, ValueError):
                     return self.send_json(400, {"result": "error", "reason": "localize_at needs x and y (map metres), optional yaw_deg"})
+                by = str(req.get("client") or "console")[:60]
+                lineup = marker_lineup_choice()
+                if lineup["via"] == "marker":
+                    lineup["click"] = click_vs_marker(click, lineup["pose"])
+                    err = MAPPER.lineup_from_marker(odom, lineup["pose"], by=by, click=lineup["click"])
+                else:
+                    MAPPER.align_note = lineup["note"]
+                    err = MAPPER.localize_at(odom, *click, by=by)
+                    if err:
+                        MAPPER.align_note = None
+                print(f"[lineup] Set dog position: {json.dumps(lineup, default=str)}", flush=True)
+                NODE._map_key = None
+                if err:
+                    return self.send_json(409, {"result": "error", "reason": err, "lineup": lineup})
+                return self.send_json(200, {"result": "done", "lineup": lineup, **MAPPER.info()})
             else:
                 return self.send_json(400, {"result": "error", "reason": "action must be start, new, extend, stop, save, revert, clear, frame, align or localize_at"})
             NODE._map_key = None

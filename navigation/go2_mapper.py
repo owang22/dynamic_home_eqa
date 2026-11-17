@@ -83,6 +83,12 @@ MK_LINEUP_FRESH_S = 2.0    # s: detector frame at most this old
 MK_REFINE_R = 0.5          # m: lidar refine searches within this of the marker pose
 MK_REFINE_YAW = math.radians(10)   # and within this of its heading
 MK_REFINE_MIN = 0.3        # lidar line-up score below this does not count as confirming the marker pose
+# "Set dog position" (a click, maybe a dragged heading): the click only narrows the region.
+CLICK_MARKER_R = 1.5       # m: a marker pose this close to the click (and within HINT_YAW_TOL of a dragged heading)
+                           # agrees with it; farther, the marker is still used and the conflict is reported
+CLICK_MIN_SCORE = 0.3      # lidar-only placement: candidates need at least this line-up score...
+CLICK_SCORE_SLACK = 0.10   # ...and to be within this of the best score in the region; of those, closest to the click
+CLICK_YAW_WEIGHT = 0.5     # m per rad of heading difference from a dragged heading, when ranking by closeness
 MK_MOVE = False            # logging only: a fix that passes every gate is logged as "would_move" (loc event + suspect)
                            # and the dog is NOT moved. True = re-anchor (not yet: 10-26 B-stand case, map off at B's door)
 MK_GATE = "joint"          # lidar check: "all" (recent views, every voxel), "fresh" (voxels placed in the last
@@ -1027,7 +1033,30 @@ class Mapper:
         threading.Thread(target=self._align, args=(odom, (float(x), float(y), yaw)), daemon=True).start()
         return None
 
-    def lineup_from_marker(self, odom, pose, by="console"):
+    def _pick_near_click(self, odom, found, hint):
+        """Of the lidar line-ups around a click ([(score, deg, T)], best first), the one closest to the click (and
+        dragged heading) among those with a good-enough fit: score >= CLICK_MIN_SCORE and within CLICK_SCORE_SLACK
+        of the best. Returns ({cand, dist, turn_deg, top, n_good}, None) or (None, why)."""
+        top = found[0][0]
+        floor = max(CLICK_MIN_SCORE, top - CLICK_SCORE_SLACK)
+        good = []
+        for c in found:
+            if c[0] < floor:
+                continue
+            p = self.T_for_pose(c[2], odom)
+            dist = math.hypot(p[0] - hint[0], p[1] - hint[1])
+            turn = None if hint[2] is None else abs(wrap(p[2] - hint[2]))
+            if turn is not None and turn > HINT_YAW_TOL:
+                continue
+            good.append((dist + (CLICK_YAW_WEIGHT * turn if turn is not None else 0.0), -c[0], dist, turn, c))
+        if not good:
+            return None, f"nothing near your click fits the map well enough (best {top:.0%}, need {CLICK_MIN_SCORE:.0%})"
+        good.sort(key=lambda g: (g[0], g[1]))
+        _, _, dist, turn, c = good[0]
+        return {"cand": c, "dist": dist, "turn_deg": None if turn is None else round(math.degrees(turn), 1),
+                "top": top, "n_good": len(good)}, None
+
+    def lineup_from_marker(self, odom, pose, by="console", click=None):
         """Line up from a marker sighting (pose from marker_lineup_pose): the lidar refines within MK_REFINE_R /
         MK_REFINE_YAW of the marker pose; if it can't confirm there, the marker pose is applied as is (vision wins).
         Runs in the background like localize_at. Returns None, or why it could not start."""
@@ -1041,10 +1070,11 @@ class Mapper:
         self._aligning = True
         b = pose["best"]
         self.status = f"lining up from tag {b['mark']}…"
-        threading.Thread(target=self._marker_align, args=(odom, pose, by), daemon=True).start()
+        threading.Thread(target=self._marker_align, args=(odom, pose, by, click), daemon=True).start()
         return None
 
-    def _marker_align(self, odom, pose, by):
+    def _marker_align(self, odom, pose, by, click=None):
+        """click: {"x", "y", "yaw" or None, "dist_m", "turn_deg", "conflict": text or None} from Set dog position."""
         try:
             t0 = time.time()
             b = pose["best"]
@@ -1086,12 +1116,17 @@ class Mapper:
                                f" (was {fit_before})")
             else:
                 self.status = f"{head}; lidar could not confirm ({why}), marker pose applied as is, fit {fit_after}"
+            if click:
+                self.status = (f"{click['conflict']}. " if click.get("conflict") else
+                               f"your click agrees with tag {b['mark']} ({click['dist_m']:.1f} m off). ") + self.status
             self._set_T(T, "marker_lineup", via="marker", marker=b["mark"], marker_id=b["id"], by=by,
                         markers=pose["marks"], marker_pose={k: pose[k] for k in ("x", "y", "yaw")},
                         view_deg=b["view_deg"], dist_m=b["dist"], n_markers=pose["n"], spread_m=pose["spread_m"],
                         spread_deg=pose["spread_deg"], lidar_refined=refined, lidar_note=why,
                         refine_moved_m=round(moved, 3), refine_turned_deg=round(turned, 1),
-                        fit_before=fit_before, fit_marker=fit_marker, fit_after=fit_after)
+                        fit_before=fit_before, fit_marker=fit_marker, fit_after=fit_after,
+                        **({"clicked": {k: click[k] for k in ("x", "y", "yaw")}, "click_dist_m": click["dist_m"],
+                            "click_turn_deg": click["turn_deg"], "click_conflict": click.get("conflict")} if click else {}))
             print(f"[lineup] {self.status}", flush=True)
         finally:
             self._aligning = False
@@ -1203,11 +1238,19 @@ class Mapper:
         try:
             self.T_found = None
             t0 = time.time()
-            best = self._search(odom, hint)
+            best = self._search(odom, hint, keep_all=bool(hint))
             if isinstance(best, str):
                 self.status = best
                 return
-            score, deg, T = best[0]
+            pick = None
+            if hint:
+                pick, why = self._pick_near_click(odom, best, hint)
+                if pick is None:
+                    note = getattr(self, "align_note", None)
+                    self.align_note = None
+                    self.status = (f"{note}; " if note else "") + why + "; position not changed"
+                    return
+            score, deg, T = pick["cand"] if pick else best[0]
             # best fit at a clearly different rotation, to judge ambiguity
             other = next((b[0] for b in best[1:] if abs(wrap(math.radians(b[1] - deg))) > math.radians(10)), 0.0)
             th = T[2]
@@ -1217,13 +1260,20 @@ class Mapper:
             if self.mapping:      # a new map was started meanwhile; its frame wins
                 return
             if hint:
-                self._set_T(self.T_found, "hand_placement", by=getattr(self, "_placed_by", "console"),
-                            clicked={"x": round(hint[0], 2), "y": round(hint[1], 2),
-                                     "yaw": None if hint[2] is None else round(hint[2], 3)})
-                self.align_info["by_hand"] = True
+                note = getattr(self, "align_note", None)
+                self.align_note = None
                 heading = math.degrees(wrap(odom["yaw"] + th))
-                self.status = (f"placed by hand near ({hint[0]:.1f}, {hint[1]:.1f}), facing {heading:.0f}° "
-                               f"({score:.0%} fit, next best heading {other:.0%})")
+                self.align_info["by_hand"] = True
+                self.status = ((f"{note}; " if note else "") +
+                               f"placed near your click from the lidar ({pick['dist']:.2f} m from it, facing {heading:.0f}°, "
+                               f"{score:.0%} fit; best in the area {pick['top']:.0%}, {pick['n_good']} good candidates; "
+                               f"next best heading {other:.0%})")
+                self._set_T(self.T_found, "hand_placement", by=getattr(self, "_placed_by", "console"), via="lidar",
+                            clicked={"x": round(hint[0], 2), "y": round(hint[1], 2),
+                                     "yaw": None if hint[2] is None else round(hint[2], 3)},
+                            click_dist_m=round(pick["dist"], 3), click_turn_deg=pick["turn_deg"], score=round(score, 3),
+                            best_score=round(pick["top"], 3), n_good=pick["n_good"],
+                            **({"marker_note": note} if note else {}))
                 if score < 0.3 or score - other < 0.05:
                     self.status += ": unsure, check the arrow against the camera"
                 return
