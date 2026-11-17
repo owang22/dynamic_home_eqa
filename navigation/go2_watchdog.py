@@ -95,6 +95,11 @@ def main():
                   "console_up": st is not None, "l515_online": l515_on, "l515_asleep": l515_asleep,
                   "last_action": last_action,
                   "last_wake_t": round(last_wake, 1) or None}
+        try:   # shown in the console header (POST /watchdog, localhost only)
+            urllib.request.urlopen(urllib.request.Request("http://127.0.0.1:8080/watchdog", data=json.dumps(status).encode(),
+                                   headers={"Content-Type": "application/json"}, method="POST"), timeout=2).read()
+        except Exception:
+            pass
         tmp = STATUS + ".tmp"
         with open(tmp, "w") as f:
             json.dump(status, f)
