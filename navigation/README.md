@@ -50,6 +50,13 @@ mid-session) neither blocks nor delays the Go2 topics, and is simply absent from
 ~207 KB per frame with zstd at ~8 Hz, colour ~46 KB: about +7.6 GB/hour, so ~12 GB/hour per session with the L515
 (~13 at its 10 Hz max). Each `auto_index.jsonl` line now also has `topics_recorded`, `msg_counts` (from the bag's
 metadata) and `l515` (true if any L515 message was saved). The manual Record settings have an L515 group.
+Panels (2026-11-16): free layout on a 12-column grid with ~40 px rows; drag a panel by its header bar to move it,
+drag the bottom-right corner to resize; both snap, other panels move down out of the way; saved per browser
+(`go2layout` in localStorage), **Reset layout** restores the default; phones get one column. The L515 panel now
+embeds the bridge's own page (colour, depth, 3-D point cloud preview) proxied at `/l515/` (one port).
+Background tabs close their `/events` stream and pause image loops: browsers allow 6 connections per host:port, so six
+console tabs used to starve everything else. "waiting for L515 frames…" stuck on screen was a CSS bug
+(`display:grid` on the placeholder beat its `hidden` attribute).
 The page has an **L515 depth camera** panel (colour + colourised depth at ~4 Hz, fps and frame age, "L515 offline"
 when the bridge or Pi is off), proxied through the console (`/l515/color.jpg`, `/l515/depth.jpg`) so port 8080 is
 enough; `/state.json` has `l515 {online, fps, age_s, bridge}`.

@@ -581,6 +581,25 @@ class L515View:
     def status(self):
         return {k: self.st.get(k) for k in ("online", "fps", "age_s", "bridge", "depth", "color")}
 
+    def passthrough(self, path, timeout=7):
+        """GET path on the bridge page: (status, body, headers), or (None, None, None) if it is not running."""
+        import urllib.error
+        try:
+            return self._get(path, timeout)
+        except urllib.error.HTTPError as e:
+            return e.code, e.read(), e.headers
+        except Exception:
+            return None, None, None
+
+    @staticmethod
+    def embed(page):
+        """The bridge page for the console panel: its fetches under /l515/, no header, no Record box, compact grid."""
+        page = page.replace("fetch('/", "fetch('/l515/")
+        css = ("<style>header{display:none}section:has(#recBtn){display:none}"
+               "main{grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr))!important;gap:6px!important;padding:0!important}"
+               "section{padding:6px!important}body{background:transparent}</style>")
+        return page.replace("</head>", css + "</head>", 1)
+
 
 L515 = L515View()
 
@@ -1701,6 +1720,28 @@ class Handler(BaseHTTPRequestHandler):
             self.send_header("X-Frame-T", repr(t))
             self.end_headers()
             self.wfile.write(data)
+        elif self.path.split("?")[0] in ("/l515", "/l515/", "/l515/status.json", "/l515/cloud.bin"):
+            # The bridge's own page (l515_go2_pi4_bridge web.py: colour, depth, 3-D point cloud preview) through this
+            # port, for the console's L515 panel (an iframe). Its fetches are rewritten to /l515/...; colour and depth
+            # come from the shared cache below, status and cloud are passed through. Its own Record box is hidden
+            # (the console records the L515).
+            p = self.path.split("?")[0]
+            if p == "/l515":
+                self.send_response(301); self.send_header("Location", "/l515/"); self.end_headers(); return
+            code, body, hdr = L515.passthrough("/" if p == "/l515/" else self.path[5:])
+            if code is None:
+                return self.send_error(502, "L515 bridge page (port 8081) is not running")
+            ctype = hdr.get("Content-Type", "application/octet-stream")
+            if p == "/l515/":
+                body = L515.embed(body.decode("utf-8", "replace")).encode()
+            self.send_response(code)
+            self.send_header("Content-Type", ctype)
+            self.send_header("Content-Length", str(len(body)))
+            self.send_header("Cache-Control", "no-store")
+            if hdr.get("X-Frame-T"):
+                self.send_header("X-Frame-T", hdr["X-Frame-T"])
+            self.end_headers()
+            self.wfile.write(body)
         elif self.path.split("?")[0] in ("/l515/color.jpg", "/l515/depth.jpg"):
             # L515 colour / colourised depth (red = near, blue = 5 m+), proxied from the bridge page; newer than
             # ?after=<t>, waits up to 3 s, else 204 (also while the L515 is off).
@@ -1810,10 +1851,22 @@ h2 .szc button.on{color:var(--accent);border-color:var(--accent)}
 #deployov small{color:var(--dim);font:12px var(--mono)}#deployov button{justify-self:center;padding:8px 22px;font-weight:600}
 .l515v{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:10px}.l515v figure{margin:0;min-width:0}
 .l515v img{width:100%;display:block;border-radius:4px;background:#000}.l515v figcaption{font:11px var(--mono);color:var(--dim);margin-top:4px}
+#l515f{width:100%;min-height:320px;border:0;display:block;background:transparent}#l515f[hidden]{display:none}
+.l515off[hidden]{display:none}  /* the bug behind "waiting for L515 frames…": display:grid beat [hidden] */
 .l515off{aspect-ratio:4/3;display:grid;place-items:center;border-radius:4px;background:var(--bg);border:1px dashed var(--line);color:var(--dim);font:12px var(--mono);text-align:center;padding:8px}
 .mknote{font:12px var(--mono);color:var(--dim);margin-top:6px}.mknote b{color:var(--warn);font-weight:600}
 h2 .grip{font-style:normal;font-size:14px;line-height:1;margin:-2px 6px 0 -2px;padding:0 2px;color:var(--dim);cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none}h2 .grip:hover{color:var(--accent)}
-main>section.dragging{opacity:.55;outline:2px dashed var(--accent);outline-offset:2px}body.dragging,body.dragging *{cursor:grabbing!important;user-select:none;-webkit-user-select:none}
+main.free{grid-template-columns:repeat(12,minmax(0,1fr));grid-template-rows:auto;grid-auto-rows:var(--rowh,40px);align-items:stretch}
+main.free>section:not(.ctlbar){display:flex;flex-direction:column;overflow:auto;position:relative;min-height:0}
+main.free>section.ctlbar{grid-column:1/-1;grid-row:1}main.free>section[hidden]{display:none}
+main.free .fill{flex:1 1 0;min-height:80px}main.free #cam{max-height:none;aspect-ratio:auto;height:auto}
+main.free #l515f{min-height:120px}main.free .l515off{aspect-ratio:auto}
+main.free h2.draghd{cursor:grab;user-select:none;-webkit-user-select:none;touch-action:none}
+.rsz{display:none}main.free .rsz{display:block;position:absolute;right:2px;bottom:2px;width:14px;height:14px;cursor:nwse-resize;touch-action:none;
+ background:linear-gradient(135deg,transparent 50%,var(--dim) 50%,var(--dim) 60%,transparent 60%,transparent 75%,var(--dim) 75%,var(--dim) 85%,transparent 85%);opacity:.6;z-index:3}
+main.free .rsz:hover{opacity:1}
+.lghost{pointer-events:none;border:1.5px dashed var(--accent);border-radius:6px;background:color-mix(in srgb,var(--accent) 8%,transparent);z-index:0}.lghost[hidden]{display:none}
+main>section.dragging{z-index:5;box-shadow:0 8px 30px rgba(0,0,0,.45);opacity:.85;outline:2px dashed var(--accent);outline-offset:2px}body.dragging,body.dragging *{cursor:grabbing!important;user-select:none;-webkit-user-select:none}
 #resetlayout{font:11px var(--mono);padding:3px 8px;border-radius:5px;border:1px solid var(--line);background:var(--bg);color:var(--dim);cursor:pointer}#resetlayout:hover{color:var(--fg)}
 .mapzoom{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:0 0 6px;font:11px var(--mono);color:var(--dim)}
 .mapzoom button{font:12px var(--mono);min-width:28px;padding:3px 7px;border-radius:4px;border:1px solid var(--line);background:var(--bg);color:var(--fg);cursor:pointer}
@@ -1901,10 +1954,10 @@ main>section.dragging{opacity:.55;outline:2px dashed var(--accent);outline-offse
 <main>
 <section class="full ctlbar" id="ctlbar"><div id="ctltext">Control: checking…</div>
 <div class="ctlbtns"><button id="takeover">Take over</button><button id="handback" hidden>Hand back to agents</button></div><div class="battwarn" id="battwarn" role="alert" hidden><span id="battwarntxt"></span><button type="button" id="battwarnx" title="Hide until the next 10% drop">ok</button></div></section>
-<section class="full"><h2>Live camera <span id="camage"></span></h2><img id="cam" alt="Front camera stream"><div class="mknote" id="mknote"></div></section>
+<section class="full"><h2>Live camera <span id="camage"></span></h2><img id="cam" class="fill" alt="Front camera stream"><div class="mknote" id="mknote"></div></section>
 <section class="wide" id="l515sec"><h2>L515 depth camera <span id="l515st">checking…</span></h2>
-<div class="l515v"><figure><img id="l515c" alt="L515 colour frame" hidden><div class="l515off" id="l515co">L515 offline</div><figcaption>colour</figcaption></figure>
-<figure><img id="l515d" alt="L515 depth frame" hidden><div class="l515off" id="l515do">L515 offline</div><figcaption>depth · red = near, blue = 5 m+, black = no return</figcaption></figure></div></section>
+<iframe id="l515f" class="fill" title="L515 live view: colour, depth and 3-D point cloud (the bridge page, through this console)" hidden></iframe>
+<div class="l515off fill" id="l515off">checking…</div></section>
 <section class="wide"><h2>Drive <span id="dnote"></span></h2><div class="drive">
 <div class="pad" id="pad">
 <button data-k="q">↺<small>Q</small></button><button data-k="w">↑<small>W</small></button><button data-k="e">↻<small>E</small></button>
@@ -1946,11 +1999,11 @@ main>section.dragging{opacity:.55;outline:2px dashed var(--accent);outline-offse
 <small>Auto recording saves every session by itself (auto_* folders: camera as JPEG, lidar, pose, L515 colour + depth when it is on, console events; about 4 GB/hour, about 12 GB/hour with the L515). It starts when the dog connects and stops when it disconnects or has been idle for 4 minutes. Stop recording during it pauses it until the dog reconnects.</small>
 </div>
 <div class="past" id="past"></div></section>
-<section><h2>Lidar, top view <span id="cloudinfo"></span></h2><canvas id="cloud" width="600" height="600"></canvas>
+<section><h2>Lidar, top view <span id="cloudinfo"></span></h2><canvas id="cloud" class="fill" width="600" height="600"></canvas>
 <div class="legend">grid lines every 2 m · grey = open floor seen · yellow→red = obstacle 10 cm→1.2 m tall · arrow = robot heading</div></section>
 <section class="wide"><h2>Map <span id="mapinfo"></span></h2><div class="mapzoom"><button id="zin" type="button" title="Zoom in (or scroll on the map)">+</button><button id="zout" type="button" title="Zoom out">−</button><button id="zfit" type="button" title="Show the whole map">Fit</button><label><input type="checkbox" id="zfollow"> follow dog</label><span>labels</span><button id="lsm" type="button" title="Smaller labels">A−</button><button id="llg" type="button" title="Bigger labels">A+</button><label title="Turn the drawing so the room's walls run straight across and up; the map itself is unchanged">view <select id="zrot"><option value="north">North up</option><option value="room">Room square</option></select></label><button id="editpl" type="button" title="Drag places (and a selected object) on the map">Edit places</button><span id="zinfo"></span></div>
 <div class="edithint" id="edithint" hidden><span>drag a place's dot to move it · drag its arrow tip to turn it · drag the ◆ to move the thing itself · drag a selected object's centre ■ to move it · drag a tag's spot to move it, and drag the circle at the arrow tip so the arrow points out of the tag's printed face, into the room · Esc or the button to finish</span><button type="button" id="addobj" title="Then click the map where the object or marker is">Add object</button><label><input type="checkbox" id="snapw" checked> snap to walls</label><small>hold Shift to place freely</small></div>
-<div class="maplayers"><span>Show:</span><label title="Desk and table tops"><input type="checkbox" data-layer="mid"><i style="background:rgb(230,140,40)"></i>Desk tops</label><label title="Shelves, cabinet tops, door frames"><input type="checkbox" data-layer="high"><i style="background:rgb(160,90,220)"></i>High</label><label title="Ceiling height: darker = lower"><input type="checkbox" data-layer="ceiling"><i style="background:linear-gradient(90deg,#444,#ccc)"></i>Ceiling</label><label title="Labelled objects; click one to rename, relabel, confirm or delete it"><input type="checkbox" data-layer="objects"><i style="border:1.5px dashed var(--warn)"></i>Objects</label></div><canvas id="map" width="600" height="600"></canvas>
+<div class="maplayers"><span>Show:</span><label title="Desk and table tops"><input type="checkbox" data-layer="mid"><i style="background:rgb(230,140,40)"></i>Desk tops</label><label title="Shelves, cabinet tops, door frames"><input type="checkbox" data-layer="high"><i style="background:rgb(160,90,220)"></i>High</label><label title="Ceiling height: darker = lower"><input type="checkbox" data-layer="ceiling"><i style="background:linear-gradient(90deg,#444,#ccc)"></i>Ceiling</label><label title="Labelled objects; click one to rename, relabel, confirm or delete it"><input type="checkbox" data-layer="objects"><i style="border:1.5px dashed var(--warn)"></i>Objects</label></div><canvas id="map" class="fill" width="600" height="600"></canvas>
 <div class="legend" id="maplegend">white = open floor · black = walls and furniture · grey = not seen yet · arrow = robot · dots = places (line to where the dog stands to see it) · dashed = agent route · green / red squares = what the lidar sees now clears / adds for route planning · click the map to mark a place</div>
 <div class="mapctl"><span id="mapstatus" class="mapstatus"></span>
 <button data-map="new" data-when="idle">Start new map</button><button data-map="extend" data-when="idle">Extend map</button>
@@ -2001,7 +2054,7 @@ main>section.dragging{opacity:.55;outline:2px dashed var(--accent);outline-offse
 <section><h2>Places <span id="plnote"></span></h2><div id="places"></div>
 <form id="plform"><input id="plid" type="text" placeholder="name, e.g. Sofa 2" maxlength="60" required><input id="pldesc" type="text" placeholder="what is here"><button>Save this spot</button></form>
 <div class="legend">Saves where the dog stands now, and guesses where the thing is: the first wall or furniture straight ahead of the camera. To mark a place later, click the thing on the map instead. Click a place here to show its camera cone. Agents read this list.</div></section>
-<section><h2>Orientation (IMU)</h2><canvas id="rpyplot" width="600" height="180"></canvas>
+<section><h2>Orientation (IMU)</h2><canvas id="rpyplot" class="fill" width="600" height="180"></canvas>
 <div class="legend"><b class="lx">roll</b><b class="ly">pitch</b><b class="lz">yaw</b> · last 20 s, degrees</div>
 <dl class="kv" id="imu" style="margin-top:10px"></dl></section>
 <section><h2>Odometry</h2><dl class="kv" id="odom"></dl></section>
@@ -2019,7 +2072,9 @@ const f=(v,n=2)=>(v>=0?' ':'')+Number(v).toFixed(n);
 const kv=(el,rows)=>{el.innerHTML=rows.map(([k,v])=>`<dt>${k}</dt><dd>${v}</dd>`).join('')};
 const hist=[];const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 
-function plotRPY(){const c=$('rpyplot'),g=c.getContext('2d'),W=c.width,H=c.height;g.clearRect(0,0,W,H);
+function plotRPY(){const c=$('rpyplot');if(FREE){const r=c.getBoundingClientRect();if(r.width>50&&r.height>50&&(Math.abs(c.width-r.width)>2||Math.abs(c.height-r.height)>2)){c.width=Math.round(r.width);c.height=Math.round(r.height)}}
+ else if(c.width!==600||c.height!==180){c.width=600;c.height=180}
+ const g=c.getContext('2d'),W=c.width,H=c.height;g.clearRect(0,0,W,H);
  const now=performance.now()/1000;g.strokeStyle=css('--line');g.lineWidth=1;
  [-30,0,30].forEach(d=>{const y=H/2-d/45*(H/2);g.beginPath();g.moveTo(0,y);g.lineTo(W,y);g.stroke();
   g.fillStyle=css('--dim');g.font='11px monospace';g.fillText(d+'°',4,y-3)});
@@ -2029,9 +2084,11 @@ function plotRPY(){const c=$('rpyplot'),g=c.getContext('2d'),W=c.width,H=c.heigh
 
 // draw canvases at their on-screen size (sharp at any panel size); returns the size in CSS px
 // (square, but never taller than most of the window)
-function fit(c){const dpr=window.devicePixelRatio||1,w=Math.max(100,Math.round(c.getBoundingClientRect().width||600)),
- h=Math.min(w,Math.max(300,Math.round(innerHeight*0.85))),nw=Math.round(w*dpr),nh=Math.round(h*dpr);
- if(c.width!==nw||c.height!==nh){c.width=nw;c.height=nh;c.style.height=h+'px'}c.getContext('2d').setTransform(dpr,0,0,dpr,0,0);return [w,h]}
+function fit(c){const dpr=window.devicePixelRatio||1,rc=c.getBoundingClientRect(),w=Math.max(100,Math.round(rc.width||600)),
+ fill=FREE&&c.classList.contains('fill'),   // free layout: the panel decides the size; the canvas fills it
+ h=fill?Math.max(80,Math.round(rc.height)):Math.min(w,Math.max(300,Math.round(innerHeight*0.85))),nw=Math.round(w*dpr),nh=Math.round(h*dpr);
+ if(fill&&c.style.height)c.style.height='';
+ if(c.width!==nw||c.height!==nh){c.width=nw;c.height=nh;if(!fill)c.style.height=h+'px'}c.getContext('2d').setTransform(dpr,0,0,dpr,0,0);return [w,h]}
 function plotCloud(cl,od){const c=$('cloud'),W=Math.min(...fit(c)),g=c.getContext('2d'),R=8,s=W/(2*R);g.clearRect(0,0,c.width,c.height);
  g.strokeStyle=css('--line');g.lineWidth=1;for(let m=-R;m<=R;m+=2){const p=W/2+m*s;
   g.beginPath();g.moveTo(p,0);g.lineTo(p,W);g.moveTo(0,p);g.lineTo(W,p);g.stroke()}
@@ -2202,30 +2259,27 @@ function render(d){const a=d.age||{};
 
 // The camera <img> stream does not reconnect by itself when the console restarts; restart it whenever the event stream (re)connects.
 async function camLoop(){let after=0;const cam=$('cam');
- for(;;){try{const r=await fetch('/camera.jpg?after='+after,{cache:'no-store'});
+ for(;;){if(document.hidden){await new Promise(f=>setTimeout(f,1000));continue}
+  try{const r=await fetch('/camera.jpg?after='+after,{cache:'no-store'});
    if(r.status===200){after=+r.headers.get('X-Frame-T')||0;const u=URL.createObjectURL(await r.blob()),old=cam.src;
      cam.src=u;if(old.startsWith('blob:'))URL.revokeObjectURL(old)}
    else if(r.status!==204)throw new Error(r.status)}
   catch(e){after=0;await new Promise(f=>setTimeout(f,1000))}}}
 camLoop();
-// L515 depth camera, proxied by the console from the bridge page (port 8081), so port 8080 is enough
+// L515 depth camera: the bridge page (colour, depth, 3-D cloud) in an iframe, proxied by the console at /l515/
+// (one port). Loaded only while the L515 is online and this tab is visible, so it never holds connections otherwise.
 let L515ON=false;
+function l515Frame(){const f=$('l515f'),want=L515ON&&!document.hidden;
+ if(want&&f.hidden){f.src='/l515/';f.hidden=false;$('l515off').hidden=true}
+ else if(!want&&!f.hidden){f.hidden=true;f.src='about:blank';$('l515off').hidden=false}}
 function renderL515(l){L515ON=!!l.online;
  $('l515st').textContent=l.online?`${l.fps!=null?l.fps.toFixed(1):'?'} fps · frame ${l.age_s!=null?l.age_s.toFixed(1):'?'} s old${l.depth?' · depth '+l.depth:''}`
   :l.bridge?'L515 offline (bridge running, no frames from the Pi)':'L515 offline';
- if(!l.online)[['l515c','l515co'],['l515d','l515do']].forEach(([i,o])=>{$(i).hidden=true;$(o).hidden=false;
-  $(o).textContent=l.bridge?'L515 offline: no frames from the Pi':'L515 offline: start the Pi sender, then scripts/run_pc.sh in l515_go2_pi4_bridge'});
- else ['l515co','l515do'].forEach(o=>{if(!$(o).hidden)$(o).textContent='waiting for L515 frames…'})}
-async function l515Loop(kind,img,off){let after=0;
- for(;;){const t0=Date.now();
-  try{if(!L515ON||document.hidden){await new Promise(f=>setTimeout(f,1000));continue}
-   const r=await fetch(`/l515/${kind}.jpg?after=${after}`,{cache:'no-store'});
-   if(r.status===200){after=+r.headers.get('X-Frame-T')||0;const u=URL.createObjectURL(await r.blob()),old=img.src;
-     img.src=u;img.hidden=false;off.hidden=true;if(old.startsWith('blob:'))URL.revokeObjectURL(old)}
-   else if(r.status!==204)throw new Error(r.status)}
-  catch(e){after=0;await new Promise(f=>setTimeout(f,1000))}
-  await new Promise(f=>setTimeout(f,Math.max(0,250-(Date.now()-t0))))}}
-l515Loop('color',$('l515c'),$('l515co'));l515Loop('depth',$('l515d'),$('l515do'));
+ if(!l.online)$('l515off').textContent=l.bridge?'L515 offline: no frames from the Pi':'L515 offline: start the Pi sender, then scripts/run_pc.sh in l515_go2_pi4_bridge';
+ l515Frame()}
+// outside the free layout the iframe takes its content's height (same origin through the proxy)
+$('l515f').addEventListener('load',()=>{try{const d=$('l515f').contentDocument;if(!d||!d.body)return;
+ new ResizeObserver(()=>{if(!FREE)$('l515f').style.height=d.documentElement.scrollHeight+'px'}).observe(d.body)}catch(e){}});
 // Deploys: the console sends boot_id (new per start) and deploying {t, msg}. While deploying: overlay, no driving.
 // A new boot id, or getting data again after the console was down, reloads the page (new page code).
 var DEPLOY=false,BOOT=null,lastMsg=Date.now(),wasDown=false;
@@ -2235,12 +2289,20 @@ function deployCheck(d){lastMsg=Date.now();
  DEPLOY=!!d.deploying;$('deployov').hidden=!DEPLOY;
  if(DEPLOY){if(armed||held.size)setArmed(false);$('deploymsg').textContent=d.deploying.msg||''}
  return false}
-setInterval(()=>{const down=Date.now()-lastMsg;
+setInterval(()=>{if(document.hidden)return;const down=Date.now()-lastMsg;
  if(down>5000){wasDown=true;fetch('/state.json',{cache:'no-store'}).then(r=>r.ok&&location.reload()).catch(()=>{})}
  if(DEPLOY){setArmed(false);$('deploytxt').textContent=down>60000?'The console has not come back after a minute. Reload this page by hand; if it still does not load, check the console on the control PC.':'This page reloads by itself.'}},3000);
 $('deploystop').addEventListener('click',()=>post({action:'stop'}));
-function connect(){const es=new EventSource('/events');es.onopen=()=>{$('conn').textContent='streaming from '+location.host};
+// Browsers allow 6 connections per host:port (HTTP/1.1). /events holds one for as long as the tab is open, so with
+// six console tabs nothing else (camera, L515 frames) ever loaded: "waiting for L515 frames…" forever (2026-11-16).
+// Background tabs now close their stream and pause their image loops; they catch up when shown again.
+let ES=null;
+function connect(){if(ES)return;const es=ES=new EventSource('/events');es.onopen=()=>{$('conn').textContent='streaming from '+location.host};
  es.onmessage=e=>render(JSON.parse(e.data));es.onerror=()=>{$('conn').textContent='disconnected, retrying…'}}
+document.addEventListener('visibilitychange',()=>{
+ if(document.hidden){if(ES){ES.close();ES=null}$('conn').textContent='paused while this tab is in the background'}
+ else{lastMsg=Date.now();connect()}
+ l515Frame()});
 connect();
 
 const GROUPS=['camera','lidar','l515','pose'];
@@ -2428,42 +2490,74 @@ document.querySelectorAll('main>section').forEach((sec,i)=>{const h=sec.querySel
 const secKey=sec=>sec.dataset.k;
 // redraw every canvas after a panel moves or changes size
 function redrawAll(){plotMap(lastMap,lastPose);if(lastCloud)plotCloud(...lastCloud);plotRPY()}
-// panel sizes: S / M / L buttons on every panel, remembered in this browser
-document.querySelectorAll('main>section').forEach((sec,i)=>{const h=sec.querySelector('h2');if(!h)return;
- const key='go2sz:'+secKey(sec);const base=sec.classList.contains('full')?3:sec.classList.contains('wide')?2:1;
- const set=n=>{sec.classList.remove('full','wide','sz2','sz3');if(n===2)sec.classList.add('sz2');if(n===3)sec.classList.add('sz3');
-  box.querySelectorAll('button').forEach(b=>b.classList.toggle('on',+b.dataset.n===n));setTimeout(redrawAll,0)};
- const box=document.createElement('span');box.className='szc';
- box.innerHTML='<button type="button" data-n="1" title="Narrow panel">S</button><button type="button" data-n="2" title="Two columns wide">M</button><button type="button" data-n="3" title="Full width">L</button>';
- box.addEventListener('click',e=>{const n=+e.target.dataset.n;if(!n)return;set(n);try{localStorage.setItem(key,n)}catch(err){}});
- h.appendChild(box);let n=base;try{n=+(localStorage.getItem(key)||base)}catch(err){}set(n)});
-// panel order: drag the ⠿ handle (mouse or touch) or press ⤒ to move a panel to the top; remembered in this browser
+// Free layout (Oliver, 2026-11-16): panels sit on a 12-column grid with ~40 px rows. Drag a panel by its header bar
+// (not its buttons or inputs) to move it, drag the corner handle to resize; both snap to the grid with a faint outline
+// of the target, and other panels move down out of the way. Saved per browser (go2layout); Reset layout restores the
+// default. Phones (< 700 px): one column, no dragging.
+var FREE=false;
 const MAIN=document.querySelector('main'),CTL=$('ctlbar'),panels=()=>[...MAIN.children].filter(s=>s.tagName==='SECTION'&&s!==CTL);
-function saveOrder(){try{localStorage.setItem('go2order',JSON.stringify(panels().map(secKey)))}catch(err){}}
-function placeAll(list){list.forEach(s=>MAIN.appendChild(s));setTimeout(redrawAll,0)}
-(()=>{let saved=null;try{saved=JSON.parse(localStorage.getItem('go2order')||'null')}catch(err){}
- if(!Array.isArray(saved))return;const at=new Map(saved.map((k,i)=>[k,i])),cur=panels();
- // saved panels fill the slots saved panels had by default, in saved order; unknown panels keep their default slot
- const mine=cur.filter(s=>at.has(secKey(s))).sort((a,b)=>at.get(secKey(a))-at.get(secKey(b)));
- placeAll(cur.map(s=>at.has(secKey(s))?mine.shift():s))})();
-function moveTop(sec){MAIN.insertBefore(sec,CTL?CTL.nextSibling:MAIN.firstChild);saveOrder();setTimeout(redrawAll,0);sec.scrollIntoView({block:'nearest',behavior:'smooth'})}
+const COLS=12,GAP=12,LKEY='go2layout';
+let PLAY={},GHOST=null;            // PLAY: key -> {x, y, w, h} as the person left it (the base); shown positions resolve collisions
+const pitch=()=>{const W=MAIN.clientWidth-32,cw=(W-GAP*(COLS-1))/COLS,rh=Math.max(30,Math.min(48,Math.round(W/36)));return {cw,rh,cx:cw+GAP,cy:rh+GAP}};
+function defaults(){const P=pitch(),sky=new Array(COLS).fill(0),out={};
+ panels().forEach(sec=>{const w=sec.classList.contains('full')?12:sec.classList.contains('wide')?8:4;
+  const nat=sec.hidden?200:sec.getBoundingClientRect().height,
+   h=Math.max(sec.querySelector('.fill')?8:3,Math.min(24,Math.ceil((nat+GAP)/P.cy)));   // camera/map/L515: room to fill
+  let best=null;for(let x=0;x<=COLS-w;x++){const y=Math.max(...sky.slice(x,x+w));if(!best||y<best.y)best={x,y}}
+  out[secKey(sec)]={x:best.x,y:best.y,w,h};for(let i=best.x;i<best.x+w;i++)sky[i]=best.y+h});
+ return out}
+const hit=(a,b)=>a.x<b.x+b.w&&b.x<a.x+a.w&&a.y<b.y+b.h&&b.y<a.y+a.h;
+function resolve(base,fixed){   // visible panels only; `fixed` keeps its spot, the rest move down until clear (gridstack style)
+ const items=panels().filter(s=>!s.hidden&&base[secKey(s)]).map(s=>({k:secKey(s),...base[secKey(s)]}));
+ items.sort((a,b)=>(b.k===fixed)-(a.k===fixed)||a.y-b.y||a.x-b.x);
+ const placed=[],out={...base};
+ for(const it of items){let c;while((c=placed.find(p=>hit(p,it))))it.y=c.y+c.h;placed.push(it);out[it.k]={x:it.x,y:it.y,w:it.w,h:it.h}}
+ return out}
+function place(sec,r){sec.style.gridColumn=`${r.x+1} / span ${r.w}`;sec.style.gridRow=`${r.y+2} / span ${r.h}`}
+function apply(shown){panels().forEach(s=>{const r=shown[secKey(s)];if(r)place(s,r)})}
+function relayout(){if(FREE){apply(resolve(PLAY,null));MAIN.style.setProperty('--rowh',pitch().rh+'px')}scheduleRedraw()}
+function saveLay(){try{localStorage.setItem(LKEY,JSON.stringify(PLAY))}catch(e){}}
+let rdq=false;function scheduleRedraw(){if(rdq)return;rdq=true;requestAnimationFrame(()=>{rdq=false;try{redrawAll()}catch(e){}})}
+function setFree(on){if(on===FREE)return;FREE=on;MAIN.classList.toggle('free',on);
+ if(!on){panels().forEach(s=>{s.style.gridColumn=s.style.gridRow='';s.style.transform=''});scheduleRedraw();return}
+ let saved=null;try{saved=JSON.parse(localStorage.getItem(LKEY)||'null')}catch(e){}
+ const def=defaults();PLAY={};
+ // saved panels keep their spots; panels new since then go below everything
+ let bottom=0;if(saved)panels().forEach(s=>{const r=saved[secKey(s)];if(r){PLAY[secKey(s)]=r;bottom=Math.max(bottom,r.y+r.h)}});
+ panels().forEach(s=>{const k=secKey(s);if(!PLAY[k])PLAY[k]=saved?{...def[k],x:0,y:bottom+def[k].y}:def[k]});
+ relayout()}
+function ghost(r){if(!GHOST){GHOST=document.createElement('div');GHOST.className='lghost';MAIN.appendChild(GHOST)}
+ if(!r){GHOST.hidden=true;return}GHOST.hidden=false;place(GHOST,r)}
+const NODRAG='button,input,select,textarea,label,a,summary,[contenteditable],iframe,canvas';
 panels().forEach(sec=>{const h=sec.querySelector('h2');if(!h)return;
- const g=document.createElement('i');g.className='grip';g.textContent='⠿';g.title='Drag to move this panel';h.insertBefore(g,h.firstChild);
- const top=document.createElement('button');top.type='button';top.textContent='⤒';top.title='Move this panel to the top';
- top.addEventListener('click',()=>moveTop(sec));const box=h.querySelector('.szc');(box||h).appendChild(top);
- let drag=null;
- g.addEventListener('pointerdown',e=>{if(e.button)return;e.preventDefault();g.setPointerCapture(e.pointerId);drag={last:null};sec.classList.add('dragging');document.body.classList.add('dragging')});
- g.addEventListener('pointermove',e=>{if(!drag)return;
+ h.classList.add('draghd');h.title='Drag to move this panel';
+ const rz=document.createElement('i');rz.className='rsz';rz.title='Drag to resize';sec.appendChild(rz);
+ let d=null;
+ const start=(e,mode)=>{if(!FREE||e.button)return;if(mode==='move'&&e.target.closest(NODRAG))return;
+  const k=secKey(sec),r=resolve(PLAY,null)[k];d={mode,k,x0:e.clientX,y0:e.clientY,r0:{...r},base:{...PLAY},cur:{...r},moved:false};
+  (mode==='move'?h:rz).setPointerCapture(e.pointerId);e.preventDefault()};
+ const move=e=>{if(!d)return;const P=pitch(),dx=e.clientX-d.x0,dy=e.clientY-d.y0;
+  if(!d.moved&&Math.hypot(dx,dy)<4)return;
+  if(!d.moved){d.moved=true;sec.classList.add('dragging');document.body.classList.add('dragging')}
+  const r={...d.r0};
+  if(d.mode==='move'){r.x=Math.max(0,Math.min(COLS-r.w,Math.round(d.r0.x+dx/P.cx)));r.y=Math.max(0,Math.round(d.r0.y+dy/P.cy));sec.style.transform=`translate(${dx}px,${dy}px)`}
+  else{r.w=Math.max(2,Math.min(COLS-r.x,Math.round(d.r0.w+dx/P.cx)));r.h=Math.max(2,Math.round(d.r0.h+dy/P.cy));place(sec,r)}
   if(e.clientY<50)scrollBy(0,-18);else if(e.clientY>innerHeight-50)scrollBy(0,18);
-  const el=document.elementFromPoint(e.clientX,e.clientY),t=el&&el.closest('main>section');
-  if(!t||t===sec||t===CTL||t.parentNode!==MAIN){drag.last=t;return}if(t===drag.last)return;drag.last=t;
-  // moving down the list: land after the target; moving up: land before it (snaps to that grid slot)
-  const ps=panels();MAIN.insertBefore(sec,ps.indexOf(sec)<ps.indexOf(t)?t.nextSibling:t)});
- const end=()=>{if(!drag)return;drag=null;sec.classList.remove('dragging');document.body.classList.remove('dragging');saveOrder();setTimeout(redrawAll,0)};
- g.addEventListener('pointerup',end);g.addEventListener('pointercancel',end);g.addEventListener('lostpointercapture',end)});
-$('resetlayout').addEventListener('click',()=>{try{const ks=[];for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k==='go2order'||k.startsWith('go2sz:'))ks.push(k)}
- ks.forEach(k=>localStorage.removeItem(k))}catch(err){}location.reload()});
-addEventListener('resize',redrawAll);
+  if(r.x===d.cur.x&&r.y===d.cur.y&&r.w===d.cur.w&&r.h===d.cur.h&&GHOST&&!GHOST.hidden)return;
+  d.cur=r;const shown=resolve({...d.base,[d.k]:r},d.k);
+  panels().forEach(s=>{if(s!==sec&&shown[secKey(s)])place(s,shown[secKey(s)])});ghost(r);scheduleRedraw()};
+ const end=()=>{if(!d)return;const dd=d;d=null;sec.style.transform='';sec.classList.remove('dragging');document.body.classList.remove('dragging');ghost(null);
+  if(!dd.moved)return;PLAY=resolve({...dd.base,[dd.k]:dd.cur},dd.k);saveLay();relayout()};
+ h.addEventListener('pointerdown',e=>start(e,'move'));rz.addEventListener('pointerdown',e=>start(e,'size'));
+ [h,rz].forEach(el=>{el.addEventListener('pointermove',move);el.addEventListener('pointerup',end);el.addEventListener('pointercancel',end)})});
+// panels that appear or disappear (agent photos, suggestions) re-flow; canvases redraw when their panel changes size
+const MO=new MutationObserver(()=>{if(FREE)relayout()});panels().forEach(s=>MO.observe(s,{attributes:true,attributeFilter:['hidden']}));
+const RO=new ResizeObserver(()=>scheduleRedraw());['map','cloud','rpyplot'].forEach(id=>$(id)&&RO.observe($(id)));
+const wide=()=>innerWidth>=700;
+addEventListener('resize',()=>{setFree(wide());relayout()});
+setFree(wide());
+$('resetlayout').addEventListener('click',()=>{try{['go2layout','go2order'].forEach(k=>localStorage.removeItem(k));
+ for(let i=localStorage.length-1;i>=0;i--){const k=localStorage.key(i);if(k&&k.startsWith('go2sz:'))localStorage.removeItem(k)}}catch(err){}location.reload()});
 $('map').addEventListener('click',async e=>{if(!mapXf||PLACING||Date.now()-PLACED<500)return;
  const {x,y,inside}=mapAt(e);if(!inside)return;
  if(LBLPICK){lblPick(false);lblNear(x,y);return}
