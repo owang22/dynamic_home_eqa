@@ -602,7 +602,10 @@ class L515View:
         css = ("<style>header{display:none}section:has(#recBtn){display:none}"
                "main{grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr))!important;gap:6px!important;padding:0!important}"
                "section{padding:6px!important}body{background:transparent}</style>")
-        return page.replace("</head>", css + "</head>", 1)
+        # hold the page's frame fetches while the console's panel is being dragged (no flicker; resumes on drop)
+        hold = ("<script>(()=>{const f=window.fetch.bind(window);window.fetch=async(...a)=>{"
+                "while(parent!==window&&parent.__DRAG)await new Promise(r=>setTimeout(r,100));return f(...a)}})()</script>")
+        return page.replace("</head>", css + hold + "</head>", 1)
 
 
 L515 = L515View()
@@ -2315,6 +2318,7 @@ $('battwarnx').addEventListener('click',()=>{$('battwarn').hidden=true});
 const FEET=['FR','FL','RR','RL'];const SENS=['imu','odom','state','joints','cloud','camera'];
 function render(d){const a=d.age||{};
  if(deployCheck(d))return;
+ if(window.__DRAG){PENDING=d;return}     // a panel is being dragged: no DOM/canvas updates until it is dropped
  renderDog(d,a);
  if(d.l515)renderL515(d.l515);
  if(d.rec)renderRec(d.rec);if(d.agents)renderAgents(d.agents);
@@ -2346,7 +2350,7 @@ function render(d){const a=d.age||{};
 
 // The camera <img> stream does not reconnect by itself when the console restarts; restart it whenever the event stream (re)connects.
 async function camLoop(){let after=0;const cam=$('cam');
- for(;;){if(document.hidden){await new Promise(f=>setTimeout(f,1000));continue}
+ for(;;){if(document.hidden||window.__DRAG){await new Promise(f=>setTimeout(f,1000));continue}
   try{const r=await fetch('/camera.jpg?after='+after,{cache:'no-store'});
    if(r.status===200){after=+r.headers.get('X-Frame-T')||0;const u=URL.createObjectURL(await r.blob()),old=cam.src;
      cam.src=u;if(old.startsWith('blob:'))URL.revokeObjectURL(old)}
@@ -2379,6 +2383,7 @@ function renderDog(d,a){const ds=d.dog_status||{},odom=a.odom,idle=ds.idle_s!=nu
  $('wdst').textContent=wfresh&&w.last_action?'watchdog: '+w.last_action:''}
 // Deploys: the console sends boot_id (new per start) and deploying {t, msg}. While deploying: overlay, no driving.
 // A new boot id, or getting data again after the console was down, reloads the page (new page code).
+var PENDING=null;   // latest /events data held back during a panel drag
 var DEPLOY=false,BOOT=null,lastMsg=Date.now(),wasDown=false;
 function deployCheck(d){lastMsg=Date.now();
  if(d.boot_id){if(BOOT&&d.boot_id!==BOOT){location.reload();return true}BOOT=d.boot_id}
@@ -2614,7 +2619,7 @@ function place(sec,r){sec.style.gridColumn=`${r.x+1} / span ${r.w}`;sec.style.gr
 function apply(shown){panels().forEach(s=>{const r=shown[secKey(s)];if(r)place(s,r)})}
 function relayout(){if(FREE){apply(resolve(PLAY,null));MAIN.style.setProperty('--rowh',pitch().rh+'px')}scheduleRedraw()}
 function saveLay(){try{localStorage.setItem(LKEY,JSON.stringify(PLAY))}catch(e){}}
-let rdq=false;function scheduleRedraw(){if(rdq)return;rdq=true;requestAnimationFrame(()=>{rdq=false;try{redrawAll()}catch(e){}})}
+let rdq=false;function scheduleRedraw(){if(rdq||window.__DRAG)return;rdq=true;requestAnimationFrame(()=>{rdq=false;if(window.__DRAG)return;try{redrawAll()}catch(e){}})}
 function setFree(on){if(on===FREE)return;FREE=on;MAIN.classList.toggle('free',on);
  if(!on){panels().forEach(s=>{s.style.gridColumn=s.style.gridRow='';s.style.transform=''});scheduleRedraw();return}
  let saved=null;try{saved=JSON.parse(localStorage.getItem(LKEY)||'null')}catch(e){}
@@ -2635,21 +2640,27 @@ panels().forEach(sec=>{const h=sec.querySelector('h2');if(!h)return;
   (mode==='move'?h:rz).setPointerCapture(e.pointerId);e.preventDefault()};
  const move=e=>{if(!d)return;const P=pitch(),dx=e.clientX-d.x0,dy=e.clientY-d.y0;
   if(!d.moved&&Math.hypot(dx,dy)<4)return;
-  if(!d.moved){d.moved=true;sec.classList.add('dragging');document.body.classList.add('dragging')}
+  if(!d.moved){d.moved=true;window.__DRAG=true;sec.classList.add('dragging');document.body.classList.add('dragging')}
   const r={...d.r0};
   if(d.mode==='move'){r.x=Math.max(0,Math.min(COLS-r.w,Math.round(d.r0.x+dx/P.cx)));r.y=Math.max(0,Math.round(d.r0.y+dy/P.cy));sec.style.transform=`translate(${dx}px,${dy}px)`}
-  else{r.w=Math.max(2,Math.min(COLS-r.x,Math.round(d.r0.w+dx/P.cx)));r.h=Math.max(2,Math.round(d.r0.h+dy/P.cy));place(sec,r)}
+  else{r.w=Math.max(2,Math.min(COLS-r.x,Math.round(d.r0.w+dx/P.cx)));r.h=Math.max(2,Math.round(d.r0.h+dy/P.cy))}  // size applied on drop
   if(e.clientY<50)scrollBy(0,-18);else if(e.clientY>innerHeight-50)scrollBy(0,18);
   if(r.x===d.cur.x&&r.y===d.cur.y&&r.w===d.cur.w&&r.h===d.cur.h&&GHOST&&!GHOST.hidden)return;
-  d.cur=r;const shown=resolve({...d.base,[d.k]:r},d.k);
-  panels().forEach(s=>{if(s!==sec&&shown[secKey(s)])place(s,shown[secKey(s)])});ghost(r);scheduleRedraw()};
- const end=()=>{if(!d)return;const dd=d;d=null;sec.style.transform='';sec.classList.remove('dragging');document.body.classList.remove('dragging');ghost(null);
-  if(!dd.moved)return;PLAY=resolve({...dd.base,[dd.k]:dd.cur},dd.k);saveLay();relayout()};
+  d.cur=r;ghost(r)};       // only the snap outline moves during a drag (no panel resizes, no redraws: no flicker)
+ const end=()=>{if(!d)return;const dd=d;d=null;if(!dd.moved)window.__DRAG=false;sec.style.transform='';sec.classList.remove('dragging');document.body.classList.remove('dragging');ghost(null);
+  if(!dd.moved)return;PLAY=resolve({...dd.base,[dd.k]:dd.cur},dd.k);saveLay();
+  window.__DRAG=false;window.__ROQUIET=performance.now()+300;apply(resolve(PLAY,null));
+  // one redraw with the latest data once the new sizes are laid out
+  requestAnimationFrame(()=>{const p=PENDING;PENDING=null;try{if(p)render(p);else redrawAll()}catch(e){}})};
  h.addEventListener('pointerdown',e=>start(e,'move'));rz.addEventListener('pointerdown',e=>start(e,'size'));
  [h,rz].forEach(el=>{el.addEventListener('pointermove',move);el.addEventListener('pointerup',end);el.addEventListener('pointercancel',end)})});
 // panels that appear or disappear (agent photos, suggestions) re-flow; canvases redraw when their panel changes size
-const MO=new MutationObserver(()=>{if(FREE)relayout()});panels().forEach(s=>MO.observe(s,{attributes:true,attributeFilter:['hidden']}));
-const RO=new ResizeObserver(()=>scheduleRedraw());['map','cloud','rpyplot'].forEach(id=>$(id)&&RO.observe($(id)));
+// (render() sets .hidden on every /events message; setting it fires a mutation even when unchanged, which used to
+// relayout and redraw everything 10 times a second: only react when a panel really appeared or disappeared)
+const VIS=new Map(panels().map(s=>[s,s.hidden]));
+const MO=new MutationObserver(()=>{let ch=false;panels().forEach(s=>{if(VIS.get(s)!==s.hidden){VIS.set(s,s.hidden);ch=true}});if(ch&&FREE)relayout()});
+panels().forEach(s=>MO.observe(s,{attributes:true,attributeFilter:['hidden']}));
+const RO=new ResizeObserver(()=>{if(performance.now()<(window.__ROQUIET||0))return;scheduleRedraw()});['map','cloud','rpyplot'].forEach(id=>$(id)&&RO.observe($(id)));
 const wide=()=>innerWidth>=700;
 addEventListener('resize',()=>{setFree(wide());relayout()});
 setFree(wide());
