@@ -39,7 +39,7 @@ from sensor_msgs.msg import CompressedImage, Image, JointState, PointCloud2
 from sensor_msgs_py import point_cloud2
 
 from go2_agent import AGENT_LEASE_S, BUMP_H, UNDER_TOP_MAX, Agents, check_name
-from go2_mapper import Mapper
+from go2_mapper import MK_LINEUP_FRESH_S, Mapper, marker_lineup_pose
 from go2_nav import Planner
 from go2_trail import Trail
 from go2_markers import Markers
@@ -85,7 +85,13 @@ AGENT_CALLS = ("claim", "release", "stop", "say", "status", "move", "turn", "pho
 REC_DIR = "/recordings"
 REC_TOPICS = {"camera": ["/camera/image_raw", "/camera/camera_info"],
               "lidar": ["/point_cloud2"],
-              "pose": ["/odom", "/imu", "/tf", "/tf_static", "/joint_states", "/go2_states"]}
+              "pose": ["/odom", "/imu", "/tf", "/tf_static", "/joint_states", "/go2_states"],
+              # RealSense L515 on the dog (l515_go2_pi4_bridge receiver, may be off). Colour as the Pi's JPEG, depth
+              # as raw 16-bit mm; /go2/l515/points and the raw colour image are left out (rebuilt from these).
+              "l515": ["/go2/l515/color/image_raw/compressed", "/go2/l515/color/camera_info",
+                       "/go2/l515/depth/image_raw", "/go2/l515/depth/camera_info"]}
+L515_URL = os.environ.get("GO2_L515_URL", "http://127.0.0.1:8081")   # the bridge's page: frames + status.json
+L515_VIEW_HZ = 4.0         # console L515 panel refresh while someone is looking at it
 REC_MIN_FREE_GB = 20       # refuse to start below this, stop automatically below half of it
 HOST_UID = 1000            # recordings are handed to the host user when they finish
 
@@ -99,7 +105,12 @@ AUTO_REC_MIN_FREE_GB = 50  # don't start below this; stop cleanly below AUTO_REC
 AUTO_REC_MOVE = (0.08, 0.15)   # odom speed m/s, turn rad/s above which the dog counts as moving
 AUTO_REC_POSTURE_M = 0.05  # body height change (standing up, lying down) that counts as activity
 AUTO_REC_JPEG_Q = 80       # camera saved as full-size JPEG (~80 KB/frame) instead of raw 2.7 MB frames
-AUTO_REC_TOPICS = (["/camera/image_raw/compressed", "/camera/camera_info", "/point_cloud2"] + REC_TOPICS["pose"])
+# The L515 topics are always listed: ros2 bag record subscribes to each listed topic whenever it appears (polls
+# discovery), so an L515 that is off or starts mid-session neither blocks nor delays the Go2 topics; its topics are
+# simply missing from the bag (tested 2026-11-16). Measured with the L515 at ~8 Hz: depth 614 KB -> ~207 KB per
+# frame with zstd, colour JPEG ~46 KB: about +7.6 GB/hour (~9 GB/hour at its 10 Hz max) on top of the Go2's ~4.
+AUTO_REC_TOPICS = (["/camera/image_raw/compressed", "/camera/camera_info", "/point_cloud2"] + REC_TOPICS["pose"]
+                   + REC_TOPICS["l515"])
 # zstd per message shrinks lidar clouds ~5x. rosbag2's compression queue defaults to 1 and then drops messages
 # (most clouds were lost in a replay test), so give it room and two threads.
 AUTO_REC_ARGS = ["--compression-mode", "message", "--compression-format", "zstd",
@@ -131,14 +142,14 @@ class Recorder:
                     return "Auto recording is already saving this session; press Stop recording first for a manual one"
                 return "Already recording"
             if auto:
-                groups, extra, topics = ["camera", "lidar", "pose"], " ".join(auto.get("args", [])), " ".join(auto["topics"])
+                groups, extra, topics = ["camera", "lidar", "pose", "l515"], " ".join(auto.get("args", [])), " ".join(auto["topics"])
                 if self.free_gb() < auto.get("min_free", REC_MIN_FREE_GB):
                     return f"Less than {auto.get('min_free', REC_MIN_FREE_GB)} GB free on disk"
                 self.name = auto["name"]
             else:
                 groups = [g for g in REC_TOPICS if g in groups]
-                if not any(g in groups for g in ("camera", "lidar")):
-                    return "Choose camera, lidar or both in Settings"
+                if not any(g in groups for g in ("camera", "lidar", "l515")):
+                    return "Choose camera, lidar or L515 in Settings"
                 if self.free_gb() < REC_MIN_FREE_GB:
                     return f"Less than {REC_MIN_FREE_GB} GB free on disk"
                 self.name = time.strftime("go2_%Y%m%d_%H%M%S_") + "_".join(g for g in groups if g != "pose")
@@ -228,6 +239,17 @@ def _trim_snapshot(snap):
     return out
 
 
+def _bag_counts(bag):
+    """{topic: message count} from a finished bag's metadata.yaml, or None (no metadata: still open or crashed)."""
+    try:
+        import yaml
+        with open(os.path.join(bag, "metadata.yaml")) as fh:
+            info = yaml.safe_load(fh)["rosbag2_bagfile_information"]
+        return {t["topic_metadata"]["name"]: int(t["message_count"]) for t in info["topics_with_message_count"]}
+    except Exception:
+        return None
+
+
 def _chown_tree(path):
     for d, _, files in os.walk(path):
         for f in [d] + [os.path.join(d, x) for x in files]:
@@ -246,7 +268,8 @@ class AutoRecorder:
     connect, or activity after an idle stop, starts a new session.
     Each session is REC_DIR/auto_YYYYMMDD_HHMMSS/ holding bag/ (the Recorder's ros2 bag: camera as JPEG, lidar,
     pose topics, zstd per message) and events.jsonl (console state once a second plus discrete events; no driver
-    identity). REC_DIR/auto_index.jsonl gets one line per finished session.
+    identity). REC_DIR/auto_index.jsonl gets one line per finished session, with the topics actually recorded (message
+    counts from the bag's metadata) and whether the L515 was there.
     With the manual Record button: Stop recording during an auto session ends it and pauses auto recording until the
     dog reconnects; Record during an auto session is refused (no double recording); while a manual recording runs
     auto recording waits, and resumes after it if the dog is active.
@@ -295,6 +318,8 @@ class AutoRecorder:
                     self.height, active = h, True
             if active:
                 self.last_active = now
+        if self.session and sig.get("l515_live"):
+            self.session["l515_seen"] = True
         free = sig.get("free_gb")
         if self.session:
             if not (self.rec.running() and self.rec.auto):
@@ -334,7 +359,7 @@ class AutoRecorder:
             self._event(now, "not_started", reason=err)
             self.retry_at = now + 60.0
             return
-        self.session = {"name": name, "dir": d, "start": now, "fh": fh}
+        self.session = {"name": name, "dir": d, "start": now, "fh": fh, "l515_seen": False}
         self.loc_seq, self.agent_t = None, now
         self._event(now, "auto_rec_start", session=name, topics=AUTO_REC_TOPICS)
 
@@ -350,14 +375,22 @@ class AutoRecorder:
         except OSError:
             pass
         _chown_tree(s["dir"])
-        self.last = self._index(s["name"], s["start"], now, reason, self.rec.dir_size(s["dir"]) if os.path.isdir(s["dir"]) else 0)
+        self.last = self._index(s["name"], s["start"], now, reason, self.rec.dir_size(s["dir"]) if os.path.isdir(s["dir"]) else 0,
+                                l515_seen=s.get("l515_seen"))
 
-    def _index(self, name, start, end, reason, size):
+    def _index(self, name, start, end, reason, size, l515_seen=None):
+        counts = _bag_counts(os.path.join(self.rec_dir, name, "bag"))
+        if counts is not None:     # what the bag really holds; listed topics that never published are absent
+            l515 = any(counts.get(t) for t in REC_TOPICS["l515"])
+        else:
+            l515 = l515_seen
         line = {"name": name, "start": time.strftime("%Y-%m-%dT%H:%M:%S", time.localtime(start)),
                 "end": time.strftime("%Y-%m-%dT%H:%M:%S", time.localtime(end)), "start_t": round(start, 2),
                 "end_t": round(end, 2), "secs": round(end - start), "reason": reason, "bytes": size,
                 "gb": round(size / 1e9, 3), "gb_per_hour": round(size / 1e9 * 3600 / (end - start), 2) if end - start > 60 else None,
-                "topics": AUTO_REC_TOPICS, "camera": f"jpeg q{AUTO_REC_JPEG_Q}", "bag_compression": "zstd per message"}
+                "topics": AUTO_REC_TOPICS, "topics_recorded": sorted(t for t, n in counts.items() if n) if counts else None,
+                "msg_counts": counts, "l515": l515,
+                "camera": f"jpeg q{AUTO_REC_JPEG_Q}", "bag_compression": "zstd per message"}
         p = os.path.join(self.rec_dir, AUTO_INDEX)
         try:
             with open(p, "a") as fh:
@@ -470,6 +503,79 @@ map_png = {"data": None}         # latest lab map as PNG, for /map.png
 jpeg = {"data": None, "t": 0.0}
 full = {"img": None, "t": 0.0}   # latest camera frame at full size, for /frame.jpg
 jpeg_cond = threading.Condition()
+
+
+class L515View:
+    """The RealSense L515 for the console, read from the bridge's page (L515_URL, l515_go2_pi4_bridge/web.py) so the
+    console needs no extra ROS subscriptions and remote viewers only need port 8080. status.json is polled once a
+    second (for /state.json l515 and the auto recorder); colour and colourised depth frames are fetched at
+    L515_VIEW_HZ only while a browser asked for them in the last 10 s (/l515/color.jpg, /l515/depth.jpg)."""
+
+    KINDS = ("color", "depth")
+
+    def __init__(self, url=L515_URL):
+        self.url = url.rstrip("/")
+        self.cond = threading.Condition()
+        self.frames = {k: (None, 0.0) for k in self.KINDS}     # kind -> (jpeg bytes, frame time)
+        self.wanted = {k: 0.0 for k in self.KINDS}             # kind -> last time a browser asked
+        self.st = {"online": False, "fps": None, "age_s": None, "bridge": False}
+
+    def start(self):
+        threading.Thread(target=self._status_loop, daemon=True).start()
+        for k in self.KINDS:
+            threading.Thread(target=self._frame_loop, args=(k,), daemon=True).start()
+        return self
+
+    def _get(self, path, timeout):
+        import urllib.request
+        with urllib.request.urlopen(self.url + path, timeout=timeout) as r:
+            return r.status, r.read(), r.headers
+
+    def _status_loop(self):
+        while True:
+            try:
+                _, body, _ = self._get("/status.json", 1.5)
+                c = json.loads(body).get("camera") or {}
+                age = c.get("age")
+                self.st = {"online": bool(c.get("live")), "fps": c.get("fps"),
+                           "age_s": round(age, 1) if age is not None else None, "bridge": True,
+                           "depth": c.get("depth"), "color": c.get("color")}
+            except Exception:
+                self.st = {"online": False, "fps": None, "age_s": None, "bridge": False}
+            time.sleep(1.0)
+
+    def _frame_loop(self, kind):
+        after = 0.0
+        while True:
+            t0 = time.time()
+            if t0 - self.wanted[kind] > 10 or not self.st["online"]:
+                time.sleep(0.5)
+                continue
+            try:
+                code, body, hdr = self._get(f"/{kind}.jpg?after={after!r}", 6)   # the bridge waits up to 5 s
+                if code == 200 and body:
+                    after = float(hdr.get("X-Frame-T") or time.time())
+                    with self.cond:
+                        self.frames[kind] = (body, after)
+                        self.cond.notify_all()
+            except Exception:
+                after = 0.0
+                time.sleep(1.0)
+            time.sleep(max(0.0, 1.0 / L515_VIEW_HZ - (time.time() - t0)))
+
+    def frame(self, kind, after, wait=3.0):
+        """Newest frame newer than `after`, waiting up to `wait` s; (None, 0) if none."""
+        self.wanted[kind] = time.time()
+        with self.cond:
+            self.cond.wait_for(lambda: self.frames[kind][1] > after, timeout=wait)
+            data, t = self.frames[kind]
+        return (data, t) if data is not None and t > after else (None, 0.0)
+
+    def status(self):
+        return {k: self.st.get(k) for k in ("online", "fps", "age_s", "bridge", "depth", "color")}
+
+
+L515 = L515View()
 
 
 def r(x, n=3):
@@ -774,10 +880,36 @@ def localization_notice(client):
     evs = [e for e in info["events"] if e["seq"] > last]
     return {"events": evs, "status": info["status"], "fit": info["fit"], "runner_up": info["runner_up"],
             "unsure": info["unsure"],
-            "summary": "; ".join(f"{e['kind'].replace('_', ' ')} at {time.strftime('%H:%M:%S', time.localtime(e['t']))}"
+            "summary": "; ".join(f"{e['kind'].replace('_', ' ')}"
+                                 + (f" from tag {e['marker']}" if e.get("via") == "marker" else " (lidar)" if e.get("via") == "lidar" else "")
+                                 + f" at {time.strftime('%H:%M:%S', time.localtime(e['t']))}"
                                  + (f" from ({e['from']['x']:.2f}, {e['from']['y']:.2f})" if e.get("from") else "")
                                  + (f" to ({e['to']['x']:.2f}, {e['to']['y']:.2f})" if e.get("to") else "")
                                  for e in evs)}
+
+
+def lineup_reject_text(rejected):
+    """Why no marker could seed a line-up, for the console status: 'no marker in view' or per tag reasons."""
+    if not rejected:
+        return "no marker in view"
+    if rejected[0].get("id") is None:
+        return "no marker in view (" + "; ".join(rejected[0]["why"]) + ")"
+    return "no usable marker (" + "; ".join(f"tag {r['mark']}: {', '.join(r['why'])}" for r in rejected) + ")"
+
+
+def marker_lineup_choice():
+    """For "Line up again": {"via": "marker", "pose", "used", "rejected"} from the latest detector frame, or
+    {"via": "lidar", "note": why no marker was used, "rejected"}."""
+    snap = MARKERS.latest if MARKERS else {}
+    ft = snap.get("frame_t") or 0.0
+    age = time.time() - ft if ft else None
+    if age is None:
+        pose, used, rej = None, [], []
+    else:
+        pose, used, rej = marker_lineup_pose(snap.get("list") or [], MARKER_TABLE.get() if MARKER_TABLE else {}, age)
+    if pose:
+        return {"via": "marker", "pose": pose, "used": used, "rejected": rej}
+    return {"via": "lidar", "note": lineup_reject_text(rej), "rejected": rej}
 
 
 def objects_path():
@@ -882,6 +1014,7 @@ def snapshot():
     snap["loc"] = MAPPER.loc_info()
     snap["markers"] = MARKERS.snapshot() if MARKERS else None
     snap["battery"] = battery()
+    snap["l515"] = L515.status()
     lv = AG.planner.overlay() if AG.planner else None
     snap["live"] = lv if lv and time.time() - lv["t"] < 5 else None
     snap["control"] = {"avoid": NODE.avoid, "speed": NODE.speed, "speeds": SPEEDS, "look_deg": round(math.degrees(NODE.head)),
@@ -1119,9 +1252,22 @@ class Handler(BaseHTTPRequestHandler):
             elif act == "save":
                 err = MAPPER.save(odom)
             elif act == "align":
-                err = None
-                MAPPER.T = None
-                MAPPER.try_align(odom, force=True)
+                # Vision first (Oliver: localization fixes must use vision): a surveyed marker in view seeds the
+                # line-up and the lidar only refines near it; with none usable, the lidar searches the whole map.
+                err, lineup = None, marker_lineup_choice()
+                if lineup["via"] == "marker":
+                    err = MAPPER.lineup_from_marker(odom, lineup["pose"], by=str(req.get("client") or self.client_address[0])[:60])
+                else:
+                    MAPPER.align_note = lineup["note"]
+                    MAPPER.T = None
+                    MAPPER.try_align(odom, force=True)
+                    if not MAPPER._aligning:          # nothing started (no lidar yet, mapping): don't keep the note
+                        MAPPER.align_note = None
+                print(f"[lineup] Line up again: {json.dumps(lineup, default=str)}", flush=True)
+                NODE._map_key = None
+                if err:
+                    return self.send_json(409, {"result": "error", "reason": err, "lineup": lineup})
+                return self.send_json(200, {"result": "done", "lineup": lineup, **MAPPER.info()})
             elif act == "localize_at":   # a person clicked where the dog is: {"x", "y", "yaw_deg"?}
                 try:
                     yaw = req.get("yaw_deg")
@@ -1452,6 +1598,27 @@ class Handler(BaseHTTPRequestHandler):
             self.send_header("X-Frame-T", repr(t))
             self.end_headers()
             self.wfile.write(data)
+        elif self.path.split("?")[0] in ("/l515/color.jpg", "/l515/depth.jpg"):
+            # L515 colour / colourised depth (red = near, blue = 5 m+), proxied from the bridge page; newer than
+            # ?after=<t>, waits up to 3 s, else 204 (also while the L515 is off).
+            q = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
+            try:
+                after = float(q.get("after", ["0"])[0])
+            except ValueError:
+                after = 0.0
+            data, t = L515.frame(self.path.split("?")[0][6:-4], after)
+            if data is None:
+                self.send_response(204)
+                self.send_header("Cache-Control", "no-store")
+                self.end_headers()
+                return
+            self.send_response(200)
+            self.send_header("Content-Type", "image/jpeg")
+            self.send_header("Content-Length", str(len(data)))
+            self.send_header("Cache-Control", "no-store")
+            self.send_header("X-Frame-T", repr(t))
+            self.end_headers()
+            self.wfile.write(data)
         elif self.path.split("?")[0] == "/camera.mjpg":
             self.send_response(200)
             self.send_header("Content-Type", "multipart/x-mixed-replace; boundary=frame")
@@ -1535,6 +1702,9 @@ section.sz2{grid-column:span 2}section.sz3{grid-column:1/-1}@media (max-width:70
 h2 .szc{display:inline-flex;gap:2px;margin-left:8px}h2>span:first-of-type{margin-left:auto}
 h2 .szc button{font:10px var(--mono);padding:1px 5px;border:1px solid var(--line);border-radius:3px;background:var(--bg);color:var(--dim);cursor:pointer}
 h2 .szc button.on{color:var(--accent);border-color:var(--accent)}
+.l515v{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:10px}.l515v figure{margin:0;min-width:0}
+.l515v img{width:100%;display:block;border-radius:4px;background:#000}.l515v figcaption{font:11px var(--mono);color:var(--dim);margin-top:4px}
+.l515off{aspect-ratio:4/3;display:grid;place-items:center;border-radius:4px;background:var(--bg);border:1px dashed var(--line);color:var(--dim);font:12px var(--mono);text-align:center;padding:8px}
 .mknote{font:12px var(--mono);color:var(--dim);margin-top:6px}.mknote b{color:var(--warn);font-weight:600}
 h2 .grip{font-style:normal;font-size:14px;line-height:1;margin:-2px 6px 0 -2px;padding:0 2px;color:var(--dim);cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none}h2 .grip:hover{color:var(--accent)}
 main>section.dragging{opacity:.55;outline:2px dashed var(--accent);outline-offset:2px}body.dragging,body.dragging *{cursor:grabbing!important;user-select:none;-webkit-user-select:none}
@@ -1626,6 +1796,9 @@ main>section.dragging{opacity:.55;outline:2px dashed var(--accent);outline-offse
 <section class="full ctlbar" id="ctlbar"><div id="ctltext">Control: checking…</div>
 <div class="ctlbtns"><button id="takeover">Take over</button><button id="handback" hidden>Hand back to agents</button></div><div class="battwarn" id="battwarn" role="alert" hidden><span id="battwarntxt"></span><button type="button" id="battwarnx" title="Hide until the next 10% drop">ok</button></div></section>
 <section class="full"><h2>Live camera <span id="camage"></span></h2><img id="cam" alt="Front camera stream"><div class="mknote" id="mknote"></div></section>
+<section class="wide" id="l515sec"><h2>L515 depth camera <span id="l515st">checking…</span></h2>
+<div class="l515v"><figure><img id="l515c" alt="L515 colour frame" hidden><div class="l515off" id="l515co">L515 offline</div><figcaption>colour</figcaption></figure>
+<figure><img id="l515d" alt="L515 depth frame" hidden><div class="l515off" id="l515do">L515 offline</div><figcaption>depth · red = near, blue = 5 m+, black = no return</figcaption></figure></div></section>
 <section class="wide"><h2>Drive <span id="dnote"></span></h2><div class="drive">
 <div class="pad" id="pad">
 <button data-k="q">↺<small>Q</small></button><button data-k="w">↑<small>W</small></button><button data-k="e">↻<small>E</small></button>
@@ -1661,9 +1834,10 @@ main>section.dragging{opacity:.55;outline:2px dashed var(--accent);outline-offse
 <strong>What to record</strong>
 <label><input type="checkbox" id="r_camera" checked> Camera <small>front camera, raw 1280×720 at ~5 fps, about 50 GB/hour</small></label>
 <label><input type="checkbox" id="r_lidar" checked> Lidar <small>point cloud at ~7 Hz, about 25 GB/hour</small></label>
+<label><input type="checkbox" id="r_l515" checked> L515 depth camera <small>colour JPEG + raw 16-bit depth at up to 10 fps, about 20 GB/hour (manual bags are not compressed); skipped if the L515 is off</small></label>
 <label><input type="checkbox" id="r_pose" checked> Robot pose <small>odometry, IMU, joints, transforms; tiny, needed to line lidar frames up</small></label>
 <small>Saved as ROS 2 bags in ~/oliver/go2_recordings on the control PC. These settings are remembered in this browser.</small>
-<small>Auto recording saves every session by itself (auto_* folders: camera as JPEG, lidar, pose, console events; about 4 GB/hour). It starts when the dog connects and stops when it disconnects or has been idle for 4 minutes. Stop recording during it pauses it until the dog reconnects.</small>
+<small>Auto recording saves every session by itself (auto_* folders: camera as JPEG, lidar, pose, L515 colour + depth when it is on, console events; about 4 GB/hour, about 12 GB/hour with the L515). It starts when the dog connects and stops when it disconnects or has been idle for 4 minutes. Stop recording during it pauses it until the dog reconnects.</small>
 </div>
 <div class="past" id="past"></div></section>
 <section><h2>Lidar, top view <span id="cloudinfo"></span></h2><canvas id="cloud" width="600" height="600"></canvas>
@@ -1888,6 +2062,7 @@ function battWarn(b){const el=$('battwarn');if(!b||b.soc==null||b.stale){el.hidd
 $('battwarnx').addEventListener('click',()=>{$('battwarn').hidden=true});
 const FEET=['FR','FL','RR','RL'];const SENS=['imu','odom','state','joints','cloud','camera'];
 function render(d){const a=d.age||{};
+ if(d.l515)renderL515(d.l515);
  if(d.rec)renderRec(d.rec);if(d.agents)renderAgents(d.agents);
  if(d.control){ctl=d.control;$('avoid').checked=ctl.avoid;if(ctl.speed)showSpeed(ctl.speed,ctl.speeds);
   const lk=ctl.look_deg||0,bp=d.imu?Math.round(d.imu.rpy[1]*180/Math.PI):null;
@@ -1923,11 +2098,29 @@ async function camLoop(){let after=0;const cam=$('cam');
    else if(r.status!==204)throw new Error(r.status)}
   catch(e){after=0;await new Promise(f=>setTimeout(f,1000))}}}
 camLoop();
+// L515 depth camera, proxied by the console from the bridge page (port 8081), so port 8080 is enough
+let L515ON=false;
+function renderL515(l){L515ON=!!l.online;
+ $('l515st').textContent=l.online?`${l.fps!=null?l.fps.toFixed(1):'?'} fps · frame ${l.age_s!=null?l.age_s.toFixed(1):'?'} s old${l.depth?' · depth '+l.depth:''}`
+  :l.bridge?'L515 offline (bridge running, no frames from the Pi)':'L515 offline';
+ if(!l.online)[['l515c','l515co'],['l515d','l515do']].forEach(([i,o])=>{$(i).hidden=true;$(o).hidden=false;
+  $(o).textContent=l.bridge?'L515 offline: no frames from the Pi':'L515 offline: start the Pi sender, then scripts/run_pc.sh in l515_go2_pi4_bridge'});
+ else ['l515co','l515do'].forEach(o=>{if(!$(o).hidden)$(o).textContent='waiting for L515 frames…'})}
+async function l515Loop(kind,img,off){let after=0;
+ for(;;){const t0=Date.now();
+  try{if(!L515ON||document.hidden){await new Promise(f=>setTimeout(f,1000));continue}
+   const r=await fetch(`/l515/${kind}.jpg?after=${after}`,{cache:'no-store'});
+   if(r.status===200){after=+r.headers.get('X-Frame-T')||0;const u=URL.createObjectURL(await r.blob()),old=img.src;
+     img.src=u;img.hidden=false;off.hidden=true;if(old.startsWith('blob:'))URL.revokeObjectURL(old)}
+   else if(r.status!==204)throw new Error(r.status)}
+  catch(e){after=0;await new Promise(f=>setTimeout(f,1000))}
+  await new Promise(f=>setTimeout(f,Math.max(0,250-(Date.now()-t0))))}}
+l515Loop('color',$('l515c'),$('l515co'));l515Loop('depth',$('l515d'),$('l515do'));
 function connect(){const es=new EventSource('/events');es.onopen=()=>{$('conn').textContent='streaming from '+location.host};
  es.onmessage=e=>render(JSON.parse(e.data));es.onerror=()=>{$('conn').textContent='disconnected, retrying…'}}
 connect();
 
-const GROUPS=['camera','lidar','pose'];
+const GROUPS=['camera','lidar','l515','pose'];
 try{const saved=JSON.parse(localStorage.getItem('recGroups')||'null');if(saved)GROUPS.forEach(g=>$('r_'+g).checked=saved.includes(g))}catch(e){}
 GROUPS.forEach(g=>$('r_'+g).addEventListener('change',()=>{try{localStorage.setItem('recGroups',JSON.stringify(GROUPS.filter(x=>$('r_'+x).checked)))}catch(e){}}));
 $('gear').addEventListener('click',()=>{const h=!$('settings').hidden;$('settings').hidden=h;$('gear').setAttribute('aria-expanded',String(!h))});
@@ -1942,7 +2135,7 @@ const AUTOTXT={off:'Auto recording is off (GO2_AUTO_REC=0)',waiting_for_dog:'Aut
  manual_recording:'Auto recording waits for this manual recording',idle:'Auto recording stopped while the dog is idle; resumes when it moves'};
 function renderRec(r){recRunning=r.running;$('recbtn').classList.toggle('on',r.running);$('recbtn').querySelector('span').textContent=r.running?'Stop recording':'Record';
  const a=r.auto_info||{};$('autorec').hidden=!r.auto;
- $('recinfo').innerHTML=r.running?`${r.auto?'<b class="err">auto recording</b> · ':''}<b>${hms(r.secs)}</b> · ${r.mb>1000?(r.mb/1000).toFixed(1)+' GB':r.mb+' MB'} · ${r.auto?'camera (JPEG), lidar, pose':r.groups.join(', ')+' · started from '+r.by}`
+ $('recinfo').innerHTML=r.running?`${r.auto?'<b class="err">auto recording</b> · ':''}<b>${hms(r.secs)}</b> · ${r.mb>1000?(r.mb/1000).toFixed(1)+' GB':r.mb+' MB'} · ${r.auto?'camera (JPEG), lidar, pose'+(L515ON?', L515':''):r.groups.join(', ')+' · started from '+r.by}`
   :(r.error?`<span class="err">${r.error}</span> · `:'')+(AUTOTXT[a.state]?AUTOTXT[a.state]+' · ':'')+(r.free_gb!=null?`${r.free_gb} GB free`:'');
  $('past').innerHTML=r.past.length?'Saved recordings:<br>'+r.past.map(p=>`${p.name} · ${p.mb>1000?(p.mb/1000).toFixed(1)+' GB':p.mb+' MB'}`).join('<br>'):''}
 
@@ -2456,6 +2649,7 @@ def auto_rec_signals():
                "vel": odom["vel"] if odom and now - st.get("odom", 0.0) < 2.0 else None,
                "body_height": state["body_height"] if state and now - st.get("state", 0.0) < 2.0 else None}
     sig["cmd_age"] = time.monotonic() - NODE.last_cmd
+    sig["l515_live"] = L515.st["online"]
     try:
         sig["free_gb"] = REC.free_gb()
     except OSError:
@@ -2488,6 +2682,7 @@ def main():
     AG.mapper, AG.planner = MAPPER, Planner(MAPPER)
     AG.planner.fail_log = os.path.join("/maps", f"{os.environ.get('MAP_NAME', 'lab')}_nav_failures.jsonl")
     threading.Thread(target=rclpy.spin, args=(node,), daemon=True).start()
+    L515.start()
     AUTO.recover()
     threading.Thread(target=auto_rec_loop, daemon=True).start()
     HIST = History("/maps", os.environ.get("MAP_NAME", "lab"), sample_from(latest, lock, MAPPER, AG, MARKERS, battery))

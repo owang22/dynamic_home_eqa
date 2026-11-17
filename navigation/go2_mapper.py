@@ -75,6 +75,14 @@ MK_MAX_SHIFT = 1.0         # m: larger ones are refused (a mis-surveyed or moved
 MK_LIDAR_MARGIN = 0.05     # the recent views' wall fit at the marker pose may be at most this much worse
 MK_COOLDOWN_S = 5.0
 MK_SUSPECT_M = 0.30        # a disagreement this large also raises suspect (smaller ones are only logged)
+# "Line up again" from a marker in view (Mapper.lineup_from_marker, marker_lineup_pose): vision seeds the line-up,
+# the lidar only refines near it. Beyond ~35 deg off face-on the detector reads tags 0.1-0.25 m long with the facing
+# wrong, hence 30 (the remap's gate).
+MK_LINEUP_MAX_VIEW = 30.0  # deg
+MK_LINEUP_FRESH_S = 2.0    # s: detector frame at most this old
+MK_REFINE_R = 0.5          # m: lidar refine searches within this of the marker pose
+MK_REFINE_YAW = math.radians(10)   # and within this of its heading
+MK_REFINE_MIN = 0.3        # lidar line-up score below this does not count as confirming the marker pose
 MK_MOVE = False            # logging only: a fix that passes every gate is logged as "would_move" (loc event + suspect)
                            # and the dog is NOT moved. True = re-anchor (not yet: 10-26 B-stand case, map off at B's door)
 MK_GATE = "joint"          # lidar check: "all" (recent views, every voxel), "fresh" (voxels placed in the last
@@ -107,6 +115,53 @@ SUSPECT_FIT, SUSPECT_CLEAR = 0.65, 0.70
 SUSPECT_S, SUSPECT_MOVE_M = 10.0, 0.3
 CAND_SEP_M, CAND_SEP_DEG = 0.5, 20.0   # relocalize search: candidates must differ by this much
 HOST_UID = 1000
+
+
+def marker_lineup_pose(sightings, survey, frame_age=0.0):
+    """The dog's map pose from the markers in view, for a fresh line-up (no prior map pose needed).
+    sightings: go2_markers items (id, mark, z, x, yaw_deg, view_deg, dist, ambig, fix_ok, held); survey: MarkerTable
+    {id: {"x", "y", "facing_deg"}}; frame_age: s since the detector's frame.
+    Heading psi = facing - 180 + yaw_deg (the relation marker_fix's yaw check uses; checked against 185 logged
+    sightings of tag A, 2026-11-16: residual slope +0.82 vs yaw_deg, median error 2.0 deg vs 4.9 with the other sign).
+    Returns (pose or None, used, rejected): pose {x, y, yaw, n, spread_m, spread_deg, best: sighting summary};
+    used/rejected: [{id, mark, why?: [...], view_deg, dist}]."""
+    used, rejected = [], []
+    if frame_age > MK_LINEUP_FRESH_S:
+        return None, [], [{"id": None, "mark": None, "why": [f"detector frame {frame_age:.1f} s old"]}]
+    for m in sightings or []:
+        sv = survey.get(m.get("id"))
+        why = []
+        if sv is None: why.append("unsurveyed")
+        if not m.get("fix_ok") or m.get("held"): why.append("unsteady" + (f" ({','.join(m.get('why') or [])})" if m.get("why") else ""))
+        if m.get("ambig") is not None and m["ambig"] >= MK_MAX_AMBIG: why.append("ambiguous")
+        if m.get("view_deg", 90) > MK_LINEUP_MAX_VIEW: why.append(f"oblique ({m.get('view_deg', 90):.0f} deg)")
+        if m.get("dist", 9) > MK_MAX_DIST: why.append(f"far ({m.get('dist', 9):.1f} m)")
+        info = {"id": m.get("id"), "mark": m.get("mark"), "view_deg": m.get("view_deg"), "dist": m.get("dist")}
+        if why:
+            rejected.append(dict(info, why=why))
+            continue
+        psi = wrap(math.radians(sv["facing_deg"] - 180 + m["yaw_deg"]))
+        f, l = MK_CAM_AHEAD + m["z"], -m["x"]
+        x = sv["x"] - (math.cos(psi) * f - math.sin(psi) * l)
+        y = sv["y"] - (math.sin(psi) * f + math.cos(psi) * l)
+        used.append(dict(info, x=x, y=y, yaw=psi))
+    if not used:
+        return None, used, rejected
+    used.sort(key=lambda u: (u["view_deg"], u["dist"]))
+    xs, ys = np.array([u["x"] for u in used]), np.array([u["y"] for u in used])
+    if len(used) == 1:
+        x, y, yaw, sp, sd = used[0]["x"], used[0]["y"], used[0]["yaw"], 0.0, 0.0
+    else:
+        x, y = float(np.median(xs)), float(np.median(ys))
+        ref = used[0]["yaw"]                          # circular median around the best sighting's heading
+        yaw = wrap(ref + float(np.median([wrap(u["yaw"] - ref) for u in used])))
+        sp = float(np.max(np.hypot(xs - x, ys - y)))
+        sd = float(max(abs(math.degrees(wrap(u["yaw"] - yaw))) for u in used))
+    b = used[0]
+    pose = {"x": round(x, 3), "y": round(y, 3), "yaw": round(yaw, 4), "n": len(used), "spread_m": round(sp, 3),
+            "spread_deg": round(sd, 1), "marks": [u["mark"] for u in used], "ids": [u["id"] for u in used],
+            "best": {"id": b["id"], "mark": b["mark"], "view_deg": b["view_deg"], "dist": b["dist"]}}
+    return pose, used, rejected
 
 
 def wrap(a):
@@ -972,6 +1027,75 @@ class Mapper:
         threading.Thread(target=self._align, args=(odom, (float(x), float(y), yaw)), daemon=True).start()
         return None
 
+    def lineup_from_marker(self, odom, pose, by="console"):
+        """Line up from a marker sighting (pose from marker_lineup_pose): the lidar refines within MK_REFINE_R /
+        MK_REFINE_YAW of the marker pose; if it can't confirm there, the marker pose is applied as is (vision wins).
+        Runs in the background like localize_at. Returns None, or why it could not start."""
+        if self.mapping:
+            return "stop mapping first"
+        if odom is None:
+            return "no odometry"
+        if self._aligning:
+            return "a line-up is already running; try again in a few seconds"
+        self.pending, self.resume_mapping = None, False
+        self._aligning = True
+        b = pose["best"]
+        self.status = f"lining up from tag {b['mark']}…"
+        threading.Thread(target=self._marker_align, args=(odom, pose, by), daemon=True).start()
+        return None
+
+    def _marker_align(self, odom, pose, by):
+        try:
+            t0 = time.time()
+            b = pose["best"]
+            T_m = self.T_for(odom, pose["x"], pose["y"], pose["yaw"])
+            fit_before = self.view_fit(self.T) if self.T is not None else None
+            fit_marker = self.view_fit(T_m)
+            T, refined, why, score = T_m, False, None, None
+            if not (self.score >= OCC_SCORE).any():
+                why = "no saved map"
+            elif len(self.recent) < 2:
+                why = "no lidar data yet"
+            else:
+                found = self._search(odom, (pose["x"], pose["y"], pose["yaw"]), radius=MK_REFINE_R, yaw_tol=MK_REFINE_YAW)
+                if isinstance(found, str):
+                    why = found
+                else:
+                    score, _, T_r = found[0]
+                    fit_r = self.view_fit(T_r)
+                    if score < MK_REFINE_MIN:
+                        why = f"lidar fit near the tag too low ({score:.2f})"
+                    elif fit_r is not None and fit_marker is not None and fit_r < fit_marker:
+                        why = f"lidar refine fits worse ({fit_r} vs {fit_marker})"
+                    else:
+                        T, refined = T_r, True
+            if self.mapping:      # a new map was started meanwhile; its frame wins
+                return
+            fit_after = self.view_fit(T)
+            p = self.T_for_pose(T, odom)
+            moved = math.hypot(p[0] - pose["x"], p[1] - pose["y"])
+            turned = abs(math.degrees(wrap(p[2] - pose["yaw"])))
+            self.align_info = {"score": None if score is None else round(score, 2), "runner_up": None,
+                               "via": "marker", "marker": b["mark"], "fit_before": fit_before,
+                               "fit_marker": fit_marker, "fit_after": fit_after, "lidar_refined": refined,
+                               "secs": round(time.time() - t0, 1), "at": time.strftime("%H:%M:%S")}
+            head = (f"lined up from tag {b['mark']} ({b['view_deg']:.0f}° off face-on, {b['dist']:.1f} m"
+                    + (f", {pose['n']} tags agree within {pose['spread_m']:.2f} m" if pose["n"] > 1 else "") + ")")
+            if refined:
+                self.status = (f"{head} + lidar refine ({moved:.2f} m, {turned:.0f}°), fit {fit_after}"
+                               f" (was {fit_before})")
+            else:
+                self.status = f"{head}; lidar could not confirm ({why}), marker pose applied as is, fit {fit_after}"
+            self._set_T(T, "marker_lineup", via="marker", marker=b["mark"], marker_id=b["id"], by=by,
+                        markers=pose["marks"], marker_pose={k: pose[k] for k in ("x", "y", "yaw")},
+                        view_deg=b["view_deg"], dist_m=b["dist"], n_markers=pose["n"], spread_m=pose["spread_m"],
+                        spread_deg=pose["spread_deg"], lidar_refined=refined, lidar_note=why,
+                        refine_moved_m=round(moved, 3), refine_turned_deg=round(turned, 1),
+                        fit_before=fit_before, fit_marker=fit_marker, fit_after=fit_after)
+            print(f"[lineup] {self.status}", flush=True)
+        finally:
+            self._aligning = False
+
     def try_align(self, odom, force=False):
         """Start an alignment in the background if one is needed and the lidar has data."""
         if self._aligning or self.mapping or odom is None or len(self.recent) < 2:
@@ -999,7 +1123,7 @@ class Mapper:
         self.status = "lining up with the saved map…"
         threading.Thread(target=self._align, args=(odom,), daemon=True).start()
 
-    def _search(self, odom, hint=None, radius=None, keep_all=False):
+    def _search(self, odom, hint=None, radius=None, keep_all=False, yaw_tol=HINT_YAW_TOL):
         """Line the recent lidar views up with the saved map: for each heading (1 degree steps) the best shift.
         hint (x, y, yaw or None): keep only shifts that put the dog within radius (default HINT_R) of (x, y),
         and headings within HINT_YAW_TOL of yaw. Returns [(score, deg, T)] best first, or a reason string."""
@@ -1030,7 +1154,7 @@ class Mapper:
         best = []
         for deg in np.arange(0, 360, 1.0):
             th = math.radians(deg)
-            if hint and hint[2] is not None and abs(wrap(odom["yaw"] + th - hint[2])) > HINT_YAW_TOL:
+            if hint and hint[2] is not None and abs(wrap(odom["yaw"] + th - hint[2])) > yaw_tol:
                 continue
             c, s = math.cos(th), math.sin(th)
             q = rel @ np.array([[c, s], [-s, c]])  # rotate by th
@@ -1105,15 +1229,18 @@ class Mapper:
                 return
             if self.T is not None:   # placed by hand while this ran
                 return
+            note = getattr(self, "align_note", None)
+            self.align_note = None
+            pre = f"{note}; " if note else ""
             if score >= ALIGN_OK and score - other >= ALIGN_MARGIN:
-                self._set_T(self.T_found, "auto_align")
-                self.status = f"lined up with the saved map ({score:.0%} fit)"
+                self._set_T(self.T_found, "auto_align", via="lidar", **({"marker_note": note} if note else {}))
+                self.status = f"{pre}lined up with the saved map from the lidar ({score:.0%} fit)"
                 if self.resume_mapping:
                     self.resume_mapping = False
                     self.mapping = True
                     self.status = f"restored the unsaved map ({score:.0%} fit); still mapping"
             else:
-                self.status = (f"could not line up confidently ({score:.0%} fit, next best {other:.0%}); "
+                self.status = (f"{pre}could not line up confidently ({score:.0%} fit, next best {other:.0%}); "
                                "drive a little so the lidar sees more. Retrying every 20 s.")
         finally:
             self._aligning = False

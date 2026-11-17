@@ -42,6 +42,27 @@ line-up events, agent calls; no driver identity). `auto_index.jsonl` in that fol
 Stop recording during an auto session ends it and pauses auto recording until the dog reconnects; Record is
 refused while an auto session runs. Off switch: start the console with `docker exec -e GO2_AUTO_REC=0 ...`.
 
+Since 2026-11-16 auto sessions also record the RealSense L515 when its bridge (`~/oliver/l515_go2_pi4_bridge`) is
+publishing: `/go2/l515/color/image_raw/compressed`, `/go2/l515/color/camera_info`, `/go2/l515/depth/image_raw` (raw
+16-bit mm) and `/go2/l515/depth/camera_info` (not `/go2/l515/points` or the raw colour image: both rebuild from these).
+The topics are always listed; `ros2 bag record` picks each up when it appears, so an L515 that is off (or starts
+mid-session) neither blocks nor delays the Go2 topics, and is simply absent from the bag. Measured: depth 614 KB ->
+~207 KB per frame with zstd at ~8 Hz, colour ~46 KB: about +7.6 GB/hour, so ~12 GB/hour per session with the L515
+(~13 at its 10 Hz max). Each `auto_index.jsonl` line now also has `topics_recorded`, `msg_counts` (from the bag's
+metadata) and `l515` (true if any L515 message was saved). The manual Record settings have an L515 group.
+The page has an **L515 depth camera** panel (colour + colourised depth at ~4 Hz, fps and frame age, "L515 offline"
+when the bridge or Pi is off), proxied through the console (`/l515/color.jpg`, `/l515/depth.jpg`) so port 8080 is
+enough; `/state.json` has `l515 {online, fps, age_s, bridge}`.
+
+**Line up again uses a marker first** (2026-11-16, Oliver: localization fixes must use vision). If a surveyed marker
+is in the detector's latest frame (< 2 s old; fix_ok, not held, ambig < 0.5, <= 30° off face-on, <= 2.5 m), the dog's
+map pose comes from the best one (most face-on, then nearest; median of several, spread reported): heading = facing
+- 180° + yaw_deg (sign checked on 185 logged tag-A sightings). The lidar then refines within 0.5 m / 10° of it; if it
+can't confirm there (no map, low score, worse fit), the marker pose is applied as is and the status says so. With no
+usable marker it falls back to the whole-map lidar line-up and the status says why (`no marker in view`, or per tag:
+unsurveyed, oblique, far, ambiguous, unsteady). Events: `marker_lineup` (`via: "marker"`, `marker`, `marker_id`,
+`fit_before`, `fit_marker`, `fit_after`, `lidar_refined`, `lidar_note`) or `auto_align` with `via: "lidar"`.
+
 ## Files
 
 | file | what |

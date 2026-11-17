@@ -210,8 +210,10 @@ good, try `global`. If nothing fits well, drive a little (turn 90°) so the lida
   (for example while the dog stands), so standing still never accumulates time toward them.
 - `loc.fit`, `runner_up` and `unsure` describe the *last line-up* only. `unsure` means a score under 0.3, or
   less than 0.05 ahead of the next-best heading.
-- `loc.events` kinds: `hand_placement`, `auto_align`, `session_restore`, `new_map`, `drift_correction` (only
-  jumps over 0.3 m or 10°), `agent_relocalize`, `marker_disagree`, `unknown` (frame set by hand).
+- `loc.events` kinds: `hand_placement`, `auto_align` (`via: "lidar"`), `marker_lineup` (`via: "marker"`, `marker`,
+  `marker_id`, `fit_before`/`fit_marker`/`fit_after`, `lidar_refined`; the console's Line up again seeds from a
+  surveyed marker in view, <= 30° off face-on, and the lidar refines within 0.5 m), `session_restore`, `new_map`,
+  `drift_correction` (only jumps over 0.3 m or 10°), `agent_relocalize`, `marker_disagree`, `unknown` (frame set by hand).
 - **Marker checks (logging only, never move the dog):** fix_ok sightings of surveyed markers A–D (≤ 2.5 m, ≤ 45°
   oblique) are pooled over 3 s. Each check is logged in `loc.marker` (last 5: `{t, n, marks, dx, dy, shift, spread,
   action}`, where (dx, dy) is how far the marker says the pose should move). A disagreement of 0.15–1.0 m that
@@ -224,7 +226,7 @@ good, try `global`. If nothing fits well, drive a little (turn 90°) so the lida
 
 | endpoint | gives |
 |---|---|
-| `/state.json` | everything at once. `odom {pos, yaw, vel}`, `imu {rpy}`, `state {body_height, obstacle [4 ranges], mode, ...}`, `map {mode, status, origin, resolution, room_deg, ...}`, `map_pose`, `loc`, `agents`, `nav`, `markers`, `battery {soc, ..., stale?}`, `control {avoid, speed, ...}`, `age` (seconds since each sensor), `rec {running, auto, name, mb, free_gb, auto_info {enabled, state, session, secs, idle_s, idle_limit_s, min_free_gb, last, events}}`: **`rec.auto: true`** while the console's automatic run recording is on (`auto_info.state`: `recording`, `waiting_for_dog`, `idle`, `paused_until_reconnect`, `manual_recording`, `disk_low`, `off`). `/events` streams it at 10 Hz |
+| `/state.json` | everything at once. `odom {pos, yaw, vel}`, `imu {rpy}`, `state {body_height, obstacle [4 ranges], mode, ...}`, `map {mode, status, origin, resolution, room_deg, ...}`, `map_pose`, `loc`, `agents`, `nav`, `markers`, `battery {soc, ..., stale?}`, `l515 {online, fps, age_s, bridge}` (RealSense L515 depth camera; frames at `/l515/color.jpg`, `/l515/depth.jpg`, `?after=<t>`, 204 when none), `control {avoid, speed, ...}`, `age` (seconds since each sensor), `rec {running, auto, name, mb, free_gb, auto_info {enabled, state, session, secs, idle_s, idle_limit_s, min_free_gb, last, events}}`: **`rec.auto: true`** while the console's automatic run recording is on (`auto_info.state`: `recording`, `waiting_for_dog`, `idle`, `paused_until_reconnect`, `manual_recording`, `disk_low`, `off`). `/events` streams it at 10 Hz |
 | `/places` | `{id: {x, y, yaw_deg, target {x, y} or null, description, preview, ...}}`. `(x, y, yaw_deg)` is where the dog stands; `target` is where the thing is. `/places/<id>.jpg` is its view |
 | `/nav/plan?place=` or `?x=&y=` | `{path [[x, y]...], length_m, goal, tight, squeeze?, squeeze_at?, squeeze_along_m?, squeeze_clear_m?, fallback?, pose_suspect?, live_shift?}` or `{error, why?}`. 409 when not lined up |
 | `/nav/grid?x=&y=&r=2` | read-only PNG of the planner's grid around a point (default: the dog; r in m, max 4; 10 px per 10 cm, north up): saved obstacles black, cleared by live light green, new live red, hard live (chairs, under tops) purple, under-desk cost light orange, stall blocks orange, unknown grey, last route green with its narrowest point circled, the dog blue. `?json=1`: `{counts, clear_here_m, last_route {path, length_m, tight, squeeze, fallback, narrowest {clear_m, x, y, needs_m}}, last_failure}`. 503 if the planner is busy |
