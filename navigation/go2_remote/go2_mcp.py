@@ -9,6 +9,8 @@ anyone with that full URL can see the robot and press its buttons, so keep it pr
 Commands sent from here count as a person at the console: they take control from any agent.
 """
 import base64
+import fcntl
+import subprocess
 import io
 import json
 import os
@@ -24,6 +26,7 @@ from mcp.types import ToolAnnotations
 
 CONSOLE = "http://127.0.0.1:8080"
 CLIENT = "claude.ai remote"
+WAKE = os.path.expanduser("~/oliver/go2_wake.sh")
 L515 = "http://127.0.0.1:8081"   # RealSense L515 bridge page (l515_go2_pi4_bridge); may be off
 HERE = os.path.dirname(os.path.abspath(__file__))
 SECRET = open(os.path.join(HERE, "secret")).read().strip()
@@ -95,6 +98,26 @@ def state():
     return out
 
 
+def wake_status():
+    """Whether a wake (go2_wake.sh) is running now, and the end of its log."""
+    running = False
+    try:
+        with open("/tmp/go2_wake.lock", "a") as f:
+            try:
+                fcntl.flock(f, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                fcntl.flock(f, fcntl.LOCK_UN)
+            except OSError:
+                running = True
+    except OSError:
+        pass
+    try:
+        with open("/tmp/go2_wake.log") as f:
+            log = f.read().splitlines()[-8:]
+    except OSError:
+        log = []
+    return {"running": running, "log": log}
+
+
 def console_up():
     try:
         get("/control", timeout=2)
@@ -109,8 +132,8 @@ def go2_snapshot() -> dict[str, Any]:
     the map, recent agent tool calls, the front camera now (640 px JPEG, base64) and the agents'
     latest photo."""
     if not console_up():
-        return {"error": "console_down", "t": time.time()}
-    return state()
+        return {"error": "console_down", "t": time.time(), "wake": wake_status()}
+    return {**state(), "wake": wake_status()}
 
 
 @mcp.tool(annotations=READ, structured_output=True)
@@ -152,6 +175,20 @@ def go2_l515() -> dict[str, Any]:
         except (urllib.error.URLError, OSError, ValueError):
             pass
     return out
+
+
+@mcp.tool(annotations=WRITE, structured_output=True)
+def go2_wake() -> dict[str, Any]:
+    """Wake everything with one button: reconnect the dog's driver and the console if they have no data (as
+    run_go2_keys.sh does), and start the RealSense L515 bridge if its Pi is on. Does not move the dog or take
+    control. Runs in the background for up to a few minutes; watch wake.log in go2_snapshot."""
+    st = wake_status()
+    if st["running"]:
+        return {"started": False, "reason": "a wake is already running", "wake": st, "t": time.time()}
+    subprocess.Popen([WAKE], stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+                     start_new_session=True)
+    time.sleep(1)
+    return {"started": True, "wake": wake_status(), "t": time.time()}
 
 
 @mcp.tool(annotations=WRITE, structured_output=True)

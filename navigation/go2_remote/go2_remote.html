@@ -44,6 +44,8 @@ h2 span{font:11px var(--mono);letter-spacing:0;text-transform:none}
 .act{flex:0 1 auto;font:12px var(--mono);color:var(--dim)}.act .pill{font-size:12px;padding:3px 10px}
 #stop{background:var(--bad);border-color:var(--bad);color:#fff;font-size:15px;padding:12px 22px;letter-spacing:.04em}
 #takeover{border-color:var(--agent);color:var(--agent)}
+#wake{border-color:var(--accent);color:var(--accent)}#wake.hot{background:var(--accent);color:var(--panel)}
+.wakelog{flex-basis:100%;margin:0;font:11px/1.4 var(--mono);color:var(--dim);white-space:pre-wrap;max-height:9em;overflow:auto}
 .cams{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}
 .frame{position:relative;width:100%;max-width:100%;aspect-ratio:16/9;background:var(--cam);border-radius:4px;overflow:hidden}
 .frame img{width:100%;height:100%;object-fit:contain;display:block}
@@ -87,9 +89,11 @@ td.r-done{color:var(--ok)}td.r-bad{color:var(--bad)}
 <section class="panel ctl" id="ctl" aria-live="polite">
   <div class="who" id="who"><b>Waiting for the robot…</b><small>Status refreshes about every 30 s, and right after anything you press here.</small></div>
   <div class="act" id="act" aria-live="polite"></div>
+  <button id="wake" disabled title="Reconnect the driver and console if they have no data, and start the L515 bridge. Does not move the dog.">Wake dog</button>
   <button id="takeover" disabled>Take control</button>
   <button id="handback" disabled hidden>Hand back to agents</button>
   <button id="stop" disabled>STOP</button>
+  <pre class="wakelog" id="wakelog" hidden></pre>
 </section>
 
 <div class="cams">
@@ -160,6 +164,7 @@ const esc = t => String(t ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;
 const deg = r => (r * 180 / Math.PI).toFixed(0);
 const ago = t => { const s = Date.now() / 1000 - t; return s < 60 ? `${Math.max(0, Math.round(s))} s ago` : s < 3600 ? `${Math.round(s / 60)} min ago` : `${Math.round(s / 3600)} h ago`; };
 const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+let waking = false, wakePoll = null;
 let mcp = null, snap = null, mapData = null, busy = false, lastT = 0, hadControl = false, otherPerson = false;
 const mapImg = new Image();
 
@@ -185,11 +190,13 @@ function setEnabled(on) {
   document.querySelectorAll("[data-d],#stand,#lie").forEach(b => { b.disabled = b.disabled || !armed; });
   $("armed").disabled = !snap;
   $("refresh").disabled = !mcp || busy;
+  $("wake").disabled = !mcp || waking;
 }
 
 function render(d) {
   if (!d) return;
-  if (d.error === "console_down") { notice("The robot is reachable, but the console on the control PC is not running. Start it with <code>~/oliver/run_go2_keys.sh</code>.", true); setEnabled(false); return; }
+  showWake(d.wake);
+  if (d.error === "console_down") { $("wake").classList.add("hot"); $("act").innerHTML = `<span class="pill off">OFFLINE</span>console not running`; notice("The robot is reachable, but the console on the control PC is not running. Start it with <code>~/oliver/run_go2_keys.sh</code>.", true); setEnabled(false); return; }
   snap = d; lastT = d.t;
   if (d.error && typeof d.error === "string") notice(`Last command: ${esc(d.error)}`, true); else notice("");
   const o = d.owner, cur = d.current, ctl = $("ctl");
@@ -209,6 +216,7 @@ function render(d) {
 
   // Is the dog doing anything? idle_s counts seconds with no motion, posture change or command.
   const online = d.ages && d.ages.odom != null && d.ages.odom < 10;
+  $("wake").classList.toggle("hot", !online);
   const idle = d.idle_s;
   $("act").innerHTML = !online ? `<span class="pill off">OFFLINE</span>dog not sending data`
     : idle == null ? "" : idle >= 30 ? `<span class="pill idle">IDLE</span>no motion or commands for ${idle < 120 ? Math.round(idle) + " s" : Math.round(idle / 60) + " min"}`
@@ -291,6 +299,28 @@ async function act(tool, input, label) {
   } finally { busy = false; setEnabled(!!snap); }
 }
 
+function showWake(w) {
+  if (!w) return;
+  waking = !!w.running;
+  $("wake").textContent = waking ? "Waking…" : "Wake dog";
+  const log = $("wakelog");
+  log.hidden = !(waking || (w.log && w.log.length && Date.now() - wokeAt < 10 * 60e3));
+  log.textContent = (w.log || []).join("\n");
+  if (waking && !wakePoll) wakePoll = setInterval(pollWake, 5000);
+  if (!waking && wakePoll) { clearInterval(wakePoll); wakePoll = null; }
+  $("wake").disabled = !mcp || waking;
+}
+let wokeAt = 0;
+async function pollWake() {
+  try { render((await mcp.callTool(SERVER, "go2_snapshot", {}, { cache: false })).payload); } catch (e) {}
+  try { renderL515((await mcp.callTool(SERVER, "go2_l515", {}, { cache: false })).payload); } catch (e) {}
+}
+$("wake").onclick = async () => {
+  if (!mcp || waking) return;
+  waking = true; wokeAt = Date.now(); $("wake").textContent = "Waking…"; $("wake").disabled = true;
+  try { const r = (await mcp.callTool(SERVER, "go2_wake", {}, { cache: false })).payload; showWake(r.wake); if (!wakePoll) wakePoll = setInterval(pollWake, 5000); }
+  catch (e) { waking = false; const [msg, bad] = explain(e); notice(msg, bad); setEnabled(!!snap); }
+};
 $("stop").onclick = () => act("go2_stop", {}, "Stop");
 $("takeover").onclick = () => { if (otherPerson && !confirm("A person at the lab console has control. Take it from them?")) return; act("go2_take_over", {}, "Retake control"); };
 $("handback").onclick = () => act("go2_hand_back", {}, "Hand back");
