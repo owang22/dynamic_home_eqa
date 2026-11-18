@@ -102,6 +102,7 @@ REC_TOPICS = {"camera": ["/camera/image_raw", "/camera/camera_info"],
               "l515": ["/go2/l515/color/image_raw/compressed", "/go2/l515/color/camera_info",
                        "/go2/l515/depth/image_raw", "/go2/l515/depth/camera_info"]}
 L515_URL = os.environ.get("GO2_L515_URL", "http://127.0.0.1:8081")   # the bridge's page: frames + status.json
+AGENT_CHAT_URL = os.environ.get("GO2_AGENT_CHAT_URL", "http://127.0.0.1:8091")   # go2_agent_chat.py on the host
 L515_VIEW_HZ = 4.0         # console L515 panel refresh while someone is looking at it
 REC_MIN_FREE_GB = 20       # refuse to start below this, stop automatically below half of it
 HOST_UID = 1000            # recordings are handed to the host user when they finish
@@ -1117,6 +1118,27 @@ def dog_status(snap):
 _STOPPED_AT_EXIT = []
 
 
+def agent_chat_proxy(handler, method, rest, body=None):
+    """Forward /agentchat/<rest> to the host's agent runner (go2_agent_chat.py). Lab network only."""
+    import urllib.error
+    import urllib.request
+    req = urllib.request.Request(f"{AGENT_CHAT_URL}/{rest}", data=body, method=method,
+                                 headers={"Content-Type": "application/json"} if body is not None else {})
+    try:
+        with urllib.request.urlopen(req, timeout=30) as r:
+            code, data = r.status, r.read()
+    except urllib.error.HTTPError as e:
+        code, data = e.code, e.read()
+    except Exception:
+        code, data = 502, json.dumps({"error": "the agent runner is not running (go2_agent_chat.py on the control PC)"}).encode()
+    handler.send_response(code)
+    handler.send_header("Content-Type", "application/json")
+    handler.send_header("Content-Length", str(len(data)))
+    handler.send_header("Cache-Control", "no-store")
+    handler.end_headers()
+    handler.wfile.write(data)
+
+
 def stop_dog(reason, times=4, gap=0.1):
     """What the STOP button does (interrupt agents, obstacle-avoid zero move if avoidance is on, StopMove, plus a zero
     Twist), sent `times` times over ~0.3 s so it gets through. Safe to call from any thread and at shutdown."""
@@ -1240,7 +1262,7 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_POST(self):
         path = self.path.split("?")[0]
-        if not (path in ("/cmd", "/map", "/map/objects", "/map/proposals", "/deploying", "/watchdog") or path.startswith(("/agent/", "/places", "/label/"))):
+        if not (path in ("/cmd", "/map", "/map/objects", "/map/proposals", "/deploying", "/watchdog") or path.startswith(("/agent/", "/places", "/label/", "/agentchat/"))):
             return self.send_error(404)
         if path == "/watchdog":     # ~/oliver/go2_watchdog.py on this machine: its latest status, shown on the page
             try:
@@ -1275,6 +1297,11 @@ class Handler(BaseHTTPRequestHandler):
             return self.send_json(200, {"result": "done", "deploying": DEPLOYING, "boot_id": BOOT_ID})
         if not self.can_control():
             return self.send_error(403, "Drive controls only work from the lab network")
+        if path.startswith("/agentchat/"):        # "Ask the dog": the host's agent runner; Stop always goes through
+            rest = path[len("/agentchat/"):]
+            if DEPLOYING and rest == "chat":
+                return self.send_json(503, {"error": "console is deploying; try again when it is back"})
+            return agent_chat_proxy(self, "POST", rest, self.rfile.read(int(self.headers.get("Content-Length", 0))) or b"{}")
         try:
             req = json.loads(self.rfile.read(int(self.headers.get("Content-Length", 0))) or b"{}")
         except ValueError as e:
@@ -1805,6 +1832,10 @@ class Handler(BaseHTTPRequestHandler):
             self.send_header("X-Frame-T", repr(t))
             self.end_headers()
             self.wfile.write(data)
+        elif self.path.startswith("/agentchat/"):
+            if not self.can_control():
+                return self.send_error(403, "Ask the dog only works from the lab network")
+            return agent_chat_proxy(self, "GET", self.path[len("/agentchat/"):])
         elif self.path.split("?")[0] in ("/l515", "/l515/", "/l515/status.json", "/l515/cloud.bin"):
             # The bridge's own page (l515_go2_pi4_bridge web.py: colour, depth, 3-D point cloud preview) through this
             # port, for the console's L515 panel (an iframe). Its fetches are rewritten to /l515/...; colour and depth
@@ -1931,6 +1962,19 @@ section.sz2{grid-column:span 2}section.sz3{grid-column:1/-1}@media (max-width:70
 h2 .szc{display:inline-flex;gap:2px;margin-left:8px}h2>span:first-of-type{margin-left:auto}
 h2 .szc button{font:10px var(--mono);padding:1px 5px;border:1px solid var(--line);border-radius:3px;background:var(--bg);color:var(--dim);cursor:pointer}
 h2 .szc button.on{color:var(--accent);border-color:var(--accent)}
+.chatlog{min-height:160px;max-height:60vh;overflow:auto;display:flex;flex-direction:column;gap:6px;padding:4px 2px;font:14px/1.45 var(--sans)}
+main.free .chatlog{max-height:none}
+.chatlog .u{align-self:flex-end;background:var(--accent);color:#fff;padding:6px 10px;border-radius:10px 10px 2px 10px;max-width:85%;white-space:pre-wrap;overflow-wrap:anywhere}
+.chatlog .a{align-self:flex-start;background:var(--bg);border:1px solid var(--line);padding:6px 10px;border-radius:10px 10px 10px 2px;max-width:92%;white-space:pre-wrap;overflow-wrap:anywhere}
+.chatlog .tl{font:12px var(--mono);color:var(--dim);overflow-wrap:anywhere}.chatlog .tl b{color:var(--fg);font-weight:500}.chatlog .tl .ok{color:var(--accent)}.chatlog .tl .no{color:var(--bad)}
+.chatlog .ph{display:flex;gap:6px;flex-wrap:wrap}.chatlog .ph img{width:140px;aspect-ratio:16/9;object-fit:cover;border-radius:4px;cursor:zoom-in;background:#000}
+.chatlog .meta{font:11px var(--mono);color:var(--dim)}.chatlog .err{color:var(--bad);font:12px var(--mono)}.chathint{color:var(--dim);font-size:12px}
+.chatform{display:grid;gap:6px;margin-top:6px}#chatin{width:100%;font:15px var(--sans);padding:8px;border-radius:6px;border:1px solid var(--line);background:var(--bg);color:var(--fg);resize:vertical}
+.chatbar{display:flex;gap:6px;flex-wrap:wrap;align-items:center}.chatbar button,.chatbar select{font:13px var(--sans);padding:7px 12px;border-radius:6px}
+.chatstop{background:#a33!important;color:#fff!important;border-color:#a33!important;font-weight:700!important;padding:7px 20px!important}.chatstop:disabled{opacity:.4}
+#chatst.busy::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--accent);margin-right:6px;animation:chatp 1s infinite}
+@keyframes chatp{50%{opacity:.2}}
+@media (max-width:699px){main>#ctlbar{order:-2}main>#chatsec{order:-1;grid-column:1/-1}#chatin{font-size:16px;min-height:3.4em}.chatbar button,.chatbar select{padding:10px 14px;font-size:15px}.chatstop{flex:1}}
 .dogst{display:flex;gap:8px;align-items:center;font:12px var(--mono);color:var(--dim);flex-wrap:wrap}
 .dogst b{font:700 14px var(--sans);letter-spacing:.06em;padding:4px 12px;border-radius:6px;border:1px solid var(--line);color:var(--fg)}
 .dogst b.off{background:#5a1f1f;border-color:#a33;color:#ffd7d7}.dogst b.idle{background:#4d3b12;border-color:#a77d1c;color:#ffe6a8}
@@ -2047,6 +2091,11 @@ main>section.dragging{z-index:5;box-shadow:0 8px 30px rgba(0,0,0,.45);opacity:.8
 <section class="wide" id="l515sec"><h2>L515 depth camera <span id="l515st">checking…</span></h2>
 <iframe id="l515f" class="fill" title="L515 live view: colour, depth and 3-D point cloud (the bridge page, through this console)" hidden></iframe>
 <div class="l515off fill" id="l515off">checking…</div></section>
+<section class="wide" id="chatsec"><h2>Ask the dog <span id="chatst"></span></h2>
+<div id="chatlog" class="chatlog fill" aria-live="polite"><div class="chathint">Ask a question, or ask the dog to go somewhere or look for something. The agent only has the robot tools; Take over or STOP always wins.</div></div>
+<form id="chatform" class="chatform"><textarea id="chatin" rows="2" placeholder="Ask the dog… (Enter sends, Shift+Enter for a new line)" aria-label="Message for the dog's agent"></textarea>
+<div class="chatbar"><select id="chatmodel" aria-label="Model"><option value="opus">Opus</option><option value="sonnet">Sonnet</option></select>
+<button type="submit" id="chatsend">Send</button><button type="button" id="chatstop" class="chatstop" disabled>Stop</button><button type="button" id="chatnew">New conversation</button></div></form></section>
 <section class="wide"><h2>Drive <span id="dnote"></span></h2><div class="drive">
 <div class="pad" id="pad">
 <button data-k="q">↺<small>Q</small></button><button data-k="w">↑<small>W</small></button><button data-k="e">↻<small>E</small></button>
@@ -2318,7 +2367,8 @@ $('battwarnx').addEventListener('click',()=>{$('battwarn').hidden=true});
 const FEET=['FR','FL','RR','RL'];const SENS=['imu','odom','state','joints','cloud','camera'];
 function render(d){const a=d.age||{};
  if(deployCheck(d))return;
- if(window.__DRAG){PENDING=d;return}     // a panel is being dragged: no DOM/canvas updates until it is dropped
+ if(window.__DRAG){PENDING=d;return}
+ if(!CHAT.busy){const o=(d.agents||{}).owner;$('chatst').textContent=o&&o.kind==='human'?'agents locked out: press Hand back to agents so it can move':''}     // a panel is being dragged: no DOM/canvas updates until it is dropped
  renderDog(d,a);
  if(d.l515)renderL515(d.l515);
  if(d.rec)renderRec(d.rec);if(d.agents)renderAgents(d.agents);
@@ -2395,6 +2445,58 @@ setInterval(()=>{if(document.hidden)return;const down=Date.now()-lastMsg;
  if(down>5000){wasDown=true;fetch('/state.json',{cache:'no-store'}).then(r=>r.ok&&location.reload()).catch(()=>{})}
  if(DEPLOY){setArmed(false);$('deploytxt').textContent=down>60000?'The console has not come back after a minute. Reload this page by hand; if it still does not load, check the console on the control PC.':'This page reloads by itself.'}},3000);
 $('deploystop').addEventListener('click',()=>post({action:'stop'}));
+// "Ask the dog": chat with a Claude agent run by go2_agent_chat.py on the host (proxied at /agentchat/). The agent only
+// has the robot tools; the console's agent rules apply (Take over / STOP win). Stop kills the run and stops the dog.
+const CHAT={session:null,run:null,from:0,busy:false,tools:{}};
+try{CHAT.session=localStorage.getItem('go2chat')||null;const m=localStorage.getItem('go2chatmodel');if(m)$('chatmodel').value=m}catch(e){}
+const cesc=t=>String(t==null?'':t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function chatAdd(cls,html){const d=document.createElement('div');d.className=cls;d.innerHTML=html;const L=$('chatlog');
+ const stick=L.scrollHeight-L.scrollTop-L.clientHeight<60;L.appendChild(d);if(stick)L.scrollTop=L.scrollHeight;return d}
+function chatBusy(b,txt){CHAT.busy=b;$('chatst').className=b?'busy':'';$('chatst').textContent=txt||(b?'working…':'');
+ $('chatstop').disabled=!b;$('chatsend').disabled=b}
+const argtxt=a=>Object.entries(a||{}).filter(([k,v])=>v!==''&&v!=null).map(([k,v])=>typeof v==='string'?v:k+'='+JSON.stringify(v)).join(' ');
+function chatEvent(e){
+ if(e.kind==='user')chatAdd('u',cesc(e.text));
+ else if(e.kind==='text')chatAdd('a',cesc(e.text));
+ else if(e.kind==='tool'){CHAT.tools[e.id]=chatAdd('tl',`› <b>${cesc(e.name)}</b> ${cesc(argtxt(e.args))} <span>…</span>`);chatBusy(true,e.name+'…')}
+ else if(e.kind==='tool_result'){const el=CHAT.tools[e.id];if(el){const s=el.querySelector('span');s.className=e.ok?'ok':'no';
+   s.textContent=e.ok?'done':'refused: '+e.summary.slice(0,140);s.title=e.summary}chatBusy(true,'thinking…')}
+ else if(e.kind==='photo'){let row=$('chatlog').lastElementChild;if(!row||!row.classList.contains('ph'))row=chatAdd('ph','');
+   const i=document.createElement('img');i.src=e.url;i.alt='Photo the agent took';i.loading='lazy';i.onclick=()=>open(e.url,'_blank');row.appendChild(i)}
+ else if(e.kind==='result')chatAdd('meta',`${e.is_error?'error · ':''}${e.duration_s!=null?e.duration_s+' s':''}${e.turns?' · '+e.turns+' turns':''}${e.cost_usd!=null?' · $'+e.cost_usd.toFixed(3):''}`);
+ else if(e.kind==='error')chatAdd('err',cesc(e.text));
+ else if(e.kind==='stopped')chatAdd('err','stopped'+(e.killed?' (agent ended)':'')+'; STOP sent to the dog');
+ else if(e.kind==='start')chatBusy(true,'thinking…')}
+async function chatPoll(run){CHAT.run=run;CHAT.from=0;chatBusy(true);
+ while(CHAT.run===run){try{const r=await fetch(`/agentchat/chat/stream?run=${run}&from=${CHAT.from}`,{cache:'no-store'});
+   if(!r.ok)throw new Error(r.status);const j=await r.json();j.events.forEach(chatEvent);CHAT.from=j.next;if(j.done)break}
+  catch(e){await new Promise(f=>setTimeout(f,1500))}}
+ if(CHAT.run===run){CHAT.run=null;chatBusy(false)}}
+async function chatSend(){const text=$('chatin').value.trim();if(!text||CHAT.busy)return;
+ const model=$('chatmodel').value;try{localStorage.setItem('go2chatmodel',model)}catch(e){}
+ chatBusy(true,'starting…');let r,j;
+ try{r=await fetch('/agentchat/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({session:CHAT.session,text,model})});j=await r.json()}
+ catch(e){chatAdd('err','could not reach the console');chatBusy(false);return}
+ if(!r.ok){chatAdd('err',cesc(j.error||('error '+r.status)));chatBusy(false);if(r.status===409&&j.run)chatPoll(j.run);return}
+ $('chatin').value='';CHAT.session=j.session;try{localStorage.setItem('go2chat',j.session)}catch(e){}
+ const h=$('chatlog').querySelector('.chathint');if(h)h.remove();chatPoll(j.run)}
+$('chatform').addEventListener('submit',e=>{e.preventDefault();chatSend()});
+$('chatin').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey&&!e.isComposing){e.preventDefault();chatSend()}});
+$('chatstop').addEventListener('click',async()=>{const run=CHAT.run;chatBusy(true,'stopping…');
+ // the runner kills the agent and sends STOP to the console (agents may still drive after: the next chat works);
+ // if the runner can't be reached, the page's own STOP halts the dog (and locks agents out until Hand back)
+ let ok=false;try{ok=(await fetch('/agentchat/chat/stop',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({run})})).ok}catch(e){}
+ if(!ok)post({action:'stop'});if(!CHAT.run)chatBusy(false)});
+$('chatnew').addEventListener('click',()=>{if(CHAT.busy)return;CHAT.session=null;try{localStorage.removeItem('go2chat')}catch(e){}
+ $('chatlog').innerHTML='<div class="chathint">New conversation.</div>'});
+(async()=>{try{if(CHAT.session){const r=await fetch('/agentchat/chat/conv?session='+CHAT.session,{cache:'no-store'});
+   if(r.ok){const j=await r.json();$('chatlog').innerHTML='';j.runs.forEach(x=>x.events.forEach(chatEvent));chatBusy(false)}else CHAT.session=null}
+  const s=await(await fetch('/agentchat/chat/status',{cache:'no-store'})).json();
+  if(s.busy&&s.run&&s.session===CHAT.session){$('chatlog').innerHTML='';const r=await fetch('/agentchat/chat/conv?session='+s.session);
+   const j=await r.json();j.runs.filter(x=>x.run!==s.run).forEach(x=>x.events.forEach(chatEvent));chatPoll(s.run)}
+  else if(s.busy)chatBusy(false,'agent busy with another conversation')}
+ catch(e){$('chatst').textContent='agent runner offline'}})();
+
 // Browsers allow 6 connections per host:port (HTTP/1.1). /events holds one for as long as the tab is open, so with
 // six console tabs nothing else (camera, L515 frames) ever loaded: "waiting for L515 frames…" forever (2026-11-16).
 // Background tabs now close their stream and pause their image loops; they catch up when shown again.
@@ -2441,7 +2543,10 @@ setInterval(()=>{if(!armed)return;
  if(held.size){const v=[0,0,0];held.forEach(k=>DIR[k].forEach((d,i)=>v[i]+=d));const m=v.map((d,i)=>Math.sign(d)*LIM[i]);
   post({move:m});wasMoving=true;$('dstat').textContent=`moving  x=${m[0].toFixed(1)} y=${m[1].toFixed(1)} turn=${m[2].toFixed(1)}`}
  else if(wasMoving){wasMoving=false;$('dstat').textContent='Armed: stopped'}},100);
-addEventListener('keydown',e=>{if(e.target.tagName==='INPUT'&&e.key!==' ')return;const k=e.key.toLowerCase();
+addEventListener('keydown',e=>{
+ // typing in a text box (chat, labels, place names) must never drive the dog: no WASD/QE, no space-STOP, no R/F
+ if(e.target.closest&&e.target.closest('textarea,select,[contenteditable="true"],input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=button])'))return;
+ if(e.target.tagName==='INPUT'&&e.key!==' ')return;const k=e.key.toLowerCase();
  if(k===' '){e.preventDefault();stop();return}if(armed&&DIR[k]){e.preventDefault();held.add(k);paint()}
  if(!e.repeat&&(k==='r'||k==='f')){e.preventDefault();look(k==='r'?6:-6)}});
 addEventListener('keyup',e=>{const k=e.key.toLowerCase();if(held.delete(k))paint()});

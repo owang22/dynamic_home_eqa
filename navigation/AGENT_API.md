@@ -244,6 +244,11 @@ good, try `global`. If nothing fits well, drive a little (turn 90°) so the lida
 
 ## Not for agents
 
+- `/agentchat/*` (the console's "Ask the dog" chat, proxied to go2_agent_chat.py on the host): `POST chat {session,
+  text, model: opus|sonnet}` -> `{run, session}` (409 busy, 503 while deploying), `GET chat/stream?run=&from=`,
+  `POST chat/stop {run}`, `GET chat/conv?session=`, `GET chat/status`. The chat agent itself uses the tools above
+  as client `ask-the-dog`.
+
 These belong to people at the console. Don't call them:
 
 - `POST /cmd` (drive channel, takeover, hand back, speed, record)

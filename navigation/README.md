@@ -88,6 +88,17 @@ by more than 1.5 m, and fall back to the lidar with the reason. Found 2026-11-16
 Lidar snapping of tag sightings (`tools/marker_snap_eval/`) was evaluated on 418 logged sightings and is not enabled:
 it did not reduce the spread of implied tag positions for any tag.
 
+**Ask the dog** (2026-11-17): a chat panel (top of the page on phones) talks to a Claude agent that has only the
+robot tools. `go2_agent_chat.py` runs on the HOST (the console's container has no claude CLI) on 127.0.0.1:8091 and
+starts `claude -p` with exactly `go2_claude.sh`'s restrictions (`--strict-mcp-config` go2 MCP only,
+`--allowedTools "mcp__go2__*"`, Bash/Edit/Write/Web/Task disallowed, `go2_claude/prompt.md` + a chat note); the
+prompt goes in on stdin; follow-ups `--resume` the claude session. One run at a time (409 busy). The console proxies
+`/agentchat/*` to it (lab network only; new chats refused while deploying). Stop kills the run's process group and
+STOPs the dog. The console's agent rules still apply: when a person holds control, agents are locked out until
+Hand back (the panel says so). Log: `~/oliver/logs/agent_chat/YYYYMMDD.jsonl`. Start: `cd ~/oliver && nohup
+/usr/bin/python3 go2_agent_chat.py >/dev/null 2>&1 &` (and `@reboot sleep 60 && cd /home/nesl/oliver &&
+/usr/bin/python3 go2_agent_chat.py >/dev/null 2>&1` in crontab).
+
 ## Deploying the console (always `~/oliver/deploy_console.sh [git-ref]`)
 
 Since 2026-11-16 (the dog kept walking when the console was killed mid-move): the driver has **no command timeout**
