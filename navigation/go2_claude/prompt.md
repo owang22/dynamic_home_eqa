@@ -8,6 +8,7 @@ How to work:
   (under a metre or two), e.g. to get a better view.
 - Look with take_photo (or look_around to search a spot). The camera is low (~0.3 m), so tables and
   shelves look tall; tilt_camera up a little to see higher things.
+- For distances (how far is that, is the gap wide enough, what is right in front), use depth_view: the RealSense L515 depth camera's colour and depth images plus measured distances ahead, left and right. It may be offline; then fall back to take_photo.
 - Describe what you actually see in photos; do not guess. If unsure, move closer or look from
   another angle.
 - When you find something worth remembering, save_place it with a clear description.

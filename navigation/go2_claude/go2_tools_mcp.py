@@ -164,6 +164,52 @@ def take_photo(note: str = "") -> list:
     return photo_images(out) + [pose_text(out)]
 
 
+L515 = os.environ.get("GO2_L515", "http://127.0.0.1:8081")   # RealSense L515 bridge page
+
+
+@mcp.tool()
+def depth_view(note: str = "") -> list:
+    """Look with the RealSense L515 depth camera mounted on the dog (front-facing, about 70 degrees wide).
+    Returns its colour image, a depth image (red = near, blue = 5 m or more, black = no return) and measured
+    distances to the nearest thing ahead, left and right. Use it to check how far away something is, whether
+    a gap is wide enough, or what is right in front of the dog. Does not move the dog."""
+    import struct
+    out = []
+    try:
+        st = json.loads(urllib.request.urlopen(L515 + "/status.json", timeout=3).read()).get("camera") or {}
+    except (urllib.error.URLError, OSError, ValueError):
+        return ["The L515 depth camera is offline (its bridge is not running). Use take_photo instead."]
+    for kind, label in (("color", "L515 colour"), ("depth", "L515 depth (red near, blue 5 m+, black none)")):
+        try:
+            with urllib.request.urlopen(f"{L515}/{kind}.jpg", timeout=3) as r:
+                if r.status == 200:
+                    out += [label, Image(data=shrink(r.read(), 640), format="jpeg")]
+        except (urllib.error.URLError, OSError):
+            pass
+    try:   # cloud.bin: uint32 n, float32 xyz[n][3] (camera frame: x right, y down, z forward, m), uint8 rgb[n][3]
+        b = urllib.request.urlopen(L515 + "/cloud.bin", timeout=3).read()
+        n = struct.unpack_from("<I", b, 0)[0]
+        xyz = struct.unpack_from(f"<{n * 3}f", b, 4)
+        best = {"left": None, "ahead": None, "right": None}
+        for i in range(n):
+            x, y, z = xyz[3 * i], xyz[3 * i + 1], xyz[3 * i + 2]
+            if z <= 0.1 or y > 0.2 or y < -0.6:   # skip the floor (camera ~0.3 m up) and things far overhead
+                continue
+            a = math.degrees(math.atan2(x, z))
+            k = "left" if a < -12 else "right" if a > 12 else "ahead"
+            d = math.hypot(x, z)
+            if best[k] is None or d < best[k]:
+                best[k] = d
+        dist = ", ".join(f"{k} {v:.2f} m" if v is not None else f"{k} nothing within range" for k, v in best.items())
+        out.append(f"Nearest returns at body height (floor and overhead removed): {dist}. "
+                   "Distances are from the camera; its mount offset is not measured yet, so treat them as about +-10 cm.")
+    except (urllib.error.URLError, OSError, struct.error, ValueError):
+        out.append("No point cloud from the L515 right now, so no distances.")
+    if st.get("fps"):
+        out.append(f"L515 streaming at {st['fps']:.1f} fps.")
+    return out
+
+
 @mcp.tool()
 def look_around(n: int = 4, note: str = "") -> list:
     """Take n photos (1-12) while turning a full circle in place, n equal steps. Good for getting
