@@ -605,7 +605,8 @@ class L515View:
                "section{padding:6px!important}body{background:transparent}</style>")
         # hold the page's frame fetches while the console's panel is being dragged (no flicker; resumes on drop)
         hold = ("<script>(()=>{const f=window.fetch.bind(window);window.fetch=async(...a)=>{"
-                "while(parent!==window&&parent.__DRAG)await new Promise(r=>setTimeout(r,100));return f(...a)}})()</script>")
+                "const w=()=>new Promise(r=>setTimeout(r,100));while(parent!==window&&parent.__DRAG)await w();"
+                "const res=await f(...a);while(parent!==window&&parent.__DRAG)await w();return res}})()</script>")
         return page.replace("</head>", css + hold + "</head>", 1)
 
 
@@ -1990,14 +1991,22 @@ main.free .chatlog{max-height:none}
 .mknote{font:12px var(--mono);color:var(--dim);margin-top:6px}.mknote b{color:var(--warn);font-weight:600}
 h2 .grip{font-style:normal;font-size:14px;line-height:1;margin:-2px 6px 0 -2px;padding:0 2px;color:var(--dim);cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none}h2 .grip:hover{color:var(--accent)}
 main.free{grid-template-columns:repeat(12,minmax(0,1fr));grid-template-rows:auto;grid-auto-rows:var(--rowh,40px);align-items:stretch}
-main.free>section:not(.ctlbar){display:flex;flex-direction:column;overflow:auto;position:relative;min-height:0}
+main.free>section:not(.ctlbar){display:flex;flex-direction:column;overflow:hidden;position:relative;min-height:0}
+/* the panel frame does not scroll; its body does, inside the frame's padding, so no scrollbar sits under the resize
+   handles (which live on the frame, in the padding, above the body) */
+.pbody{min-width:0}main.free .pbody{flex:1 1 auto;min-height:0;overflow:auto;display:flex;flex-direction:column;margin-bottom:8px}  /* ends where the 20 px corner handle starts */
 main.free>section.ctlbar{grid-column:1/-1;grid-row:1}main.free>section[hidden]{display:none}
 main.free .fill{flex:1 1 0;min-height:80px}main.free #cam{max-height:none;aspect-ratio:auto;height:auto}
 main.free #l515f{min-height:120px}main.free .l515off{aspect-ratio:auto}
 main.free h2.draghd{cursor:grab;user-select:none;-webkit-user-select:none;touch-action:none}
-.rsz{display:none}main.free .rsz{display:block;position:absolute;right:2px;bottom:2px;width:14px;height:14px;cursor:nwse-resize;touch-action:none;
- background:linear-gradient(135deg,transparent 50%,var(--dim) 50%,var(--dim) 60%,transparent 60%,transparent 75%,var(--dim) 75%,var(--dim) 85%,transparent 85%);opacity:.6;z-index:3}
-main.free .rsz:hover{opacity:1}
+.rsz,.rsz-r,.rsz-b{display:none}
+main.free .rsz{display:block;position:absolute;right:0;bottom:0;width:20px;height:20px;cursor:nwse-resize;touch-action:none;z-index:6;
+ background:linear-gradient(135deg,transparent 52%,var(--dim) 52%,var(--dim) 60%,transparent 60%,transparent 70%,var(--dim) 70%,var(--dim) 78%,transparent 78%,transparent 86%,var(--dim) 86%,var(--dim) 94%,transparent 94%);
+ background-size:14px 14px;background-position:right 2px bottom 2px;background-repeat:no-repeat;opacity:.7;border-bottom-right-radius:6px}
+main.free .rsz:hover{opacity:1;background-color:color-mix(in srgb,var(--accent) 18%,transparent)}
+main.free .rsz-r{display:block;position:absolute;top:36px;right:0;bottom:20px;width:8px;cursor:ew-resize;touch-action:none;z-index:5}
+main.free .rsz-b{display:block;position:absolute;left:0;right:20px;bottom:0;height:8px;cursor:ns-resize;touch-action:none;z-index:5}
+main.free .rsz-r:hover,main.free .rsz-b:hover{background:color-mix(in srgb,var(--accent) 25%,transparent)}
 .lghost{pointer-events:none;border:1.5px dashed var(--accent);border-radius:6px;background:color-mix(in srgb,var(--accent) 8%,transparent);z-index:0}.lghost[hidden]{display:none}
 main>section.dragging{z-index:5;box-shadow:0 8px 30px rgba(0,0,0,.45);opacity:.85;outline:2px dashed var(--accent);outline-offset:2px}body.dragging,body.dragging *{cursor:grabbing!important;user-select:none;-webkit-user-select:none}
 #resetlayout{font:11px var(--mono);padding:3px 8px;border-radius:5px;border:1px solid var(--line);background:var(--bg);color:var(--dim);cursor:pointer}#resetlayout:hover{color:var(--fg)}
@@ -2402,6 +2411,7 @@ function render(d){const a=d.age||{};
 async function camLoop(){let after=0;const cam=$('cam');
  for(;;){if(document.hidden||window.__DRAG){await new Promise(f=>setTimeout(f,1000));continue}
   try{const r=await fetch('/camera.jpg?after='+after,{cache:'no-store'});
+   if(r.status===200&&window.__DRAG){await r.blob();continue}   // a frame that arrives mid-drag is dropped (next one is newer)
    if(r.status===200){after=+r.headers.get('X-Frame-T')||0;const u=URL.createObjectURL(await r.blob()),old=cam.src;
      cam.src=u;if(old.startsWith('blob:'))URL.revokeObjectURL(old)}
    else if(r.status!==204)throw new Error(r.status)}
@@ -2702,6 +2712,9 @@ function redrawAll(){plotMap(lastMap,lastPose);if(lastCloud)plotCloud(...lastClo
 // of the target, and other panels move down out of the way. Saved per browser (go2layout); Reset layout restores the
 // default. Phones (< 700 px): one column, no dragging.
 var FREE=false;
+// every panel's content (all but its header) goes in a .pbody: the body scrolls, the frame keeps the resize handles
+document.querySelectorAll('main>section').forEach(sec=>{const h=sec.querySelector(':scope>h2');if(!h||sec.id==='ctlbar')return;
+ const b=document.createElement('div');b.className='pbody';while(h.nextSibling)b.appendChild(h.nextSibling);sec.appendChild(b)});
 const MAIN=document.querySelector('main'),CTL=$('ctlbar'),panels=()=>[...MAIN.children].filter(s=>s.tagName==='SECTION'&&s!==CTL);
 const COLS=12,GAP=12,LKEY='go2layout';
 let PLAY={},GHOST=null;            // PLAY: key -> {x, y, w, h} as the person left it (the base); shown positions resolve collisions
@@ -2738,17 +2751,20 @@ function ghost(r){if(!GHOST){GHOST=document.createElement('div');GHOST.className
 const NODRAG='button,input,select,textarea,label,a,summary,[contenteditable],iframe,canvas';
 panels().forEach(sec=>{const h=sec.querySelector('h2');if(!h)return;
  h.classList.add('draghd');h.title='Drag to move this panel';
- const rz=document.createElement('i');rz.className='rsz';rz.title='Drag to resize';sec.appendChild(rz);
+ const rz=document.createElement('i');rz.className='rsz';rz.title='Drag to resize';
+ const er=document.createElement('i');er.className='rsz-r';er.title='Drag to change the width';
+ const eb=document.createElement('i');eb.className='rsz-b';eb.title='Drag to change the height';sec.append(er,eb,rz);
  let d=null;
  const start=(e,mode)=>{if(!FREE||e.button)return;if(mode==='move'&&e.target.closest(NODRAG))return;
   const k=secKey(sec),r=resolve(PLAY,null)[k];d={mode,k,x0:e.clientX,y0:e.clientY,r0:{...r},base:{...PLAY},cur:{...r},moved:false};
-  (mode==='move'?h:rz).setPointerCapture(e.pointerId);e.preventDefault()};
+  e.currentTarget.setPointerCapture(e.pointerId);e.preventDefault();e.stopPropagation()};
  const move=e=>{if(!d)return;const P=pitch(),dx=e.clientX-d.x0,dy=e.clientY-d.y0;
   if(!d.moved&&Math.hypot(dx,dy)<4)return;
   if(!d.moved){d.moved=true;window.__DRAG=true;sec.classList.add('dragging');document.body.classList.add('dragging')}
   const r={...d.r0};
   if(d.mode==='move'){r.x=Math.max(0,Math.min(COLS-r.w,Math.round(d.r0.x+dx/P.cx)));r.y=Math.max(0,Math.round(d.r0.y+dy/P.cy));sec.style.transform=`translate(${dx}px,${dy}px)`}
-  else{r.w=Math.max(2,Math.min(COLS-r.x,Math.round(d.r0.w+dx/P.cx)));r.h=Math.max(2,Math.round(d.r0.h+dy/P.cy))}  // size applied on drop
+  else{if(d.mode!=='h')r.w=Math.max(2,Math.min(COLS-r.x,Math.round(d.r0.w+dx/P.cx)));
+   if(d.mode!=='w')r.h=Math.max(2,Math.round(d.r0.h+dy/P.cy))}  // size applied on drop
   if(e.clientY<50)scrollBy(0,-18);else if(e.clientY>innerHeight-50)scrollBy(0,18);
   if(r.x===d.cur.x&&r.y===d.cur.y&&r.w===d.cur.w&&r.h===d.cur.h&&GHOST&&!GHOST.hidden)return;
   d.cur=r;ghost(r)};       // only the snap outline moves during a drag (no panel resizes, no redraws: no flicker)
@@ -2758,7 +2774,8 @@ panels().forEach(sec=>{const h=sec.querySelector('h2');if(!h)return;
   // one redraw with the latest data once the new sizes are laid out
   requestAnimationFrame(()=>{const p=PENDING;PENDING=null;try{if(p)render(p);else redrawAll()}catch(e){}})};
  h.addEventListener('pointerdown',e=>start(e,'move'));rz.addEventListener('pointerdown',e=>start(e,'size'));
- [h,rz].forEach(el=>{el.addEventListener('pointermove',move);el.addEventListener('pointerup',end);el.addEventListener('pointercancel',end)})});
+ er.addEventListener('pointerdown',e=>start(e,'w'));eb.addEventListener('pointerdown',e=>start(e,'h'));
+ [h,rz,er,eb].forEach(el=>{el.addEventListener('pointermove',move);el.addEventListener('pointerup',end);el.addEventListener('pointercancel',end)})});
 // panels that appear or disappear (agent photos, suggestions) re-flow; canvases redraw when their panel changes size
 // (render() sets .hidden on every /events message; setting it fires a mutation even when unchanged, which used to
 // relayout and redraw everything 10 times a second: only react when a panel really appeared or disappeared)
