@@ -37,6 +37,7 @@ from nav_msgs.msg import Odometry
 from rclpy.node import Node
 from rclpy.qos import qos_profile_sensor_data
 from sensor_msgs.msg import CompressedImage, Image, JointState, PointCloud2
+from std_msgs.msg import String
 from sensor_msgs_py import point_cloud2
 
 from go2_agent import AGENT_LEASE_S, BUMP_H, UNDER_TOP_MAX, Agents, check_name
@@ -96,7 +97,8 @@ AGENT_CALLS = ("claim", "release", "stop", "say", "status", "move", "turn", "pho
 REC_DIR = "/recordings"
 REC_TOPICS = {"camera": ["/camera/image_raw", "/camera/camera_info"],
               "lidar": ["/point_cloud2"],
-              "pose": ["/odom", "/imu", "/tf", "/tf_static", "/joint_states", "/go2_states"],
+              "pose": ["/odom", "/imu", "/tf", "/tf_static", "/joint_states", "/go2_states",
+                       "/go2/motor_temps"],     # motor temperatures (patch_driver_motor_temps.sh; absent without it)
               # RealSense L515 on the dog (l515_go2_pi4_bridge receiver, may be off). Colour as the Pi's JPEG, depth
               # as raw 16-bit mm; /go2/l515/points and the raw colour image are left out (rebuilt from these).
               "l515": ["/go2/l515/color/image_raw/compressed", "/go2/l515/color/camera_info",
@@ -241,6 +243,8 @@ def _trim_snapshot(snap):
                  "obs_cells": len(v.get("obs") or [])}
         elif v and k == "loc":
             v = {kk: vv for kk, vv in v.items() if kk not in ("events", "track", "marker")}
+        elif v and k == "motors":     # integer temps in the /joint_states order (FL, FR, RL, RR x hip, thigh, calf)
+            v = {kk: v.get(kk) for kk in ("temps", "max", "hottest", "level", "err", "stale")}
         elif v and k == "agents":
             v = {"call": (v.get("current") or {}).get("call")}
         elif v and k == "control":
@@ -509,7 +513,13 @@ REC = Recorder()
 AUTO = AutoRecorder(REC)
 
 lock = threading.Lock()
-latest = {"imu": None, "odom": None, "state": None, "joints": None, "cloud": None,
+# Motor temperatures (/go2/motor_temps from patch_driver_motor_temps.sh). Neither the SDK nor the driver documents the
+# Go2's over-temperature limits, so these are our own: warn at 60 degC, hot at 70 (2026-11-18: the dog collapsed by itself
+# after standing 8 min, most likely motor over-temperature protection).
+MOTOR_WARN_C = 60
+MOTOR_HOT_C = 70
+MOTOR_STALE_S = 10.0
+latest = {"motors": None, "imu": None, "odom": None, "state": None, "joints": None, "cloud": None,
           "map": None, "map_pose": None, "stamps": {}}
 map_png = {"data": None}         # latest lab map as PNG, for /map.png
 jpeg = {"data": None, "t": 0.0}
@@ -627,6 +637,8 @@ class Collector(Node):
         self.create_subscription(JointState, "/joint_states", self.on_joints, q)
         self.create_subscription(PointCloud2, "/point_cloud2", self.on_cloud, q)
         self.create_subscription(Image, "/camera/image_raw", self.on_image, q)
+        self.create_subscription(String, "/go2/motor_temps", self.on_motors, 10)
+        self._mlost = None
         self.create_timer(0.2, self.update_map_pose)
         self.create_timer(0.25, self.marker_fix_tick)
         self.create_timer(2.0, self.refresh_map)
@@ -787,6 +799,31 @@ class Collector(Node):
                                "obstacle": [r(v) for v in m.range_obstacle],
                                "foot_force": [int(v) for v in m.foot_force]}
             self.stamp("state")
+
+    def on_motors(self, m):
+        """/go2/motor_temps (JSON, /joint_states order): temps, max, hottest, per-leg max, motors whose lost count grew."""
+        try:
+            d = json.loads(m.data)
+            names, temps = d.get("order") or [], d.get("temps") or []
+            if len(names) != 12 or len(temps) != 12:
+                return
+            t = [None if v is None else int(round(float(v))) for v in temps]
+            valid = [(v, n) for v, n in zip(t, names) if v is not None]
+            mx, hot = max(valid) if valid else (None, None)
+            lost = d.get("lost") or [None] * 12
+            prev, self._mlost = self._mlost, lost
+            err = [n for n, a, b in zip(names, prev or [], lost) if isinstance(a, (int, float)) and isinstance(b, (int, float)) and b > a]
+            legs = {}
+            for v, n in zip(t, names):
+                if v is not None:
+                    legs[n[:2]] = max(legs.get(n[:2], v), v)
+            level = "hot" if mx is not None and mx >= MOTOR_HOT_C else "warm" if mx is not None and mx >= MOTOR_WARN_C else "ok"
+            with lock:
+                latest["motors"] = {"temps": t, "order": names, "max": mx, "hottest": hot, "legs": legs, "err": err,
+                                    "lost": lost, "level": level, "warn_c": MOTOR_WARN_C, "hot_c": MOTOR_HOT_C}
+                self.stamp("motors")
+        except (ValueError, TypeError):
+            pass
 
     def on_joints(self, m):
         with lock:
@@ -1179,6 +1216,8 @@ def snapshot():
         if snap.get("cloud"):          # the under-top cells are for the planner only; keep /events the size it was
             snap["cloud"] = {k: v for k, v in snap["cloud"].items() if k not in ("under", "under_obs")}
         snap["age"] = {k: r(now - t, 2) for k, t in latest["stamps"].items()}
+        if snap.get("motors"):
+            snap["motors"] = dict(snap["motors"], stale=now - latest["stamps"].get("motors", 0) > MOTOR_STALE_S)
     mono = time.monotonic()
     snap["rec"] = REC.status()
     snap["rec"]["auto_info"] = AUTO.status()   # rec.auto is true while auto recording runs
@@ -1976,6 +2015,11 @@ main.free .chatlog{max-height:none}
 #chatst.busy::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--accent);margin-right:6px;animation:chatp 1s infinite}
 @keyframes chatp{50%{opacity:.2}}
 @media (max-width:699px){main>#ctlbar{order:-2}main>#chatsec{order:-1;grid-column:1/-1}#chatin{font-size:16px;min-height:3.4em}.chatbar button,.chatbar select{padding:10px 14px;font-size:15px}.chatstop{flex:1}}
+.motchip{font:12px var(--mono);padding:3px 8px;border-radius:99px;border:1px solid var(--line);color:var(--fg);cursor:pointer;user-select:none}
+.motchip.warm{background:#4d3b12;border-color:#a77d1c;color:#ffe6a8}.motchip.hot{background:#5a1f1f;border-color:#a33;color:#ffd7d7;font-weight:700}
+.motchip.stale{color:var(--dim)}
+.motwarn{flex-basis:100%;order:3;display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-weight:600;padding:8px 10px;border-radius:6px;background:#4d3b12;color:#ffe6a8}
+.motwarn.hot{background:#5a1f1f;color:#ffd7d7}.motwarn[hidden]{display:none}.motwarn button{font-weight:700;padding:6px 16px}
 .dogst{display:flex;gap:8px;align-items:center;font:12px var(--mono);color:var(--dim);flex-wrap:wrap}
 .dogst b{font:700 14px var(--sans);letter-spacing:.06em;padding:4px 12px;border-radius:6px;border:1px solid var(--line);color:var(--fg)}
 .dogst b.off{background:#5a1f1f;border-color:#a33;color:#ffd7d7}.dogst b.idle{background:#4d3b12;border-color:#a77d1c;color:#ffe6a8}
@@ -2092,10 +2136,10 @@ main>section.dragging{z-index:5;box-shadow:0 8px 30px rgba(0,0,0,.45);opacity:.8
 .legend b{font-weight:400}.lx{color:var(--x)}.ly{color:var(--y)}.lz{color:var(--z)}
 </style></head><body>
 <header><h1>Go2 Live Sensors</h1><span class="sub" id="conn">connecting…</span><span id="autorec" class="autorec" role="status" title="Every session with the dog is saved automatically to ~/oliver/go2_recordings (auto_*)" hidden><i></i>auto recording</span>
-<div class="dogst" id="dogst" role="status"><b id="dogstb">…</b><span id="dogstt"></span><span id="l515stc"></span><span id="wdst"></span></div><div class="chips" id="chips"></div><button id="resetlayout" type="button" title="Put every panel back in its default place and size">Reset layout</button></header>
+<div class="dogst" id="dogst" role="status"><b id="dogstb">…</b><span id="dogstt"></span><span id="motst" class="motchip" role="button" tabindex="0" hidden title="Motor temperatures"></span><span id="l515stc"></span><span id="wdst"></span></div><div class="chips" id="chips"></div><button id="resetlayout" type="button" title="Put every panel back in its default place and size">Reset layout</button></header>
 <main>
 <section class="full ctlbar" id="ctlbar"><div id="ctltext">Control: checking…</div>
-<div class="ctlbtns"><button id="takeover">Take over</button><button id="handback" hidden>Hand back to agents</button></div><div class="battwarn" id="battwarn" role="alert" hidden><span id="battwarntxt"></span><button type="button" id="battwarnx" title="Hide until the next 10% drop">ok</button></div></section>
+<div class="ctlbtns"><button id="takeover">Take over</button><button id="handback" hidden>Hand back to agents</button></div><div class="motwarn" id="motwarn" role="alert" hidden><span id="motwarntxt"></span><button type="button" id="motlie" title="Lie the dog down (what the Drive panel's Lie down does)">Lie down</button></div><div class="battwarn" id="battwarn" role="alert" hidden><span id="battwarntxt"></span><button type="button" id="battwarnx" title="Hide until the next 10% drop">ok</button></div></section>
 <section class="full"><h2>Live camera <span id="camage"></span></h2><img id="cam" class="fill" alt="Front camera stream"><div class="mknote" id="mknote"></div></section>
 <section class="wide" id="l515sec"><h2>L515 depth camera <span id="l515st">checking…</span></h2>
 <iframe id="l515f" class="fill" title="L515 live view: colour, depth and 3-D point cloud (the bridge page, through this console)" hidden></iframe>
@@ -2440,7 +2484,21 @@ function renderDog(d,a){const ds=d.dog_status||{},odom=a.odom,idle=ds.idle_s!=nu
  $('dogstt').textContent=st==='off'?(odom==null?'no data':`no data for ${dur(odom)}`):st==='idle'?`idle ${dur(idle)}`:'';
  const l=d.l515||{},w=d.watchdog,wfresh=w&&Date.now()/1000-w.received_t<60;
  $('l515stc').textContent='L515 '+(wfresh&&w.l515_asleep?'asleep':l.online?'online':'offline');
- $('wdst').textContent=wfresh&&w.last_action?'watchdog: '+w.last_action:''}
+ $('wdst').textContent=wfresh&&w.last_action?'watchdog: '+w.last_action:'';
+ renderMotors(d.motors,a.motors)}
+// Motors: header chip (tap for per-leg max) and a banner when hot. Lie down only on a person's click, never by itself.
+const MOTWARN=60,MOTHOT=70;let MOTLEGS=false;
+const mname=n=>n?n.replace('_',' '):'?';
+function renderMotors(m,age){const c=$('motst'),b=$('motwarn');
+ if(!m||m.max==null){c.hidden=true;b.hidden=true;return}
+ const stale=m.stale||age==null||age>10,wc=m.warn_c||MOTWARN,hc=m.hot_c||MOTHOT,lvl=stale?'stale':m.max>=hc?'hot':m.max>=wc?'warm':'';
+ c.hidden=false;c.className='motchip '+lvl;
+ const legs=['FL','FR','RL','RR'].map(l=>`${l} ${m.legs&&m.legs[l]!=null?m.legs[l]:'?'}°`).join(' · ');
+ c.textContent=stale?'Motors: no data':MOTLEGS?'Motors '+legs:`Motors ${m.max} °C`;c.title=`Hottest: ${mname(m.hottest)} ${m.max} °C · per leg: ${legs}`+(m.err&&m.err.length?` · lost packets: ${m.err.join(', ')}`:'')+(stale?' (no fresh data)':'');
+ const show=!stale&&(lvl==='warm'||lvl==='hot');b.hidden=!show;b.className='motwarn'+(lvl==='hot'?' hot':'');
+ if(show)$('motwarntxt').textContent=`Motors ${lvl==='hot'?'very hot':'hot'} (${mname(m.hottest)} ${m.max} °C): lie the dog down to let it cool`}
+$('motst').addEventListener('click',()=>{MOTLEGS=!MOTLEGS});
+$('motlie').addEventListener('click',()=>{post({action:'lie'});$('dstat').textContent='Lie down (motors hot)'});
 // Deploys: the console sends boot_id (new per start) and deploying {t, msg}. While deploying: overlay, no driving.
 // A new boot id, or getting data again after the console was down, reloads the page (new page code).
 var PENDING=null;   // latest /events data held back during a panel drag

@@ -99,6 +99,17 @@ Hand back (the panel says so). Log: `~/oliver/logs/agent_chat/YYYYMMDD.jsonl`. S
 /usr/bin/python3 go2_agent_chat.py >/dev/null 2>&1 &` (and `@reboot sleep 60 && cd /home/nesl/oliver &&
 /usr/bin/python3 go2_agent_chat.py >/dev/null 2>&1` in crontab).
 
+**Motor temperatures** (2026-11-18, after the dog collapsed by itself standing still, most likely motor over-temperature
+protection): `patch_driver_motor_temps.sh` makes the driver publish `/go2/motor_temps` (std_msgs/String JSON, <= 4 Hz:
+`temps` [12 degC], `lost`, `reserve`, `order` FL/FR/RL/RR x hip/thigh/calf, the `/joint_states` order; the dog's own order
+is FR, FL, RR, RL) and saves the first raw motor entry to `/tmp/go2_motor_fields.json` in the container. Like the battery
+patch it edits the driver inside `go2_test`: it survives `docker restart` but not `docker rm`; after recreating the
+container run it again and restart the driver (dog off or idle). `--undo` removes it exactly. The console puts
+`motors {temps, max, hottest, legs, err, level, stale}` in `/state.json`/`/events`, shows a **Motors** chip (tap: per-leg
+max) and, at >= 60 degC (amber) / >= 70 degC (red), a banner "Motors hot (FR calf 68 °C): lie the dog down to let it cool"
+with a Lie down button (only on a person's click). Neither the Unitree SDK nor the driver documents the Go2's motor
+temperature limits, so 60/70 are our own choice. The topic is auto-recorded and in the manual "pose" group.
+
 ## Deploying the console (always `~/oliver/deploy_console.sh [git-ref]`)
 
 Since 2026-11-16 (the dog kept walking when the console was killed mid-move): the driver has **no command timeout**
