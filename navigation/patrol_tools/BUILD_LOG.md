@@ -22,6 +22,7 @@ Code is in `../` (go2_patrol.py, go2_dashboard.py, go2_agent.py, go2_watchdog.py
 | 18:35 | Turning sweep check (turn_blocked within 0.42 m of centre), no re-plant or shuffle in the sweep, no backward rock in patrols; avoid API mode re-asserted before manual moves (0866f0c19d) | Collision p_20261121_182815 (Oliver stopped it: chair hit by the front while turning and by the back legs while backing); Oliver: manual driving only worked with avoidance off |
 | 18:40 | /patrol/check `turn_clear_m` + `ok_to_turn`; /agent/view refuses multi-heading views at stands too tight to turn (turn_clearance) (8cc12ba0f5) | AUT ask 18:34 after the chair collision |
 | 18:55 | `GET /agent/surround` (36 x 10 deg nearest live cells, footprint margins, cloud age, pose; no claim) (b702a90fa7) | AUT ask 18:50, item 1 (after Oliver: the agent should plan its own exits) |
+| 19:08 | Oliver's tight-spot exits: 261 episodes (125 strict) from his recorded drives, JSON (~/go2_overnight/exits on Z690) | AUT ask 18:50, item 3 |
 
 ## Not buildable here (and why)
 - **Live motion tests by the control PC itself:** the permission rules on Z690 block me from sending patrol or motion
