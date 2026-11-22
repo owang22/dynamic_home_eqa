@@ -245,6 +245,47 @@ class Agents:
         hit = (fx > x0) & (fx < x1) & (np.abs(fy) < half) & (pts[:, 2] > BUMP_H[0]) & (pts[:, 2] < BUMP_H[1])
         return float(fx[hit].min()) if hit.any() else None
 
+    def surround(self, bins=36, max_m=3.0):
+        """Read-only view around the body (AUT ask 18:50): nearest live obstacle cell in the BUMP_H band per
+        360/bins-degree bin from the body centre (+ = left, 0 = ahead; None = nothing within max_m), the footprint
+        margins (gap from each side of the 0.70 x 0.31 m body to the nearest cell in front of / behind / beside it),
+        the cloud age and the pose. Same cells and band as sweep_hit and the arc check."""
+        odom, _, state, cloud, mp, ages = self.snap()
+        out = {"t": round(time.time(), 2), "cloud_age_s": None if ages.get("cloud") is None else round(ages["cloud"], 2),
+               "standing": bool(state and state.get("body_height", 0) >= MIN_BODY_H), "map_pose": None if not mp else
+               {"x": round(mp["x"], 3), "y": round(mp["y"], 3), "yaw_deg": round(math.degrees(mp["yaw"]), 1)},
+               "band_m": list(BUMP_H), "bin_deg": 360.0 / bins, "bins": None, "margins": None,
+               "rule": "bins: bearing of the bin centre, + = left, 0 = ahead; distance from the body centre (base_link). "
+                       "margins: free distance beyond each side of a 0.70 x 0.31 m body, within the body's width/length"}
+        if not cloud or not cloud.get("obs") or odom is None or cloud.get("frame") == "base_link":
+            out["note"] = "no live lidar cells (lying down pauses the lidar)"
+            return out
+        pts = np.asarray(cloud["obs"], dtype=np.float64)
+        pts = pts[(pts[:, 2] > BUMP_H[0]) & (pts[:, 2] < BUMP_H[1])]
+        dx, dy = pts[:, 0] - odom["pos"][0], pts[:, 1] - odom["pos"][1]
+        c, s = math.cos(odom["yaw"]), math.sin(odom["yaw"])
+        fx, fy = c * dx + s * dy, -s * dx + c * dy
+        own = (np.abs(fx) < 0.30) & (np.abs(fy) < 0.12)       # the body itself (legs, voxel smear), as sweep_hit
+        fx, fy = fx[~own], fy[~own]
+        d = np.hypot(fx, fy)
+        brg = np.degrees(np.arctan2(fy, fx))
+        w = 360.0 / bins
+        res = []
+        for i in range(bins):
+            centre = -180.0 + (i + 0.5) * w
+            m = (brg >= centre - w / 2) & (brg < centre + w / 2) & (d <= max_m)
+            res.append([round(centre, 1), round(float(d[m].min()), 2) if m.any() else None])
+        out["bins"] = res
+        hl, hw = 0.35, 0.155                                    # half length / half width of the body
+        def gap(sel, val):
+            return round(float(val[sel].min()), 2) if sel.any() else None
+        out["margins"] = {"front": gap((fx > hl) & (np.abs(fy) < hw), fx - hl),
+                          "rear": gap((fx < -hl) & (np.abs(fy) < hw), -fx - hl),
+                          "left": gap((fy > hw) & (np.abs(fx) < hl), fy - hw),
+                          "right": gap((fy < -hw) & (np.abs(fx) < hl), -fy - hw),
+                          "nearest_m": round(float(d.min()), 2) if len(d) else None}
+        return out
+
     def sweep_hit(self):
         """Distance (m) from the dog's centre to the nearest live obstacle cell (BUMP_H band) within SWEEP_R, outside
         the body's own footprint, or None. Used before and during turns in place."""

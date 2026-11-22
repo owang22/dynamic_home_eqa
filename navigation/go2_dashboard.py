@@ -1885,6 +1885,14 @@ class Handler(BaseHTTPRequestHandler):
             out["loc_events"] = [e for e in MAPPER.loc_info(track_n=0)["events"] if lo <= e["t"] <= hi]
             out["agent_calls"] = [e for e in AG.status()["log"] if lo <= e["t"] <= hi]
             self.send_json(200, out)
+        elif self.path.split("?")[0] == "/agent/surround":
+            # read-only, no claim (AUT ask 18:50): nearest live obstacle per 10 deg around the body + footprint margins
+            q = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
+            try:
+                bins = max(8, min(int(q.get("bins", [36])[0]), 72))
+            except ValueError:
+                return self.send_error(400, "bins must be an integer")
+            self.send_json(200, AG.surround(bins=bins))
         elif self.path.split("?")[0] == "/agent/status":
             q = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
             self.notice_for = q.get("client", [None])[0]
