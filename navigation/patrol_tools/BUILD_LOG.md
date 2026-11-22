@@ -29,3 +29,6 @@ Code is in `../` (go2_patrol.py, go2_dashboard.py, go2_agent.py, go2_watchdog.py
 - **p_20261121_174120 (17:41, AUT's first patrol):** settle-until-still verified. 14 of 14 shots were still=true
   (patrol 1: 2 of 4 false), and the extra wait was at most about 0.5 s. No refusals. fresh_fit 0.66-0.84.
   Observation: facing (3-16 s per heading change, about 16 s for 180 deg) is now a cost comparable to walking.
+- **p_20261121_180630 (18:06, brain v5):** shot clearance verified live. h0 front_clear_m 0.22 m to a chair seat
+  (matches the photo), h1 0.63 m. The brain dropped the blocked heading's credit (46 → 5 cells). The patrol ended
+  because of the AUT's own NameError; its finally block stopped the patrol and lay the dog down.
