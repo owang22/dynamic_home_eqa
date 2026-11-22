@@ -129,3 +129,19 @@ wake after 11-21 15:52).
     stand (check_safe).
 - The held cloud is saved to /maps/held_cloud.json on lie-down and reloaded once after a console restart (deploys happen while lying). Tests use a temp file.
 - Tests: test_margins 38/38 (patrol strafe, held cloud, reload), test_arc 78/78, test_view 78/78, test_patrol 71/71.
+
+## 2026-11-22 15:4x — AUT ask 1528 (Oliver-approved exception)
+- **Low band:** cells topped 0.10-0.18 m (the console keeps nothing below 0.10 m, OBSTACLE_MIN_H).
+  - `/agent/surround` bins_detail: per-bin `low` = {d_m, z_m, kind: low}, plus `low_band_m`. They are not counted in
+    `bins` or the checks.
+  - Arc dry runs and strafes report `low` = {low_min_clearance_m, low_blocked, low_n_near, margin_m}.
+- **Dog avoidance ranges:** not available. /go2_states range_obstacle is 0 in every row, and the driver publishes
+  nothing else from the dog's avoidance.
+- **One-shot `dog_avoid: false`** on `/agent/move` (m or lateral_m) and real `/agent/arc`:
+  - Limits: at most 0.30 m, and |v| <= 0.10 m/s (move and strafe speeds are clamped to 0.10).
+  - Refused (409) with `low_blocked` if a low cell would come within the arc margin of the body along the path, or
+    with `no_live_cloud`.
+  - The dog's avoidance is switched off for that call only and restored afterwards, even on an error or abort
+    (`dog_avoid_restored`).
+  - All the console's own checks still apply.
+- Tests: test_margins 43/43, test_arc 78/78, test_view 78/78, test_patrol 71/71.

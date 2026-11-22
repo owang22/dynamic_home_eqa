@@ -56,6 +56,9 @@ HOLD_MOVE_M, HOLD_YAW_DEG = 0.05, 5.0     # held cloud valid while the dog stays
 HOLD_RICH_FRAC, HOLD_SPARSE_FRAC = 0.8, 0.5
 HOLD_AFTER_STAND_S = 15.0
 HELD_FILE = os.environ.get("GO2_HELD_CLOUD", "/maps/held_cloud.json")   # saved on lie-down, reloaded after a restart                 # merge held cells into a sparse live map only this long after a stand-up   # replace the held cloud when live has >= 80% of its cells; merge below 50%
+LOW_H = (0.10, 0.18)       # AUT ask 1528: low cells (wheel bases, cables, box edges) the dog's own avoidance may see;
+                           # the console keeps cells from 0.10 m (OBSTACLE_MIN_H), nothing lower is available
+DOG_AVOID_OFF_V, DOG_AVOID_OFF_M = 0.10, 0.30   # one-shot dog_avoid: false (Oliver-approved exception, ask 1528)
 LAT_MAX_M, LAT_V = 0.5, 0.15   # /agent/move lateral_m (AUT ask 1450): per call, m/s (Oliver's 11-21 pocket exit: 0.27 m
                                # sideways with 0.37 m back in 3.7 s)
 MAX_MOVE_M, MAX_TURN_DEG = 3.0, 360.0      # per call
@@ -458,6 +461,20 @@ class Agents:
                         "z_min_m": round(float(zz.min()), 2) if len(zz) else None,
                         "z_max_m": round(float(zz.max()), 2) if len(zz) else None,
                         "kinds_near": sorted(set(kind_all[near].tolist()))})
+        low = self._low_pts(cloud)
+        if len(low):
+            ldx, ldy = low[:, 0] - odom["pos"][0], low[:, 1] - odom["pos"][1]
+            lfx, lfy = c * ldx + s * ldy, -s * ldx + c * ldy
+            lown = (np.abs(lfx) < 0.30) & (np.abs(lfy) < 0.12)
+            lfx, lfy, lz = lfx[~lown], lfy[~lown], low[~lown, 2]
+            ld, lb = np.hypot(lfx, lfy), np.degrees(np.arctan2(lfy, lfx))
+            for i, b in enumerate(det):
+                centre = b["bearing_deg"]
+                m = (lb >= centre - w / 2) & (lb < centre + w / 2) & (ld <= max_m)
+                if m.any():
+                    j = np.nonzero(m)[0][np.argmin(ld[m])]
+                    b["low"] = {"d_m": round(float(ld[j]), 2), "z_m": round(float(lz[j]), 2), "kind": "low"}
+        out["low_band_m"] = list(LOW_H)
         out["bins_detail"] = det
         out["bins_detail_note"] = ("per bin: the nearest cell and the cells within 10 cm of it. z = the cell's top above "
                                    "the floor (the dog's cloud keeps only each cell's top, so a desk edge reads its top). "
@@ -473,6 +490,79 @@ class Agents:
                           "right": gap((fy < -hw) & (np.abs(fx) < hl), -fy - hw),
                           "nearest_m": round(float(d.min()), 2) if len(d) else None}
         return out
+
+    def _low_pts(self, cloud):
+        """(N x 3) odom-frame cells topped LOW_H (0.10-0.18 m above the floor): not counted by the checks, reported."""
+        obs = np.asarray((cloud or {}).get("obs") or [], dtype=np.float64).reshape(-1, 3)
+        return obs[(obs[:, 2] > LOW_H[0]) & (obs[:, 2] <= LOW_H[1])]
+
+    def low_check(self, kind, v=0.0, w=0.0, length=0.0, sign=1):
+        """Low-band check for the path of a move (kind m: straight, lat: sideways, arc), from the body outline at the arc
+        margin. Returns {low_min_clearance_m, low_blocked, low_n_near}."""
+        odom, _, _, cloud, _, _ = self.snap()
+        if odom is None or not cloud:
+            return {"low_min_clearance_m": None, "low_blocked": None, "low_n_near": 0, "note": "no cloud"}
+        low = self._low_pts(cloud)
+        mg = self.margins()["arc_margin_m"]
+        if not len(low):
+            return {"low_min_clearance_m": None, "low_blocked": False, "low_n_near": 0}
+        if kind == "arc":
+            sw = self._arc_sweep(odom, low[:, :2], v, w, length)
+            mn = sw["min"]
+        else:
+            dx, dy = low[:, 0] - odom["pos"][0], low[:, 1] - odom["pos"][1]
+            c, s_ = math.cos(odom["yaw"]), math.sin(odom["yaw"])
+            fx, fy = c * dx + s_ * dy, -s_ * dx + c * dy
+            own = (np.abs(fx) < BODY_HL) & (np.abs(fy) < BODY_HW)
+            fx, fy = fx[~own], fy[~own]
+            k = max(2, int(length / 0.05) + 2)
+            mn = None
+            for t in np.linspace(0.0, length, k):          # the body translated along the move
+                bx, by = (fx - sign * t, fy) if kind == "m" else (fx, fy - sign * t)
+                d = body_clearance(bx, by)
+                if len(d):
+                    mn = float(d.min()) if mn is None else min(mn, float(d.min()))
+        near = int((np.hypot(low[:, 0] - odom["pos"][0], low[:, 1] - odom["pos"][1]) < 1.0).sum())
+        return {"low_min_clearance_m": None if mn is None else round(mn, 3), "low_blocked": mn is not None and mn < mg,
+                "low_n_near": near, "low_band_m": list(LOW_H), "margin_m": mg}
+
+    def _dog_avoid_off(self, args, kind, dist, v=None, w=None):
+        """Validate a one-shot dog_avoid: false (ask 1528). Returns (None, info) if allowed, else (refusal, info)."""
+        info = {"dog_avoid": False}
+        if abs(dist) > DOG_AVOID_OFF_M + 1e-6:
+            return {"code": "dog_avoid_off_limit", "detail": f"dog_avoid false: at most {DOG_AVOID_OFF_M} m"}, info
+        if v is not None and abs(v) > DOG_AVOID_OFF_V + 1e-6:
+            return {"code": "dog_avoid_off_limit", "detail": f"dog_avoid false: |v| <= {DOG_AVOID_OFF_V} m/s"}, info
+        if kind == "arc":
+            lc = self.low_check("arc", v, w, abs(dist) + abs(v) * ARC_COAST_S)
+        else:
+            lc = self.low_check(kind, length=abs(dist) + 0.03, sign=1 if dist >= 0 else -1)
+        info.update(lc)
+        if lc.get("low_blocked") is None:
+            return {"code": "no_live_cloud", "detail": "dog_avoid false needs a cloud for the low-band check"}, info
+        if lc["low_blocked"]:
+            return {"code": "low_blocked", "detail": f"a low cell ({LOW_H[0]}-{LOW_H[1]} m) comes "
+                    f"{lc['low_min_clearance_m']:.2f} m from the body along the path (margin {lc['margin_m']:.2f} m); "
+                    "dog_avoid false is refused"}, info
+        return None, info
+
+    def _with_dog_avoid_off(self, fn, info):
+        """Run fn with the dog's own avoidance off, then restore it (also on errors and aborts)."""
+        node = self.node
+        prev = bool(getattr(node, "avoid", False))
+        setter = getattr(node, "set_avoid", None)
+        def run():
+            if setter and prev:
+                setter(False)
+            print(f"[dog_avoid] off for one call: {info}", flush=True)
+            try:
+                out = fn()
+            finally:
+                if setter and prev:
+                    setter(True)
+                    print("[dog_avoid] back on", flush=True)
+            return dict(out, **info, dog_avoid_restored=prev)
+        return run
 
     def _live_obstacle_pts(self, cloud):
         """(N x 2) odom-frame live obstacle cells, the same set the arc check uses: the BUMP_H band, cells topped at
@@ -630,7 +720,7 @@ class Agents:
             z = max(-c["turn_v"], min(c["turn_v"], z))
         self.node.move(x, y, z)
 
-    def _move(self, m, timeout_s):
+    def _move(self, m, timeout_s, v_max=None):
         back_m = min(MAX_BACK_M, self.caps["back_m"]) if self.caps else MAX_BACK_M
         m = max(-back_m, min(MAX_MOVE_M, float(m)))
         sign = 1 if m >= 0 else -1
@@ -670,6 +760,8 @@ class Agents:
                         "reason": "not making progress (avoidance stopped it, or something is in the way)",
                         "moved_m": round(done * sign, 3), "stall": self.stall_info()}
             v = max(MIN_SPEED, min(MOVE_SPEED, left * 1.2)) * sign if sign > 0 else -BACK_SPEED
+            if v_max is not None:
+                v = max(-v_max, min(v_max, v))
             self._mv(v, 0.0, 0.0)
             self.last_motion = time.monotonic()
             time.sleep(0.1)
@@ -692,7 +784,7 @@ class Agents:
         g = g[g < 1.0]
         return float(g.min()) if len(g) else None
 
-    def _strafe(self, lat_m, timeout_s):
+    def _strafe(self, lat_m, timeout_s, v_max=None):
         """Sideways (+ = left) by up to LAT_MAX_M at LAT_V, heading held. Refused / stopped when the live side gap
         would fall below the arc margin; stall detection as move."""
         lat_m = max(-LAT_MAX_M, min(LAT_MAX_M, lat_m))
@@ -710,6 +802,7 @@ class Agents:
                     "reason": f"side_blocked: {g:.2f} m free on the {side}, {abs(lat_m):.2f} m asked + margin {mg:.2f} m",
                     "why": {"code": "side_blocked", "side_gap_m": round(g, 3), "margin_m": mg,
                             "max_lateral_m": round(max(0.0, g - mg), 2)}}
+        low = self.low_check("lat", length=abs(lat_m), sign=sign)
         hist, t_start = deque(), time.monotonic()
         while True:
             self.tick(deadline)
@@ -717,7 +810,7 @@ class Agents:
             done = (-(odom["pos"][0] - x0) * math.sin(yaw0) + (odom["pos"][1] - y0) * math.cos(yaw0)) * sign
             left = abs(lat_m) - done
             if left <= 0.02:
-                return {"result": "done", "moved_m": round(done * sign, 3), "lateral": True}
+                return {"result": "done", "moved_m": round(done * sign, 3), "lateral": True, "low": low}
             g = self._side_gap(sign)
             if g is not None and g < mg:
                 return {"result": "blocked", "side": side, "moved_m": round(done * sign, 3), "side_gap_m": round(g, 3), "lateral": True,
@@ -730,8 +823,10 @@ class Agents:
             if now - t_start > STALL_S + 0.5 and hist and done - hist[0][1] < STALL_M:
                 return {"result": "blocked", "side": side, "moved_m": round(done * sign, 3), "lateral": True,
                         "reason": "not making progress (avoidance stopped it, or something is in the way)",
-                        "stall": self.stall_info()}
+                        "stall": self.stall_info(), "stall_info": self.stall_info(), "stopped_by": "progress", "low": low}
             v = LAT_V if not self.caps else min(LAT_V, self.caps["v"])
+            if v_max is not None:
+                v = min(v, v_max)
             # hold the heading: small yaw correction
             yerr = wrap(yaw0 - odom["yaw"])
             self._mv(0.0, sign * v, max(-0.3, min(0.3, 1.5 * yerr)))
@@ -1096,6 +1191,7 @@ class Agents:
                    "profile": self._arc_profile(sw), "end_pose": self._odom_to_map(*sw["pose"][1]), "stop_reason": "done", **info}
             if rear:
                 out["rear_blocked"] = rear
+            out["low"] = self.low_check("arc", v, w, sp["length"] + coast)    # ask 1528: reported, not blocking
             if back:                  # AUT ask 1416 #4 (11-22 14:1x: dry "clear", real reverse stopped at once)
                 out["rear_unverified"] = True
                 out["rear_note"] = ("backing up: the lidar barely sees behind the dog and this check cannot see what "
@@ -1236,11 +1332,24 @@ class Agents:
             return meta
 
         if call == "move":
+            off = args.get("dog_avoid") is False
             if args.get("lateral_m") is not None:
                 if args.get("m") not in (None, 0, 0.0):
                     return 400, {"result": "error", "reason": "bad arguments: give m (forward/back) or lateral_m, not both"}
-                return self.run(client, call, args, lambda: self._strafe(float(args["lateral_m"]), timeout_s), caps=caps)
-            return self.run(client, call, args, lambda: self._move(args["m"], timeout_s), caps=caps)
+                lat = float(args["lateral_m"])
+                fn = lambda: self._strafe(lat, timeout_s, v_max=DOG_AVOID_OFF_V if off else None)
+                kind, dist = "lat", lat
+            else:
+                mm = float(args["m"])
+                fn = lambda: self._move(mm, timeout_s, v_max=DOG_AVOID_OFF_V if off else None)
+                kind, dist = "m", mm
+            if off:
+                why, info = self._dog_avoid_off(args, kind, dist)
+                if why:
+                    return 409, {"result": "refused", "reason": f"{why['code']}: {why['detail']}", "why": why,
+                                 "stop_reason": "refused", **info}
+                fn = self._with_dog_avoid_off(fn, info)
+            return self.run(client, call, args, fn, caps=caps)
         if call == "turn":
             return self.run(client, call, args, lambda: self._turn(args["deg"], timeout_s), caps=caps)
         if call == "photo":
@@ -1281,7 +1390,14 @@ class Agents:
                 return 400, {"result": "error", "reason": f"bad arguments: {e}"}
         if call == "arc":          # dry: a read, sends nothing (not even the closing stop)
             sp, dry = self._arc_spec(args, caps), args.get("dry") is True
-            return self.run(client, call, args, lambda: self._arc(sp, timeout_s, dry), stop=not dry, caps=caps)
+            fn = lambda: self._arc(sp, timeout_s, dry)
+            if args.get("dog_avoid") is False and not dry:
+                why, info = self._dog_avoid_off(args, "arc", sp["length"], sp["v"], sp["w"])
+                if why:
+                    return 409, {"result": "refused", "reason": f"{why['code']}: {why['detail']}", "why": why,
+                                 "stop_reason": "refused", **info}
+                fn = self._with_dog_avoid_off(fn, info)
+            return self.run(client, call, args, fn, stop=not dry, caps=caps)
         raise KeyError(call)
 
     def _posture(self, args):

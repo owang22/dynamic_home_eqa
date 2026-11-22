@@ -176,6 +176,31 @@ _, _, _, cl, _, _ = ag.snap()
 ok("dog moved: held cloud dropped", not cl.get("held"))
 w.cloud.obs = []; time.sleep(0.3)
 
+# ask 1528: low band, one-shot dog_avoid false
+w.sim.body_h = 0.30; w.cloud.on = True
+ag._held, ag._held_merge, ag._held_loaded = None, None, True
+w.node.avoid = True
+sets = []
+w.node.set_avoid = lambda on: (sets.append(bool(on)), setattr(w.node, "avoid", bool(on)))
+w.cloud.obs = [[*body_pt(w, 0.0, 0.40), 0.14]]; time.sleep(0.4)     # a low cell 0.245 m beyond the left side
+sr = ag.surround()
+ok("surround: low cell reported per bin (kind low), not in the band bins", any((b.get("low") or {}).get("z_m") == 0.14 for b in sr["bins_detail"])
+   and all(b[1] is None for b in sr["bins"]), [b.get("low") for b in sr["bins_detail"] if b.get("low")])
+code, out = ag.tool("move", C, {"client": C, "lateral_m": 0.25, "dog_avoid": False, "timeout_s": 10})
+ok("dog_avoid false strafe into the low cell: refused low_blocked, avoidance untouched", code == 409 and out["why"]["code"] == "low_blocked"
+   and sets == [] and w.node.avoid is True, out.get("reason"))
+code, out = ag.tool("move", C, {"client": C, "lateral_m": 0.5, "dog_avoid": False})
+ok("dog_avoid false over 0.3 m: refused", code == 409 and out["why"]["code"] == "dog_avoid_off_limit")
+n0 = len(w.node.calls)
+code, out = ag.tool("move", C, {"client": C, "lateral_m": -0.2, "dog_avoid": False, "timeout_s": 10})
+mv = [c for c in w.node.calls[n0:] if c[2] == "move"]
+ok("dog_avoid false strafe right (clear): done, avoidance off then back on, |vy| <= 0.10",
+   out.get("result") == "done" and sets == [False, True] and w.node.avoid is True and out.get("dog_avoid_restored") is True
+   and mv and max(abs(c[4]) for c in mv) <= 0.1001, (out.get("result"), sets, max(abs(c[4]) for c in mv) if mv else None))
+code, out = ag.tool("arc", C, {"client": C, "v_mps": 0.1, "w_radps": 0.0, "distance_m": 0.2, "dry": True})
+ok("arc dry run reports the low band", "low" in out and "low_min_clearance_m" in out["low"], out.get("low"))
+w.cloud.obs = []; time.sleep(0.3)
+
 # stall_info
 si = ag.stall_info()
 ok("stall_info fields", {"dog_avoid_on", "body_height", "locked_stand_suspect", "hint"} <= set(si), si)
