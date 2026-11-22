@@ -45,6 +45,13 @@ TURN_OVERSHOOT = math.radians(6)
 # backward rock stepped it back; Oliver stopped it. Now a turn is refused, or stops, when a live obstacle cell
 # (BUMP_H band) is within SWEEP_R of the dog's centre; in patrols the rock is forward/still only.
 SWEEP_R = 0.42           # the dog keeps turning about this much after stop
+# 11-22 (Oliver: margins too strict; the agent may reduce them, he approved any exceptions it asks for): the in-place
+# turn check is now the body rectangle swept through the turn still to go (+ TURN_COAST_DEG), inflated by the turn
+# margin. Default 0.03 m: a full turn then needs ~0.42 m all round, as SWEEP_R did; small turns need much less.
+# The agent can set its own turn / arc margins with the "margins" tool (0 .. MARGIN_MAX_M).
+TURN_MARGIN_M = 0.03
+TURN_COAST_DEG = 10.0     # the dog keeps turning about this much after the stop
+MARGIN_MAX_M = 0.20
 MAX_MOVE_M, MAX_TURN_DEG = 3.0, 360.0      # per call
 FRONT_CLEAR = (0.35, 0.90, 0.25)           # obstacle box ahead of base_link: x from, x to, half width (m)
 REAR_CLEAR = (0.30, 0.75, 0.22)            # and behind it, when backing up
@@ -201,6 +208,42 @@ class Agents:
         self.caps = None
         self.tag_lineup = None         # relocalize mode "tag": set by the console (go2_dashboard.tag_lineup_for_agent)
         self.human_seq = 0             # +1 on every human takeover (go2_patrol ends a patrol on any change)
+        self.margins_by = {}           # client -> {turn_margin_m, arc_margin_m, why, t}: the agent's own margins (11-22)
+
+    # ---------- margins (11-22: the driving agent may set its own; Oliver approved) ----------
+    def margins(self, client=None):
+        """The margins in force: the owning agent's own (or client's), else the defaults."""
+        if client is None:
+            o = self.owner_now()
+            client = o["client"] if o and o["kind"] == "agent" else None
+        m = {"turn_margin_m": TURN_MARGIN_M, "arc_margin_m": ARC_MARGIN, "source": "default"}
+        own = self.margins_by.get(client) if client else None
+        if own:
+            m.update(own, source=f"set by {client}")
+        return m
+
+    def set_margins(self, client, args):
+        if args.get("reset"):
+            self.margins_by.pop(client, None)
+            return {"result": "done", "margins": self.margins(client)}
+        cur = dict(self.margins_by.get(client) or {})
+        if not any(args.get(k) is not None for k in ("turn_margin_m", "arc_margin_m")):
+            raise ValueError("give turn_margin_m and/or arc_margin_m (m), or reset: true")
+        for k in ("turn_margin_m", "arc_margin_m"):
+            if k in args and args[k] is not None:
+                v = float(args[k])
+                if not 0.0 <= v <= MARGIN_MAX_M:
+                    raise ValueError(f"{k} must be 0..{MARGIN_MAX_M} m")
+                cur[k] = round(v, 3)
+        cur["why"] = str(args.get("why") or "")[:300]
+        cur["t"] = round(time.time(), 1)
+        self.margins_by[client] = cur
+        print(f"[margins] {client}: {cur}", flush=True)
+        return {"result": "done", "margins": self.margins(client),
+                "defaults": {"turn_margin_m": TURN_MARGIN_M, "arc_margin_m": ARC_MARGIN},
+                "note": "turn margin: gap kept between the body rectangle (0.70 x 0.31 m) and any live obstacle cell over "
+                        "the turn still to go; arc margin: the same along an arc. Cells are 0.1 m, so a real surface can "
+                        "be ~5 cm nearer than its cell. Kept until you change or reset them (a console restart resets)."}
 
     # ---------- ownership ----------
     def owner_now(self):
@@ -342,9 +385,12 @@ class Agents:
         under = np.asarray(cloud.get("under_obs") or [], dtype=np.float64).reshape(-1, 2)
         return np.vstack([obs[keep, :2], under])
 
-    def sweep_hit(self):
-        """Distance (m) from the dog's centre to the nearest live obstacle cell (BUMP_H band) within SWEEP_R, outside
-        the body's own footprint, or None. Used before and during turns in place."""
+    def sweep_hit(self, turn_rad=None, margin=None):
+        """Turning in place by turn_rad (signed; None = a full turn) from the heading now: distance (m) from the dog's
+        centre to the nearest live obstacle cell that the body rectangle, inflated by the turn margin, would sweep over
+        (BUMP_H band + tall + under_obs; cells inside the body now are the dog itself). None = clear."""
+        if margin is None:
+            margin = self.margins()["turn_margin_m"]
         odom, _, _, cloud, _, ages = self.snap()
         if not cloud or not cloud.get("obs") or ages.get("cloud", 99) > 3.0 or cloud.get("frame") == "base_link":
             return None
@@ -355,8 +401,30 @@ class Agents:
         c, s = math.cos(odom["yaw"]), math.sin(odom["yaw"])
         fx, fy = c * dx + s * dy, -s * dx + c * dy
         d = np.hypot(fx, fy)
-        near = (d < SWEEP_R) & ~((np.abs(fx) < 0.30) & (np.abs(fy) < 0.12))   # the body itself (legs, voxel smear)
-        return float(d[near].min()) if near.any() else None
+        reach = math.hypot(BODY_HL + margin, BODY_HW + margin)
+        near = (d < reach) & ~((np.abs(fx) < 0.30) & (np.abs(fy) < 0.12))   # the body itself (legs, voxel smear)
+        if not near.any():
+            return None
+        fx, fy, d = fx[near], fy[near], d[near]
+        if turn_rad is None or abs(turn_rad) >= math.pi:
+            return float(d.min())             # a half turn or more sweeps the whole disc
+        k = max(2, int(abs(math.degrees(turn_rad)) / 2) + 2)
+        hit = np.zeros(len(d), bool)
+        for ph in np.linspace(0.0, turn_rad, k):   # the body rotated by ph: the cells in that body frame
+            c, s = math.cos(ph), math.sin(ph)
+            hit |= body_clearance(c * fx + s * fy, -s * fx + c * fy) < margin
+        return float(d[hit].min()) if hit.any() else None
+
+    def stall_info(self):
+        """For "not making progress" replies (AUT ask 1430): the dog's own avoidance state and body height. 11-22: the
+        dog ignored walking right after a stand-up (locked StandUp, body ~0.329 m, BalanceStand dropped mid-rise)."""
+        _, _, state, _, _, ages = self.snap()
+        h = state["body_height"] if state and ages.get("state", 99) < 2.0 else None
+        return {"dog_avoid_on": bool(getattr(self.node, "avoid", False)), "body_height": h,
+                "locked_stand_suspect": h is not None and h >= 0.325,
+                "hint": "body_height >= 0.325 and no motion: the dog is probably still in its locked stand-up pose; "
+                        "dog_avoid_on: the dog's own obstacle avoidance may have stopped it (its ranges are not "
+                        "published); otherwise something the lidar sees"}
 
     def _map_behind(self):
         """Distance to the nearest saved-map obstacle in the box behind the dog, or None."""
@@ -490,7 +558,7 @@ class Agents:
                     continue
                 return {"result": "blocked", "side": "front" if sign > 0 else "back",
                         "reason": "not making progress (avoidance stopped it, or something is in the way)",
-                        "moved_m": round(done * sign, 3)}
+                        "moved_m": round(done * sign, 3), "stall": self.stall_info()}
             v = max(MIN_SPEED, min(MOVE_SPEED, left * 1.2)) * sign if sign > 0 else -BACK_SPEED
             self._mv(v, 0.0, 0.0)
             self.last_motion = time.monotonic()
@@ -574,12 +642,16 @@ class Agents:
         turned, hist = 0.0, deque()
         while target - turned > early:
             self.tick(deadline)
-            hit = self.sweep_hit()
+            togo = max(0.0, target - turned) + math.radians(TURN_COAST_DEG)
+            mg = self.margins()["turn_margin_m"]
+            hit = self.sweep_hit(togo * sign, mg)
             if hit is not None:
-                return {"result": "blocked", "reason": f"turn_blocked: something {hit:.2f} m from the dog's centre, "
-                        f"inside its turning sweep ({SWEEP_R} m); move clear before turning",
+                return {"result": "blocked", "reason": f"turn_blocked: something {hit:.2f} m from the dog's centre "
+                        f"would be inside the body's sweep over the {math.degrees(togo):.0f} deg still to turn "
+                        f"(turn margin {mg:.2f} m); move clear, turn less, or lower turn_margin_m (margins tool)",
                         "turned": turned * sign, "yaw": self.snap()[0]["yaw"], "why": {"code": "turn_blocked",
-                        "detail": f"obstacle {hit:.2f} m from centre, sweep {SWEEP_R} m"}}
+                        "detail": f"obstacle {hit:.2f} m from centre, sweep over {math.degrees(togo):.0f} deg, "
+                                  f"margin {mg:.2f} m", "turn_margin_m": mg, "obstacle_m": round(hit, 3)}}
             yaw = self.snap()[0]["yaw"]
             turned += wrap(yaw - prev) * sign
             prev = yaw
@@ -719,7 +791,7 @@ class Agents:
             else:
                 cell.append(None)
             rows.append(row)
-        hit = np.nonzero(dmin < ARC_MARGIN)[0]
+        hit = np.nonzero(dmin < self.margins()["arc_margin_m"])[0]
         fin = np.isfinite(dmin)
         return {"rows": rows, "cell": cell, "min": float(dmin[fin].min()) if fin.any() else None,
                 "worst": int(dmin.argmin()) if fin.any() else None, "blocked": int(hit[0]) if len(hit) else None,
@@ -741,9 +813,9 @@ class Agents:
         where = "from where it is now " if during else ""
         why = {"code": "arc_blocked",
                "detail": f"the body's {r['side']} would come {max(r['clearance_m'], 0):.2f} m from an obstacle (needs "
-                         f"{ARC_MARGIN:.2f} m) {r['s_m']:.2f} m along the arc {where}(heading {r['heading_deg']:+.0f} deg)",
+                         f"{self.margins()['arc_margin_m']:.2f} m) {r['s_m']:.2f} m along the arc {where}(heading {r['heading_deg']:+.0f} deg)",
                "s_m": r["s_m"], "heading_deg": r["heading_deg"], "side": r["side"], "clearance_m": r["clearance_m"],
-               "min_clearance_m": None if sw["min"] is None else round(sw["min"], 3), "margin_m": ARC_MARGIN}
+               "min_clearance_m": None if sw["min"] is None else round(sw["min"], 3), "margin_m": self.margins()["arc_margin_m"]}
         c = sw["cell"][i]
         if c is not None:
             why["obstacle"] = self._odom_to_map(*c) or {"x": round(c[0], 2), "y": round(c[1], 2), "frame": "odom"}
@@ -798,7 +870,7 @@ class Agents:
         mn = None if sw["min"] is None else round(sw["min"], 3)
         if dry:
             out = {"result": "done", "dry": True, "clear": sw["blocked"] is None and rear is None, "min_clearance_m": mn,
-                   "margin_m": ARC_MARGIN, "blocked_at": self._arc_why(sw, odom, False) if sw["blocked"] is not None else None,
+                   "margin_m": self.margins()["arc_margin_m"], "blocked_at": self._arc_why(sw, odom, False) if sw["blocked"] is not None else None,
                    "profile": self._arc_profile(sw), "end_pose": self._odom_to_map(*sw["pose"][1]), "stop_reason": "done", **info}
             if rear:
                 out["rear_blocked"] = rear
@@ -870,7 +942,7 @@ class Agents:
                 if (now - t_start > STALL_S + 0.5 and st["s"] - hist[0][1] < STALL_M
                         and abs(st["yaw"] - hist[0][2]) < math.radians(3)):
                     return done({"result": "blocked", "reason": "not making progress (avoidance stopped it, or something "
-                                 "is in the way)"})
+                                 "is in the way)", "stall": self.stall_info()})
                 self._mv(v, 0.0, w)
                 self.last_motion = time.monotonic()
                 time.sleep(0.1)
@@ -972,6 +1044,13 @@ class Agents:
             return self.run(client, call, args, lambda: self._posture(args), stop=False, caps=caps)
         if call == "relocalize":
             return self.run(client, call, args, lambda: self._relocalize(client, args), caps=caps)
+        if call == "margins":      # no motion: the agent's own turn / arc margins (11-22)
+            if args.get("get"):
+                return 200, {"result": "done", "margins": self.margins(client)}
+            try:
+                return 200, self.set_margins(client, args)
+            except (TypeError, ValueError) as e:
+                return 400, {"result": "error", "reason": f"bad arguments: {e}"}
         if call == "arc":          # dry: a read, sends nothing (not even the closing stop)
             sp, dry = self._arc_spec(args, caps), args.get("dry") is True
             return self.run(client, call, args, lambda: self._arc(sp, timeout_s, dry), stop=not dry, caps=caps)
@@ -1260,7 +1339,7 @@ class Agents:
                         hist.clear()
                         prev = self.map_pose_now()
                         continue
-                    return {"result": "blocked", "side": "front", "moved_m": moved, "stall": True,
+                    return {"result": "blocked", "side": "front", "moved_m": moved, "stall": True, "stall_info": self.stall_info(),
                             "reason": "not making progress (something is in the way, or avoidance stopped it)",
                             "at": [mp["x"] + math.cos(mp["yaw"]) * 0.5, mp["y"] + math.sin(mp["yaw"]) * 0.5]}
                 v = MOVE_SPEED if not last else max(MIN_SPEED, min(MOVE_SPEED, dist * 1.2))

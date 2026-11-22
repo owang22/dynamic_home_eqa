@@ -95,7 +95,7 @@ MARKERS = None             # printed ArUco markers in view (go2_markers.py)
 MARKER_TABLE = None        # where they are on the map (go2_marker_table.py): re-anchors the pose
 TRAIL = None               # camera frames along the way, with map poses (go2_trail.py)
 AGENT_CALLS = ("claim", "release", "stop", "say", "status", "move", "turn", "photo", "look_around", "go_to", "look",
-               "posture", "relocalize", "patrol/start", "patrol/stop", "view", "arc")
+               "posture", "relocalize", "patrol/start", "patrol/stop", "view", "arc", "margins")
 PATROLS = None             # patrol envelope, monitor and patrol files (go2_patrol.Patrols)
 PRIOR_DIR = os.path.join("/maps", f"{os.environ.get('MAP_NAME', 'lab')}_prior")   # Oliver's driving prior (11-21)
 
@@ -761,6 +761,28 @@ class Collector(Node):
         self.last_cmd = time.monotonic()
         self.head = 0.0      # standing up or lying down resets the body pose
         self.stop()
+        if name == "stand":
+            # 11-22: BalanceStand sent 0.2 s after StandUp arrived mid-rise and was dropped, leaving the dog in its
+            # locked stand-up pose (body ~0.329 m), which ignores walking; every move after a stand-up from lying
+            # stalled (agent 14:15 + 14:26, Oliver 14:18). Wait for the rise to finish, then BalanceStand (twice).
+            time.sleep(0.2)
+            self.send("StandUp")
+            end, prev, steady = time.monotonic() + 4.0, None, 0
+            while time.monotonic() < end:
+                time.sleep(0.1)
+                with lock:
+                    st = latest.get("state")
+                h = st.get("body_height") if st else None
+                if h is not None and h >= 0.28:
+                    steady = steady + 1 if prev is not None and abs(h - prev) < 0.004 else 0
+                    if steady >= 3:
+                        break
+                prev = h
+            time.sleep(0.2)
+            self.send("BalanceStand")
+            time.sleep(0.3)
+            self.send("BalanceStand")
+            return
         for c in ACTIONS[name]:
             time.sleep(0.2)
             self.send(c)
@@ -1441,6 +1463,8 @@ class Handler(BaseHTTPRequestHandler):
         if call == "say":
             AG.notes[client] = {"text": str(req.get("text", ""))[:300], "t": time.time()}
             return self.send_json(200, {"result": "done"})
+        if call == "margins":                    # no motion: the agent's own turn / arc margins (11-22, Oliver-approved)
+            return self.send_json(*AG.tool("margins", client, req))
         if call == "patrol/stop":                # stops first, then ends the patrol (go2_patrol.Patrols.stop)
             return self.send_json(*PATROLS.stop(client))
         blk = PATROLS.blocks(client)             # an open patrol: no other agent may claim the dog
@@ -1992,6 +2016,31 @@ class Handler(BaseHTTPRequestHandler):
                 return self.send_error(400, "limit must be an integer")
             sampled = q.get("sampled", ["1"])[0] not in ("0", "")
             self.send_json(200, go2_patrol.views(AG, KEEPOUT, TRAIL, AG.places(), PRIOR_DIR, PATROLS, sampled, limit))
+        elif self.path.split("?")[0] == "/patrol/human_turns":
+            # Oliver's in-place turns from his recorded drives (11-22): where he turned, how far, and the live-lidar
+            # clearance then. ?x=&y=&r= (map m) filters to a spot; ?min_turn_deg= to the bigger turns.
+            q = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
+            try:
+                d = json.load(open(os.path.join(PRIOR_DIR, "human_turns.json")))
+                x = float(q["x"][0]) if "x" in q else None
+                y = float(q["y"][0]) if "y" in q else None
+                r = float(q.get("r", [1.5])[0])
+                mt = float(q.get("min_turn_deg", [0])[0])
+            except OSError:
+                return self.send_json(503, {"error": "no human_turns.json in the prior folder"})
+            except ValueError:
+                return self.send_error(400, "x, y, r, min_turn_deg must be numbers")
+            ts = [t for t in d["turns"] if abs(t["turn_deg"]) >= mt]
+            if x is not None and y is not None:
+                ts = [dict(t, dist_m=round(math.hypot(t["map"]["x"] - x, t["map"]["y"] - y), 2)) for t in ts if "map" in t
+                      and math.hypot(t["map"]["x"] - x, t["map"]["y"] - y) <= r]
+                ts.sort(key=lambda t: t["dist_m"])
+            self.send_json(200, {"n": len(ts), "turns": ts[:500], "made": d.get("made"), "note": d.get("note"),
+                                 "fields": "turn_deg (+ left), min_clearance_m = nearest live obstacle cell to the dog's "
+                                           "centre during the turn (band 0.18-0.60 m), min_body_gap_m = smallest gap "
+                                           "between the body rectangle and those cells over the turn he made (bin "
+                                           "centres, approximate; negative = a cell inside the swept outline, usually "
+                                           "smear), map = 19:29 map pose (converted from the old map, ~0.1-0.3 m)"})
         elif self.path.split("?")[0] == "/patrol/prior":
             out, err = go2_patrol.prior(PRIOR_DIR)
             if out is None:

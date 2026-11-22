@@ -193,7 +193,15 @@ def front_clearance(odom, cloud, cloud_age):
                     f"({CAM_X} m ahead of base_link), up to {CLEAR_MAX_M} m; bearing + = left; null = nothing seen"}
 
 
-TURN_NEED_M = 0.42     # go2_agent.SWEEP_R: an in-place turn needs nothing closer than this to the dog's centre
+TURN_NEED_M = None     # override (tests); None = a full in-place turn needs the body's swept corner radius + the turn
+                       # margin in force (default 0.03 m -> 0.42 m, the old SWEEP_R; the agent may lower its margin)
+
+
+def turn_need_m(agent):
+    if TURN_NEED_M is not None:
+        return TURN_NEED_M
+    m = agent.margins()["turn_margin_m"] if hasattr(agent, "margins") else 0.03
+    return round(math.hypot(0.35 + m, 0.155 + m), 3)
 
 
 def _turn_clear(agent, x, y, mp):
@@ -317,8 +325,9 @@ def check(poses, agent, keepout, speed="slow"):
                  tight=bool(plan.get("tight")), squeeze=bool(plan.get("squeeze")),
                  goal_used=[round(gx, 2), round(gy, 2)], snapped_m=round(snap, 2))
         tc, tc_src = _turn_clear(agent, gx, gy, mp)
-        r.update(turn_clear_m=tc, turn_clear_source=tc_src,
-                 ok_to_turn=None if tc is None else bool(tc >= TURN_NEED_M))
+        need = turn_need_m(agent)
+        r.update(turn_clear_m=tc, turn_clear_source=tc_src, turn_need_m=need,
+                 ok_to_turn=None if tc is None else bool(tc >= need))
         flags = []
         if snap > SNAP_WARN_M:
             flags.append(f"goal moved {snap:.2f} m to open floor")
@@ -1094,7 +1103,8 @@ class Patrols:
             if yaws and len(yaws) > 1 and r.get("ok_to_turn") is False:   # AUT ask 18:34 #3
                 return self._refuse({"code": "turn_clearance",
                                      "detail": f"{len(yaws)} headings need turning in place, but the stand has only "
-                                               f"{r['turn_clear_m']} m clear all round (needs {TURN_NEED_M} m)",
+                                               f"{r['turn_clear_m']} m clear all round (needs {r.get('turn_need_m')} m "
+                                               f"at your turn margin; the margins tool can lower it)",
                                      "turn_clear_m": r["turn_clear_m"]})
             caps = self.caps()
             self.p["n_views"] += 1

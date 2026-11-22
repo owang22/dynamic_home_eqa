@@ -70,3 +70,27 @@ Tests: test_view 78/78 (4 new), test_patrol 71/71, test_arc 77/78 (1 new). The f
 stopped mid-arc", fails the same way on the old code: the fixture START is in the old map frame, and the 19:29 map
 has an obstacle 0.65 m behind it. go2_wake.sh: the L515 tunnel no longer inherits the wake lock (it blocked every
 wake after 11-21 15:52).
+
+## 2026-11-22 15:0x — Oliver: margins too strict; agent may lower them (ask 1430 answered)
+- **Stand fix (cause of every "dry clear, moved 0.00" stall today, including Oliver's 14:18 avoid-on drive):**
+  - The cause: the console's stand sent BalanceStand 0.2 s after StandUp, while the dog was still rising. The dog
+    dropped it and stayed in its locked stand-up pose (body 0.329 m), which ignores walking.
+  - Evidence: 14:15:31 arc (avoid on), 14:18:28 Oliver (avoid on), 14:26:36 arc (**avoid off**). In all three, body
+    height was 0.329 and there was no motion; it moved once height dropped to about 0.31.
+  - The fix: Collector.action("stand") sends StandUp, waits up to 4 s for the height to stop rising (>= 0.28 m and
+    steady), then sends BalanceStand twice.
+- Stall replies (move, arc, go_to) now carry `stall` / `stall_info`: {dog_avoid_on, body_height, locked_stand_suspect,
+  hint}.
+- **In-place turn check = the body rectangle swept through the turn still to go** (+10° coast), inflated by the
+  turn margin. It used to be a full circle of SWEEP_R 0.42 m.
+  - The default margin of 0.03 m keeps a full turn at about 0.42 m. Small turns now need much less.
+- **`/agent/margins {client, turn_margin_m?, arc_margin_m?, why?}`**: the agent's own margins.
+  - Range 0..0.20 m; `get: true` reads them, `reset: true` restores the defaults.
+  - They apply while that client owns the dog and are reset by a console restart.
+  - /patrol/check `turn_need_m` / `ok_to_turn` and the turn_clearance refusal use the owner's turn margin.
+- **`GET /patrol/human_turns?x=&y=&r=&min_turn_deg=`**: Oliver's 389 in-place turns from his recorded drives.
+  - Fields: pose (19:29 map, converted), turn_deg, min_clearance_m (live lidar then) and min_body_gap_m.
+  - Source: patrol_tools/human_turns/human_turns.py; data in /maps/lab_prior/human_turns.json, not in git.
+  - Near tag B he turned 190° at (0.08, -3.78) with 0.46 m clearance.
+  - Overall p5 clearance is 0.28 m, and 118/389 turns were below 0.42 m.
+- Tests: test_margins 22/22 (new), test_view 78/78, test_patrol 71/71, test_arc 77/78 (the same old-map fixture failure).
