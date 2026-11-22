@@ -94,3 +94,17 @@ wake after 11-21 15:52).
   - Near tag B he turned 190° at (0.08, -3.78) with 0.46 m clearance.
   - Overall p5 clearance is 0.28 m, and 118/389 turns were below 0.42 m.
 - Tests: test_margins 22/22 (new), test_view 78/78, test_patrol 71/71, test_arc 77/78 (the same old-map fixture failure).
+
+## 2026-11-22 15:1x — AUT asks 1450 + 1452 (Oliver-approved exceptions)
+- **1452:** reverse `/agent/arc` rear check now runs along the arc. The saved map's occupied cells behind the dog's
+  centre are checked against the body rectangle swept along the arc (+ coast) at the arc margin (`source:
+  saved_map_swept`).
+  - It runs both before and during the arc. The live cells were already swept by `_arc_sweep`.
+  - The straight-back raycast and live rear box are no longer used for arcs; `/agent/move` still uses them.
+  - Arc replies carry `stopped_by`: lidar_sweep | rear_map_sweep | progress (with stall_info).
+- **1450:** `/agent/move {lateral_m}` strafes (+ left), at most 0.5 m per call at 0.15 m/s, with heading held.
+  - It is refused or stopped when the live side gap beyond the body side (within the body length + margin) would
+    fall below the arc margin, and it has stall detection.
+  - `/agent/surround` gains `bins_detail` per bin: {d_m, kind band|tall|under, z_min_m, z_max_m, kinds_near}.
+- Tests: test_arc 78/78 (rear tests rewritten for the swept check; the old fixture failure is gone), test_margins
+  27/27 (strafe + surround), test_view 78/78, test_patrol 71/71. The harness sim now integrates lateral velocity.

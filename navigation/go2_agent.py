@@ -52,6 +52,8 @@ SWEEP_R = 0.42           # the dog keeps turning about this much after stop
 TURN_MARGIN_M = 0.03
 TURN_COAST_DEG = 10.0     # the dog keeps turning about this much after the stop
 MARGIN_MAX_M = 0.20
+LAT_MAX_M, LAT_V = 0.5, 0.15   # /agent/move lateral_m (AUT ask 1450): per call, m/s (Oliver's 11-21 pocket exit: 0.27 m
+                               # sideways with 0.37 m back in 3.7 s)
 MAX_MOVE_M, MAX_TURN_DEG = 3.0, 360.0      # per call
 FRONT_CLEAR = (0.35, 0.90, 0.25)           # obstacle box ahead of base_link: x from, x to, half width (m)
 REAR_CLEAR = (0.30, 0.75, 0.22)            # and behind it, when backing up
@@ -365,6 +367,36 @@ class Agents:
             m = (brg >= centre - w / 2) & (brg < centre + w / 2) & (d <= max_m)
             res.append([round(centre, 1), round(float(d[m].min()), 2) if m.any() else None])
         out["bins"] = res
+        # AUT ask 1450 #3: what the nearest cell per bin is (top height above the floor, band / tall / under an overhang)
+        obs = np.asarray(cloud.get("obs") or [], dtype=np.float64).reshape(-1, 3)
+        keep = (obs[:, 2] > BUMP_H[0]) & (obs[:, 2] < BUMP_H[1])
+        if ARC_TALL_MIN is not None:
+            keep |= obs[:, 2] >= ARC_TALL_MIN
+        nb = int(keep.sum())
+        z_all = np.concatenate([obs[keep, 2], np.full(len(pts) - nb, np.nan)])
+        kind_all = np.array(["band" if z < BUMP_H[1] else "tall" for z in obs[keep, 2]] + ["under"] * (len(pts) - nb))
+        z_all, kind_all = z_all[~own], kind_all[~own]
+        det = []
+        for i in range(bins):
+            centre = -180.0 + (i + 0.5) * w
+            m = (brg >= centre - w / 2) & (brg < centre + w / 2) & (d <= max_m)
+            if not m.any():
+                det.append({"bearing_deg": round(centre, 1), "d_m": None})
+                continue
+            idx = np.nonzero(m)[0]
+            near = idx[d[idx] <= d[idx].min() + 0.10]          # the cells within 10 cm of the nearest
+            zz = z_all[near][np.isfinite(z_all[near])]
+            det.append({"bearing_deg": round(centre, 1), "d_m": round(float(d[idx].min()), 2),
+                        "kind": str(kind_all[idx[np.argmin(d[idx])]]),
+                        "z_min_m": round(float(zz.min()), 2) if len(zz) else None,
+                        "z_max_m": round(float(zz.max()), 2) if len(zz) else None,
+                        "kinds_near": sorted(set(kind_all[near].tolist()))})
+        out["bins_detail"] = det
+        out["bins_detail_note"] = ("per bin: the nearest cell and the cells within 10 cm of it. z = the cell's top above "
+                                   "the floor (the dog's cloud keeps only each cell's top, so a desk edge reads its top). "
+                                   "kind: band (0.18-0.60 m), tall (top >= 1.0 m: walls, cabinets, people), under (open "
+                                   "floor under an overhang such as a desk; counted as an obstacle). Body ~0.45 m high, "
+                                   "L515 mast 0.68 m")
         hl, hw = 0.35, 0.155                                    # half length / half width of the body
         def gap(sel, val):
             return round(float(val[sel].min()), 2) if sel.any() else None
@@ -561,6 +593,70 @@ class Agents:
                         "moved_m": round(done * sign, 3), "stall": self.stall_info()}
             v = max(MIN_SPEED, min(MOVE_SPEED, left * 1.2)) * sign if sign > 0 else -BACK_SPEED
             self._mv(v, 0.0, 0.0)
+            self.last_motion = time.monotonic()
+            time.sleep(0.1)
+
+    def _side_gap(self, sign):
+        """Free distance (m) beyond the body's left (sign +1) or right (-1) side to the nearest live obstacle cell within
+        the body's length + the arc margin, or None if nothing is within 1 m. Same cells as the arc check."""
+        odom, _, _, cloud, _, ages = self.snap()
+        if not cloud or not cloud.get("obs") or ages.get("cloud", 99) > ARC_CLOUD_MAX_S or cloud.get("frame") == "base_link":
+            raise RuntimeError("stale_sensors: no fresh live lidar for the side check (lying down pauses it)")
+        pts = self._live_obstacle_pts(cloud)
+        if not len(pts):
+            return None
+        dx, dy = pts[:, 0] - odom["pos"][0], pts[:, 1] - odom["pos"][1]
+        c, s = math.cos(odom["yaw"]), math.sin(odom["yaw"])
+        fx, fy = c * dx + s * dy, -s * dx + c * dy
+        mg = self.margins()["arc_margin_m"]
+        sel = (np.abs(fx) < BODY_HL + mg) & (sign * fy > BODY_HW - 0.02) & ~((np.abs(fx) < 0.30) & (np.abs(fy) < 0.12))
+        g = sign * fy[sel] - BODY_HW
+        g = g[g < 1.0]
+        return float(g.min()) if len(g) else None
+
+    def _strafe(self, lat_m, timeout_s):
+        """Sideways (+ = left) by up to LAT_MAX_M at LAT_V, heading held. Refused / stopped when the live side gap
+        would fall below the arc margin; stall detection as move."""
+        lat_m = max(-LAT_MAX_M, min(LAT_MAX_M, lat_m))
+        sign = 1 if lat_m >= 0 else -1
+        deadline = time.monotonic() + timeout_s
+        odom0 = self.snap()[0]
+        if odom0 is None:
+            raise RuntimeError("stale_sensors")
+        x0, y0, yaw0 = odom0["pos"][0], odom0["pos"][1], odom0["yaw"]
+        mg = self.margins()["arc_margin_m"]
+        side = "left" if sign > 0 else "right"
+        g = self._side_gap(sign)
+        if g is not None and g - abs(lat_m) < mg:
+            return {"result": "refused", "side": side, "moved_m": 0.0, "side_gap_m": round(g, 3),
+                    "reason": f"side_blocked: {g:.2f} m free on the {side}, {abs(lat_m):.2f} m asked + margin {mg:.2f} m",
+                    "why": {"code": "side_blocked", "side_gap_m": round(g, 3), "margin_m": mg,
+                            "max_lateral_m": round(max(0.0, g - mg), 2)}}
+        hist, t_start = deque(), time.monotonic()
+        while True:
+            self.tick(deadline)
+            odom = self.snap()[0]
+            done = (-(odom["pos"][0] - x0) * math.sin(yaw0) + (odom["pos"][1] - y0) * math.cos(yaw0)) * sign
+            left = abs(lat_m) - done
+            if left <= 0.02:
+                return {"result": "done", "moved_m": round(done * sign, 3), "lateral": True}
+            g = self._side_gap(sign)
+            if g is not None and g < mg:
+                return {"result": "blocked", "side": side, "moved_m": round(done * sign, 3), "side_gap_m": round(g, 3),
+                        "reason": f"side_blocked: {g:.2f} m free on the {side} (margin {mg:.2f} m)",
+                        "why": {"code": "side_blocked", "side_gap_m": round(g, 3), "margin_m": mg}}
+            now = time.monotonic()
+            hist.append((now, done))
+            while hist and now - hist[0][0] > STALL_S:
+                hist.popleft()
+            if now - t_start > STALL_S + 0.5 and hist and done - hist[0][1] < STALL_M:
+                return {"result": "blocked", "side": side, "moved_m": round(done * sign, 3), "lateral": True,
+                        "reason": "not making progress (avoidance stopped it, or something is in the way)",
+                        "stall": self.stall_info()}
+            v = LAT_V if not self.caps else min(LAT_V, self.caps["v"])
+            # hold the heading: small yaw correction
+            yerr = wrap(yaw0 - odom["yaw"])
+            self._mv(0.0, sign * v, max(-0.3, min(0.3, 1.5 * yerr)))
             self.last_motion = time.monotonic()
             time.sleep(0.1)
 
@@ -823,8 +919,56 @@ class Agents:
             why["s_m_note"] = "s_m / heading_deg count from where the dog stopped, not from the arc's start"
         return why
 
-    def _arc_rear(self):
-        """Backing up: the saved-map rear check, then the live rear box (as _move / obstacle(-1)). {code, detail} or None."""
+    def _arc_rear(self, v=None, w=None, length=None):
+        """Backing up along an arc (AUT ask 1452, Oliver-approved): the saved map's occupied cells BEHIND the dog's
+        centre against the body rectangle swept along the arc itself (the live cells are already swept by
+        _arc_sweep), instead of the straight-back raycast + live rear box that /agent/move uses. {code, ...} or None."""
+        if v is not None:
+            return self._arc_rear_swept(v, w, length)
+        return self._arc_rear_straight()
+
+    def _arc_rear_swept(self, v, w, length):
+        mp = self.map_pose_now()
+        m = self.mapper
+        if mp is None or m is None or getattr(m, "score", None) is None:
+            return None
+        from go2_mapper import OCC_SCORE, RES
+        R = length + 0.9
+        c0, r0 = int((mp["x"] - R - m.origin[0]) / RES), int((mp["y"] - R - m.origin[1]) / RES)
+        c1, r1 = int((mp["x"] + R - m.origin[0]) / RES) + 1, int((mp["y"] + R - m.origin[1]) / RES) + 1
+        c0, r0 = max(c0, 0), max(r0, 0)
+        c1, r1 = min(c1, m.score.shape[1]), min(r1, m.score.shape[0])
+        if c1 <= c0 or r1 <= r0:
+            return None
+        rr, cc = np.nonzero(m.score[r0:r1, c0:c1] >= OCC_SCORE)
+        if not len(rr):
+            return None
+        gx = m.origin[0] + (cc + c0 + 0.5) * RES
+        gy = m.origin[1] + (rr + r0 + 0.5) * RES
+        cs, sn = math.cos(mp["yaw"]), math.sin(mp["yaw"])
+        dx, dy = gx - mp["x"], gy - mp["y"]
+        px, py = cs * dx + sn * dy, -sn * dx + cs * dy
+        keep = (px < -0.10) & ~((np.abs(px) < BODY_HL) & (np.abs(py) < BODY_HW))   # behind the centre, not under the body
+        px, py = px[keep], py[keep]
+        if not len(px):
+            return None
+        n = max(1, int(math.ceil(length / ARC_STEP_M)), int(math.ceil(abs(w) * length / abs(v) / ARC_STEP_RAD)))
+        sarr, ax, ay, ath = arc_poses(v, w, length, n)
+        ct, st = np.cos(ath)[:, None], np.sin(ath)[:, None]
+        qx, qy = px[None, :] - ax[:, None], py[None, :] - ay[:, None]
+        d = body_clearance(ct * qx + st * qy, -st * qx + ct * qy)
+        mg = self.margins()["arc_margin_m"]
+        i, j = np.unravel_index(np.argmin(d), d.shape)
+        if d[i, j] >= mg:
+            return None
+        return {"code": "rear_blocked", "source": "saved_map_swept", "clearance_m": round(float(d[i, j]), 3),
+                "s_m": round(float(sarr[i]), 3), "margin_m": mg,
+                "obstacle": {"x": round(float(gx[keep][j]), 2), "y": round(float(gy[keep][j]), 2), "frame": "map"},
+                "detail": f"the saved map has an obstacle {max(float(d[i, j]), 0):.2f} m from the body (needs {mg:.2f} m) "
+                          f"{float(sarr[i]):.2f} m along the reverse arc (the lidar barely sees behind the dog)"}
+
+    def _arc_rear_straight(self):
+        """The straight-back checks (as _move / obstacle(-1)). {code, detail} or None."""
         m = self._map_behind()
         if m is not None:
             return {"code": "rear_blocked", "source": "saved_map", "dist_m": round(m, 2),
@@ -866,7 +1010,7 @@ class Agents:
             if r["s_m"] > sp["length"] + 1e-6:
                 r["coast"] = True
         info["arc"]["coast_m"] = round(coast, 3)
-        rear = self._arc_rear() if back else None
+        rear = self._arc_rear(v, w, sp["length"] + coast) if back else None
         mn = None if sw["min"] is None else round(sw["min"], 3)
         if dry:
             out = {"result": "done", "dry": True, "clear": sw["blocked"] is None and rear is None, "min_clearance_m": mn,
@@ -881,10 +1025,11 @@ class Agents:
             return out
         if sw["blocked"] is not None:
             why = self._arc_why(sw, odom, False)
-            return {"result": "refused", "reason": f"arc_blocked: {why['detail']}", "why": why, "min_clearance_m": mn,
+            return {"result": "refused", "reason": f"arc_blocked: {why['detail']}", "why": why, "min_clearance_m": mn, "stopped_by": "lidar_sweep",
                     "moved_m": 0.0, **info}
         if rear:
-            return {"result": "refused", "reason": f"rear_blocked: {rear['detail']}", "why": rear, "moved_m": 0.0, **info}
+            return {"result": "refused", "reason": f"rear_blocked: {rear['detail']}", "why": rear, "moved_m": 0.0,
+                    "stopped_by": "rear_map_sweep", **info}
         deadline = time.monotonic() + timeout_s
         st = {"prev": odom, "s": 0.0, "yaw": 0.0, "min": sw["min"]}
         sgn_w = 1.0 if w >= 0 else -1.0
@@ -929,12 +1074,12 @@ class Agents:
                 if sw["blocked"] is not None:
                     why = self._arc_why(sw, o, True)
                     return done({"result": "blocked", "reason": f"arc_blocked: obstacle: {why['detail']}", "why": why,
-                                 "side": why["side"]})
+                                 "side": why["side"], "stopped_by": "lidar_sweep"})
                 if back:
-                    rear = self._arc_rear()
+                    rear = self._arc_rear(v, w, max(left, 0.01) + coast)
                     if rear:
                         return done({"result": "blocked", "reason": f"rear_blocked: obstacle: {rear['detail']}",
-                                     "why": rear, "side": "back"})
+                                     "why": rear, "side": "back", "stopped_by": "rear_map_sweep"})
                 now = time.monotonic()
                 hist.append((now, st["s"], st["yaw"]))
                 while hist and now - hist[0][0] > STALL_S:
@@ -942,7 +1087,7 @@ class Agents:
                 if (now - t_start > STALL_S + 0.5 and st["s"] - hist[0][1] < STALL_M
                         and abs(st["yaw"] - hist[0][2]) < math.radians(3)):
                     return done({"result": "blocked", "reason": "not making progress (avoidance stopped it, or something "
-                                 "is in the way)", "stall": self.stall_info()})
+                                 "is in the way)", "stall": self.stall_info(), "stopped_by": "progress"})
                 self._mv(v, 0.0, w)
                 self.last_motion = time.monotonic()
                 time.sleep(0.1)
@@ -1012,6 +1157,10 @@ class Agents:
             return meta
 
         if call == "move":
+            if args.get("lateral_m") is not None:
+                if args.get("m") not in (None, 0, 0.0):
+                    return 400, {"result": "error", "reason": "bad arguments: give m (forward/back) or lateral_m, not both"}
+                return self.run(client, call, args, lambda: self._strafe(float(args["lateral_m"]), timeout_s), caps=caps)
             return self.run(client, call, args, lambda: self._move(args["m"], timeout_s), caps=caps)
         if call == "turn":
             return self.run(client, call, args, lambda: self._turn(args["deg"], timeout_s), caps=caps)

@@ -68,8 +68,8 @@ class Sim:
             vx, vy, wz, tc = self.cmd
             if now - tc > 0.3:
                 vx = vy = wz = 0.0
-            self.x += math.cos(self.yaw) * vx * dt
-            self.y += math.sin(self.yaw) * vx * dt
+            self.x += (math.cos(self.yaw) * vx - math.sin(self.yaw) * vy) * dt     # vy: + = left (strafe, 11-22)
+            self.y += (math.sin(self.yaw) * vx + math.cos(self.yaw) * vy) * dt
             self.yaw = (self.yaw + wz * dt + math.pi) % (2 * math.pi) - math.pi
             head = self.node.head if self.node and self.look_holds else 0.0
             wall = time.time()

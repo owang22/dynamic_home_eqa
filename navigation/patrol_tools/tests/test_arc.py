@@ -232,25 +232,26 @@ code, out = arc(w, v_mps=0.1, w_radps=0.6, end_yaw_deg=350, dry=True)
 ok("dry run: long profile thinned to ARC_PROFILE_MAX", out["clear"] and len(out["profile"]) <= A.ARC_PROFILE_MAX, len(out["profile"]))
 w.close()
 
-# ---------------- saved-map rear check (planner on, START has furniture behind it) ----------------
+# ---------------- saved-map rear check along the reverse arc (AUT ask 1452; START has furniture behind it) ----------------
 w = world(planner=True)
-code, out = arc(w, v_mps=-0.15, w_radps=0.1, distance_m=0.4)
-ok("reverse arc from START: stopped mid-arc by the saved-map rear check", out["result"] == "blocked" and out["stop_reason"] == "obstacle"
-   and out["why"]["code"] == "rear_blocked" and out["why"]["source"] == "saved_map" and -0.4 < out["moved_m"] < -0.02,
-   (out.get("why"), out.get("moved_m")))
-code, out = arc(w, v_mps=-0.15, w_radps=0.1, distance_m=0.3, dry=True)
-ok("  dry run there says so (clear false, rear_blocked saved_map)", out["clear"] is False and out["rear_blocked"]["source"] == "saved_map")
 n0 = len(w.node.calls)
-code, out = arc(w, v_mps=-0.15, w_radps=0.1, distance_m=0.3)
-ok("  and a real reverse arc there is refused before moving", out["result"] == "refused" and out["why"]["code"] == "rear_blocked"
+code, out = arc(w, v_mps=-0.15, w_radps=0.1, distance_m=0.4)
+ok("reverse arc 0.4 m from START: refused up front by the saved map swept along the arc", out["result"] == "refused"
+   and out["why"]["code"] == "rear_blocked" and out["why"]["source"] == "saved_map_swept" and out.get("stopped_by") == "rear_map_sweep"
    and not moves(w, n0), out.get("why"))
+code, out = arc(w, v_mps=-0.15, w_radps=0.1, distance_m=0.4, dry=True)
+ok("  dry run there says so (clear false, rear_blocked saved_map_swept)", out["clear"] is False
+   and out["rear_blocked"]["source"] == "saved_map_swept", out.get("rear_blocked"))
+code, out = arc(w, v_mps=-0.15, w_radps=0.1, distance_m=0.15, dry=True)
+ok("  a short reverse arc that stops short of it is clear (the straight-back box would have refused it)", out["clear"]
+   and w.ag._arc_rear_straight() is not None, (out.get("rear_blocked"), w.ag._arc_rear_straight()))
 code, out = arc(w, v_mps=0.3, w_radps=0.1, distance_m=0.3, dry=True)
 ok("  forward arc there: no rear check", out["clear"] and "rear_blocked" not in out)
 w.cloud.obs = [[*body_pt(w, -0.5, 0.0), 0.4]]; time.sleep(0.3)
 pl, w.ag.planner = w.ag.planner, None
 code, out = arc(w, v_mps=-0.15, w_radps=0.0, distance_m=0.1, dry=True)
-ok("  live rear box (no map): 0.5 m behind refuses even a 0.1 m reverse arc", out["clear"] is False and out["rear_blocked"]["source"] == "live_rear_box",
-   out.get("rear_blocked"))
+ok("  live cell 0.5 m behind (no map): a 0.1 m reverse arc is not clear (live swept footprint)", out["clear"] is False
+   and out["blocked_at"]["code"] == "arc_blocked", out.get("blocked_at"))
 ok("  reverse dry run is marked rear_unverified (AUT ask 1416 #4)", out.get("rear_unverified") is True and out.get("rear_note"))
 w.ag.planner = pl
 w.close()

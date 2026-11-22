@@ -112,6 +112,24 @@ ok("reset -> defaults", r.json()["margins"]["source"] == "default" and r.json()[
 ok("another client's margins do not apply to the owner", (FH("/agent/margins", {"client": "other", "turn_margin_m": 0.0}).code == 200)
    and ag.margins()["turn_margin_m"] == A.TURN_MARGIN_M)
 
+# lateral move (AUT ask 1450)
+put(w, 0.0, 0.30)          # left side: 0.145 m free beyond the body side
+code, out = ag.tool("move", C, {"client": C, "lateral_m": 0.2, "timeout_s": 10})
+ok("strafe 0.2 m left with 0.145 m free: refused side_blocked", out.get("result") == "refused" and out["why"]["code"] == "side_blocked", out)
+y0 = w.sim.y; x0 = w.sim.x
+code, out = ag.tool("move", C, {"client": C, "lateral_m": -0.2, "timeout_s": 10})
+ok("strafe 0.2 m right (clear): done, moved sideways", out.get("result") == "done" and abs(out["moved_m"] + 0.2) < 0.05, out)
+code, out = ag.tool("move", C, {"client": C, "lateral_m": 0.1, "m": 0.3})
+ok("m and lateral_m together refused (400)", code == 400)
+ok("sim got lateral commands", any(c[2] == "move" and abs(c[4]) > 0.05 for c in w.node.calls), [c for c in w.node.calls if c[2] == "move"][-2:])
+# surround detail: one band cell and one tall cell
+w.cloud.obs = [[*body_pt(w, 0.8, 0.0), 0.40], [*body_pt(w, 0.0, -0.9), 1.6]]
+time.sleep(0.35)
+sr = ag.surround()
+det = [b for b in sr.get("bins_detail", []) if b.get("d_m") is not None]
+ok("surround bins_detail: kinds + z of the nearest cells", any(b["kind"] == "band" and b["z_max_m"] == 0.4 for b in det)
+   and any(b["kind"] == "tall" and b["z_min_m"] == 1.6 for b in det) and len(sr["bins"]) == 36, det)
+
 # stall_info
 si = ag.stall_info()
 ok("stall_info fields", {"dog_avoid_on", "body_height", "locked_stand_suspect", "hint"} <= set(si), si)
