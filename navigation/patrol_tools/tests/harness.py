@@ -113,6 +113,7 @@ class World:
 
     def __init__(self, monitor=True):
         self.tmp = tempfile.mkdtemp(prefix="s3w_")
+        go2_agent.HELD_FILE = os.path.join(self.tmp, "held_cloud.json")   # never the live /maps one
         shutil.copy("/maps/lab.grid.npz", self.tmp)
         self.latest = {"motors": None, "imu": None, "odom": None, "state": None, "joints": None, "cloud": None,
                        "map": None, "map_pose": None, "stamps": {}}

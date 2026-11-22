@@ -127,4 +127,5 @@ wake after 11-21 15:52).
     is (no ghosts).
   - Effect: dry runs, surround, /patrol/check at the dog and the turn sweep work while lying. Motion still needs a
     stand (check_safe).
-- Tests: test_margins 36/36 (patrol strafe, held cloud), test_arc 78/78, test_view 78/78, test_patrol 71/71.
+- The held cloud is saved to /maps/held_cloud.json on lie-down and reloaded once after a console restart (deploys happen while lying). Tests use a temp file.
+- Tests: test_margins 38/38 (patrol strafe, held cloud, reload), test_arc 78/78, test_view 78/78, test_patrol 71/71.

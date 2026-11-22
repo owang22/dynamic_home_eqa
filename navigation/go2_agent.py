@@ -54,7 +54,8 @@ TURN_COAST_DEG = 10.0     # the dog keeps turning about this much after the stop
 MARGIN_MAX_M = 0.20
 HOLD_MOVE_M, HOLD_YAW_DEG = 0.05, 5.0     # held cloud valid while the dog stays this close to where it was (ask 1510)
 HOLD_RICH_FRAC, HOLD_SPARSE_FRAC = 0.8, 0.5
-HOLD_AFTER_STAND_S = 15.0                 # merge held cells into a sparse live map only this long after a stand-up   # replace the held cloud when live has >= 80% of its cells; merge below 50%
+HOLD_AFTER_STAND_S = 15.0
+HELD_FILE = os.environ.get("GO2_HELD_CLOUD", "/maps/held_cloud.json")   # saved on lie-down, reloaded after a restart                 # merge held cells into a sparse live map only this long after a stand-up   # replace the held cloud when live has >= 80% of its cells; merge below 50%
 LAT_MAX_M, LAT_V = 0.5, 0.15   # /agent/move lateral_m (AUT ask 1450): per call, m/s (Oliver's 11-21 pocket exit: 0.27 m
                                # sideways with 0.37 m back in 3.7 s)
 MAX_MOVE_M, MAX_TURN_DEG = 3.0, 360.0      # per call
@@ -322,6 +323,14 @@ class Agents:
         n_live = len(cloud.get("obs") or []) if live_ok else 0
         pose = (odom["pos"][0], odom["pos"][1], odom["yaw"])
         h = getattr(self, "_held", None)
+        if h is None and not getattr(self, "_held_loaded", False):
+            self._held_loaded = True               # once per process: the dog may have lain through a console restart
+            try:
+                with open(HELD_FILE) as fh:
+                    d = json.load(fh)
+                h = self._held = {"cloud": d["cloud"], "pose": tuple(d["pose"]), "n": d["n"], "t": d["t"], "loaded": True}
+            except (OSError, ValueError, KeyError, TypeError):
+                h = None
 
         def moved(hh):
             return (math.hypot(pose[0] - hh["pose"][0], pose[1] - hh["pose"][1]) > HOLD_MOVE_M
@@ -330,6 +339,9 @@ class Agents:
         was = getattr(self, "_was_standing", None)
         if standing and was is False:
             self._stood_t = now                    # lying -> standing: the dog's voxel map restarts
+        if was and not standing and h is not None and not h.get("saved"):
+            h["saved"] = True                      # standing -> lying: keep the held cloud across console restarts
+            threading.Thread(target=self._save_held, args=(dict(h),), daemon=True, name="held-save").start()
         self._was_standing = standing
         if standing and not live_ok:
             return cloud, ages                     # standing with no live cloud is a sensor fault: never hold
@@ -501,6 +513,16 @@ class Agents:
             c, s = math.cos(ph), math.sin(ph)
             hit |= body_clearance(c * fx + s * fy, -s * fx + c * fy) < margin
         return float(d[hit].min()) if hit.any() else None
+
+    def _save_held(self, h):
+        try:
+            tmp = HELD_FILE + ".tmp"
+            with open(tmp, "w") as fh:
+                json.dump({"cloud": {k: h["cloud"].get(k) for k in ("frame", "obs", "under_obs")}, "pose": list(h["pose"]),
+                           "n": h["n"], "t": h["t"]}, fh)
+            os.replace(tmp, HELD_FILE)
+        except (OSError, TypeError, ValueError) as e:
+            print(f"[held] save failed: {e}", flush=True)
 
     def stall_info(self):
         """For "not making progress" replies (AUT ask 1430): the dog's own avoidance state and body height. 11-22: the

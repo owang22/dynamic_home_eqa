@@ -6,7 +6,8 @@ sys.path.insert(0, "/tmp/s3test")
 import numpy as np
 import harness as H
 from harness import World
-import go2_agent as A, go2_patrol
+import go2_agent as A, go2_patrol, os, tempfile
+A.HELD_FILE = os.path.join(tempfile.mkdtemp(), "held_cloud.json")
 import go2_dashboard as D
 
 RES = []
@@ -156,6 +157,11 @@ ok("lying, lidar off: surround uses the held cloud, flagged", sr.get("cloud_held
 code, out = ag.tool("arc", C, {"client": C, "v_mps": 0.2, "w_radps": 0.0, "distance_m": 0.3, "dry": True})
 ok("lying: arc dry run works on the held cloud", out.get("dry") and "clear" in out and "no_live_cloud" not in str(out.get("reason")), out.get("reason"))
 ok("lying: turn sweep sees the held 0.40 m side cell", ag.sweep_hit(None) is not None)
+time.sleep(0.5)
+ok("lie-down saved the held cloud to disk", os.path.exists(A.HELD_FILE), A.HELD_FILE)
+ag._held, ag._held_merge, ag._held_loaded = None, None, False      # as after a console restart while lying
+ok("after a restart while lying: held cloud reloaded from disk", ag.sweep_hit(None) is not None
+   and (ag.surround().get("cloud_held") or {}).get("why", "").startswith("lying"))
 w.sim.body_h = 0.30
 w.cloud.obs = [[*body_pt(w, 2.5, 0.0), 0.4]]; w.cloud.on = True; time.sleep(0.4)
 _, _, _, cl, _, ages = ag.snap()
