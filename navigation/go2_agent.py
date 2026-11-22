@@ -374,7 +374,8 @@ class Agents:
             left = abs(m) - done
             if left <= 0.03:
                 return {"result": "done", "moved_m": round(done * sign, 3)}
-            ob = self.obstacle(sign)
+            ob = self.obstacle(sign, force=True)   # front box even with the dog's avoidance on: it missed a chair
+                                                   # on 11-21 (p_20261121_182815), so agents don't rely on it alone
             if ob is not None:
                 return {"result": "blocked", "side": "front" if sign > 0 else "back",
                         "reason": f"obstacle {ob:.2f} m from the robot centre", "moved_m": round(done * sign, 3)}
