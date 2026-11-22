@@ -59,6 +59,15 @@ def _wrap(a):
     return (a + math.pi) % (2 * math.pi) - math.pi
 
 
+def _num(v):
+    """float(v), or 0.0 if it is not a number (bad arguments are reported by the tool itself)."""
+    try:
+        v = float(v)
+    except (TypeError, ValueError):
+        return 0.0
+    return v if math.isfinite(v) else 0.0
+
+
 class Keepout:
     def __init__(self, root, name):
         self.path = os.path.join(root, f"{name}_keepout.json")
@@ -349,7 +358,8 @@ MONITOR_S = 0.2
 KEEPOUT_INSIDE_M = 0.0       # monitor: a patrol tool stops if the dog's centre gets inside a keep-out zone (+ margin)
 MIN_BODY_H = 0.18            # go2_agent.MIN_BODY_H: lower means lying down
 TILT_LIMIT = 0.6             # go2_agent.TILT_LIMIT
-MOTION_CALLS = ("move", "turn", "go_to", "look_around", "look", "view")   # what the envelope checks and interrupts
+MOTION_CALLS = ("move", "turn", "go_to", "look_around", "look", "view", "arc")   # what the envelope checks and interrupts
+                                                                               # (a dry arc is a read: neither)
 STICKY = ("time_up", "battery_low", "motor_warm")                         # these halt a patrol for good
 PATROL_ID_RE = re.compile(r"^p_\d{8}_\d{6}(_\d{1,3})?$")
 FILE_PART_RE = re.compile(r"^[A-Za-z0-9_][A-Za-z0-9_.-]{0,80}$")
@@ -821,6 +831,8 @@ class Patrols:
             return None
         if call in ("photo", "relocalize", "claim"):
             return None
+        if call == "arc" and req.get("dry") is True:    # a dry run only reads the lidar; it sends nothing
+            return None
         if p.get("halt"):
             return dict(p["halt"], detail=f"patrol halted: {p['halt']['detail']}")
         conds = self.conditions()
@@ -847,6 +859,9 @@ class Patrols:
                     if -m > caps["back_m"]:
                         req["m"] = -caps["back_m"]
                         req["clamped_from_m"] = m
+            if call == "arc" and _num(req.get("v_mps")) < 0 and caps["back_m"] < 0.05:
+                return self._refuse({"code": "reverse_budget", "detail": f"the patrol's {PATROL_BACK_TOTAL_M} m "
+                                     "of reverse are used up"})   # Agents._arc_spec caps a reverse arc at back_m
             if call == "go_to":
                 try:
                     gx, gy, gyaw, _ = self.ag._goal(req)
@@ -862,7 +877,7 @@ class Patrols:
             self.interrupted = None
         code, out = self.ag.tool(call, client, req, caps=caps)
         with self.lock:
-            if call == "move" and isinstance(out.get("moved_m"), (int, float)) and out["moved_m"] < 0:
+            if call in ("move", "arc") and isinstance(out.get("moved_m"), (int, float)) and out["moved_m"] < 0:
                 self.p["reverse_used_m"] += -out["moved_m"]
             if isinstance(out.get("moved_m"), (int, float)):
                 self.p["walked_m"] = round(self.p["walked_m"] + abs(out["moved_m"]), 2)
@@ -980,7 +995,7 @@ class Patrols:
                 p["halt"], p["state"] = c, "halted"
                 self._event("halt", **c)
                 self._save()
-        if mine and cur.get("call") in MOTION_CALLS:
+        if mine and cur.get("call") in MOTION_CALLS and not (cur.get("call") == "arc" and (cur.get("args") or {}).get("dry") is True):
             why = p.get("halt") or (conds[0] if conds else None)
             if why and not self.ag.abort.is_set():
                 self.interrupted = {"code": why["code"], "detail": why["detail"]}

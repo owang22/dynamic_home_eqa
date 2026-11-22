@@ -85,7 +85,8 @@ WATCHDOG = None           # last POST /watchdog from ~/oliver/go2_watchdog.py (h
 DOG_ST = {"state": None, "since": 0.0, "active_t": 0.0}
 DOG_OFF_S = 10.0          # odom older than this: the dog is off (same rule as go2_watchdog.py)
 DOG_IDLE_S = 30.0         # no motion, posture change or command for this long: idle
-MOTION_AGENT_CALLS = ("claim", "move", "turn", "look_around", "go_to", "look", "posture", "relocalize", "patrol/start", "view")
+MOTION_AGENT_CALLS = ("claim", "move", "turn", "look_around", "go_to", "look", "posture", "relocalize", "patrol/start", "view",
+                      "arc")   # arc: dry runs are refused while deploying too (simpler)
 AG = None                  # agent tools and who has control (go2_agent.py)
 MAPPER = None              # lab map built from the lidar clouds (go2_mapper.py)
 EXAMPLES = None            # objects labelled by example from camera frames (go2_examples.py)
@@ -94,7 +95,7 @@ MARKERS = None             # printed ArUco markers in view (go2_markers.py)
 MARKER_TABLE = None        # where they are on the map (go2_marker_table.py): re-anchors the pose
 TRAIL = None               # camera frames along the way, with map poses (go2_trail.py)
 AGENT_CALLS = ("claim", "release", "stop", "say", "status", "move", "turn", "photo", "look_around", "go_to", "look",
-               "posture", "relocalize", "patrol/start", "patrol/stop", "view")
+               "posture", "relocalize", "patrol/start", "patrol/stop", "view", "arc")
 PATROLS = None             # patrol envelope, monitor and patrol files (go2_patrol.Patrols)
 PRIOR_DIR = os.path.join("/maps", f"{os.environ.get('MAP_NAME', 'lab')}_prior")   # Oliver's driving prior (11-21)
 
