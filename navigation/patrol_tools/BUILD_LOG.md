@@ -15,6 +15,10 @@ Code is in `../` (go2_patrol.py, go2_dashboard.py, go2_agent.py, go2_watchdog.py
 | 17:29 | `GET /patrol/views` candidates (seen counts, walk length), `GET /patrol/prior` (4c0c93a79f) | agreed plan step 4-5 (inbox 16:25) |
 | 17:34 | Watchdog detects an L515 missing from the Pi's USB instead of restarting the bridge every 2 min (402d19b77e) | ahead of the expected "L515 back online" ask: the root cause is hardware (unplugged); Oliver asked to reconnect it |
 | 17:48 | est_s depends on the speed preset (slow 3.4 s + m/0.12; normal as before); per-heading cost measured (8fb8378f58) | AUT trace, patrol 2: est_s 1.3-1.7x optimistic; draft per-heading ask (as data, no new API) |
+| 17:59 | Shot `clearance` (front_clear_m, ranges_deg_m from the live lidar) (7aab51a8fe) | AUT ask 17:47: v003 h1 faced a cable bundle 0.3 m from the lens (patrol 2) |
+| 17:59 | `relocalize tag` refusal lists each tag's stand pose and viewable_from_here / turn (7aab51a8fe) | AUT ask 17:52 (offer b): spun 360 deg near the sofa where tag D faces away (patrol 2) |
+| 17:59 | `/patrol/check` yaw lists → per-heading est_face_s; shots log face_s (7aab51a8fe) | AUT ask 17:52: flat 6.9 s per heading over-bought big turns |
+| 17:59 | loc_suspect says what raised it (`suspect_why`: lidar_fit or tag + shift) (7aab51a8fe) | traced failure, patrol 3: the abort said "lidar looks shifted", but tag A disagreed with the lidar by 0.42 m; the AUT blamed the stale map |
 
 ## Not buildable here (and why)
 - **Live motion tests by the control PC itself:** the permission rules on Z690 block me from sending patrol or motion
