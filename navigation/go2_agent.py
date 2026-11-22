@@ -147,6 +147,7 @@ class Agents:
         # Speed caps for the tool that is running, or None (go2_patrol: patrol-scoped, never global). Keys:
         # v (forward m/s), back_v (reverse m/s), turn_v (rad/s), back_m (reverse per move). Set by run() for one call.
         self.caps = None
+        self.tag_lineup = None         # relocalize mode "tag": set by the console (go2_dashboard.tag_lineup_for_agent)
         self.human_seq = 0             # +1 on every human takeover (go2_patrol ends a patrol on any change)
 
     # ---------- ownership ----------
@@ -577,7 +578,8 @@ class Agents:
                         "reason": f"the body height did not show {pose} within {POSTURE_S:.0f} s"}
 
     def _relocalize(self, client, args):
-        """search / global: where the dog could be on the map (not applied). set: put it at x, y, yaw."""
+        """tag: line up from a printed tag in view (vision; refused with the tags' map poses if none is usable).
+        search / global: where the dog could be on the map (not applied). set: put it at x, y, yaw."""
         m = self.mapper
         if m is None:
             raise RuntimeError("no map")
@@ -602,6 +604,10 @@ class Agents:
                 return {"result": "error", "reason": err, "current": here}
             return {"result": "done", "mode": mode, "candidates": cands, "current": here,
                     "searched": None if centre is None else {"x": centre[0], "y": centre[1], "radius_m": radius}}
+        if mode == "tag":                  # line up from a printed tag in view (vision), as "Line up again" does
+            if self.tag_lineup is None:
+                return {"result": "error", "reason": "tag line-up is not available on this console"}
+            return dict(self.tag_lineup(client), current=here)
         if mode == "set":
             yaw = math.radians(float(args["yaw_deg"])) if "yaw_deg" in args else float(args["yaw"])
             info, err = m.set_pose(odom, float(args["x"]), float(args["y"]), yaw, by=client,
@@ -609,7 +615,7 @@ class Agents:
             if err:
                 return {"result": "refused", "reason": err, **info, "current": here}
             return {"result": "done", **info, "pose": m.pose(odom)}
-        raise ValueError("mode must be search, global or set")
+        raise ValueError("mode must be tag, search, global or set")
 
     def _look(self, deg):
         """Tilt the camera up (+) or down (-) by pitching the body while standing; 0 levels it.

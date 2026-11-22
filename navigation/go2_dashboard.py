@@ -908,6 +908,16 @@ class Collector(Node):
         self._mk_frame = snap.get("frame_t")
         with lock:
             odom = latest["odom"]
+        # Not lined up and a usable tag in view: line up from the tag by itself, as "Line up again" would (Oliver
+        # 11-21: vision should settle the line-up without anyone pressing a button). Pose only, never motion.
+        now = time.time()
+        if (MAPPER.T is None and not MAPPER._aligning and not MAPPER.mapping and odom is not None
+                and now - getattr(self, "_auto_tag_t", 0.0) > AUTO_TAG_LINEUP_S):
+            choice = marker_lineup_choice()
+            if choice["via"] == "marker":
+                self._auto_tag_t = now
+                err = MAPPER.lineup_from_marker(odom, choice["pose"], by="auto: tag in view")
+                print(f"[lineup] auto from tag {choice['pose']['best']['mark']}: {err or 'started'}", flush=True)
         rec = MAPPER.marker_fix(odom, snap["list"], MARKER_TABLE.get())
         if rec and rec.get("action") not in (None, "agree"):
             print(f"[markers] {rec}", flush=True)
@@ -1019,6 +1029,34 @@ def marker_lineup_choice():
             return {"via": "lidar", "note": clash, "rejected": rej, "marker_pose": pose}
         return {"via": "marker", "pose": pose, "used": used, "rejected": rej}
     return {"via": "lidar", "note": lineup_reject_text(rej), "rejected": rej}
+
+
+AUTO_TAG_LINEUP_S = 10.0  # not lined up: try a line-up from a tag in view at most this often
+
+
+def tag_lineup_for_agent(client, wait_s=10.0):
+    """relocalize mode "tag" (go2_agent): line up from a tag in view now, wait for the result. Without a usable tag,
+    say why and where the tags are, so the agent can turn towards one."""
+    tags = [{"tag": v.get("name"), "x": round(v["x"], 2), "y": round(v["y"], 2), "facing_deg": round(v["facing_deg"], 1)}
+            for v in (MARKER_TABLE.get() if MARKER_TABLE else {}).values()]
+    choice = marker_lineup_choice()
+    if choice["via"] != "marker":
+        return {"result": "refused", "reason": f"no usable tag in view: {choice.get('note') or 'none seen'}. "
+                "Turn to face a tag from 0.8-3 m (within ~30 deg of its front) and try again.",
+                "why": {"code": "no_tag_in_view", "detail": choice.get("note")}, "tags": tags}
+    with lock:
+        odom = latest["odom"]
+    err = MAPPER.lineup_from_marker(odom, choice["pose"], by=f"agent {client}")
+    if err:
+        return {"result": "error", "reason": err, "tags": tags}
+    end = time.time() + wait_s
+    while MAPPER._aligning and time.time() < end:
+        time.sleep(0.2)
+    ok = MAPPER.T is not None and not MAPPER._aligning
+    with lock:
+        odom = latest["odom"]
+    return {"result": "done" if ok else "error", "via": "tag", "tag": choice["pose"]["best"]["mark"],
+            "status": MAPPER.status, "pose": MAPPER.pose(odom), **({} if ok else {"reason": "the line-up did not finish"})}
 
 
 MARKER_CLASH_M = 1.5     # a marker pose this far from a confident lidar pose is not used for a line-up
@@ -3281,6 +3319,7 @@ def main():
     MARKER_TABLE = MarkerTable("/maps", os.environ.get("MAP_NAME", "lab"), log=lambda m: print(m, flush=True))
     EXAMPLES = Examples("/maps", os.environ.get("MAP_NAME", "lab"), MAPPER, TRAIL)
     AG.mapper, AG.planner = MAPPER, Planner(MAPPER)
+    AG.tag_lineup = tag_lineup_for_agent
     AG.planner.fail_log = os.path.join("/maps", f"{os.environ.get('MAP_NAME', 'lab')}_nav_failures.jsonl")
     PATROLS.start_monitor()
     threading.Thread(target=rclpy.spin, args=(node,), daemon=True).start()
