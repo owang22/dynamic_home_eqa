@@ -19,3 +19,8 @@ Code is in `../` (go2_patrol.py, go2_dashboard.py, go2_agent.py, go2_watchdog.py
 - **Live motion tests by the control PC itself:** the permission rules on Z690 block me from sending patrol or motion
   calls to the dog. Live runs come from cheetah, or from Oliver.
 - **L515 depth:** the camera is not on the Pi's USB (hardware). It needs a person.
+
+## Verification on later patrols
+- **p_20261121_174120 (17:41, AUT's first patrol):** settle-until-still verified. 14 of 14 shots were still=true
+  (patrol 1: 2 of 4 false), and the extra wait was at most about 0.5 s. No refusals. fresh_fit 0.66-0.84.
+  Observation: facing (3-16 s per heading change, about 16 s for 180 deg) is now a cost comparable to walking.
