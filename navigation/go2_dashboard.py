@@ -1034,21 +1034,93 @@ def marker_lineup_choice():
 AUTO_TAG_LINEUP_S = 10.0  # not lined up: try a line-up from a tag in view at most this often
 
 
-def tag_lineup_for_agent(client, wait_s=10.0):
+TAG_VIEW_DIST = (0.8, 3.0)        # a tag reads well from this far ...
+TAG_VIEW_OFF_DEG = 60.0           # ... and within this angle of its front (marker_lineup_pose gates view <= 30 deg)
+TAG_STAND_TRY = [(1.5, 0), (1.2, 0), (1.8, 0), (1.5, 20), (1.5, -20), (2.2, 0), (1.0, 0), (2.2, 25), (2.2, -25)]
+
+
+def tag_stand_pose(t):
+    """A pose on open floor in front of tag t to read it from ({x, y, yaw_deg, dist_m, off_deg}), or None."""
+    pl = AG.planner if AG else None
+    for dist, off in TAG_STAND_TRY:
+        a = math.radians(t["facing_deg"] + off)
+        x, y = t["x"] + dist * math.cos(a), t["y"] + dist * math.sin(a)
+        if pl is not None:
+            with pl.lock:
+                pl._grid()
+                if pl.occ is None:
+                    pl = None
+                else:
+                    r, c = pl.cell(x, y)
+                    if not pl.inside(r, c) or pl.dist[r, c] < 0.28:
+                        continue
+        if KEEPOUT and KEEPOUT.hit(x, y, margin=0.2):
+            continue
+        return {"x": round(x, 2), "y": round(y, 2), "yaw_deg": round(math.degrees(wrap(a + math.pi)), 1),
+                "dist_m": dist, "off_deg": off, "checked_on_map": pl is not None}
+    return None
+
+
+def tag_viewability(here):
+    """Each tag with a stand pose to read it from and, when a pose 'here' is known, whether it can be read from here
+    and how far to turn (AUT ask 17:52)."""
+    out = []
+    for v in (MARKER_TABLE.get() if MARKER_TABLE else {}).values():
+        t = {"tag": v.get("name"), "x": round(v["x"], 2), "y": round(v["y"], 2), "facing_deg": round(v["facing_deg"], 1)}
+        t["stand"] = tag_stand_pose(t)
+        if here:
+            dx, dy = here["x"] - t["x"], here["y"] - t["y"]
+            d = math.hypot(dx, dy)
+            off = abs(math.degrees(wrap(math.atan2(dy, dx) - math.radians(t["facing_deg"]))))
+            face = math.degrees(math.atan2(-dy, -dx))
+            t.update(dist_m=round(d, 2), off_axis_deg=round(off, 1),
+                     viewable_from_here=bool(TAG_VIEW_DIST[0] <= d <= TAG_VIEW_DIST[1] and off <= TAG_VIEW_OFF_DEG),
+                     face_yaw_deg=round(face, 1),
+                     turn_deg=None if here.get("yaw") is None else round(math.degrees(wrap(math.radians(face) - here["yaw"])), 1))
+        out.append(t)
+    if here:
+        out.sort(key=lambda t: (not t.get("viewable_from_here"), t.get("dist_m", 99)))
+    return out
+
+
+def tag_lineup_for_agent(client, args=None, wait_s=10.0):
     """relocalize mode "tag" (go2_agent): line up from a tag in view now, wait for the result. Without a usable tag,
-    say why and where the tags are, so the agent can turn towards one."""
-    tags = [{"tag": v.get("name"), "x": round(v["x"], 2), "y": round(v["y"], 2), "facing_deg": round(v["facing_deg"], 1)}
-            for v in (MARKER_TABLE.get() if MARKER_TABLE else {}).values()]
+    say why and, for each tag, a stand pose to read it from and whether it can be read from 'here': the map pose if
+    lined up, else x, y (and yaw_deg) passed by the agent, else the lidar's best guess (labelled)."""
+    args = args or {}
     choice = marker_lineup_choice()
     if choice["via"] != "marker":
+        here, src = None, None
+        with lock:
+            odom = latest["odom"]
+        mp = MAPPER.pose(odom) if MAPPER and odom else None
+        if mp:
+            here, src = {"x": mp["x"], "y": mp["y"], "yaw": mp["yaw"]}, "map_pose"
+        elif "x" in args and "y" in args:
+            here = {"x": float(args["x"]), "y": float(args["y"]),
+                    "yaw": None if args.get("yaw_deg") is None else math.radians(float(args["yaw_deg"]))}
+            src = "agent_hint"
+        else:
+            try:
+                cands, err = MAPPER.candidates(odom, None, None, 1) if MAPPER and odom else ([], "no odom")
+            except Exception as e:          # the lidar search can fail without a usable view
+                cands, err = [], str(e)
+            if cands:
+                c0 = cands[0]
+                here = {"x": c0["x"], "y": c0["y"], "yaw": math.radians(c0["yaw_deg"]) if "yaw_deg" in c0 else c0.get("yaw")}
+                src = f"lidar_best_guess (fit {c0.get('fit')}, may be a mirror pose)"
         return {"result": "refused", "reason": f"no usable tag in view: {choice.get('note') or 'none seen'}. "
-                "Turn to face a tag from 0.8-3 m (within ~30 deg of its front) and try again.",
-                "why": {"code": "no_tag_in_view", "detail": choice.get("note")}, "tags": tags}
+                "Go to a tag's stand pose (or turn to face a tag that is viewable_from_here) and try again.",
+                "why": {"code": "no_tag_in_view", "detail": choice.get("note")},
+                "here": None if here is None else {"x": round(here["x"], 2), "y": round(here["y"], 2),
+                                                   "yaw_deg": None if here.get("yaw") is None else round(math.degrees(here["yaw"]), 1),
+                                                   "source": src},
+                "tags": tag_viewability(here)}
     with lock:
         odom = latest["odom"]
     err = MAPPER.lineup_from_marker(odom, choice["pose"], by=f"agent {client}")
     if err:
-        return {"result": "error", "reason": err, "tags": tags}
+        return {"result": "error", "reason": err}
     end = time.time() + wait_s
     while MAPPER._aligning and time.time() < end:
         time.sleep(0.2)

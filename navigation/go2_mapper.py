@@ -216,6 +216,7 @@ class Mapper:
         self.fresh_fit = None               # their fit at the current T
         self._sus_low, self._sus_at = None, None
         self.suspect_since = None           # time the dog was judged suspect (see SUSPECT_*), else None
+        self.suspect_why = None             # what raised it: {source: lidar_fit | tag, detail, ...}
         if self.load_unsaved():
             self.status = "restored the unsaved map from before the console restarted; lining up with it"
         elif self.load():
@@ -282,6 +283,7 @@ class Mapper:
                 "track_fit": (self.track_info or {}).get("fit"),
                 "fresh_fit": None if self.fresh_fit is None else round(self.fresh_fit, 3),
                 "suspect": self.suspect_since is not None, "suspect_since": self.suspect_since,
+                "suspect_why": self.suspect_why if self.suspect_since is not None else None,
                 "marker": list(getattr(self, "marker_log", []))[-5:]}
 
     def pose(self, odom):
@@ -815,6 +817,8 @@ class Mapper:
         self._sus_low[1] = (rx, ry)
         if self.suspect_since is None and now - self._sus_low[0] >= SUSPECT_S and self._sus_low[2] >= SUSPECT_MOVE_M:
             self.suspect_since = round(now, 2)
+            self.suspect_why = {"source": "lidar_fit", "detail": f"the live lidar view fits the map poorly (below "
+                                f"{SUSPECT_FIT:.0%}) over {self._sus_low[2]:.1f} m of walking: the pose may be shifted"}
 
     def _fit_at(self, obs, T):
         """Mean wall likelihood of these odom-frame points if the odom-to-map transform were T, or None."""
@@ -935,6 +939,11 @@ class Mapper:
         if rec["action"] in ("too_far", "lidar_disagrees", "would_move"):
             if self.suspect_since is None and rec["shift"] >= MK_SUSPECT_M:
                 self.suspect_since = round(now, 2)
+                self.suspect_why = {"source": "tag", "marks": rec.get("marks"), "shift_m": round(rec["shift"], 2),
+                                    "action": rec["action"],
+                                    "detail": f"tag {'/'.join(rec.get('marks') or [])} puts the dog "
+                                              f"{rec['shift']:.2f} m from the lidar pose ({rec['action']}); one of them "
+                                              f"is wrong here (tag table entry, stale map or map scale)"}
             mp2 = self.pose(odom)
             self.event_seq += 1
             self.events.append({"t": rec["t"], "kind": "marker_disagree", "seq": self.event_seq, "action": rec["action"],

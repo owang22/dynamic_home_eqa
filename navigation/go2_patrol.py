@@ -40,6 +40,10 @@ SETTLE_S = 1.5         # stand still before a photo (the /agent/view default set
 # 3.4 s + walked_m / 0.12 m/s (MAE 4.2 s). The 17 go_tos above ran mostly at "normal". So walking depends on the
 # speed preset. Per heading, measured: face median 5.5 s (p90 8.0), settle 1.5 s, still-wait <= 0.5 s.
 WALK_BY_SPEED = {"slow": (0.12, 3.4), "normal": (WALK_V, GOTO_OVERHEAD_S)}   # (m/s, overhead s)
+# Facing one heading: FACE_A_S + |turn deg| * FACE_S_PER_DEG. Two points from patrols 1-2: median 5.5 s for typical
+# turns, ~16 s for 180 deg -> 2.5 s + 0.075 s/deg. Rough: refit from per-shot face_s / face_from_deg (logged from 18:0x).
+FACE_A_S, FACE_S_PER_DEG = 2.5, 0.075
+STILL_WAIT_S = 0.3     # typical extra wait for stillness after settle_s (<= STILL_EXTRA_S)
 MAX_POSES = 40         # per /patrol/check call
 SNAP_WARN_M = 0.30     # the planner moved the goal further than this: say so
 LAYER_OCC = 2          # go2_mapper.LAYER_OCC
@@ -143,6 +147,51 @@ def _turns(path, yaw0, yaw_goal):
     return total
 
 
+CLEAR_FOV_DEG = 40.0   # half field of view for front_clear_m (the dog camera: ~79 deg horizontal)
+CLEAR_BIN_DEG = 10.0
+CLEAR_MAX_M = 6.0
+CAM_X = 0.30           # the camera lens is about this far ahead of base_link; ranges are from the lens
+BODY_X = 0.35          # points closer than this ahead of base_link are the dog's own body / legs
+CLEAR_MIN_H = 0.18     # cells lower than this are floor (the lidar reports the floor in ~10 cm steps; same as
+                       # go2_agent.BUMP_H[0]): a first try with every cell read 0.06 m in open floor (11-21)
+
+
+def front_clearance(odom, cloud, cloud_age):
+    """Nearest obstacle in the camera's view from the live lidar cells (AUT ask 17:47): front_clear_m within
+    +-CLEAR_FOV_DEG of the heading, measured from the lens, and per-10-deg bins. Obstacle cells are the console's live
+    cells 0.1-2.0 m above the floor (the dog's persistent ~5-10 cm voxel map, so it can lag or keep stale voxels)."""
+    if not cloud or not cloud.get("obs") or odom is None or cloud.get("frame") == "base_link":
+        return {"front_clear_m": None, "ranges_deg_m": None, "cloud_age_s": None if cloud_age is None else round(cloud_age, 2),
+                "note": "no live lidar cells"}
+    pts = np.asarray(cloud["obs"], dtype=np.float64)
+    pts = pts[pts[:, 2] >= CLEAR_MIN_H]
+    dx, dy = pts[:, 0] - odom["pos"][0], pts[:, 1] - odom["pos"][1]
+    c, s_ = math.cos(odom["yaw"]), math.sin(odom["yaw"])
+    fx, fy = c * dx + s_ * dy, -s_ * dx + c * dy
+    keep = fx > BODY_X
+    cx, cy = fx[keep] - CAM_X, fy[keep]
+    rng = np.hypot(cx, cy)
+    brg = np.degrees(np.arctan2(cy, cx))
+    inside = (np.abs(brg) <= CLEAR_FOV_DEG) & (rng <= CLEAR_MAX_M)
+    front = float(rng[inside].min()) if inside.any() else None
+    bins = []
+    for b0 in np.arange(-CLEAR_FOV_DEG, CLEAR_FOV_DEG, CLEAR_BIN_DEG):
+        m = (brg >= b0) & (brg < b0 + CLEAR_BIN_DEG) & (rng <= CLEAR_MAX_M)
+        bins.append([round(float(b0 + CLEAR_BIN_DEG / 2), 1), round(float(rng[m].min()), 2) if m.any() else None])
+    return {"front_clear_m": None if front is None else round(front, 2), "ranges_deg_m": bins,
+            "cloud_age_s": None if cloud_age is None else round(cloud_age, 2),
+            "rule": f"live lidar cells {CLEAR_MIN_H}-2 m tall (lower things, e.g. a cable on the floor, are not counted), within +-{CLEAR_FOV_DEG:.0f} deg of the heading, from the lens "
+                    f"({CAM_X} m ahead of base_link), up to {CLEAR_MAX_M} m; bearing + = left; null = nothing seen"}
+
+
+def _arrival_yaw(path, yaw0):
+    """Heading of the last route segment longer than 5 cm (the dog arrives facing about that way), else yaw0."""
+    for (ax, ay), (bx, by) in zip(path[-2::-1], path[::-1]):
+        if math.hypot(bx - ax, by - ay) >= 0.05:
+            return math.atan2(by - ay, bx - ax)
+    return yaw0
+
+
 def check(poses, agent, keepout, speed="slow"):
     """Dry run for a batch of poses [{x, y, yaw_deg?, look_deg?}] from where the dog is now.
     Returns (http_code, body). Never claims or moves the dog."""
@@ -160,7 +209,12 @@ def check(poses, agent, keepout, speed="slow"):
     for i, p in enumerate(poses):
         try:
             x, y = float(p["x"]), float(p["y"])
-            yaw = None if p.get("yaw_deg") is None else math.radians(float(p["yaw_deg"]))
+            yd = p.get("yaw_deg")
+            if isinstance(yd, list):
+                if not yd or len(yd) > MAX_HEADINGS:
+                    raise ValueError
+                yd = [float(v) for v in yd]
+            yaw = None if yd is None else math.radians(float(yd[0] if isinstance(yd, list) else yd))
         except (KeyError, TypeError, ValueError):
             out.append({"i": i, "ok": False, "why": {"code": "bad_pose", "detail": "x and y (map m) are required"}})
             continue
@@ -186,11 +240,26 @@ def check(poses, agent, keepout, speed="slow"):
             continue
         gx, gy = plan.get("goal", [x, y])
         snap = math.hypot(gx - x, gy - y)
-        turn = _turns(path, mp["yaw"], yaw)
+        yaws = p.get("yaw_deg") if isinstance(p.get("yaw_deg"), list) else None
+        if yaws:
+            yaw = math.radians(float(yaws[0]))
+        turn = _turns(path, mp["yaw"], None)            # along the route only; facing is priced per heading below
         walk_v, overhead = WALK_BY_SPEED.get(speed, WALK_BY_SPEED["slow"])
         walk_s = plan["length_m"] / walk_v
+        # per heading: from the arrival heading (last route segment) to the first, then from each to the next
+        arrive = _arrival_yaw(path, mp["yaw"])
+        hs = [math.radians(float(h)) for h in yaws] if yaws else ([yaw] if yaw is not None else [None])
+        heads, prev = [], arrive
+        for h in hs:
+            dd = 0.0 if h is None or prev is None else abs(math.degrees(_wrap(h - prev)))
+            face = 0.0 if dd <= 3.0 else FACE_A_S + dd * FACE_S_PER_DEG
+            heads.append({"yaw_deg": None if h is None else round(math.degrees(h), 1), "turn_deg": round(dd, 1),
+                          "est_face_s": round(face, 1), "est_settle_s": SETTLE_S + STILL_WAIT_S,
+                          "est_s": round(face + SETTLE_S + STILL_WAIT_S, 1)})
+            prev = h if h is not None else prev
         r.update(ok=True, route_m=round(plan["length_m"], 2),
-                 est_s=round(overhead + walk_s + turn / TURN_V + SETTLE_S, 1),
+                 est_s=round(overhead + walk_s + turn / TURN_V + sum(h["est_s"] for h in heads), 1),
+                 headings=heads,
                  est={"walk_s": round(walk_s, 1), "turn_s": round(turn / TURN_V, 1), "settle_s": SETTLE_S,
                       "overhead_s": overhead},
                  tight=bool(plan.get("tight")), squeeze=bool(plan.get("squeeze")),
@@ -588,7 +657,10 @@ class Patrols:
         if li.get("lost"):
             out.append({"code": "loc_lost", "detail": "the map fit has been low: the map pose is probably wrong; relocalize"})
         if li.get("suspect"):
-            out.append({"code": "loc_suspect", "detail": "the live lidar view looks shifted against the map; relocalize"})
+            sw = li.get("suspect_why") or {}
+            out.append({"code": "loc_suspect", "source": sw.get("source"),
+                        "detail": (sw.get("detail") or "the pose is suspect") + "; relocalize (tag mode, or set) before moving on",
+                        **({"marks": sw["marks"], "shift_m": sw.get("shift_m")} if sw.get("marks") else {})})
         mp = self.ag.map_pose_now()
         if mp is None:
             out.append({"code": "no_map_pose", "detail": "the console is not lined up with the map"})
@@ -986,8 +1058,12 @@ class Patrols:
                             rt = self.ag._turn(d, max(1.0, deadline - time.monotonic()))
                             if rt["result"] != "done":
                                 return dict(rt, **res)
-                    timing["face_s"] = round(timing["face_s"] + time.monotonic() - t0, 2)
-                    shots.append(self._shoot(vdir, f"h{i}", url, look, settle, deadline, timing, yaw))
+                    face_i = time.monotonic() - t0
+                    timing["face_s"] = round(timing["face_s"] + face_i, 2)
+                    shot = self._shoot(vdir, f"h{i}", url, look, settle, deadline, timing, yaw)
+                    shot["face_s"] = round(face_i, 2)       # this heading's turn (AUT ask 17:52: refit est_face_s)
+                    shot["face_from_deg"] = None if yaw is None else round(d if abs(d) > FACE_TOL_DEG else 0.0, 1)
+                    shots.append(shot)
             finally:
                 if look and not self.ag.abort.is_set():   # level again (walking would level it anyway); not after
                     self.ag.node.look(0.0)                # an abort: a person may have taken over
@@ -1076,7 +1152,7 @@ class Patrols:
             img, ft = ag.full["img"], ag.full["t"]
         if img is None or time.time() - ft > CAM_MAX_AGE_S:
             raise RuntimeError("no_camera_frame: the dog camera has no recent frame")
-        odom, imu, state, _, _, ages = ag.snap()
+        odom, imu, state, cloud, _, ages = ag.snap()
         import cv2
         files = {}
         ok, buf = cv2.imencode(".jpg", img, [cv2.IMWRITE_JPEG_QUALITY, 92])
@@ -1114,6 +1190,7 @@ class Patrols:
                 "pose": None if mp is None else {"x": round(mp["x"], 3), "y": round(mp["y"], 3),
                                                   "yaw_deg": round(math.degrees(mp["yaw"]), 1)},
                 "odom_age_s": round(ages.get("odom", 99), 2),
+                "clearance": front_clearance(odom, cloud, ages.get("cloud")),
                 "loc": {"map_id": ag.mapper.saved_at if ag.mapper is not None else None,
                         "track_fit": li.get("track_fit"), "fresh_fit": li.get("fresh_fit"),
                         "lost": li.get("lost"), "suspect": li.get("suspect")},

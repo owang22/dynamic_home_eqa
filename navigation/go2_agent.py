@@ -607,7 +607,7 @@ class Agents:
         if mode == "tag":                  # line up from a printed tag in view (vision), as "Line up again" does
             if self.tag_lineup is None:
                 return {"result": "error", "reason": "tag line-up is not available on this console"}
-            return dict(self.tag_lineup(client), current=here)
+            return dict(self.tag_lineup(client, args), current=here)
         if mode == "set":
             yaw = math.radians(float(args["yaw_deg"])) if "yaw_deg" in args else float(args["yaw"])
             info, err = m.set_pose(odom, float(args["x"]), float(args["y"]), yaw, by=client,
