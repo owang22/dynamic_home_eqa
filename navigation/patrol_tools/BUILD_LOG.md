@@ -40,3 +40,6 @@ baseline. AUT 1 = p_..._174120 (v0), 2 = _175111 (v2), 3 = _175618 (v3), 4 = _18
 - **p_20261121_182117 (18:21):** first live L515 capture in /agent/view: colour + 16-bit depth (640x480, 58% valid)
   + camera_infos, dt_to_dog_s -0.014 s. L515 centre-patch median 0.84 m vs lidar front_clear_m 1.06 m (not the same
   quantity: patch vs nearest in ±40°, different mount).
+  Correction (18:29, after the AUT's question): L515 depth PNGs are in mm (receiver converts). The 0.84 m above was
+  wrong (camera scale applied twice). The centre patch is 3.4-4.3 m and sparse, consistent with the lidar's nearest
+  cell at 1.06 m within ±40°.
