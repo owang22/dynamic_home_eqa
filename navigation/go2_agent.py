@@ -802,6 +802,10 @@ class Agents:
                    "profile": self._arc_profile(sw), "end_pose": self._odom_to_map(*sw["pose"][1]), "stop_reason": "done", **info}
             if rear:
                 out["rear_blocked"] = rear
+            if back:                  # AUT ask 1416 #4 (11-22 14:1x: dry "clear", real reverse stopped at once)
+                out["rear_unverified"] = True
+                out["rear_note"] = ("backing up: the lidar barely sees behind the dog and this check cannot see what "
+                                    "the dog's own avoidance sees, so a clear dry run can still stop at once for real")
             return out
         if sw["blocked"] is not None:
             why = self._arc_why(sw, odom, False)

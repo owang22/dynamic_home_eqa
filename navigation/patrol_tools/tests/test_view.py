@@ -168,6 +168,23 @@ ok("patrol_file unit: absolute rel / traversal / NUL", all(go2_patrol.patrol_fil
    for r in ("/etc/passwd", "..", "views/..", "patrol.json\x00.jpg", "", "views/" + vid + "/h0_dog.jpg/..")))
 ok("GET /patrol/<id>/patrol.json allowed", get(f"/patrol/{pid}/patrol.json").code == 200)
 
+# AUT ask 1416: arrival heading in check, view face "arrival" (no turn at all)
+code, chk = go2_patrol.check([cands[0], goal], w.ag, w.keepout)
+rr = [x for x in chk["results"] if x["ok"]]
+ok("check: arrival_heading_deg + in_place_turns on every ok pose",
+   rr and all(isinstance(x.get("arrival_heading_deg"), float) and isinstance(x.get("in_place_turns"), list) for x in rr), rr[:1])
+r = post("/agent/view", {"client": C, "x": goal["x"], "y": goal["y"], "face": "arrival", "yaw_deg": 0})
+ok("face arrival + yaw_deg refused (400)", r.code == 400, r.json())
+r = post("/agent/view", {"client": C, "x": goal["x"], "y": goal["y"], "face": "north"})
+ok("bad face refused (400)", r.code == 400, r.json())
+back = next(c for c, x in zip(cands, go2_patrol.check(cands, w.ag, w.keepout)[1]["results"]) if x["ok"] and 0.6 < x["route_m"] < 1.6)
+r = post("/agent/view", {"client": C, "x": back["x"], "y": back["y"], "face": "arrival", "settle_s": 0.3})
+v = r.json()
+ok("face arrival: done, one shot, no face turn, arrived_yaw_deg reported",
+   r.code == 200 and v["result"] == "done" and len(v["shots"]) == 1 and v["timing"]["face_s"] < 0.5
+   and v["shots"][0]["face_from_deg"] is None and isinstance(v.get("arrived_yaw_deg"), float)
+   and v["goal"]["face"] == "arrival", {k: v.get(k) for k in ("result", "reason", "arrived_yaw_deg", "timing")})
+
 # deploying: view refused (503), patrol/stop still allowed
 D.DEPLOYING = {"msg": "deploy", "t": 1}
 r = post("/agent/view", {"client": C, "x": goal["x"], "y": goal["y"], "yaw_deg": 0})
@@ -176,7 +193,7 @@ D.DEPLOYING = None
 r = post("/agent/patrol/stop", {"client": "someone-else"})
 ok("patrol/stop by another client refused", r.code == 409)
 r = post("/agent/patrol/stop", {"client": C})
-ok("patrol/stop", r.code == 200 and r.json()["summary"]["stop_reason"] == "client_stop" and r.json()["summary"]["n_views"] == 2
+ok("patrol/stop", r.code == 200 and r.json()["summary"]["stop_reason"] == "client_stop" and r.json()["summary"]["n_views"] == 3
    and r.json()["envelope"]["state"] == "ended", r.json().get("summary"))
 pj = json.load(open(os.path.join(w.tmp, "lab_patrols", pid, "patrol.json")))
 ok("patrol.json summary", pj["summary"]["stop_reason"] == "client_stop" and pj["state"] == "ended" and pj["walked_m"] > 0.5, pj["summary"])

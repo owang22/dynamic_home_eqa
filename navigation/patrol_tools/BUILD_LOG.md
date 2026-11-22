@@ -52,3 +52,21 @@ baseline. AUT 1 = p_..._174120 (v0), 2 = _175111 (v2), 3 = _175618 (v3), 4 = _18
 - **p_20261121_184002 (18:40):** turn_blocked verified live. The dog was lying in the collision pocket (map
   clearance 0.14 m); the first view's go_to refused to turn (obstacle 0.39 m from centre, inside the 0.42 m sweep),
   walked 0 m, and the AUT stopped and lay down.
+
+## 2026-11-22 14:30 — AUT ask 1416 (arrival heading, view without final turn)
+1. `/patrol/check` results now carry `arrival_heading_deg`, the heading of the route's last segment (>= 5 cm), and
+   `in_place_turns` [{x, y, deg}]. These are the places on the route where the heading changes by more than 45° (start
+   included); there the follower stops and turns in place, so the turn-sweep check applies.
+2. `/agent/view {x, y, face: "arrival"}` makes no turn at all. It settles and shoots at the arrival heading, then
+   reports `arrived_yaw_deg` (also in view.json, and `goal.face`). Giving `face: "arrival"` together with `yaw_deg`
+   returns 400. Omitting `yaw_deg` already behaved this way; now it is explicit and reported.
+3. Small-turn rule (unchanged, answered): a view turns only when the heading error is over 3° (FACE_TOL_DEG). A
+   go_to's final face turns only when it is over 5°. While walking a route, heading errors up to 45° are steered
+   without stopping, and only the forward check applies. Any in-place turn, however small, runs the sweep check
+   (SWEEP_R 0.42 m) every tick, so there is no small-turn exemption. Loosening that is a safety change and needs Oliver.
+4. Reverse `/agent/arc` dry runs now return `rear_unverified: true` + `rear_note`. The dry run cannot see what the
+   dog's own avoidance sees behind it.
+Tests: test_view 78/78 (4 new), test_patrol 71/71, test_arc 77/78 (1 new). The failing test, "reverse arc from START
+stopped mid-arc", fails the same way on the old code: the fixture START is in the old map frame, and the 19:29 map
+has an obstacle 0.65 m behind it. go2_wake.sh: the L515 tunnel no longer inherits the wake lock (it blocked every
+wake after 11-21 15:52).

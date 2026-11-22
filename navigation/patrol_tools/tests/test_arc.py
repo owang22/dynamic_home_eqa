@@ -134,6 +134,7 @@ ok("  real run refused there, with s_m / heading / side / clearance", out["resul
    and "heading_deg" in out["why"] and out["why"]["clearance_m"] < A.ARC_MARGIN and "obstacle" in out["why"], out["why"])
 w.cloud.obs = [[*centre_pt(w, 1.207 + A.ARC_MARGIN - 0.03, 0.45), 0.3]]; time.sleep(0.3)
 code, out = arc(w, v_mps=0.3, w_radps=0.3, distance_m=0.6, dry=True)
+ok("forward dry run has no rear_unverified", "rear_unverified" not in out)
 ok("  outer hit is on the right side (front-right corner)", out["blocked_at"] and out["blocked_at"]["side"] == "front-right corner",
    out.get("blocked_at"))
 # cells inside the current footprint are the dog itself; floor cells don't count; tall cells and under_obs do
@@ -250,6 +251,7 @@ pl, w.ag.planner = w.ag.planner, None
 code, out = arc(w, v_mps=-0.15, w_radps=0.0, distance_m=0.1, dry=True)
 ok("  live rear box (no map): 0.5 m behind refuses even a 0.1 m reverse arc", out["clear"] is False and out["rear_blocked"]["source"] == "live_rear_box",
    out.get("rear_blocked"))
+ok("  reverse dry run is marked rear_unverified (AUT ask 1416 #4)", out.get("rear_unverified") is True and out.get("rear_note"))
 w.ag.planner = pl
 w.close()
 

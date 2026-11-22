@@ -224,6 +224,24 @@ def _arrival_yaw(path, yaw0):
     return yaw0
 
 
+IN_PLACE_DEG = 45.0    # go2_agent.TURN_IN_PLACE: the follower stops and turns in place above this heading error
+
+
+def _in_place_turns(path, yaw0):
+    """Where following path from heading yaw0 makes the dog stop and turn in place (heading change > IN_PLACE_DEG
+    between route segments, or between yaw0 and the first segment). Approximate: the follower steers toward a point
+    a little ahead on each leg, so small kinks are walked round. [{x, y, deg}] (deg signed, + = left)."""
+    out, h = [], yaw0
+    for (ax, ay), (bx, by) in zip(path, path[1:]):
+        if math.hypot(bx - ax, by - ay) < 0.05:
+            continue
+        nh = math.atan2(by - ay, bx - ax)
+        if h is not None and abs(math.degrees(_wrap(nh - h))) > IN_PLACE_DEG:
+            out.append({"x": round(ax, 2), "y": round(ay, 2), "deg": round(math.degrees(_wrap(nh - h)), 0)})
+        h = nh
+    return out
+
+
 def check(poses, agent, keepout, speed="slow"):
     """Dry run for a batch of poses [{x, y, yaw_deg?, look_deg?}] from where the dog is now.
     Returns (http_code, body). Never claims or moves the dog."""
@@ -292,6 +310,8 @@ def check(poses, agent, keepout, speed="slow"):
         r.update(ok=True, route_m=round(plan["length_m"], 2),
                  est_s=round(overhead + walk_s + turn / TURN_V + sum(h["est_s"] for h in heads), 1),
                  headings=heads,
+                 arrival_heading_deg=None if arrive is None else round(math.degrees(arrive), 1),
+                 in_place_turns=_in_place_turns(path, mp["yaw"]),
                  est={"walk_s": round(walk_s, 1), "turn_s": round(turn / TURN_V, 1), "settle_s": SETTLE_S,
                       "overhead_s": overhead},
                  tight=bool(plan.get("tight")), squeeze=bool(plan.get("squeeze")),
@@ -1048,6 +1068,11 @@ class Patrols:
                 yaws = req.get("yaw_deg")
                 yaws = [yaws] if isinstance(yaws, (int, float)) else list(yaws or [])
                 yaws = [float(v) for v in yaws]
+                face = req.get("face")
+                if face not in (None, "arrival"):
+                    raise ValueError('face must be "arrival" or absent')
+                if face == "arrival" and yaws:
+                    raise ValueError('face "arrival" takes no yaw_deg (the dog shoots at the heading it arrives with)')
                 if len(yaws) > MAX_HEADINGS:
                     raise ValueError(f"at most {MAX_HEADINGS} headings")
                 look = req.get("look_deg")
@@ -1056,7 +1081,7 @@ class Patrols:
                 timeout_s = max(5.0, min(VIEW_TIMEOUT_S, float(req.get("timeout_s", VIEW_TIMEOUT_S))))
             except (KeyError, TypeError, ValueError) as e:
                 return 400, {"result": "error", "reason": f"bad arguments: {e} (x, y; yaw_deg: number or list; "
-                             "look_deg?, settle_s? 0-5)", "stop_reason": "bad_arguments"}
+                             "look_deg?, settle_s? 0-5; face: \"arrival\" = no turn)", "stop_reason": "bad_arguments"}
             why = self.refusal("view", req)
             if why:
                 return self._refuse(why)
@@ -1079,7 +1104,9 @@ class Patrols:
             self.interrupted = None
         plan_s = time.monotonic() - t_call
         info = {"view_id": vid, "patrol_id": self.p["patrol_id"], "t": round(time.time(), 2),
-                "goal": {"x": x, "y": y, "yaw_deg": yaws, "look_deg": look, "settle_s": settle},
+                "goal": {"x": x, "y": y, "yaw_deg": yaws, "look_deg": look, "settle_s": settle,
+                         "face": "arrival" if not yaws else "yaw_deg",
+                         "arrival_heading_deg": r.get("arrival_heading_deg")},
                 "check": {k: r.get(k) for k in ("route_m", "est_s", "goal_used", "snapped_m", "tight", "squeeze", "flags")},
                 "caps": caps}
         timing = {"plan_s": round(plan_s, 2), "walk_s": 0.0, "face_s": 0.0, "settle_s": 0.0, "photo_s": 0.0}
@@ -1098,6 +1125,9 @@ class Patrols:
                                                                                        "replans", "fallback")}}
             if g["result"] != "done":
                 return dict(g, **res)
+            if not yaws:              # face "arrival" (or no yaw_deg): no turn at all, shoot as the dog arrived
+                ma = self.ag.map_pose_now()
+                res["arrived_yaw_deg"] = None if ma is None else round(math.degrees(ma["yaw"]), 1)
             try:
                 for i, yaw in enumerate(yaws or [None]):
                     t0 = time.monotonic()
@@ -1126,6 +1156,7 @@ class Patrols:
             mot, mage = self.hooks["motors"]()
             info.update(result=out.get("result"), reason=out.get("reason"), stop_reason=out.get("stop_reason"),
                         why=out.get("why"), walked_m=out.get("walked_m", 0.0), go_to=out.get("go_to"), timing=timing,
+                        arrived_yaw_deg=out.get("arrived_yaw_deg"),
                         shots=shots, battery_end=(b or {}).get("soc"),
                         hottest_motor_c_end=mot.get("max") if mot and mage <= MOTOR_STALE_S else None,
                         urls={"view_json": url + "view.json", "patrol": f"/patrol/{self.p['patrol_id']}"},

@@ -14,7 +14,7 @@ flock -n 9 || { echo "wake already running"; exit 0; }
   if ping -c1 -W2 172.17.29.72 >/dev/null 2>&1; then
     echo "L515 Pi is up; waking its sender and starting the bridge"
     timeout 20 ssh -o BatchMode=yes -o ConnectTimeout=5 khang@172.17.29.72 'sudo systemctl start l515-sender' 2>&1 | tail -1
-    timeout 120 bash "$HERE/l515_go2_pi4_bridge/scripts/run_pc.sh" </dev/null 2>&1 | tail -4
+    timeout 120 bash "$HERE/l515_go2_pi4_bridge/scripts/run_pc.sh" </dev/null 9>&- 2>&1 | tail -4
   else
     echo "L515 Pi (172.17.29.72) not on the network; skipping the L515 bridge"
   fi
