@@ -184,6 +184,29 @@ def front_clearance(odom, cloud, cloud_age):
                     f"({CAM_X} m ahead of base_link), up to {CLEAR_MAX_M} m; bearing + = left; null = nothing seen"}
 
 
+TURN_NEED_M = 0.42     # go2_agent.SWEEP_R: an in-place turn needs nothing closer than this to the dog's centre
+
+
+def _turn_clear(agent, x, y, mp):
+    """Clearance (m) all round a stand (AUT ask 18:34): the planner's distance-to-nearest-blocked cell there (saved
+    map + live lidar within ~3 m of the dog, refreshed by update_live), and when the stand is where the dog is now,
+    the live sweep check too (the smaller wins). Resolution ~0.1 m. Returns (m or None, source)."""
+    pl = agent.planner
+    out, src = None, None
+    if pl is not None:
+        with pl.lock:
+            if pl.dist is not None:
+                r, c = pl.cell(x, y)
+                if pl.inside(r, c):
+                    out, src = round(float(pl.dist[r, c]), 2), "planner grid (map + live within ~3 m), 0.1 m cells"
+    if mp is not None and math.hypot(x - mp["x"], y - mp["y"]) < 0.3 and hasattr(agent, "sweep_hit"):
+        h = agent.sweep_hit()
+        live = 9.9 if h is None else round(h, 2)       # nothing within the sweep radius: at least that clear
+        if out is None or live < out:
+            out, src = (min(live, 9.9) if h is not None else out), "live lidar around the dog now"
+    return out, src
+
+
 def _arrival_yaw(path, yaw0):
     """Heading of the last route segment longer than 5 cm (the dog arrives facing about that way), else yaw0."""
     for (ax, ay), (bx, by) in zip(path[-2::-1], path[::-1]):
@@ -264,6 +287,9 @@ def check(poses, agent, keepout, speed="slow"):
                       "overhead_s": overhead},
                  tight=bool(plan.get("tight")), squeeze=bool(plan.get("squeeze")),
                  goal_used=[round(gx, 2), round(gy, 2)], snapped_m=round(snap, 2))
+        tc, tc_src = _turn_clear(agent, gx, gy, mp)
+        r.update(turn_clear_m=tc, turn_clear_source=tc_src,
+                 ok_to_turn=None if tc is None else bool(tc >= TURN_NEED_M))
         flags = []
         if snap > SNAP_WARN_M:
             flags.append(f"goal moved {snap:.2f} m to open floor")
@@ -1021,6 +1047,11 @@ class Patrols:
             r = chk["results"][0]
             if not r["ok"]:
                 return self._refuse(r["why"])
+            if yaws and len(yaws) > 1 and r.get("ok_to_turn") is False:   # AUT ask 18:34 #3
+                return self._refuse({"code": "turn_clearance",
+                                     "detail": f"{len(yaws)} headings need turning in place, but the stand has only "
+                                               f"{r['turn_clear_m']} m clear all round (needs {TURN_NEED_M} m)",
+                                     "turn_clear_m": r["turn_clear_m"]})
             caps = self.caps()
             self.p["n_views"] += 1
             vid = f"v{self.p['n_views']:03d}_{time.strftime('%H%M%S')}"
