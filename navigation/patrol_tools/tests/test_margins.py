@@ -170,6 +170,17 @@ ok("just stood up (sparse live map): held cells merged with live", cl.get("held"
 w.cloud.obs = rich + [[*body_pt(w, 2.5, 0.0), 0.4]]; time.sleep(0.4)
 _, _, _, cl, _, _ = ag.snap()
 ok("live map rebuilt: held no longer used", not cl.get("held"))
+w.cloud.obs = [[*body_pt(w, 2.5, 0.0), 0.4]]; time.sleep(0.4)
+ag._held, ag._held_merge, ag._held_loaded = None, None, False    # reload from disk (saved without some keys before 15:40)
+w.sim.body_h = 0.08; w.cloud.on = False; time.sleep(3.5)
+_, _, _, cl, _, _ = ag.snap()
+ok("held cloud has every key update_live reads (flat, under; 15:35 crash)", cl and all(k in cl for k in ("obs", "under_obs", "flat", "under", "frame")),
+   sorted((cl or {}).keys()))
+try:
+    ag.update_live(); ok("update_live on the held cloud does not raise", True)
+except Exception as e:
+    ok("update_live on the held cloud does not raise", False, repr(e))
+w.sim.body_h = 0.30; w.cloud.on = True; time.sleep(0.4)
 w.cloud.obs = [[*body_pt(w, 2.5, 0.0), 0.4]]; time.sleep(0.3)
 w.sim.x += 0.2; time.sleep(0.3)
 _, _, _, cl, _, _ = ag.snap()

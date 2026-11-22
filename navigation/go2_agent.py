@@ -365,7 +365,11 @@ class Agents:
             hc = h["cloud"]
             obs = list(hc.get("obs") or []) + (list(cloud.get("obs") or []) if live_ok else [])
             und = list(hc.get("under_obs") or []) + (list(cloud.get("under_obs") or []) if live_ok else [])
-            mc = (key, dict(hc, obs=obs, under_obs=und))
+            base = dict(cloud) if live_ok else {}
+            base.update(hc)
+            for k in ("flat", "under"):            # every key the live cloud has (update_live reads flat / under)
+                base[k] = list(hc.get(k) or []) + (list(cloud.get(k) or []) if live_ok else [])
+            mc = (key, dict(base, obs=obs, under_obs=und, frame="odom"))
             self._held_merge = mc
         out = dict(mc[1], held={"age_s": round(now - h["t"], 1), "n_held": h["n"], "n_live": n_live,
                                 "why": "lying down: the lidar is off" if not live_ok else
@@ -608,7 +612,8 @@ class Agents:
         try:
             tmp = HELD_FILE + ".tmp"
             with open(tmp, "w") as fh:
-                json.dump({"cloud": {k: h["cloud"].get(k) for k in ("frame", "obs", "under_obs")}, "pose": list(h["pose"]),
+                json.dump({"cloud": {k: h["cloud"].get(k) for k in ("frame", "obs", "under_obs", "flat", "under")},
+                           "pose": list(h["pose"]),
                            "n": h["n"], "t": h["t"]}, fh)
             os.replace(tmp, HELD_FILE)
         except (OSError, TypeError, ValueError) as e:
@@ -1530,7 +1535,7 @@ class Agents:
                 obs.append(p)
                 hard.append(p)
             under = [self.mapper.to_map(x, y)[:2] for x, y in cloud.get("under", ())]
-            free += [self.mapper.to_map(x, y)[:2] for x, y in cloud["flat"]]
+            free += [self.mapper.to_map(x, y)[:2] for x, y in (cloud.get("flat") or [])]
             self.live_hist.append((obs, free, under, hard))
         # an obstacle cell counts once it shows up in a few clouds in a row (cuts flicker)
         need = min(LIVE_MIN_SEEN, len(self.live_hist))

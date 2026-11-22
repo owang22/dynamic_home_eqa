@@ -917,7 +917,10 @@ class Collector(Node):
                                "under_obs": np.round(under_obs.astype(np.float64), 2).tolist(),
                                "under": np.round(under.astype(np.float64), 2).tolist()}
         if AG and AG.planner:
-            AG.update_live()     # the route planner's view of what's around the dog now
+            try:
+                AG.update_live()     # the route planner's view of what's around the dog now
+            except Exception as e:   # 11-22: an exception here killed the ROS spin thread (console blind, "DOG OFF")
+                print(f"[cloud] update_live failed: {type(e).__name__}: {e}", flush=True)
             self.stamp("cloud")
 
     def refresh_map(self):
