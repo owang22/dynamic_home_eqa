@@ -24,6 +24,7 @@ Code is in `../` (go2_patrol.py, go2_dashboard.py, go2_agent.py, go2_watchdog.py
 | 18:55 | `GET /agent/surround` (36 x 10 deg nearest live cells, footprint margins, cloud age, pose; no claim) (b702a90fa7) | AUT ask 18:50, item 1 (after Oliver: the agent should plan its own exits) |
 | 19:08 | Oliver's tight-spot exits: 261 episodes (125 strict) from his recorded drives, JSON (~/go2_overnight/exits on Z690) | AUT ask 18:50, item 3 |
 | 19:14 | `POST /agent/arc` (+ `dry`), swept-footprint check, margin 0.08 m; walls/tall cells now count in the turn sweep and surround (52ec3ce158) | AUT ask 18:50, item 2 |
+| 19:45 | Dwell spots (78 candidates + all prior buckets, 244 records) converted to the 19:29 map by the remap's per-node correction; /patrol/views and /patrol/prior serve them | AUT ask 19:36 |
 
 ## Not buildable here (and why)
 - **Live motion tests by the control PC itself:** the permission rules on Z690 block me from sending patrol or motion
