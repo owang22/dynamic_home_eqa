@@ -52,6 +52,7 @@ def main():
     since = {"state": None, "t": time.time()}
     last_wake = last_l515 = 0.0
     l515_asleep = False
+    l515_unplugged = False      # the Pi answers but has no RealSense on its USB
     last_action = None
     log("watchdog started")
     while True:
@@ -82,17 +83,30 @@ def main():
             else:
                 log("dog off: L515 Pi not reachable, nothing to put to sleep")
         elif state == "on" and not l515_on and now - last_l515 >= L515_COOLDOWN_S and ping(PI_IP):
-            last_l515, l515_asleep, action = now, False, "l515_wake"
-            code, out = pi("sudo systemctl start l515-sender")
-            log(f"dog on, L515 not streaming: sender start rc {code} {out}; starting bridge")
-            subprocess.Popen(["bash", os.path.join(HERE, "l515_go2_pi4_bridge", "scripts", "run_pc.sh")],
-                             stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
-                             start_new_session=True)
+            last_l515 = now
+            # No RealSense (Intel, 8086:) on the Pi's USB: restarting the sender and bridge can't help (11-21: the
+            # camera was off the bus for days while this restarted the bridge every 2 min). Say so once, and wait.
+            ucode, uout = pi("lsusb -d 8086:")
+            if ucode in (0, 1) and not uout.strip():
+                if not l515_unplugged:
+                    log("dog on, L515 not on the Pi's USB (lsusb shows no Intel device): plug the camera in; "
+                        "not restarting the bridge until it shows up")
+                l515_unplugged = True
+            else:
+                if l515_unplugged:
+                    log("L515 is back on the Pi's USB")
+                l515_unplugged, l515_asleep, action = False, False, "l515_wake"
+                code, out = pi("sudo systemctl start l515-sender")
+                log(f"dog on, L515 not streaming: sender start rc {code} {out}; starting bridge")
+                subprocess.Popen(["bash", os.path.join(HERE, "l515_go2_pi4_bridge", "scripts", "run_pc.sh")],
+                                 stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+                                 start_new_session=True)
 
         if action:
             last_action = f"{action} at {time.strftime('%H:%M:%S')}"
         status = {"t": round(now, 1), "dog": state, "for_s": round(held), "odom_age_s": odom_age,
                   "console_up": st is not None, "l515_online": l515_on, "l515_asleep": l515_asleep,
+                  "l515_unplugged": l515_unplugged,
                   "last_action": last_action,
                   "last_wake_t": round(last_wake, 1) or None}
         try:   # shown in the console header (POST /watchdog, localhost only)
