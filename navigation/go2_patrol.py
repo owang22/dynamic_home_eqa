@@ -228,6 +228,9 @@ VIEW_TIMEOUT_S = 180.0       # one /agent/view call, walk + all headings
 FACE_TOL_DEG = 3.0           # don't turn for less than this
 WALK_V_MIN, WALK_W_MIN = 0.05, 0.15    # odom speed (m/s, rad/s) that counts as walking (resets the standing clock)
 STILL_V, STILL_W = 0.03, 0.05          # and below which a photo counts as still (same as go2_agent._photo)
+STILL_WINDOW_S = 0.5                   # the shutter waits for this long below STILL_V/W ...
+STILL_EXTRA_S = 2.0                    # ... for at most this long after settle_s (first patrol 11-21: 2 of 4 shots
+                                       # were taken while the dog was still moving after a 1.5 s settle)
 CAM_MAX_AGE_S = 2.0          # dog camera frame older than this at the shutter: no photo
 L515_MATCH_S = 0.6           # an L515 frame further than this from the dog shutter is not "the same instant"
 L515_KEEP = 12               # L515 messages kept per kind (~1.5 s at 8 Hz)
@@ -1020,21 +1023,33 @@ class Patrols:
         t0 = time.monotonic()
         if look:
             self.ag.node.look(math.radians(look))
-        vmax = wmax = 0.0
+        recent = deque()                         # (t, v, w) over the last STILL_WINDOW_S
         last_head = time.monotonic()
         end = time.monotonic() + settle
-        while time.monotonic() < end:
+        hard_end = end + STILL_EXTRA_S
+        while True:
+            now = time.monotonic()
+            if now >= hard_end:
+                break
             if self.ag.abort.is_set():
                 raise _aborted(self.ag)
             odom = self.ag.snap()[0]
             if odom:
-                vmax, wmax = max(vmax, math.hypot(odom["vel"][0], odom["vel"][1])), max(wmax, abs(odom["vel"][2]))
+                recent.append((now, math.hypot(odom["vel"][0], odom["vel"][1]), abs(odom["vel"][2])))
+            while recent and now - recent[0][0] > STILL_WINDOW_S:
+                recent.popleft()
+            calm = (recent and now - recent[0][0] >= STILL_WINDOW_S * 0.8
+                    and all(v < STILL_V and w < STILL_W for _, v, w in recent))
+            if now >= end and calm:
+                break
             if look and time.monotonic() - last_head >= LOOK_REFRESH_S:
                 self.ag.node.send_head()          # the pitch springs back by itself otherwise (10-23, 11-18)
                 last_head = time.monotonic()
             time.sleep(0.05)
         timing["settle_s"] = round(timing["settle_s"] + time.monotonic() - t0, 2)
         self.ag.tick(deadline)                    # fallen / lying / stale / lost: no photo, the call ends
+        vmax = max((v for _, v, _ in recent), default=None)
+        wmax = max((w for _, _, w in recent), default=None)
         t1 = time.monotonic()
         shot = self._capture(vdir, prefix, url, still_vw=(vmax, wmax))
         timing["photo_s"] = round(timing["photo_s"] + time.monotonic() - t1, 2)
@@ -1098,7 +1113,7 @@ class Patrols:
                 "look_deg_cmd": round(math.degrees(getattr(ag.node, "head", 0.0))),
                 "body_pitch_deg": round(math.degrees(imu["rpy"][1]), 1) if imu else None,
                 "body_height": state["body_height"] if state else None,
-                "still": still, "max_speed_during_settle": {"v": None if still_vw[0] is None else round(still_vw[0], 3),
+                "still": still, "max_speed_before_shutter": {"v": None if still_vw[0] is None else round(still_vw[0], 3),
                                                             "w": None if still_vw[1] is None else round(still_vw[1], 3)}}
 
 
