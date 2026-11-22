@@ -14,6 +14,7 @@ Code is in `../` (go2_patrol.py, go2_dashboard.py, go2_agent.py, go2_watchdog.py
 | 17:29 | `/agent/view` waits for stillness before the shutter (92b1ab9e68) | traced failure, patrol 1: 2 of 4 shots still=false (cheetah's note 17:27) |
 | 17:29 | `GET /patrol/views` candidates (seen counts, walk length), `GET /patrol/prior` (4c0c93a79f) | agreed plan step 4-5 (inbox 16:25) |
 | 17:34 | Watchdog detects an L515 missing from the Pi's USB instead of restarting the bridge every 2 min (402d19b77e) | ahead of the expected "L515 back online" ask: the root cause is hardware (unplugged); Oliver asked to reconnect it |
+| 17:48 | est_s depends on the speed preset (slow 3.4 s + m/0.12; normal as before); per-heading cost measured (8fb8378f58) | AUT trace, patrol 2: est_s 1.3-1.7x optimistic; draft per-heading ask (as data, no new API) |
 
 ## Not buildable here (and why)
 - **Live motion tests by the control PC itself:** the permission rules on Z690 block me from sending patrol or motion
