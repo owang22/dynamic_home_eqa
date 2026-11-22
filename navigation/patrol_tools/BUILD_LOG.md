@@ -19,6 +19,7 @@ Code is in `../` (go2_patrol.py, go2_dashboard.py, go2_agent.py, go2_watchdog.py
 | 17:59 | `relocalize tag` refusal lists each tag's stand pose and viewable_from_here / turn (7aab51a8fe) | AUT ask 17:52 (offer b): spun 360 deg near the sofa where tag D faces away (patrol 2) |
 | 17:59 | `/patrol/check` yaw lists → per-heading est_face_s; shots log face_s (7aab51a8fe) | AUT ask 17:52: flat 6.9 s per heading over-bought big turns |
 | 17:59 | loc_suspect says what raised it (`suspect_why`: lidar_fit or tag + shift) (7aab51a8fe) | traced failure, patrol 3: the abort said "lidar looks shifted", but tag A disagreed with the lidar by 0.42 m; the AUT blamed the stale map |
+| 18:35 | Turning sweep check (turn_blocked within 0.42 m of centre), no re-plant or shuffle in the sweep, no backward rock in patrols; avoid API mode re-asserted before manual moves (0866f0c19d) | Collision p_20261121_182815 (Oliver stopped it: chair hit by the front while turning and by the back legs while backing); Oliver: manual driving only worked with avoidance off |
 
 ## Not buildable here (and why)
 - **Live motion tests by the control PC itself:** the permission rules on Z690 block me from sending patrol or motion
