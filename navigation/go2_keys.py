@@ -18,14 +18,31 @@ SPORT_TOPIC = "rt/api/sport/request"
 CMD = {"StopMove": 1003, "StandUp": 1004, "StandDown": 1005, "BalanceStand": 1002,
        "Sit": 1009, "RiseSit": 1010, "Hello": 1016}
 
-LIN, STRAFE, TURN = 0.5, 0.25, 0.8    # m/s, m/s, rad/s; slower and the Go2 shuffles
+# The console's speed caps, so the keyboard can't drive faster than the console (Oliver, 11-21: keys reversed at up
+# to 0.38 m/s while the console caps reverse at 0.25). Keep in step with go2_dashboard.SPEEDS / LIMITS / BACK_MAX.
+SPEEDS = {"slow": (0.3, 0.2, 0.5), "normal": (0.5, 0.25, 0.8), "fast": (0.6, 0.3, 1.0)}   # m/s, m/s, rad/s
+BACK_MAX = 0.25                        # m/s backwards for everyone: the dog barely sees behind itself
+SPEED_FILE = "/maps/console_speed.txt"  # the preset chosen on the console page
 DEADMAN_S = 0.3                        # stop if no movement key for this long
 
-MOVES = {
-    "w": (LIN, 0.0, 0.0), "s": (-LIN, 0.0, 0.0),
-    "a": (0.0, STRAFE, 0.0), "d": (0.0, -STRAFE, 0.0),
-    "q": (0.0, 0.0, TURN), "e": (0.0, 0.0, -TURN),
-}
+
+def speeds():
+    """(forward, strafe, turn) caps for the console's current preset; normal if unknown."""
+    try:
+        name = open(SPEED_FILE).read().strip()
+    except OSError:
+        name = "normal"
+    return name if name in SPEEDS else "normal", SPEEDS.get(name, SPEEDS["normal"])
+
+
+def move_for(key):
+    name, (lin, strafe, turn) = speeds()
+    return name, {"w": (lin, 0.0, 0.0), "s": (-min(lin, BACK_MAX), 0.0, 0.0),
+                  "a": (0.0, strafe, 0.0), "d": (0.0, -strafe, 0.0),
+                  "q": (0.0, 0.0, turn), "e": (0.0, 0.0, -turn)}[key]
+
+
+MOVES = "wsadqe"
 ACTIONS = {
     "u": ("stand up", ["StandUp", "BalanceStand"]),
     "j": ("lie down", ["StandDown"]),
@@ -69,13 +86,13 @@ def main():
             ready, _, _ = select.select([sys.stdin], [], [], 0.05)
             key = sys.stdin.read(1).lower() if ready else None
 
-            if key in MOVES:
-                x, y, z = MOVES[key]
+            if key and key in MOVES:
+                preset, (x, y, z) = move_for(key)
                 t = Twist()
                 t.linear.x, t.linear.y, t.angular.z = x, y, z
                 vel_pub.publish(t)
                 moving, last_move = True, time.monotonic()
-                say(f"moving  x={x:+.1f} y={y:+.1f} turn={z:+.1f}")
+                say(f"moving  x={x:+.2f} y={y:+.2f} turn={z:+.1f}  ({preset} preset)")
             elif key == " ":
                 send("StopMove")
                 moving = False

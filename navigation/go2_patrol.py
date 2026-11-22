@@ -26,12 +26,10 @@ MAX_POSES = 40         # per /patrol/check call
 SNAP_WARN_M = 0.30     # the planner moved the goal further than this: say so
 LAYER_OCC = 2          # go2_mapper.LAYER_OCC
 
-# Provisional zones until Oliver gives the real outlines (cheetah 11-21 agreed on both).
+# The podium and the outside door are not hazards (Oliver, 11-21): no zones for them; the planner treats them as furniture.
 DEFAULT_KEEPOUT = [
     {"id": "stairwell_door", "kind": "circle", "x": -5.93, "y": 1.62, "r": 1.0, "provisional": True,
      "why": "the stairwell door: the dog must not leave the lab (covers tag C)"},
-    {"id": "podium_edge", "kind": "circle", "x": -3.59, "y": 0.57, "r": 0.5, "provisional": True,
-     "why": "the podium edge (outline still to be given by Oliver)"},
 ]
 
 
