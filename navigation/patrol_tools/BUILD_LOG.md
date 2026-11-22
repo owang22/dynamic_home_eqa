@@ -37,3 +37,6 @@ baseline. AUT 1 = p_..._174120 (v0), 2 = _175111 (v2), 3 = _175618 (v3), 4 = _18
   because of the AUT's own NameError; its finally block stopped the patrol and lay the dog down.
 - **p_20261121_181112 (18:11, AUT brain v6):** suspect threshold 0.50 m verified. No tag-A suspect while working at
   desk_oliver (patrols 3-5 had aborted there at 0.30 m). 10 views, 0 refusals.
+- **p_20261121_182117 (18:21):** first live L515 capture in /agent/view: colour + 16-bit depth (640x480, 58% valid)
+  + camera_infos, dt_to_dog_s -0.014 s. L515 centre-patch median 0.84 m vs lidar front_clear_m 1.06 m (not the same
+  quantity: patch vs nearest in ±40°, different mount).
