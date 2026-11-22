@@ -1073,6 +1073,21 @@ def tag_stand_pose(t):
     return None
 
 
+_CMDLOG = {"t": 0.0, "last": None}
+
+
+def cmdlog(client, ip, req, outcome):
+    """Oliver 11-21: manual driving does nothing with avoidance on. Log each /cmd drive request and what happened to
+    it: a change of outcome at once, repeats at most once a second (moves arrive at 10 Hz)."""
+    key = (client, outcome)
+    now = time.monotonic()
+    if key != _CMDLOG["last"] or now - _CMDLOG["t"] > 1.0:
+        _CMDLOG["last"], _CMDLOG["t"] = key, now
+        print(f"[cmd] {time.strftime('%H:%M:%S')} {client}@{ip} "
+              f"{ {k: req[k] for k in ('move', 'avoid', 'action', 'look_deg') if k in req} } -> {outcome} "
+              f"(avoid={NODE.avoid}, speed={NODE.speed}, deadman_moving={NODE.moving})", flush=True)
+
+
 def tag_viewability(here):
     """Each tag with a stand pose to read it from and, when a pose 'here' is known, whether it can be read from here
     and how far to turn (AUT ask 17:52)."""
@@ -1800,8 +1815,10 @@ class Handler(BaseHTTPRequestHandler):
             elif req.get("handback"):
                 AG.hand_back()
             elif DEPLOYING and any(k in req for k in ("move", "avoid", "look_deg")) or (DEPLOYING and req.get("action") in ACTIONS):
+                cmdlog(client, ip, req, "503 deploying")
                 return self.send_error(503, "console is deploying")
             elif console and (AG.human_drives(client, ip) or not NODE.claim(client, ip)):
+                cmdlog(client, ip, req, f"409 someone at {NODE.driver_ip} is driving")
                 return self.send_error(409, f"Someone at {NODE.driver_ip} is driving")
             elif not console and PATROLS.is_open():
                 return self.send_error(409, "a patrol is open: agents drive through /agent/* only")
@@ -1811,6 +1828,7 @@ class Handler(BaseHTTPRequestHandler):
                 return self.send_error(409, "An agent tool is running")
             elif "move" in req:
                 NODE.move(*req["move"][:3])
+                cmdlog(client, ip, req, f"sent via {'avoid service' if NODE.avoid else 'cmd_vel'}")
             elif "avoid" in req:
                 NODE.set_avoid(req["avoid"])
             elif "look_deg" in req:          # camera tilt, + = up
