@@ -48,14 +48,15 @@ class Trail:
                     for line in f:
                         try:
                             p = json.loads(line)
-                            self.points.append([p["t"], p["x"], p["y"], p["yaw"], f"{d}/{p['f']}"])
+                            self.points.append([p["t"], p["x"], p["y"], p["yaw"], f"{d}/{p['f']}", p.get("loc")])
                         except (ValueError, KeyError):
                             pass
             except OSError:
                 pass
 
-    def offer(self, pose, jpeg_bytes, frame_t, turn_rate):
-        """Called a few times a second with the map pose and the latest 640 px frame."""
+    def offer(self, pose, jpeg_bytes, frame_t, turn_rate, loc=None):
+        """Called a few times a second with the map pose and the latest 640 px frame. loc: how much to trust the
+        pose ({map_id, track_fit, fresh_fit, lost, suspect}); kept with the frame (cheetah's patrol brain, 11-21)."""
         if pose is None or jpeg_bytes is None or time.time() - frame_t > MAX_FRAME_AGE or abs(turn_rate) > MAX_TURN:
             return
         if frame_t == self.last_t:      # same frame as last time (camera stalled)
@@ -75,11 +76,11 @@ class Trail:
         with open(os.path.join(d, name), "wb") as f:
             f.write(jpeg_bytes)
         with open(os.path.join(d, "index.jsonl"), "a") as f:
-            f.write(json.dumps({"t": round(frame_t, 3), "x": x, "y": y, "yaw": yaw, "f": name}) + "\n")
+            f.write(json.dumps({"t": round(frame_t, 3), "x": x, "y": y, "yaw": yaw, "f": name, "loc": loc}) + "\n")
         for p in (d, os.path.join(d, name), os.path.join(d, "index.jsonl")) if fresh_day else (os.path.join(d, name),):
             os.chown(p, HOST_UID, HOST_UID)
         with self.lock:
-            self.points.append([round(frame_t, 3), x, y, yaw, f"{day}/{name}"])
+            self.points.append([round(frame_t, 3), x, y, yaw, f"{day}/{name}", loc])
 
     def near(self, x, y, radius=3.0, n=12):
         """Frames taken within radius of (x, y): first the ones whose camera faced the spot, nearest
@@ -87,7 +88,7 @@ class Trail:
         with self.lock:
             pts = [p for p in self.points if math.hypot(p[1] - x, p[2] - y) <= radius]
         rows = []
-        for t, px, py, yaw, f in pts:
+        for t, px, py, yaw, f, *_ in pts:
             dist = math.hypot(px - x, py - y)
             # where the spot is in the picture: degrees left (+) or right (-) of straight ahead
             bearing = math.degrees((math.atan2(y - py, x - px) - yaw + math.pi) % (2 * math.pi) - math.pi)
@@ -111,8 +112,8 @@ class Trail:
         """Frames taken after time t, oldest first, at most n. Page by passing the last one's t."""
         with self.lock:
             pts = [p for p in self.points if p[0] > t][:n]
-        return [{"t": pt, "x": round(px, 2), "y": round(py, 2), "yaw_deg": round(math.degrees(yaw), 1),
-                 "url": f"/trail/{f}"} for pt, px, py, yaw, f in pts]
+        return [dict({"t": p[0], "x": round(p[1], 2), "y": round(p[2], 2), "yaw_deg": round(math.degrees(p[3]), 1),
+                      "url": f"/trail/{p[4]}"}, **({"loc": p[5]} if len(p) > 5 and p[5] else {})) for p in pts]
 
     def coverage(self, cell=0.25):
         """Spots (x, y) where frames exist, one per cell, for drawing on the map."""

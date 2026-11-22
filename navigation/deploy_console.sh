@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Deploy a console version to the running driver container: the one way to restart the console.
 #   ~/oliver/deploy_console.sh [git-ref]      (default HEAD of ~/dynamic_home_eqa)
-# 1. takes navigation/go2_dashboard.py and go2_mapper.py from the git ref (not the working copies)
+# 1. takes the console modules (FILES) from navigation/ at the git ref (not the working copies)
 # 2. POST /deploying: the console stops the dog, refuses all motion and shows a "deploying" overlay; checks the
 #    dog's odom speed is ~0 and sends STOP again if not
 # 3. copies the files into the container (and to ~/oliver, which run_go2_keys.sh copies from)
@@ -18,7 +18,7 @@ REPO=${GO2_REPO:-$HOME/dynamic_home_eqa}
 OLIVER=${GO2_OLIVER-$HOME/oliver}
 REF=${1:-HEAD}
 ROS='source /opt/ros/humble/setup.bash && source /ros2_ws/install/setup.bash'
-FILES="go2_dashboard.py go2_mapper.py"
+FILES="go2_dashboard.py go2_mapper.py go2_agent.py go2_trail.py go2_nav.py go2_markers.py go2_examples.py go2_history.py go2_marker_table.py go2_patrol.py"
 PAT='^python3 /root/go2_dashboard.py'
 die() { echo "deploy_console: $*" >&2; exit 1; }
 # HTTP from inside the container, so this works whatever its network setup

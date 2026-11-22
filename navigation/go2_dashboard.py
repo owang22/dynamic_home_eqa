@@ -48,6 +48,7 @@ from go2_markers import Markers
 from go2_marker_table import MarkerTable
 from go2_examples import Examples
 from go2_history import History, sample_from
+import go2_patrol
 
 PORT = int(sys.argv[1]) if len(sys.argv) > 1 else 8080
 CELL = 0.1            # metres per grid cell in the top view
@@ -918,7 +919,10 @@ class Collector(Node):
                 self.stamp("map_pose")
         with jpeg_cond:
             data, t = jpeg["data"], jpeg["t"]
-        TRAIL.offer(pose, data, t, odom["vel"][2] if odom else 0.0)
+        li = MAPPER.loc_info() if pose else {}
+        TRAIL.offer(pose, data, t, odom["vel"][2] if odom else 0.0,
+                    loc={"map_id": MAPPER.saved_at, "track_fit": li.get("track_fit"), "fresh_fit": li.get("fresh_fit"),
+                         "lost": li.get("lost"), "suspect": li.get("suspect")} if pose else None)
 
     def on_image(self, m):
         if m.encoding not in ("bgr8", "rgb8"):
@@ -1302,7 +1306,7 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_POST(self):
         path = self.path.split("?")[0]
-        if not (path in ("/cmd", "/map", "/map/objects", "/map/proposals", "/deploying", "/watchdog") or path.startswith(("/agent/", "/places", "/label/", "/agentchat/"))):
+        if not (path in ("/cmd", "/map", "/map/objects", "/map/proposals", "/deploying", "/watchdog", "/patrol/check") or path.startswith(("/agent/", "/places", "/label/", "/agentchat/"))):
             return self.send_error(404)
         if path == "/watchdog":     # ~/oliver/go2_watchdog.py on this machine: its latest status, shown on the page
             try:
@@ -1488,6 +1492,10 @@ class Handler(BaseHTTPRequestHandler):
                                                          pose=pose, image=image, target=target))
             except (ValueError, TypeError, KeyError) as e:
                 return self.send_json(400, {"result": "error", "reason": str(e)})
+        if path == "/patrol/check":
+            # dry run for a patrol brain: [{x, y, yaw_deg?}] -> ok / refused + why, route_m, est_s. No claim, no motion.
+            code, out = go2_patrol.check(req.get("poses"), AG, KEEPOUT)
+            return self.send_json(code, out)
         if path == "/map":
             act = req.get("action")
             with lock:
@@ -1789,6 +1797,14 @@ class Handler(BaseHTTPRequestHandler):
                 return self.send_error(404)
             with open(f, "rb") as fh:
                 self.send_bytes(fh.read(), "image/jpeg")
+        elif self.path.split("?")[0] == "/map/grid.json":
+            # the saved map + height layers + keep-outs + map_id, for offline coverage (cheetah's patrol brain)
+            out = go2_patrol.grid_json(MAPPER, KEEPOUT)
+            if out is None:
+                return self.send_json(503, {"error": "no map"})
+            self.send_json(200, out)
+        elif self.path.split("?")[0] == "/map/keepout":
+            self.send_json(200, {"zones": KEEPOUT.zones()})
         elif self.path.split("?")[0] == "/map/layer.png":
             # one height layer, same crop as /map.png: ?layer=mid (desk/table tops) | high | ceiling
             q = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
@@ -3181,6 +3197,8 @@ def main():
     AG = Agents(node, latest, lock, full)
     MAPPER = Mapper("/maps", os.environ.get("MAP_NAME", "lab"))
     TRAIL = Trail("/maps", os.environ.get("MAP_NAME", "lab"))
+    global KEEPOUT
+    KEEPOUT = go2_patrol.Keepout("/maps", os.environ.get("MAP_NAME", "lab"))
     MARKERS = Markers(full, lock)
     global MARKER_TABLE
     MARKER_TABLE = MarkerTable("/maps", os.environ.get("MAP_NAME", "lab"), log=lambda m: print(m, flush=True))
