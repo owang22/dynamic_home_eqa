@@ -879,7 +879,9 @@ class Patrols:
                 return self._refuse(why)
             caps = self.caps()
             req = dict(req)
-            if call == "move":
+            if call == "move" and req.get("lateral_m") is not None:   # sideways (AUT ask 1507): no reverse budget
+                pass
+            elif call == "move":
                 m = float(req["m"])
                 if m < 0:
                     if caps["back_m"] < 0.05:
@@ -906,7 +908,8 @@ class Patrols:
             self.interrupted = None
         code, out = self.ag.tool(call, client, req, caps=caps)
         with self.lock:
-            if call in ("move", "arc") and isinstance(out.get("moved_m"), (int, float)) and out["moved_m"] < 0:
+            if (call in ("move", "arc") and isinstance(out.get("moved_m"), (int, float)) and out["moved_m"] < 0
+                    and not out.get("lateral")):
                 self.p["reverse_used_m"] += -out["moved_m"]
             if isinstance(out.get("moved_m"), (int, float)):
                 self.p["walked_m"] = round(self.p["walked_m"] + abs(out["moved_m"]), 2)

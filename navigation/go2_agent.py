@@ -52,6 +52,9 @@ SWEEP_R = 0.42           # the dog keeps turning about this much after stop
 TURN_MARGIN_M = 0.03
 TURN_COAST_DEG = 10.0     # the dog keeps turning about this much after the stop
 MARGIN_MAX_M = 0.20
+HOLD_MOVE_M, HOLD_YAW_DEG = 0.05, 5.0     # held cloud valid while the dog stays this close to where it was (ask 1510)
+HOLD_RICH_FRAC, HOLD_SPARSE_FRAC = 0.8, 0.5
+HOLD_AFTER_STAND_S = 15.0                 # merge held cells into a sparse live map only this long after a stand-up   # replace the held cloud when live has >= 80% of its cells; merge below 50%
 LAT_MAX_M, LAT_V = 0.5, 0.15   # /agent/move lateral_m (AUT ask 1450): per call, m/s (Oliver's 11-21 pocket exit: 0.27 m
                                # sideways with 0.37 m back in 3.7 s)
 MAX_MOVE_M, MAX_TURN_DEG = 3.0, 360.0      # per call
@@ -302,8 +305,59 @@ class Agents:
         with self.lock:
             now = time.time()
             ages = {k: now - t for k, t in self.latest["stamps"].items()}
-            return (self.latest["odom"], self.latest["imu"], self.latest["state"], self.latest["cloud"],
-                    self.latest["map_pose"], ages)
+            odom, state, cloud = self.latest["odom"], self.latest["state"], self.latest["cloud"]
+            cloud, ages = self._hold_cloud(odom, state, cloud, ages, now)
+            return (odom, self.latest["imu"], state, cloud, self.latest["map_pose"], ages)
+
+    def _hold_cloud(self, odom, state, cloud, ages, now):
+        """AUT ask 1510: the dog's lidar stops while it lies down (no /point_cloud2 at all), and after a stand-up its
+        voxel map restarts nearly empty (~1.3k cells vs 45-80k) for ~10 s. Keep the last full standing cloud; while the
+        dog has not moved since (odom < HOLD_MOVE_M / HOLD_YAW_DEG), use it when the live cloud is stale (lying) or
+        sparse (just stood up), merged with the live cells. The result carries cloud["held"] = {age_s, why, n_held,
+        n_live}; ages["cloud"] is then the live cloud's age if fresh, else 0 (the held one is the latest knowledge)."""
+        if odom is None:
+            return cloud, ages
+        ca = ages.get("cloud", 99.0)
+        live_ok = bool(cloud) and cloud.get("frame") == "odom" and ca < 1.5
+        n_live = len(cloud.get("obs") or []) if live_ok else 0
+        pose = (odom["pos"][0], odom["pos"][1], odom["yaw"])
+        h = getattr(self, "_held", None)
+
+        def moved(hh):
+            return (math.hypot(pose[0] - hh["pose"][0], pose[1] - hh["pose"][1]) > HOLD_MOVE_M
+                    or abs(wrap(pose[2] - hh["pose"][2])) > math.radians(HOLD_YAW_DEG))
+        standing = bool(state) and state.get("body_height", 0.0) >= MIN_BODY_H
+        was = getattr(self, "_was_standing", None)
+        if standing and was is False:
+            self._stood_t = now                    # lying -> standing: the dog's voxel map restarts
+        self._was_standing = standing
+        if standing and not live_ok:
+            return cloud, ages                     # standing with no live cloud is a sensor fault: never hold
+        if standing and now - getattr(self, "_stood_t", -1e9) > HOLD_AFTER_STAND_S:
+            if live_ok:                            # the latest standing view is what lying down will hold
+                self._held, self._held_merge = {"cloud": cloud, "pose": pose, "n": n_live, "t": now - ca}, None
+            return cloud, ages                     # long after a stand-up: the live map is the truth (no ghosts)
+        if live_ok and standing and (h is None or moved(h) or n_live >= HOLD_RICH_FRAC * h["n"]):
+            self._held = h = {"cloud": cloud, "pose": pose, "n": n_live, "t": now - ca}
+            self._held_merge = None
+        if h is None or moved(h):
+            return cloud, ages
+        if live_ok and n_live >= HOLD_SPARSE_FRAC * h["n"]:
+            return cloud, ages
+        key = (id(h["cloud"]), id(cloud) if live_ok else None)
+        mc = getattr(self, "_held_merge", None)
+        if not mc or mc[0] != key:
+            hc = h["cloud"]
+            obs = list(hc.get("obs") or []) + (list(cloud.get("obs") or []) if live_ok else [])
+            und = list(hc.get("under_obs") or []) + (list(cloud.get("under_obs") or []) if live_ok else [])
+            mc = (key, dict(hc, obs=obs, under_obs=und))
+            self._held_merge = mc
+        out = dict(mc[1], held={"age_s": round(now - h["t"], 1), "n_held": h["n"], "n_live": n_live,
+                                "why": "lying down: the lidar is off" if not live_ok else
+                                       "just stood up: the dog's map is still rebuilding (held cells merged)",
+                                "valid_while": f"the dog stays within {HOLD_MOVE_M} m / {HOLD_YAW_DEG} deg of where it was"})
+        ages = dict(ages, cloud=ca if live_ok else 0.0, cloud_held=round(now - h["t"], 1))
+        return out, ages
 
     def check_safe(self):
         odom, imu, state, _, _, ages = self.snap()
@@ -346,6 +400,7 @@ class Agents:
         out = {"t": round(time.time(), 2), "cloud_age_s": None if ages.get("cloud") is None else round(ages["cloud"], 2),
                "standing": bool(state and state.get("body_height", 0) >= MIN_BODY_H), "map_pose": None if not mp else
                {"x": round(mp["x"], 3), "y": round(mp["y"], 3), "yaw_deg": round(math.degrees(mp["yaw"]), 1)},
+               "cloud_held": (cloud or {}).get("held"),
                "band_m": list(BUMP_H), "tall_min_m": ARC_TALL_MIN, "bin_deg": 360.0 / bins, "bins": None, "margins": None,
                "rule": "bins: bearing of the bin centre, + = left, 0 = ahead; distance from the body centre (base_link). "
                        "margins: free distance beyond each side of a 0.70 x 0.31 m body, within the body's width/length"}
@@ -450,9 +505,10 @@ class Agents:
     def stall_info(self):
         """For "not making progress" replies (AUT ask 1430): the dog's own avoidance state and body height. 11-22: the
         dog ignored walking right after a stand-up (locked StandUp, body ~0.329 m, BalanceStand dropped mid-rise)."""
-        _, _, state, _, _, ages = self.snap()
+        odom, _, state, _, _, ages = self.snap()
         h = state["body_height"] if state and ages.get("state", 99) < 2.0 else None
         return {"dog_avoid_on": bool(getattr(self.node, "avoid", False)), "body_height": h,
+                "odom_vel": None if not odom or not odom.get("vel") else [round(v, 3) for v in odom["vel"]],
                 "locked_stand_suspect": h is not None and h >= 0.325,
                 "hint": "body_height >= 0.325 and no motion: the dog is probably still in its locked stand-up pose; "
                         "dog_avoid_on: the dog's own obstacle avoidance may have stopped it (its ranges are not "
@@ -600,7 +656,7 @@ class Agents:
         """Free distance (m) beyond the body's left (sign +1) or right (-1) side to the nearest live obstacle cell within
         the body's length + the arc margin, or None if nothing is within 1 m. Same cells as the arc check."""
         odom, _, _, cloud, _, ages = self.snap()
-        if not cloud or not cloud.get("obs") or ages.get("cloud", 99) > ARC_CLOUD_MAX_S or cloud.get("frame") == "base_link":
+        if not cloud or ages.get("cloud", 99) > ARC_CLOUD_MAX_S or cloud.get("frame") == "base_link":
             raise RuntimeError("stale_sensors: no fresh live lidar for the side check (lying down pauses it)")
         pts = self._live_obstacle_pts(cloud)
         if not len(pts):
@@ -628,7 +684,7 @@ class Agents:
         side = "left" if sign > 0 else "right"
         g = self._side_gap(sign)
         if g is not None and g - abs(lat_m) < mg:
-            return {"result": "refused", "side": side, "moved_m": 0.0, "side_gap_m": round(g, 3),
+            return {"result": "refused", "side": side, "moved_m": 0.0, "side_gap_m": round(g, 3), "lateral": True,
                     "reason": f"side_blocked: {g:.2f} m free on the {side}, {abs(lat_m):.2f} m asked + margin {mg:.2f} m",
                     "why": {"code": "side_blocked", "side_gap_m": round(g, 3), "margin_m": mg,
                             "max_lateral_m": round(max(0.0, g - mg), 2)}}
@@ -642,7 +698,7 @@ class Agents:
                 return {"result": "done", "moved_m": round(done * sign, 3), "lateral": True}
             g = self._side_gap(sign)
             if g is not None and g < mg:
-                return {"result": "blocked", "side": side, "moved_m": round(done * sign, 3), "side_gap_m": round(g, 3),
+                return {"result": "blocked", "side": side, "moved_m": round(done * sign, 3), "side_gap_m": round(g, 3), "lateral": True,
                         "reason": f"side_blocked: {g:.2f} m free on the {side} (margin {mg:.2f} m)",
                         "why": {"code": "side_blocked", "side_gap_m": round(g, 3), "margin_m": mg}}
             now = time.monotonic()
@@ -1087,7 +1143,8 @@ class Agents:
                 if (now - t_start > STALL_S + 0.5 and st["s"] - hist[0][1] < STALL_M
                         and abs(st["yaw"] - hist[0][2]) < math.radians(3)):
                     return done({"result": "blocked", "reason": "not making progress (avoidance stopped it, or something "
-                                 "is in the way)", "stall": self.stall_info(), "stopped_by": "progress"})
+                                 "is in the way)", "stall": self.stall_info(), "stall_info": self.stall_info(),
+                                 "stopped_by": "progress"})
                 self._mv(v, 0.0, w)
                 self.last_motion = time.monotonic()
                 time.sleep(0.1)

@@ -108,3 +108,23 @@ wake after 11-21 15:52).
   - `/agent/surround` gains `bins_detail` per bin: {d_m, kind band|tall|under, z_min_m, z_max_m, kinds_near}.
 - Tests: test_arc 78/78 (rear tests rewritten for the swept check; the old fixture failure is gone), test_margins
   27/27 (strafe + surround), test_view 78/78, test_patrol 71/71. The harness sim now integrates lateral velocity.
+
+## 2026-11-22 15:3x — AUT asks 1507 + 1510
+- **1507:** the patrol envelope's move pre-check read `m` and returned 400 for `lateral_m`. Strafes now pass through
+  it, and they never count against the reverse budget: all strafe replies carry `lateral: true`.
+  - `_side_gap` treated an empty live cloud (nothing near) as stale. Fixed.
+  - Arc progress stops now carry `stall_info` (as well as `stall`), with `odom_vel` added.
+- **1510:** measured with the dog lying: **no /point_cloud2 at all** (12 s, ROS domain 78). The lidar really stops
+  while lying.
+  - A switch command (rt/utlidar/switch) exists, but the driver's webrtc_req path cannot send a plain publish. It
+    would need a driver patch, and whether the firmware streams while lying is unknown.
+  - After a stand-up, the dog's voxel map restarts with ~1.3k cells (normally 45-80k) and takes about 10 s to rebuild.
+  - Built instead: the **held cloud** (Agents._hold_cloud). The latest standing cloud is kept; while the dog stays
+    within 0.05 m / 5° of where it was, it is used when lying (lidar off) and merged into the sparse live map for
+    15 s after a stand-up.
+  - Flagged as `cloud["held"]` = {age_s, why, n_held, n_live}, shown in /agent/surround `cloud_held`.
+  - Standing with no live cloud is still a sensor fault (never held). Long after a stand-up, the live map is used as
+    is (no ghosts).
+  - Effect: dry runs, surround, /patrol/check at the dog and the turn sweep work while lying. Motion still needs a
+    stand (check_safe).
+- Tests: test_margins 36/36 (patrol strafe, held cloud), test_arc 78/78, test_view 78/78, test_patrol 71/71.

@@ -19,12 +19,14 @@ C = "cheetah-patrol"
 
 class Cloud:
     def __init__(self, w):
-        self.w, self.obs = w, []
+        self.w, self.obs, self.on = w, [], True
         threading.Thread(target=self.loop, daemon=True, name="cloud").start()
         time.sleep(0.3)
 
     def loop(self):
         while self.w.sim.run:
+            if not self.on:
+                time.sleep(0.2); continue
             with self.w.lock:
                 self.w.latest["cloud"] = {"frame": "odom", "obs": [list(p) for p in self.obs], "flat": [],
                                           "under_obs": [], "under": []}
@@ -129,6 +131,44 @@ sr = ag.surround()
 det = [b for b in sr.get("bins_detail", []) if b.get("d_m") is not None]
 ok("surround bins_detail: kinds + z of the nearest cells", any(b["kind"] == "band" and b["z_max_m"] == 0.4 for b in det)
    and any(b["kind"] == "tall" and b["z_min_m"] == 1.6 for b in det) and len(sr["bins"]) == 36, det)
+
+# strafe inside a patrol (AUT ask 1507): allowed, not counted as reverse
+from harness import fake_l515
+fake_l515(w.pt)
+w.cloud.obs = []; time.sleep(0.3)
+code, st = w.pt.start(C, {"max_min": 5, "speed": "slow"})
+ok("patrol start", code == 200, st)
+code, out = w.pt.tool("move", C, {"client": C, "lateral_m": -0.2, "timeout_s": 10})
+ok("patrol: strafe right done", code == 200 and out.get("result") == "done", out)
+ok("patrol: strafe not counted as reverse", w.pt.p["reverse_used_m"] == 0.0, w.pt.p["reverse_used_m"])
+w.pt.stop(C)
+w.claim(C)
+
+# held cloud (AUT ask 1510): lying -> lidar off; just stood up -> sparse map rebuilding
+rich = [[*body_pt(w, 1.0 + 0.1 * k, 0.6), 0.4] for k in range(20)] + [[*body_pt(w, 0.0, 0.40), 0.4]]
+w.cloud.obs = rich; time.sleep(0.4)
+ag.snap()
+w.sim.body_h = 0.08
+w.cloud.on = False; time.sleep(3.5)
+sr = ag.surround()
+ok("lying, lidar off: surround uses the held cloud, flagged", sr.get("cloud_held") and sr["cloud_held"]["why"].startswith("lying")
+   and sr["bins"] and any(b[1] is not None for b in sr["bins"]), sr.get("cloud_held"))
+code, out = ag.tool("arc", C, {"client": C, "v_mps": 0.2, "w_radps": 0.0, "distance_m": 0.3, "dry": True})
+ok("lying: arc dry run works on the held cloud", out.get("dry") and "clear" in out and "no_live_cloud" not in str(out.get("reason")), out.get("reason"))
+ok("lying: turn sweep sees the held 0.40 m side cell", ag.sweep_hit(None) is not None)
+w.sim.body_h = 0.30
+w.cloud.obs = [[*body_pt(w, 2.5, 0.0), 0.4]]; w.cloud.on = True; time.sleep(0.4)
+_, _, _, cl, _, ages = ag.snap()
+ok("just stood up (sparse live map): held cells merged with live", cl.get("held") and len(cl["obs"]) == len(rich) + 1
+   and cl["held"]["why"].startswith("just stood"), (cl.get("held"), len(cl.get("obs") or [])))
+w.cloud.obs = rich + [[*body_pt(w, 2.5, 0.0), 0.4]]; time.sleep(0.4)
+_, _, _, cl, _, _ = ag.snap()
+ok("live map rebuilt: held no longer used", not cl.get("held"))
+w.cloud.obs = [[*body_pt(w, 2.5, 0.0), 0.4]]; time.sleep(0.3)
+w.sim.x += 0.2; time.sleep(0.3)
+_, _, _, cl, _, _ = ag.snap()
+ok("dog moved: held cloud dropped", not cl.get("held"))
+w.cloud.obs = []; time.sleep(0.3)
 
 # stall_info
 si = ag.stall_info()
