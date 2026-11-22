@@ -144,6 +144,10 @@ class Agents:
         self._trail = deque()          # (t, x, y) map poses the dog walked, for the planner's set_trail
         self._trail_T = None
         self._stop_if_lost = False     # set while a go_to runs (GO_TO_STOP_WHEN_LOST)
+        # Speed caps for the tool that is running, or None (go2_patrol: patrol-scoped, never global). Keys:
+        # v (forward m/s), back_v (reverse m/s), turn_v (rad/s), back_m (reverse per move). Set by run() for one call.
+        self.caps = None
+        self.human_seq = 0             # +1 on every human takeover (go2_patrol ends a patrol on any change)
 
     # ---------- ownership ----------
     def owner_now(self):
@@ -167,6 +171,7 @@ class Agents:
         o = self.owner_now()
         if o and o["kind"] == "agent":
             self.interrupt(f"a person at {ip} took over")
+        self.human_seq += 1
         self.owner = {"kind": "human", "client": client, "ip": ip, "t": time.monotonic()}
 
     def hand_back(self):
@@ -269,9 +274,10 @@ class Agents:
                                "; the map pose is probably wrong. Use relocalize before driving on")
 
     # ---------- tool runner ----------
-    def run(self, client, call, args, fn, stop=True):
+    def run(self, client, call, args, fn, stop=True, caps=None):
         if not self.busy.acquire(blocking=False):
             return 409, {"result": "error", "reason": "busy: another tool is running", "stop_reason": "busy"}
+        self.caps = caps
         self.abort.clear()
         self.abort_reason = ""
         t0 = time.time()
@@ -290,6 +296,7 @@ class Agents:
             self.node.moving = False
             if stop:             # not after a posture change: StopMove could undo lying down
                 self.node.stop()
+            self.caps = None
             self.current = None
             self.busy.release()
             if self.owner and self.owner["kind"] == "agent" and self.owner["client"] == client:
@@ -318,8 +325,17 @@ class Agents:
         return 200, out
 
     # ---------- motions ----------
+    def _mv(self, x, y, z):
+        """Every velocity command of the tools goes through here: clamped to the call's caps (patrol), if any."""
+        c = self.caps
+        if c:
+            x = max(-c["back_v"], min(c["v"], x))
+            z = max(-c["turn_v"], min(c["turn_v"], z))
+        self.node.move(x, y, z)
+
     def _move(self, m, timeout_s):
-        m = max(-MAX_BACK_M, min(MAX_MOVE_M, float(m)))
+        back_m = min(MAX_BACK_M, self.caps["back_m"]) if self.caps else MAX_BACK_M
+        m = max(-back_m, min(MAX_MOVE_M, float(m)))
         sign = 1 if m >= 0 else -1
         deadline = time.monotonic() + timeout_s
         odom0 = self.snap()[0]
@@ -356,7 +372,7 @@ class Agents:
                         "reason": "not making progress (avoidance stopped it, or something is in the way)",
                         "moved_m": round(done * sign, 3)}
             v = max(MIN_SPEED, min(MOVE_SPEED, left * 1.2)) * sign if sign > 0 else -BACK_SPEED
-            self.node.move(v, 0.0, 0.0)
+            self._mv(v, 0.0, 0.0)
             self.last_motion = time.monotonic()
             time.sleep(0.1)
 
@@ -408,7 +424,7 @@ class Agents:
             while time.monotonic() < end and not until():
                 if self.abort.is_set():
                     raise Aborted(self.abort_reason or "stopped")
-                self.node.move(v, 0.0, 0.0)
+                self._mv(v, 0.0, 0.0)
                 self.last_motion = time.monotonic()
                 time.sleep(0.1)
             self.node.moving = False
@@ -447,7 +463,7 @@ class Agents:
                 return {"result": "blocked", "reason": "not turning", "turned": turned * sign, "yaw": yaw}
             # rock forward/back a little while turning so every foot keeps stepping (no dragged pivot foot)
             rock = TURN_ROCK_V if int((now - start) / TURN_ROCK_S) % 2 == 0 else -min(TURN_ROCK_V, BACK_SPEED)
-            self.node.move(rock if TURN_ROCK_S > 0 else 0.0, 0.0, TURN_SPEED * sign)
+            self._mv(rock if TURN_ROCK_S > 0 else 0.0, 0.0, TURN_SPEED * sign)
             self.last_motion = time.monotonic()
             time.sleep(0.1)
         return {"result": "done", "turned": turned * sign, "yaw": prev}
@@ -491,7 +507,8 @@ class Agents:
         return None
 
     # ---------- tools (called by the HTTP handler) ----------
-    def tool(self, call, client, args):
+    def tool(self, call, client, args, caps=None):
+        """caps: speed caps for this call only (go2_patrol's envelope), see self.caps."""
         timeout_s = float(args.get("timeout_s", 30))
         inline = bool(args.get("inline"))
 
@@ -501,11 +518,11 @@ class Agents:
             return meta
 
         if call == "move":
-            return self.run(client, call, args, lambda: self._move(args["m"], timeout_s))
+            return self.run(client, call, args, lambda: self._move(args["m"], timeout_s), caps=caps)
         if call == "turn":
-            return self.run(client, call, args, lambda: self._turn(args["deg"], timeout_s))
+            return self.run(client, call, args, lambda: self._turn(args["deg"], timeout_s), caps=caps)
         if call == "photo":
-            return self.run(client, call, args, lambda: {"result": "done", "photo": with_b64(self._photo(client))})
+            return self.run(client, call, args, lambda: {"result": "done", "photo": with_b64(self._photo(client))}, caps=caps)
         if call == "look_around":
             n = max(1, min(12, int(args.get("n", 4))))
 
@@ -518,7 +535,7 @@ class Agents:
                         if r["result"] != "done":
                             return {"result": r["result"], "reason": r.get("reason"), "photos": shots}
                 return {"result": "done", "photos": shots}
-            return self.run(client, call, args, look)
+            return self.run(client, call, args, look, caps=caps)
         if call == "go_to":
             def go_to():
                 self._stop_if_lost = GO_TO_STOP_WHEN_LOST      # only while this go_to runs (run() holds the tool lock)
@@ -526,13 +543,13 @@ class Agents:
                     return self._go_to(args, timeout_s)
                 finally:
                     self._stop_if_lost = False
-            return self.run(client, call, args, go_to)
+            return self.run(client, call, args, go_to, caps=caps)
         if call == "look":
-            return self.run(client, call, args, lambda: self._look(float(args["deg"])))
+            return self.run(client, call, args, lambda: self._look(float(args["deg"])), caps=caps)
         if call == "posture":
-            return self.run(client, call, args, lambda: self._posture(args), stop=False)
+            return self.run(client, call, args, lambda: self._posture(args), stop=False, caps=caps)
         if call == "relocalize":
-            return self.run(client, call, args, lambda: self._relocalize(client, args))
+            return self.run(client, call, args, lambda: self._relocalize(client, args), caps=caps)
         raise KeyError(call)
 
     def _posture(self, args):
@@ -818,7 +835,7 @@ class Agents:
                             "at": [mp["x"] + math.cos(mp["yaw"]) * 0.5, mp["y"] + math.sin(mp["yaw"]) * 0.5]}
                 v = MOVE_SPEED if not last else max(MIN_SPEED, min(MOVE_SPEED, dist * 1.2))
                 v *= max(0.6, math.cos(err))
-                self.node.move(v, 0.0, max(-STEER_MAX, min(STEER_MAX, STEER_GAIN * err)))
+                self._mv(v, 0.0, max(-STEER_MAX, min(STEER_MAX, STEER_GAIN * err)))
                 self.last_motion = time.monotonic()
                 time.sleep(0.1)
             ax, ay = wx, wy

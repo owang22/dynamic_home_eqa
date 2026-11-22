@@ -36,7 +36,7 @@ from go2_interfaces.msg import IMU, Go2State, WebRtcReq
 from nav_msgs.msg import Odometry
 from rclpy.node import Node
 from rclpy.qos import qos_profile_sensor_data
-from sensor_msgs.msg import CompressedImage, Image, JointState, PointCloud2
+from sensor_msgs.msg import CameraInfo, CompressedImage, Image, JointState, PointCloud2
 from std_msgs.msg import String
 from sensor_msgs_py import point_cloud2
 
@@ -84,7 +84,7 @@ WATCHDOG = None           # last POST /watchdog from ~/oliver/go2_watchdog.py (h
 DOG_ST = {"state": None, "since": 0.0, "active_t": 0.0}
 DOG_OFF_S = 10.0          # odom older than this: the dog is off (same rule as go2_watchdog.py)
 DOG_IDLE_S = 30.0         # no motion, posture change or command for this long: idle
-MOTION_AGENT_CALLS = ("claim", "move", "turn", "look_around", "go_to", "look", "posture", "relocalize")
+MOTION_AGENT_CALLS = ("claim", "move", "turn", "look_around", "go_to", "look", "posture", "relocalize", "patrol/start", "view")
 AG = None                  # agent tools and who has control (go2_agent.py)
 MAPPER = None              # lab map built from the lidar clouds (go2_mapper.py)
 EXAMPLES = None            # objects labelled by example from camera frames (go2_examples.py)
@@ -93,7 +93,8 @@ MARKERS = None             # printed ArUco markers in view (go2_markers.py)
 MARKER_TABLE = None        # where they are on the map (go2_marker_table.py): re-anchors the pose
 TRAIL = None               # camera frames along the way, with map poses (go2_trail.py)
 AGENT_CALLS = ("claim", "release", "stop", "say", "status", "move", "turn", "photo", "look_around", "go_to", "look",
-               "posture", "relocalize")
+               "posture", "relocalize", "patrol/start", "patrol/stop", "view")
+PATROLS = None             # patrol envelope, monitor and patrol files (go2_patrol.Patrols)
 
 REC_DIR = "/recordings"
 REC_TOPICS = {"camera": ["/camera/image_raw", "/camera/camera_info"],
@@ -639,6 +640,10 @@ class Collector(Node):
         self.create_subscription(PointCloud2, "/point_cloud2", self.on_cloud, q)
         self.create_subscription(Image, "/camera/image_raw", self.on_image, q)
         self.create_subscription(String, "/go2/motor_temps", self.on_motors, 10)
+        # L515 raw depth/colour/camera_info and the dog camera_info, kept briefly for /agent/view (read-only)
+        types = {"Image": Image, "CompressedImage": CompressedImage, "CameraInfo": CameraInfo}
+        for kind, typ, topic in go2_patrol.L515_TOPICS:
+            self.create_subscription(types[typ], topic, lambda m, k=kind: PATROLS and PATROLS.l515.on(k, m), q)
         self._mlost = None
         self.create_timer(0.2, self.update_map_pose)
         self.create_timer(0.25, self.marker_fix_tick)
@@ -1236,6 +1241,7 @@ def snapshot():
     snap["dog_status"] = dog_status(snap)
     snap["watchdog"] = WATCHDOG
     snap["deploying"] = DEPLOYING
+    snap["patrol"] = PATROLS.brief() if PATROLS else None
     lv = AG.planner.overlay() if AG.planner else None
     snap["live"] = lv if lv and time.time() - lv["t"] < 5 else None
     snap["control"] = {"avoid": NODE.avoid, "speed": NODE.speed, "speeds": SPEEDS, "look_deg": round(math.degrees(NODE.head)),
@@ -1261,6 +1267,9 @@ class Handler(BaseHTTPRequestHandler):
             n = localization_notice(client)
             if n:
                 obj = dict(obj, localization_notice=n)
+            env = PATROLS.envelope_for(client) if PATROLS else None
+            if env and "envelope" not in obj:
+                obj = dict(obj, envelope=env)
         body = json.dumps(obj).encode()
         self.send_response(code)
         self.send_header("Content-Type", "application/json")
@@ -1293,13 +1302,28 @@ class Handler(BaseHTTPRequestHandler):
         if call == "say":
             AG.notes[client] = {"text": str(req.get("text", ""))[:300], "t": time.time()}
             return self.send_json(200, {"result": "done"})
+        if call == "patrol/stop":                # stops first, then ends the patrol (go2_patrol.Patrols.stop)
+            return self.send_json(*PATROLS.stop(client))
+        blk = PATROLS.blocks(client)             # an open patrol: no other agent may claim the dog
+        if blk:
+            return self.send_json(409, {"result": "refused", "reason": blk["detail"], "stop_reason": "refused", "why": blk})
         why = AG.agent_may_drive(client, ip)
         if why:
-            return self.send_json(409, {"result": "refused", "reason": why, "stop_reason": "refused"})
+            return self.send_json(409, {"result": "refused", "reason": why, "stop_reason": "refused",
+                                        "why": {"code": "human_has_control" if "person" in why else "agent_has_control",
+                                                "detail": why}})
         if call == "claim":
+            PATROLS.touch(client)
             return self.send_json(200, {"result": "done", "lease_s": AGENT_LEASE_S})
         try:
-            code, out = AG.tool(call, client, req)
+            if call == "patrol/start":
+                code, out = PATROLS.start(client, req)
+            elif call == "view":
+                code, out = PATROLS.view(client, req)
+            elif PATROLS.owns(client):           # the patrol envelope around the existing tools
+                code, out = PATROLS.tool(call, client, req)
+            else:
+                code, out = AG.tool(call, client, req)
         except (KeyError, ValueError, TypeError) as e:
             return self.send_json(400, {"result": "error", "reason": f"bad arguments: {e}", "stop_reason": "bad_arguments"})
         return self.send_json(code, out)
@@ -1655,6 +1679,8 @@ class Handler(BaseHTTPRequestHandler):
                 return self.send_error(503, "console is deploying")
             elif console and (AG.human_drives(client, ip) or not NODE.claim(client, ip)):
                 return self.send_error(409, f"Someone at {NODE.driver_ip} is driving")
+            elif not console and PATROLS.is_open():
+                return self.send_error(409, "a patrol is open: agents drive through /agent/* only")
             elif not console and AG.agent_may_drive(client or ip, ip):
                 return self.send_error(409, AG.agent_may_drive(client or ip, ip))
             elif not console and AG.current:
@@ -1805,6 +1831,21 @@ class Handler(BaseHTTPRequestHandler):
             self.send_json(200, out)
         elif self.path.split("?")[0] == "/map/keepout":
             self.send_json(200, {"zones": KEEPOUT.zones()})
+        elif self.path.split("?")[0] == "/patrols":
+            self.send_json(200, PATROLS.list())
+        elif self.path.startswith("/patrol/") and self.path.split("?")[0].count("/") == 2:
+            # /patrol/<patrol_id>: patrol.json + its views (GET /patrol/check etc. fall through to 404)
+            out = PATROLS.get(self.path.split("?")[0][len("/patrol/"):])
+            if out is None:
+                return self.send_error(404)
+            self.send_json(200, out)
+        elif self.path.startswith("/patrol/"):
+            # /patrol/<patrol_id>/<file>: a patrol's files (mount check, views); names are validated, no traversal
+            pid, _, rel = self.path.split("?")[0][len("/patrol/"):].partition("/")
+            body, ctype = PATROLS.file(pid, rel)
+            if body is None:
+                return self.send_error(404)
+            self.send_bytes(body, ctype)
         elif self.path.split("?")[0] == "/map/layer.png":
             # one height layer, same crop as /map.png: ?layer=mid (desk/table tops) | high | ceiling
             q = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
@@ -2421,6 +2462,10 @@ function plotMap(m,p){const c=$('map'),[W,H]=fit(c),g=c.getContext('2d');g.clear
   g.save();g.translate(px,py);g.rotate(RR-p.yaw);g.fillStyle=css('--bad');
   g.beginPath();g.moveTo(12,0);g.lineTo(-8,6);g.lineTo(-4,0);g.lineTo(-8,-6);g.closePath();g.fill();g.restore()}}
 mapImg.onload=()=>plotMap(lastMap,lastPose);let lastMap=null,lastPose=null,lastCloud=null,MARKERS=[];
+// patrol chip (header): the open patrol, its time left and why it stopped (go2_patrol.Patrols.brief)
+function patrolChip(p){if(!p)return '';const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+ const ended=p.state==='ended',why=ended?p.stop_reason:p.halt||(p.state==='grace'?'lease lapsed, grace':'');
+ return `<span class="chip ${ended?'dead':p.halt||p.state==='grace'?'stale':'ok'}" title="patrol by ${esc(p.client)}">patrol ${esc(p.patrol_id)} · ${ended?'ended':Math.round(p.time_left_s/60*10)/10+' min left'}${why?' · '+esc(why):''}</span>`}
 // battery chip (header) and low-battery notice (control bar); battery is null until the driver reports it
 function battChip(b){if(!b||b.soc==null)return '<span class="chip dead" title="no battery reading yet">battery —</span>';
  const soc=Math.round(b.soc),cls=b.stale?'stale':soc>50?'bhi':soc>=20?'stale':'dead',chg=b.current_ma>0;
@@ -2446,7 +2491,7 @@ function render(d){const a=d.age||{};
   $('lookstate').textContent=(lk?`${Math.abs(lk)}° ${lk>0?'up':'down'}`:'level')+(bp!=null?` · body pitch ${bp>0?'+':''}${bp}°`:'');
   const other=ctl.driver&&ctl.driver!==CLIENT;if(allowed)$('dnote').textContent=other?`driving: ${ctl.driver_ip}`:(ctl.driver?'you are driving':'');}
  $('chips').innerHTML=SENS.map(k=>{const t=a[k];const cls=t==null?'dead':t<1.5?'ok':t<5?'stale':'dead';
-  return `<span class="chip ${cls}">${k} ${t==null?'—':t<1.5?'live':t.toFixed(0)+'s'}</span>`}).join('')+battChip(d.battery);
+  return `<span class="chip ${cls}">${k} ${t==null?'—':t<1.5?'live':t.toFixed(0)+'s'}</span>`}).join('')+battChip(d.battery)+patrolChip(d.patrol);
  battWarn(d.battery);
  if(d.imu){const i=d.imu;hist.push({t:performance.now()/1000,v:i.rpy});while(hist.length&&performance.now()/1000-hist[0].t>20)hist.shift();
   kv($('imu'),[['roll / pitch / yaw (°)',`${deg(i.rpy[0])} / ${deg(i.rpy[1])} / ${deg(i.rpy[2])}`],
@@ -3200,11 +3245,20 @@ def main():
     global KEEPOUT
     KEEPOUT = go2_patrol.Keepout("/maps", os.environ.get("MAP_NAME", "lab"))
     MARKERS = Markers(full, lock)
+    global PATROLS
+
+    def motors():
+        with lock:
+            return latest["motors"], time.time() - latest["stamps"].get("motors", 0)
+    PATROLS = go2_patrol.Patrols(AG, KEEPOUT, "/maps", os.environ.get("MAP_NAME", "lab"), {
+        "battery": battery, "motors": motors, "deploying": lambda: DEPLOYING, "presets": lambda: SPEEDS,
+        "markers": lambda: MARKERS.snapshot() if MARKERS else None})
     global MARKER_TABLE
     MARKER_TABLE = MarkerTable("/maps", os.environ.get("MAP_NAME", "lab"), log=lambda m: print(m, flush=True))
     EXAMPLES = Examples("/maps", os.environ.get("MAP_NAME", "lab"), MAPPER, TRAIL)
     AG.mapper, AG.planner = MAPPER, Planner(MAPPER)
     AG.planner.fail_log = os.path.join("/maps", f"{os.environ.get('MAP_NAME', 'lab')}_nav_failures.jsonl")
+    PATROLS.start_monitor()
     threading.Thread(target=rclpy.spin, args=(node,), daemon=True).start()
     L515.start()
     AUTO.recover()
