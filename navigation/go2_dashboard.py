@@ -1557,7 +1557,8 @@ class Handler(BaseHTTPRequestHandler):
                 return self.send_json(400, {"result": "error", "reason": str(e)})
         if path == "/patrol/check":
             # dry run for a patrol brain: [{x, y, yaw_deg?}] -> ok / refused + why, route_m, est_s. No claim, no motion.
-            code, out = go2_patrol.check(req.get("poses"), AG, KEEPOUT)
+            spd = req.get("speed") or (PATROLS.p or {}).get("speed") or "slow"     # the open patrol's preset by default
+            code, out = go2_patrol.check(req.get("poses"), AG, KEEPOUT, speed=str(spd))
             return self.send_json(code, out)
         if path == "/map":
             act = req.get("action")

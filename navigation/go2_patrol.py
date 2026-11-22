@@ -36,6 +36,10 @@ WALK_V = 0.21          # m/s average along a go_to route, slow-downs and steerin
 TURN_V = 0.39          # rad/s of planned heading change, in-place turn overheads included
 GOTO_OVERHEAD_S = 2.3  # per go_to: planning, first turn-in-place settle, final approach
 SETTLE_S = 1.5         # stand still before a photo (the /agent/view default settle_s)
+# Refit 11-21 18:00 on the first two patrols (11 views, 9 with walking; speed "slow", capped at 0.30 m/s): walk_s =
+# 3.4 s + walked_m / 0.12 m/s (MAE 4.2 s). The 17 go_tos above ran mostly at "normal". So walking depends on the
+# speed preset. Per heading, measured: face median 5.5 s (p90 8.0), settle 1.5 s, still-wait <= 0.5 s.
+WALK_BY_SPEED = {"slow": (0.12, 3.4), "normal": (WALK_V, GOTO_OVERHEAD_S)}   # (m/s, overhead s)
 MAX_POSES = 40         # per /patrol/check call
 SNAP_WARN_M = 0.30     # the planner moved the goal further than this: say so
 LAYER_OCC = 2          # go2_mapper.LAYER_OCC
@@ -139,7 +143,7 @@ def _turns(path, yaw0, yaw_goal):
     return total
 
 
-def check(poses, agent, keepout):
+def check(poses, agent, keepout, speed="slow"):
     """Dry run for a batch of poses [{x, y, yaw_deg?, look_deg?}] from where the dog is now.
     Returns (http_code, body). Never claims or moves the dog."""
     if not isinstance(poses, list) or not poses:
@@ -183,11 +187,12 @@ def check(poses, agent, keepout):
         gx, gy = plan.get("goal", [x, y])
         snap = math.hypot(gx - x, gy - y)
         turn = _turns(path, mp["yaw"], yaw)
-        walk_s = plan["length_m"] / WALK_V
+        walk_v, overhead = WALK_BY_SPEED.get(speed, WALK_BY_SPEED["slow"])
+        walk_s = plan["length_m"] / walk_v
         r.update(ok=True, route_m=round(plan["length_m"], 2),
-                 est_s=round(GOTO_OVERHEAD_S + walk_s + turn / TURN_V + SETTLE_S, 1),
+                 est_s=round(overhead + walk_s + turn / TURN_V + SETTLE_S, 1),
                  est={"walk_s": round(walk_s, 1), "turn_s": round(turn / TURN_V, 1), "settle_s": SETTLE_S,
-                      "overhead_s": GOTO_OVERHEAD_S},
+                      "overhead_s": overhead},
                  tight=bool(plan.get("tight")), squeeze=bool(plan.get("squeeze")),
                  goal_used=[round(gx, 2), round(gy, 2)], snapped_m=round(snap, 2))
         flags = []
@@ -202,9 +207,12 @@ def check(poses, agent, keepout):
         out.append(r)
     return 200, {"from": {"x": round(mp["x"], 2), "y": round(mp["y"], 2), "yaw_deg": round(math.degrees(mp["yaw"]), 1)},
                  "results": out,
-                 "model": {"walk_v": WALK_V, "turn_v": TURN_V, "settle_s": SETTLE_S, "overhead_s": GOTO_OVERHEAD_S,
-                           "note": "est_s = overhead + route/walk_v + planned turns/turn_v + settle; fitted on 17 past "
-                                   "go_to calls (MAE ~3.7 s); one heading, look_deg not included"}}
+                 "model": {"speed": speed if speed in WALK_BY_SPEED else "slow",
+                           "walk_v": WALK_BY_SPEED.get(speed, WALK_BY_SPEED["slow"])[0], "turn_v": TURN_V,
+                           "settle_s": SETTLE_S, "overhead_s": WALK_BY_SPEED.get(speed, WALK_BY_SPEED["slow"])[1],
+                           "note": "est_s = overhead + route/walk_v + planned turns/turn_v + settle, for one heading. "
+                                   "slow: fitted on 9 patrol views (MAE 4.2 s); normal: on 17 go_tos (MAE 3.7 s). "
+                                   "Each extra heading in a view measured about 5.5 s face (p90 8) + settle_s"}}
 
 
 # ======================================================================================================================
@@ -1243,7 +1251,7 @@ def views(agent, keepout, trail, places, prior_dir, patrols=None, sampled=True, 
             d = geo[r, c] if planner.inside(r, c) else math.inf
             if math.isfinite(d):
                 cnd["route_m"] = round(float(d), 2)
-                cnd["est_s"] = round(GOTO_OVERHEAD_S + d / WALK_V + SETTLE_S, 1)
+                cnd["est_s"] = round(WALK_BY_SPEED["slow"][1] + d / WALK_BY_SPEED["slow"][0] + SETTLE_S, 1)
             elif "refuse" not in cnd:
                 cnd["refuse"] = {"code": "no_route", "detail": "no walkable path at the planner's normal clearance "
                                                                "(the full /patrol/check may still find a tight one)"}
