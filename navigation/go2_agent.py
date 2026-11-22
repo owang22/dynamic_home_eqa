@@ -39,7 +39,12 @@ TURN_SPEED = 0.6                           # rad/s; the legs barely step below t
 TURN_ROCK_V, TURN_ROCK_S = 0.12, 0.6       # while turning in place, rock forward/back this fast (m/s), switching every this many s
 REPLANT_V, REPLANT_S = 0.25, 0.5           # re-plant the feet: a short step forward at this speed for this long, then back
 SHUFFLES = 1                               # stalls to shuffle out of (re-plant and retry) before giving up
-TURN_OVERSHOOT = math.radians(6)           # the dog keeps turning about this much after stop
+TURN_OVERSHOOT = math.radians(6)
+# Turning in place sweeps the body's corners round (0.70 x 0.31 m body: corner radius ~0.38 m). On 11-21 18:29
+# (p_20261121_182815) the dog hit a chair with its front while turning and with its back legs while the turn's
+# backward rock stepped it back; Oliver stopped it. Now a turn is refused, or stops, when a live obstacle cell
+# (BUMP_H band) is within SWEEP_R of the dog's centre; in patrols the rock is forward/still only.
+SWEEP_R = 0.42           # the dog keeps turning about this much after stop
 MAX_MOVE_M, MAX_TURN_DEG = 3.0, 360.0      # per call
 FRONT_CLEAR = (0.35, 0.90, 0.25)           # obstacle box ahead of base_link: x from, x to, half width (m)
 REAR_CLEAR = (0.30, 0.75, 0.22)            # and behind it, when backing up
@@ -240,6 +245,23 @@ class Agents:
         hit = (fx > x0) & (fx < x1) & (np.abs(fy) < half) & (pts[:, 2] > BUMP_H[0]) & (pts[:, 2] < BUMP_H[1])
         return float(fx[hit].min()) if hit.any() else None
 
+    def sweep_hit(self):
+        """Distance (m) from the dog's centre to the nearest live obstacle cell (BUMP_H band) within SWEEP_R, outside
+        the body's own footprint, or None. Used before and during turns in place."""
+        odom, _, _, cloud, _, ages = self.snap()
+        if not cloud or not cloud.get("obs") or ages.get("cloud", 99) > 3.0 or cloud.get("frame") == "base_link":
+            return None
+        pts = np.asarray(cloud["obs"], dtype=np.float64)
+        pts = pts[(pts[:, 2] > BUMP_H[0]) & (pts[:, 2] < BUMP_H[1])]
+        if not len(pts):
+            return None
+        dx, dy = pts[:, 0] - odom["pos"][0], pts[:, 1] - odom["pos"][1]
+        c, s = math.cos(odom["yaw"]), math.sin(odom["yaw"])
+        fx, fy = c * dx + s * dy, -s * dx + c * dy
+        d = np.hypot(fx, fy)
+        near = (d < SWEEP_R) & ~((np.abs(fx) < 0.30) & (np.abs(fy) < 0.12))   # the body itself (legs, voxel smear)
+        return float(d[near].min()) if near.any() else None
+
     def _map_behind(self):
         """Distance to the nearest saved-map obstacle in the box behind the dog, or None."""
         mp = self.map_pose_now()
@@ -395,13 +417,13 @@ class Agents:
             self.node.stop()
             self._settle(0.8)
             total += r["turned"] + wrap(self.snap()[0]["yaw"] - r["yaw"])   # includes the overshoot
-            if r["result"] == "blocked" and shuffles > 0:
+            if r["result"] == "blocked" and shuffles > 0 and not str(r.get("reason", "")).startswith("turn_blocked"):
                 shuffles -= 1
                 self._replant()
                 continue
             if r["result"] != "done":
                 return {"result": r["result"], "side": "turn", "reason": r["reason"],
-                        "turned_deg": round(math.degrees(total), 1)}
+                        "turned_deg": round(math.degrees(total), 1), **({"why": r["why"]} if r.get("why") else {})}
             attempt += 1
         if replant:
             self._replant()
@@ -411,6 +433,8 @@ class Agents:
         """A short step forward and back so the feet lift and land squarely again (after a turn, or to get
         unstuck). Skipped if either way is blocked. Returns True if it stepped."""
         if REPLANT_S <= 0 or self.obstacle(1) is not None or self.obstacle(-1) is not None:
+            return False
+        if self.sweep_hit() is not None:      # something right next to the body (11-21 chair): don't step at all
             return False
         back_v = min(REPLANT_V, BACK_SPEED)
         o = self.snap()[0]
@@ -453,6 +477,12 @@ class Agents:
         turned, hist = 0.0, deque()
         while target - turned > early:
             self.tick(deadline)
+            hit = self.sweep_hit()
+            if hit is not None:
+                return {"result": "blocked", "reason": f"turn_blocked: something {hit:.2f} m from the dog's centre, "
+                        f"inside its turning sweep ({SWEEP_R} m); move clear before turning",
+                        "turned": turned * sign, "yaw": self.snap()[0]["yaw"], "why": {"code": "turn_blocked",
+                        "detail": f"obstacle {hit:.2f} m from centre, sweep {SWEEP_R} m"}}
             yaw = self.snap()[0]["yaw"]
             turned += wrap(yaw - prev) * sign
             prev = yaw
@@ -463,7 +493,8 @@ class Agents:
             if now - start > STALL_S + 0.5 and hist and turned - hist[0][1] < math.radians(3):
                 return {"result": "blocked", "reason": "not turning", "turned": turned * sign, "yaw": yaw}
             # rock forward/back a little while turning so every foot keeps stepping (no dragged pivot foot)
-            rock = TURN_ROCK_V if int((now - start) / TURN_ROCK_S) % 2 == 0 else -min(TURN_ROCK_V, BACK_SPEED)
+            back = 0.0 if self.caps else -min(TURN_ROCK_V, BACK_SPEED)   # patrols: never rock backwards (unseen rear)
+            rock = TURN_ROCK_V if int((now - start) / TURN_ROCK_S) % 2 == 0 else back
             self._mv(rock if TURN_ROCK_S > 0 else 0.0, 0.0, TURN_SPEED * sign)
             self.last_motion = time.monotonic()
             time.sleep(0.1)

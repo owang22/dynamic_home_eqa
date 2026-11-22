@@ -72,6 +72,7 @@ LIMITS = (0.6, 0.3, 1.0)   # max vx, vy (m/s), yaw rate (rad/s). Below ~0.3 m/s 
 SPEEDS = {"slow": (0.3, 0.2, 0.5), "normal": (0.5, 0.25, 0.8), "fast": LIMITS}
 SPEED_FILE = "/maps/console_speed.txt"
 DEADMAN_S = 0.3            # stop if the browser stops sending moves for this long
+AVOID_REASSERT_S = 1.0     # with avoidance on, the first move after this long a pause re-sends the avoid mode
 BACK_MAX = 0.25            # m/s backwards for everyone: the dog barely sees behind itself
 AVOID_DEFAULT = True       # the dog's obstacle avoidance starts on; agent motions rely on it
 NODE = None
@@ -720,6 +721,8 @@ class Collector(Node):
             return
         x, y, z = (max(-l, min(l, float(v))) for v, l in zip((x, y, z), SPEEDS[self.speed]))
         x = max(-BACK_MAX, x)
+        if self.avoid and time.monotonic() - getattr(self, "last_cmd", 0.0) > AVOID_REASSERT_S:
+            self.reassert_avoid()
         self.last_cmd = time.monotonic()
         if self.head and (x or y or z):     # level off before walking
             self.head = 0.0
@@ -732,6 +735,15 @@ class Collector(Node):
             t.linear.x, t.linear.y, t.angular.z = x, y, z
             self.vel_pub.publish(t)
         self.moving, self.last_move = True, time.monotonic()
+
+    def reassert_avoid(self):
+        """Re-send "avoidance on, take remote commands from the API" before the first move after a pause. Oliver
+        (11-21): the console couldn't drive with avoidance on after a takeover/STOP, only with it off. A StopMove
+        may drop the avoid service out of API-command mode; it was only set once at startup (sync_avoid)."""
+        self.req(AVOID_SWITCH_SET, AVOID_TOPIC, {"enable": True})
+        time.sleep(0.05)
+        self.req(AVOID_USE_API, AVOID_TOPIC, {"is_remote_commands_from_api": True})
+        time.sleep(0.05)
 
     def set_avoid(self, on):
         self.moving = False
