@@ -32,3 +32,5 @@ Code is in `../` (go2_patrol.py, go2_dashboard.py, go2_agent.py, go2_watchdog.py
 - **p_20261121_180630 (18:06, brain v5):** shot clearance verified live. h0 front_clear_m 0.22 m to a chair seat
   (matches the photo), h1 0.63 m. The brain dropped the blocked heading's credit (46 → 5 cells). The patrol ended
   because of the AUT's own NameError; its finally block stopped the patrol and lay the dog down.
+- **p_20261121_181112 (18:11, AUT brain v6):** suspect threshold 0.50 m verified. No tag-A suspect while working at
+  desk_oliver (patrols 3-5 had aborted there at 0.30 m). 10 views, 0 refusals.
