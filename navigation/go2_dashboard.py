@@ -72,6 +72,9 @@ LIMITS = (0.6, 0.3, 1.0)   # max vx, vy (m/s), yaw rate (rad/s). Below ~0.3 m/s 
 SPEEDS = {"slow": (0.3, 0.2, 0.5), "normal": (0.5, 0.25, 0.8), "fast": LIMITS}
 SPEED_FILE = "/maps/console_speed.txt"
 DEADMAN_S = 0.3            # stop if the browser stops sending moves for this long
+IDLE_LIE_S = 60.0          # Oliver 11-22: the dog stood for minutes while agents deliberated. Standing still with no
+                           # motion/posture command and no tool running for this long -> the console lies it down
+                           # (not while a person holds control). Reported in /agent/status idle_lie.
 AVOID_REASSERT_S = 1.0     # with avoidance on, the first move after this long a pause re-sends the avoid mode
 BACK_MAX = 0.25            # m/s backwards for everyone: the dog barely sees behind itself
 AVOID_DEFAULT = True       # the dog's obstacle avoidance starts on; agent motions rely on it
@@ -671,6 +674,42 @@ class Collector(Node):
         self.driver, self.driver_ip, self.driver_t = None, None, 0.0
         self.create_timer(0.05, self.deadman)
         self._sync = self.create_timer(2.0, self.sync_avoid)
+        self.idle_lie = None     # last automatic lie-down {t, idle_s, owner}
+        self._idle_busy = False
+        self.create_timer(1.0, self.idle_lie_tick)
+
+    def idle_lie_tick(self):
+        """Lie the dog down after IDLE_LIE_S standing still with no command (any agent, any patrol; not a person)."""
+        if self._idle_busy or DEPLOYING or AG is None:
+            return
+        now = time.monotonic()
+        with lock:
+            st, odom, stamps = latest.get("state"), latest.get("odom"), dict(latest["stamps"])
+        if not st or time.time() - stamps.get("state", 0.0) > 2.0 or (st.get("body_height") or 0.0) < 0.20:
+            return
+        if odom and (abs(odom["vel"][0]) > 0.03 or abs(odom["vel"][2]) > 0.05):
+            return
+        idle = now - max(self.last_cmd, getattr(AG, "last_motion", 0.0) or 0.0)
+        if idle < IDLE_LIE_S or AG.current is not None:
+            return
+        o = AG.owner_now()
+        if o and o["kind"] == "human":
+            return
+        if not AG.busy.acquire(blocking=False):   # a tool is starting: leave it alone
+            return
+        self._idle_busy = True
+
+        def lie():
+            try:
+                self.action("lie")
+                self.idle_lie = {"t": round(time.time(), 1), "idle_s": round(idle, 1),
+                                 "owner": None if not o else o.get("client"),
+                                 "why": f"standing still with no command for {IDLE_LIE_S:.0f} s (saves battery and motor heat)"}
+                print(f"[idle] lay the dog down: {self.idle_lie}", flush=True)
+            finally:
+                AG.busy.release()
+                self._idle_busy = False
+        threading.Thread(target=lie, daemon=True, name="idle-lie").start()
 
     def sync_avoid(self):
         """Once at startup: turn the dog's obstacle avoidance on (the console's default), so its
@@ -1457,7 +1496,8 @@ class Handler(BaseHTTPRequestHandler):
             return self.send_json(400, {"result": "error", "reason": "client is required"})
         self.notice_for = client
         if call == "status":
-            return self.send_json(200, {**AG.status(), **AG.pose_out(), "safe": AG.check_safe() or "ok", "markers": MARKERS.snapshot()["list"] if MARKERS else [], "battery": battery()})
+            return self.send_json(200, {**AG.status(), **AG.pose_out(), "safe": AG.check_safe() or "ok",
+                                        "idle_lie": getattr(NODE, "idle_lie", None), "idle_lie_after_s": IDLE_LIE_S, "markers": MARKERS.snapshot()["list"] if MARKERS else [], "battery": battery()})
         if call == "stop":                       # always allowed
             AG.interrupt(f"stop from agent {client}")
             return self.send_json(200, {"result": "done"})

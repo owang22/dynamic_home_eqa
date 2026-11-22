@@ -626,6 +626,10 @@ class Agents:
         h = state["body_height"] if state and ages.get("state", 99) < 2.0 else None
         return {"dog_avoid_on": bool(getattr(self.node, "avoid", False)), "body_height": h,
                 "odom_vel": None if not odom or not odom.get("vel") else [round(v, 3) for v in odom["vel"]],
+                "cmd_vel": (lambda c: None if not c else {"x": c[0], "y": c[1], "yaw": c[2],
+                                                          "age_s": round(time.monotonic() - c[3], 2)})(getattr(self, "_last_cmd_v", None)),
+                "move_api": "dog avoidance service (Move)" if getattr(self.node, "avoid", False) else "cmd_vel (sport Move)",
+                "sport_mode": "not available: the driver publishes mode/gait/foot_force as 0",
                 "locked_stand_suspect": h is not None and h >= 0.325,
                 "hint": "body_height >= 0.325 and no motion: the dog is probably still in its locked stand-up pose; "
                         "dog_avoid_on: the dog's own obstacle avoidance may have stopped it (its ranges are not "
@@ -723,6 +727,7 @@ class Agents:
         if c:
             x = max(-c["back_v"], min(c["v"], x))
             z = max(-c["turn_v"], min(c["turn_v"], z))
+        self._last_cmd_v = (round(x, 3), round(y, 3), round(z, 3), time.monotonic())
         self.node.move(x, y, z)
 
     def _move(self, m, timeout_s, v_max=None):

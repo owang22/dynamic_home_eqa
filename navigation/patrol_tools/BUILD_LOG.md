@@ -145,3 +145,16 @@ wake after 11-21 15:52).
     (`dog_avoid_restored`).
   - All the console's own checks still apply.
 - Tests: test_margins 43/43, test_arc 78/78, test_view 78/78, test_patrol 71/71.
+
+## 2026-11-22 15:5x — console: crash fix, idle lie-down, stall detail (ask 1545)
+- **15:35:45-15:40:37 outage (my bug):** the held cloud saved to disk lacked `flat`/`under`. When the dog stood up,
+  update_live raised KeyError in on_cloud, which killed the ROS spin thread: no data, "DOG OFF", nobody could drive.
+  - Fixed: the held cloud carries every key, and on_cloud catches and logs update_live errors.
+  - Regression test added.
+- **Idle lie-down (Oliver: the dog stood for minutes while agents deliberated):**
+  - When the dog stands still with no motion or posture command for IDLE_LIE_S = 60 s, no tool is running and no
+    person holds control, the console lies it down.
+  - This applies to any agent, inside or outside a patrol. It is reported in /agent/status `idle_lie`.
+- **stall_info:** now includes `cmd_vel` (the last commanded x / y / yaw and its age), `move_api` (avoidance service
+  or cmd_vel) and `sport_mode`. Sport mode is not available: the driver publishes mode, gait and foot_force as 0.
+- Tests: test_margins 51/51, test_view 78/78, test_patrol 71/71, test_arc 78/78.

@@ -237,5 +237,36 @@ tb = next(t for c, t in sent if c == "BalanceStand")
 ok("stand: StandUp, then BalanceStand twice, after the rise", names[-3:] == ["StandUp", "BalanceStand", "BalanceStand"] and tb - tu >= 0.6,
    (names, round(tb - tu, 2)))
 ok("stand returns within 5 s", time.monotonic() - t0 < 5.0)
+# idle lie-down (Oliver 11-22)
+acts = []
+fk = types.SimpleNamespace(_idle_busy=False, last_cmd=time.monotonic() - 100, idle_lie=None,
+                           action=lambda n: acts.append(n))
+def tick():
+    D.Collector.idle_lie_tick(fk); time.sleep(0.3)
+with D.lock:
+    D.latest["state"] = {"body_height": 0.31}; D.latest["stamps"]["state"] = time.time()
+    D.latest["odom"] = {"pos": [0, 0, 0], "yaw": 0.0, "vel": [0.0, 0.0, 0.0]}
+D.AG = types.SimpleNamespace(current=None, last_motion=0.0, busy=threading.Lock(), owner_now=lambda: None)
+tick()
+ok("idle 100 s standing, no owner: lies down", acts == ["lie"] and fk.idle_lie and fk.idle_lie["idle_s"] >= 60, (acts, fk.idle_lie))
+acts.clear(); fk.last_cmd = time.monotonic() - 30; tick()
+ok("idle 30 s: nothing", acts == [])
+fk.last_cmd = time.monotonic() - 100
+D.AG.owner_now = lambda: {"kind": "human", "client": "x"}; tick()
+ok("a person holds control: nothing", acts == [])
+D.AG.owner_now = lambda: {"kind": "agent", "client": "cheetah-patrol"}
+D.AG.current = {"call": "view"}; tick()
+ok("a tool is running: nothing", acts == [])
+D.AG.current = None
+with D.lock:
+    D.latest["state"] = {"body_height": 0.07}; D.latest["stamps"]["state"] = time.time()
+tick()
+ok("already lying: nothing", acts == [])
+with D.lock:
+    D.latest["state"] = {"body_height": 0.31}; D.latest["stamps"]["state"] = time.time()
+tick()
+ok("agent owner idle 100 s: lies down", acts == ["lie"] and fk.idle_lie["owner"] == "cheetah-patrol", fk.idle_lie)
+D.AG = ag
+
 print(f"\n{sum(r for _, r in RES)}/{len(RES)} passed")
 w.sim.run = False
