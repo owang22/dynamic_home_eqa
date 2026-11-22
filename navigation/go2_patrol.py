@@ -296,7 +296,11 @@ def check(poses, agent, keepout, speed="slow"):
         if plan.get("fallback"):
             flags.append(f"planner fallback: {plan['fallback']}")
         if plan.get("pose_suspect"):
-            flags.append("the live lidar view looks shifted against the map: pose suspect")
+            ls = plan.get("live_shift") or {}
+            flags.append("map-vs-live mismatch: the live lidar view near the dog fits the saved map best when shifted "
+                         f"by ({ls.get('dx', 0):+.2f}, {ls.get('dy', 0):+.2f}) m, {ls.get('dyaw_deg', 0):+.0f} deg. Often the "
+                         "saved map is stale here (moved furniture); it is not the tag check and does not by itself "
+                         "mean the pose is wrong")
         if flags:
             r["flags"] = flags
         out.append(r)
