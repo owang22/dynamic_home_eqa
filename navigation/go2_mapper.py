@@ -74,7 +74,11 @@ MK_MIN_SHIFT = 0.15        # m: smaller disagreements are left to the lidar trac
 MK_MAX_SHIFT = 1.0         # m: larger ones are refused (a mis-surveyed or moved marker; or the wrong one)
 MK_LIDAR_MARGIN = 0.05     # the recent views' wall fit at the marker pose may be at most this much worse
 MK_COOLDOWN_S = 5.0
-MK_SUSPECT_M = 0.30        # a disagreement this large also raises suspect (smaller ones are only logged)
+MK_SUSPECT_M = 0.50        # a disagreement this large also raises suspect (smaller ones are only logged).
+# Was 0.30 until 11-21; raised to 0.50 with Oliver's explicit OK (11-21 ~18:10). Patrols near desk_oliver kept
+# aborting on tag A vs lidar = 0.42 m with lidar fits 0.87-0.93. Offline fit (~/go2_overnight/tagA/REPORT.md): today's
+# sightings put tag A ~0.2 m from both the hand table entry and the 10-26 survey (themselves 0.22 m apart); with a
+# 5-10 deg tag facing error, honest estimates disagree by 0.3-0.5 m. Real fix: fresh map + tag survey.
 # "Line up again" from a marker in view (Mapper.lineup_from_marker, marker_lineup_pose): vision seeds the line-up,
 # the lidar only refines near it. Beyond ~35 deg off face-on the detector reads tags 0.1-0.25 m long with the facing
 # wrong, hence 30 (the remap's gate).
