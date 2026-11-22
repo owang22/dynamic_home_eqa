@@ -95,6 +95,7 @@ TRAIL = None               # camera frames along the way, with map poses (go2_tr
 AGENT_CALLS = ("claim", "release", "stop", "say", "status", "move", "turn", "photo", "look_around", "go_to", "look",
                "posture", "relocalize", "patrol/start", "patrol/stop", "view")
 PATROLS = None             # patrol envelope, monitor and patrol files (go2_patrol.Patrols)
+PRIOR_DIR = os.path.join("/maps", f"{os.environ.get('MAP_NAME', 'lab')}_prior")   # Oliver's driving prior (11-21)
 
 REC_DIR = "/recordings"
 REC_TOPICS = {"camera": ["/camera/image_raw", "/camera/camera_info"],
@@ -1831,6 +1832,29 @@ class Handler(BaseHTTPRequestHandler):
             self.send_json(200, out)
         elif self.path.split("?")[0] == "/map/keepout":
             self.send_json(200, {"zones": KEEPOUT.zones()})
+        elif self.path.split("?")[0] == "/patrol/views":
+            # candidate viewpoints with geometry (places, Oliver's dwell spots, sampled cells x 8 headings): keep-out,
+            # seen_n / last_seen_t from trail + patrol frames near the pose, route_m / est_s from the dog now
+            q = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
+            try:
+                limit = max(1, min(int(q.get("limit", [400])[0]), 3000))
+            except ValueError:
+                return self.send_error(400, "limit must be an integer")
+            sampled = q.get("sampled", ["1"])[0] not in ("0", "")
+            self.send_json(200, go2_patrol.views(AG, KEEPOUT, TRAIL, AG.places(), PRIOR_DIR, PATROLS, sampled, limit))
+        elif self.path.split("?")[0] == "/patrol/prior":
+            out, err = go2_patrol.prior(PRIOR_DIR)
+            if out is None:
+                return self.send_json(503, {"error": f"no driving prior: {err}"})
+            self.send_json(200, out)
+        elif self.path.split("?")[0] in ("/patrol/prior/REPORT.md", "/patrol/prior/paths.png"):
+            name = self.path.split("?")[0].rsplit("/", 1)[1]
+            try:
+                with open(os.path.join(PRIOR_DIR, name), "rb") as fh:
+                    body = fh.read()
+            except OSError:
+                return self.send_error(404)
+            self.send_bytes(body, "text/markdown; charset=utf-8" if name.endswith(".md") else "image/png")
         elif self.path.split("?")[0] == "/patrols":
             self.send_json(200, PATROLS.list())
         elif self.path.startswith("/patrol/") and self.path.split("?")[0].count("/") == 2:

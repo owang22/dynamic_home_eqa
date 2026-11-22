@@ -427,6 +427,33 @@ class Patrols:
                                                   "max_min", "speed", "n_views", "walked_m")})
         return {"patrols": out}
 
+    def view_points(self):
+        """[t, x, y, yaw_rad] of every saved patrol shot with a map pose (for /patrol/views seen counts). Cached; the
+        cache is refreshed when the patrols folder or any patrol's views folder changes."""
+        try:
+            stamp = tuple(sorted((pid, os.path.getmtime(os.path.join(self.root, pid, "views")))
+                                 for pid in os.listdir(self.root)
+                                 if PATROL_ID_RE.match(pid) and os.path.isdir(os.path.join(self.root, pid, "views"))))
+        except OSError:
+            return []
+        if getattr(self, "_vp_stamp", None) == stamp:
+            return list(self._vp)
+        pts = []
+        for pid, _ in stamp:
+            vd = os.path.join(self.root, pid, "views")
+            for vid in sorted(os.listdir(vd)):
+                try:
+                    with open(os.path.join(vd, vid, "view.json")) as f:
+                        v = json.load(f)
+                except (OSError, ValueError):
+                    continue
+                for sh in v.get("shots", []):
+                    ps = sh.get("pose")
+                    if ps and sh.get("t"):
+                        pts.append([sh["t"], ps["x"], ps["y"], math.radians(ps["yaw_deg"])])
+        self._vp_stamp, self._vp = stamp, pts
+        return list(pts)
+
     def get(self, pid):
         if not isinstance(pid, str) or not PATROL_ID_RE.match(pid):
             return None
@@ -1082,3 +1109,146 @@ def wrap_deg(a):
 def _aborted(ag):
     from go2_agent import Aborted
     return Aborted(ag.abort_reason or "stopped")
+
+
+# ---------- step 4: /patrol/views (geometry only: candidates, what was seen from near them, walk length) ----------
+VIEW_GRID_M = 1.0          # sampled candidates: one free cell per this many metres
+VIEW_HEADINGS = 8          # headings per sampled cell
+VIEW_CLEAR_M = 0.35        # sampled cells need at least this clearance (planner ROBOT_R 0.28 + margin)
+SEEN_R_M, SEEN_DEG = 0.5, 30.0   # a frame counts as "seen from here" within this distance and heading
+SEEN_RULE = ("2-D, pose-matched: trail/view frames taken within 0.5 m and 30 deg of the candidate pose. "
+             "Not a visibility model; cheetah's 2.5-D model is the reference.")
+
+
+def _geodesic(planner, sx, sy, rr=0.28):
+    """Walk length (m) from (sx, sy) to every planning cell with clearance >= rr, 8-connected Dijkstra on the planner
+    grid. Returns (dist array or None, why)."""
+    try:
+        from scipy.sparse import csr_matrix
+        from scipy.sparse.csgraph import dijkstra
+    except ImportError:
+        return None, "scipy missing"
+    with planner.lock:
+        planner._grid()
+        if planner.occ is None:
+            return None, "no map"
+        free = planner.dist >= rr
+        cell = 0.10
+        sr, sc = planner.cell(sx, sy)
+        if not planner.inside(sr, sc):
+            return None, "the dog is off the map"
+        free = free.copy()
+        free[sr, sc] = True
+    h, w = free.shape
+    idx = -np.ones(free.shape, np.int64)
+    n = int(free.sum())
+    idx[free] = np.arange(n)
+    rows, cols, wts = [], [], []
+    for dr, dc in ((0, 1), (1, 0), (1, 1), (1, -1)):
+        r0, r1 = (0, h - dr) if dr >= 0 else (-dr, h)
+        c0, c1 = (0, w - dc) if dc >= 0 else (-dc, w)
+        A = free[r0:r1, c0:c1]
+        B = free[r0 + dr:r1 + dr, c0 + dc:c1 + dc]
+        both = A & B
+        ia = idx[r0:r1, c0:c1][both]
+        ib = idx[r0 + dr:r1 + dr, c0 + dc:c1 + dc][both]
+        d = cell * math.hypot(dr, dc)
+        rows += [ia, ib]
+        cols += [ib, ia]
+        wts += [np.full(len(ia), d), np.full(len(ia), d)]
+    g = csr_matrix((np.concatenate(wts), (np.concatenate(rows), np.concatenate(cols))), shape=(n, n))
+    dd = dijkstra(g, directed=False, indices=int(idx[sr, sc]))
+    out = np.full(free.shape, np.inf)
+    out[free] = dd
+    return out, None
+
+
+def _seen(points, x, y, yaw):
+    """(n frames, last t) of trail/view frames taken near pose (x, y, yaw)."""
+    n, last = 0, None
+    for p in points:
+        if abs(p[1] - x) > SEEN_R_M or abs(p[2] - y) > SEEN_R_M:
+            continue
+        if math.hypot(p[1] - x, p[2] - y) > SEEN_R_M or abs(math.degrees(_wrap(p[3] - yaw))) > SEEN_DEG:
+            continue
+        n += 1
+        last = p[0] if last is None else max(last, p[0])
+    return n, last
+
+
+def views(agent, keepout, trail, places, prior_dir, patrols=None, sampled=True, limit=400):
+    """Candidate viewpoints with geometry: source, keep-out, what was seen from near them, walk length and est_s from
+    the dog now (when lined up). Value (what is worth looking at) is the patrol brain's job, not this."""
+    cands = []
+    for pid, p in (places or {}).items():
+        if "x" in p and "y" in p:
+            cands.append({"x": p["x"], "y": p["y"], "yaw_deg": p.get("yaw_deg", 0.0), "source": f"place:{pid}"})
+    try:
+        with open(os.path.join(prior_dir, "dwell_views.json")) as f:
+            spots = json.load(f)["spots"].get("human+unattributed") or []
+        for s in spots:
+            cands.append({"x": s["x"], "y": s["y"], "yaw_deg": s["yaw_deg"], "source": "dwell",
+                          "dwell": {k: s.get(k) for k in ("count", "dwell_s", "nearest_place", "first_seen",
+                                                          "last_seen", "windows") if k in s}})
+    except (OSError, ValueError, KeyError):
+        pass
+    mp = agent.map_pose_now()
+    planner = agent.planner
+    geo, geo_why = (None, "not lined up with the map") if mp is None else _geodesic(planner, mp["x"], mp["y"])
+    if sampled and planner is not None:
+        with planner.lock:
+            planner._grid()
+            dist = None if planner.occ is None else planner.dist.copy()
+            step = max(1, int(round(VIEW_GRID_M / 0.10)))
+        if dist is not None:
+            for r0 in range(0, dist.shape[0], step):          # the most open cell of each VIEW_GRID_M block
+                for c0 in range(0, dist.shape[1], step):
+                    blk = dist[r0:r0 + step, c0:c0 + step]
+                    if blk.size == 0 or blk.max() < VIEW_CLEAR_M:
+                        continue
+                    br, bc = np.unravel_index(int(np.argmax(blk)), blk.shape)
+                    x, y = planner.xy(r0 + br, c0 + bc)
+                    for k in range(VIEW_HEADINGS):
+                        cands.append({"x": round(x, 2), "y": round(y, 2),
+                                      "yaw_deg": round(-180 + k * 360.0 / VIEW_HEADINGS, 1), "source": "sampled"})
+    with trail.lock:
+        pts = [p[:4] for p in trail.points]
+    if patrols is not None:
+        pts += patrols.view_points()
+    out = []
+    for cnd in cands:
+        x, y, yaw = float(cnd["x"]), float(cnd["y"]), math.radians(float(cnd["yaw_deg"]))
+        n, last = _seen(pts, x, y, yaw)
+        cnd.update(seen_n=n, last_seen_t=last)
+        z = keepout.hit(x, y, margin=0.2)
+        if z:
+            cnd.update(refuse={"code": "keep_out", "detail": f"inside keep-out zone {z['id']}"})
+        if geo is not None:
+            r, c = planner.cell(x, y)
+            d = geo[r, c] if planner.inside(r, c) else math.inf
+            if math.isfinite(d):
+                cnd["route_m"] = round(float(d), 2)
+                cnd["est_s"] = round(GOTO_OVERHEAD_S + d / WALK_V + SETTLE_S, 1)
+            elif "refuse" not in cnd:
+                cnd["refuse"] = {"code": "no_route", "detail": "no walkable path at the planner's normal clearance "
+                                                               "(the full /patrol/check may still find a tight one)"}
+        out.append(cnd)
+    out.sort(key=lambda v: (v["source"] == "sampled", v.get("route_m", 1e9)))
+    return {"from": None if mp is None else {"x": round(mp["x"], 2), "y": round(mp["y"], 2)},
+            "route_note": geo_why or "route_m: 8-connected walk on the planning grid at 0.28 m clearance, no turns; "
+                                      "use /patrol/check for the planner's real route and refusals",
+            "seen_rule": SEEN_RULE, "n": len(out), "candidates": out[:limit], "truncated": len(out) > limit,
+            "map_id": getattr(agent.mapper, "saved_at", None)}
+
+
+def prior(prior_dir):
+    """The driving prior (Oliver's hand driving, 11-21 analysis) as one JSON."""
+    try:
+        with open(os.path.join(prior_dir, "prior.json")) as f:
+            p = json.load(f)
+        with open(os.path.join(prior_dir, "dwell_views.json")) as f:
+            d = json.load(f)
+    except (OSError, ValueError) as e:
+        return None, str(e)
+    return {"prior": p, "dwell_views": d, "report": "/patrol/prior/REPORT.md", "map": "/patrol/prior/paths.png",
+            "note": "dwell = where Oliver stopped; it reflects what he was recording, not what is worth looking at"}, None
