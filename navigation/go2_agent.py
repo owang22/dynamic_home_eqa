@@ -58,8 +58,8 @@ HOLD_AFTER_STAND_S = 15.0
 HELD_FILE = os.environ.get("GO2_HELD_CLOUD", "/maps/held_cloud.json")   # saved on lie-down, reloaded after a restart                 # merge held cells into a sparse live map only this long after a stand-up   # replace the held cloud when live has >= 80% of its cells; merge below 50%
 LOW_H = (0.10, 0.18)       # AUT ask 1528: low cells (wheel bases, cables, box edges) the dog's own avoidance may see;
                            # the console keeps cells from 0.10 m (OBSTACLE_MIN_H), nothing lower is available
-DOG_AVOID_OFF_V, DOG_AVOID_OFF_M = 0.10, 0.30   # one-shot dog_avoid: false (Oliver-approved exception, ask 1528)
-LAT_MAX_M, LAT_V = 0.5, 0.15   # /agent/move lateral_m (AUT ask 1450): per call, m/s (Oliver's 11-21 pocket exit: 0.27 m
+DOG_AVOID_OFF_V, DOG_AVOID_OFF_M = 0.25, 0.30   # AUT ask 1600: 0.10 was below the Go2's stepping speed   # one-shot dog_avoid: false (Oliver-approved exception, ask 1528)
+LAT_MAX_M, LAT_V = 0.5, 0.25   # ask 1600: the Go2 barely steps below ~0.25 m/s   # /agent/move lateral_m (AUT ask 1450): per call, m/s (Oliver's 11-21 pocket exit: 0.27 m
                                # sideways with 0.37 m back in 3.7 s)
 MAX_MOVE_M, MAX_TURN_DEG = 3.0, 360.0      # per call
 FRONT_CLEAR = (0.35, 0.90, 0.25)           # obstacle box ahead of base_link: x from, x to, half width (m)
@@ -750,9 +750,18 @@ class Agents:
                 return {"result": "done", "moved_m": round(done * sign, 3)}
             ob = self.obstacle(sign, force=True)   # front box even with the dog's avoidance on: it missed a chair
                                                    # on 11-21 (p_20261121_182815), so agents don't rely on it alone
-            if ob is not None:
+            # AUT ask 1600 (Oliver-approved): only what the rest of this move reaches counts: the body end + the
+            # distance still to go + the coast + the arc margin (the box itself still reaches 0.90 m ahead / 0.75 behind)
+            vv = max(MIN_SPEED, min(MOVE_SPEED, max(left, 0.0) * 1.2)) if sign > 0 else BACK_SPEED
+            if v_max is not None:
+                vv = min(vv, v_max)
+            mg = self.margins()["arc_margin_m"]
+            need = BODY_HL + max(left, 0.0) + vv * ARC_COAST_S + mg
+            if ob is not None and ob < need:
                 return {"result": "blocked", "side": "front" if sign > 0 else "back",
-                        "reason": f"obstacle {ob:.2f} m from the robot centre", "moved_m": round(done * sign, 3)}
+                        "reason": f"obstacle {ob:.2f} m from the robot centre (this move needs {need:.2f} m: body "
+                                  f"{BODY_HL} + {max(left, 0):.2f} to go + coast + margin {mg:.2f})",
+                        "moved_m": round(done * sign, 3), "obstacle_m": round(ob, 3), "need_m": round(need, 3)}
             now = time.monotonic()
             hist.append((now, done))
             while hist and now - hist[0][0] > STALL_S:

@@ -205,11 +205,27 @@ ok("dog_avoid false over 0.3 m: refused", code == 409 and out["why"]["code"] == 
 n0 = len(w.node.calls)
 code, out = ag.tool("move", C, {"client": C, "lateral_m": -0.2, "dog_avoid": False, "timeout_s": 10})
 mv = [c for c in w.node.calls[n0:] if c[2] == "move"]
-ok("dog_avoid false strafe right (clear): done, avoidance off then back on, |vy| <= 0.10",
+ok("dog_avoid false strafe right (clear): done, avoidance off then back on, |vy| <= 0.25",
    out.get("result") == "done" and sets == [False, True] and w.node.avoid is True and out.get("dog_avoid_restored") is True
-   and mv and max(abs(c[4]) for c in mv) <= 0.1001, (out.get("result"), sets, max(abs(c[4]) for c in mv) if mv else None))
+   and mv and max(abs(c[4]) for c in mv) <= 0.2501, (out.get("result"), sets, max(abs(c[4]) for c in mv) if mv else None))
 code, out = ag.tool("arc", C, {"client": C, "v_mps": 0.1, "w_radps": 0.0, "distance_m": 0.2, "dry": True})
 ok("arc dry run reports the low band", "low" in out and "low_min_clearance_m" in out["low"], out.get("low"))
+w.cloud.obs = []; time.sleep(0.3)
+
+# ask 1600: strafe 0.25 m/s, move-sized front box
+n0 = len(w.node.calls)
+code, out = ag.tool("move", C, {"client": C, "lateral_m": -0.2, "timeout_s": 10})
+mv = [c for c in w.node.calls[n0:] if c[2] == "move"]
+ok("strafe commands 0.25 m/s", out.get("result") == "done" and mv and abs(max(abs(c[4]) for c in mv) - 0.25) < 1e-6,
+   max(abs(c[4]) for c in mv) if mv else None)
+FH("/agent/margins", {"client": C, "arc_margin_m": 0.02})
+w.cloud.obs = [[*body_pt(w, 0.56, 0.0), 0.4]]; time.sleep(0.4)
+code, out = ag.tool("move", C, {"client": C, "m": 0.1, "timeout_s": 10})
+ok("obstacle 0.56 m ahead: a 0.1 m step at margin 0.02 is allowed", out.get("result") == "done", out)
+w.cloud.obs = [[*body_pt(w, 0.56, 0.0), 0.4]]; time.sleep(0.4)
+code, out = ag.tool("move", C, {"client": C, "m": 0.3, "timeout_s": 10})
+ok("same obstacle: a 0.3 m step is blocked with need_m", out.get("result") == "blocked" and out.get("need_m"), out.get("reason"))
+FH("/agent/margins", {"client": C, "reset": True})
 w.cloud.obs = []; time.sleep(0.3)
 
 # stall_info

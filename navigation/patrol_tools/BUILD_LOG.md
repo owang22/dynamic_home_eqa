@@ -158,3 +158,11 @@ wake after 11-21 15:52).
 - **stall_info:** now includes `cmd_vel` (the last commanded x / y / yaw and its age), `move_api` (avoidance service
   or cmd_vel) and `sport_mode`. Sport mode is not available: the driver publishes mode, gait and foot_force as 0.
 - Tests: test_margins 51/51, test_view 78/78, test_patrol 71/71, test_arc 78/78.
+
+## 2026-11-22 16:0x — AUT ask 1600 (Oliver-approved exceptions)
+- Strafe speed LAT_V 0.15 -> 0.25 m/s, and the dog_avoid false speed cap 0.10 -> 0.25 m/s. The Go2 barely steps below
+  ~0.25. The side-gap check and the 0.5 m per call are unchanged.
+- `/agent/move m`: the front/back box (0.35-0.90 ahead, the map raycast + live box behind) now blocks only obstacles
+  nearer than body 0.35 + distance still to go + coast (0.3 s at the commanded speed) + the agent's arc margin.
+  Blocked replies carry `obstacle_m` and `need_m`.
+- Tests: test_margins 54/54, test_view 78/78, test_patrol 71/71, test_arc 78/78.
