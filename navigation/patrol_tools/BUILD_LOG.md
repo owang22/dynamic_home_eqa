@@ -166,3 +166,10 @@ wake after 11-21 15:52).
   nearer than body 0.35 + distance still to go + coast (0.3 s at the commanded speed) + the agent's arc margin.
   Blocked replies carry `obstacle_m` and `need_m`.
 - Tests: test_margins 54/54, test_view 78/78, test_patrol 71/71, test_arc 78/78.
+
+## 2026-11-23 16:45 — console: re-line-up from a tag when lost (Oliver)
+Oliver: tag A's yellow box sat ~1.5 m from its pink table spot and the dog never re-aligned. marker_fix had logged
+too_far (shift 1.4-1.6 m > MK_MAX_SHIFT 1.0) every 5 s while loc said lost+suspect and the fresh lidar fit the tag
+pose 0.80 vs 0.40 at the current pose. New: marker_fix_tick re-lines-up from the tag (lineup_from_marker, the "Line
+up again" path) when lost or suspect, sightings consistent, and fit_marker >= fit_now + 0.15; at most every 15 s.
+Pose only, never motion. Confident poses are untouched (marker_clash and the gate both require lost/suspect).

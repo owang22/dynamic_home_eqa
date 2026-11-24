@@ -998,6 +998,18 @@ class Collector(Node):
         rec = MAPPER.marker_fix(odom, snap["list"], MARKER_TABLE.get())
         if rec and rec.get("action") not in (None, "agree"):
             print(f"[markers] {rec}", flush=True)
+        # Lined up but lost/suspect, and the tag pose fits the live lidar clearly better than the current pose:
+        # re-line-up from the tag (Oliver 11-23: tag A box 1.5 m from its pink table spot, dog stayed misaligned;
+        # marker_fix refused it as too_far). Same path as "Line up again" from a tag: vision seeds, lidar refines.
+        if (rec and MAPPER.T is not None and not MAPPER._aligning and not MAPPER.mapping and odom is not None
+                and tag_relock_ok(rec, MAPPER.loc_info(track_n=0))
+                and now - getattr(self, "_relock_t", 0.0) > AUTO_TAG_RELOCK_S):
+            choice = marker_lineup_choice()
+            if choice["via"] == "marker":
+                self._relock_t = now
+                err = MAPPER.lineup_from_marker(odom, choice["pose"], by="auto: lost, tag fits better")
+                print(f"[lineup] relock from tag {choice['pose']['best']['mark']} (shift {rec['shift']:.2f} m, fit "
+                      f"{rec['fit_now']:.2f} -> {rec['fit_marker']:.2f}): {err or 'started'}", flush=True)
 
     def update_map_pose(self):
         """Robot pose on the lab map; also lines a new session up with the saved map when needed."""
@@ -1109,6 +1121,19 @@ def marker_lineup_choice():
 
 
 AUTO_TAG_LINEUP_S = 10.0  # not lined up: try a line-up from a tag in view at most this often
+AUTO_TAG_RELOCK_S = 15.0  # lined up but lost: re-line-up from a tag at most this often
+RELOCK_FIT_GAIN = 0.15    # ...only when the tag pose's fresh-lidar fit beats the current pose's by this much
+
+
+def tag_relock_ok(rec, loc):
+    """True when a marker_fix record says re-line-up from the tag: the console is lost or suspect, the tag
+    sightings agree with each other, and the live lidar fits the tag pose clearly better than the current one."""
+    if not (loc.get("lost") or loc.get("suspect")):
+        return False
+    if rec.get("action") not in ("too_far", "would_move", "lidar_disagrees"):
+        return False
+    f0, f1 = rec.get("fit_now"), rec.get("fit_marker")
+    return f0 is not None and f1 is not None and f1 >= f0 + RELOCK_FIT_GAIN
 
 
 TAG_VIEW_DIST = (0.8, 3.0)        # a tag reads well from this far ...
