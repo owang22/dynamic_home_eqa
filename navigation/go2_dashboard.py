@@ -1122,7 +1122,7 @@ def marker_lineup_choice():
 
 AUTO_TAG_LINEUP_S = 10.0  # not lined up: try a line-up from a tag in view at most this often
 AUTO_TAG_RELOCK_S = 15.0  # lined up but lost: re-line-up from a tag at most this often
-RELOCK_FIT_GAIN = 0.15    # ...only when the tag pose's fresh-lidar fit beats the current pose's by this much
+RELOCK_FIT_GAIN = 0.10    # ...only when the tag pose's fresh-lidar fit beats the current pose's by this much (Oliver 11-23: 0.10)
 
 
 def tag_relock_ok(rec, loc):
