@@ -5,7 +5,7 @@
 # the go2_test container, which also stops the L515 receiver, so the bridge is always (re)started after.
 # Log: /tmp/go2_wake.log. Only one wake runs at a time.
 HERE=$(dirname "$(readlink -f "$0")")
-exec 9>/tmp/go2_wake.lock
+exec 9>/tmp/go2_wake.run.lock   # 11-23: renamed; an L515 tunnel from 11-21 holds the old lock file forever
 flock -n 9 || { echo "wake already running"; exit 0; }
 {
   echo "=== wake $(date '+%F %T')"
