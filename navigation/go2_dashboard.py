@@ -131,8 +131,9 @@ AUTO_REC_JPEG_Q = 80       # camera saved as full-size JPEG (~80 KB/frame) inste
 # discovery), so an L515 that is off or starts mid-session neither blocks nor delays the Go2 topics; its topics are
 # simply missing from the bag (tested 2026-11-16). Measured with the L515 at ~8 Hz: depth 614 KB -> ~207 KB per
 # frame with zstd, colour JPEG ~46 KB: about +7.6 GB/hour (~9 GB/hour at its 10 Hz max) on top of the Go2's ~4.
-AUTO_REC_TOPICS = (["/camera/image_raw/compressed", "/camera/camera_info", "/point_cloud2"] + REC_TOPICS["pose"]
-                   + REC_TOPICS["l515"])
+CMD_LOG_TOPIC = "/go2/cmd_log"   # std_msgs/String JSON, one per command the console sends or refuses (cheetah 11-26)
+AUTO_REC_TOPICS = (["/camera/image_raw/compressed", "/camera/camera_info", "/point_cloud2", CMD_LOG_TOPIC]
+                   + REC_TOPICS["pose"] + REC_TOPICS["l515"])
 # zstd per message shrinks lidar clouds ~5x. rosbag2's compression queue defaults to 1 and then drops messages
 # (most clouds were lost in a replay test), so give it room and two threads.
 AUTO_REC_ARGS = ["--compression-mode", "message", "--compression-format", "zstd",
@@ -662,6 +663,7 @@ class Collector(Node):
         self.jpeg_pub = self.create_publisher(CompressedImage, "/camera/image_raw/compressed", 10)  # auto recording
         self.last_cmd = 0.0      # monotonic time of the last motion/posture command: AutoRecorder's idle check
         self.req_pub = self.create_publisher(WebRtcReq, "webrtc_req", 10)
+        self.cmd_pub = self.create_publisher(String, CMD_LOG_TOPIC, 50)   # every command sent (cheetah 11-26)
         self.moving, self.last_move = False, 0.0
         self.avoid = False
         self.head = 0.0          # camera tilt from body pitch, rad, + = looking up
@@ -701,7 +703,7 @@ class Collector(Node):
 
         def lie():
             try:
-                self.action("lie")
+                self.action("lie", src="console:idle_lie")
                 self.idle_lie = {"t": round(time.time(), 1), "idle_s": round(idle, 1),
                                  "owner": None if not o else o.get("client"),
                                  "why": f"standing still with no command for {IDLE_LIE_S:.0f} s (saves battery and motor heat)"}
@@ -726,7 +728,8 @@ class Collector(Node):
     def send(self, name):
         self.req(CMD[name], SPORT_TOPIC, "", 1 if name == "StopMove" else 0)
 
-    def stop(self):
+    def stop(self, src=None):
+        self.log_cmd("stop", src=src, outcome="sent")
         if self.avoid:
             self.req(AVOID_MOVE, AVOID_TOPIC, {"x": 0.0, "y": 0.0, "yaw": 0.0, "mode": 0}, 1)
         self.send("StopMove")
@@ -741,6 +744,7 @@ class Collector(Node):
         if DEPLOYING:
             return
         self.head = max(-HEAD_MAX, min(HEAD_MAX, float(rad)))
+        self.log_cmd("look", look_deg=round(math.degrees(self.head), 1), outcome="sent")
         self.last_cmd = time.monotonic()
         self.moving = False
         self.send("BalanceStand")
@@ -755,12 +759,30 @@ class Collector(Node):
         self.driver, self.driver_ip, self.driver_t = client, ip, now
         return True
 
+    def log_cmd(self, kind, src=None, **f):
+        """Publish one command record on CMD_LOG_TOPIC (std_msgs/String JSON; in the auto recordings). Never raises:
+        logging must not break control (11-22 lesson)."""
+        try:
+            if src is None:
+                cur = AG.current if AG else None
+                src = (f"agent:{cur['client']}:{cur['call']}" if cur else
+                       f"human:{self.driver}@{self.driver_ip}" if self.driver else "console")
+            d = {"t": round(time.time(), 3), "kind": kind, "src": src, "avoid": self.avoid, "speed": self.speed}
+            d.update(f)
+            self.cmd_pub.publish(String(data=json.dumps(d)))
+        except Exception as e:
+            print(f"[cmd_log] {type(e).__name__}: {e}", flush=True)
+
     def move(self, x, y, z):
         if DEPLOYING:            # backstop for agent loops still running: no motion while deploying
             self.moving = False
+            self.log_cmd("move", requested=[x, y, z], outcome="dropped: deploying")
             return
+        req = [x, y, z]
         x, y, z = (max(-l, min(l, float(v))) for v, l in zip((x, y, z), SPEEDS[self.speed]))
         x = max(-BACK_MAX, x)
+        self.log_cmd("move", requested=[round(float(v), 3) for v in req], sent=[round(x, 3), round(y, 3), round(z, 3)],
+                     via="avoid service" if self.avoid else "cmd_vel", outcome="sent")
         if self.avoid and time.monotonic() - getattr(self, "last_cmd", 0.0) > AVOID_REASSERT_S:
             self.reassert_avoid()
         self.last_cmd = time.monotonic()
@@ -786,6 +808,7 @@ class Collector(Node):
         time.sleep(0.05)
 
     def set_avoid(self, on):
+        self.log_cmd("avoid", on=bool(on), outcome="sent")
         self.moving = False
         self.stop()
         self.avoid = bool(on)
@@ -793,10 +816,12 @@ class Collector(Node):
         time.sleep(0.2)
         self.req(AVOID_USE_API, AVOID_TOPIC, {"is_remote_commands_from_api": self.avoid})
 
-    def action(self, name):
+    def action(self, name, src=None):
         self.moving = False
         if DEPLOYING:
+            self.log_cmd("action", src=src, action=name, outcome="dropped: deploying")
             return
+        self.log_cmd("action", src=src, action=name, outcome="sent")
         self.last_cmd = time.monotonic()
         self.head = 0.0      # standing up or lying down resets the body pose
         self.stop()
@@ -829,7 +854,7 @@ class Collector(Node):
     def deadman(self):
         if self.moving and time.monotonic() - self.last_move > DEADMAN_S:
             self.moving = False
-            self.stop()
+            self.stop(src="console:deadman")
 
     def stamp(self, key):
         latest["stamps"][key] = time.time()
@@ -1169,6 +1194,9 @@ _CMDLOG = {"t": 0.0, "last": None}
 def cmdlog(client, ip, req, outcome):
     """Oliver 11-21: manual driving does nothing with avoidance on. Log each /cmd drive request and what happened to
     it: a change of outcome at once, repeats at most once a second (moves arrive at 10 Hz)."""
+    if not outcome.startswith("sent") and NODE:     # refusals never reach Node; sent ones are logged there
+        NODE.log_cmd("refused", src=f"human:{client}@{ip}",
+                     request={k: req[k] for k in ('move', 'avoid', 'action', 'look_deg') if k in req}, outcome=outcome)
     key = (client, outcome)
     now = time.monotonic()
     if key != _CMDLOG["last"] or now - _CMDLOG["t"] > 1.0:

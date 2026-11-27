@@ -173,3 +173,11 @@ too_far (shift 1.4-1.6 m > MK_MAX_SHIFT 1.0) every 5 s while loc said lost+suspe
 pose 0.80 vs 0.40 at the current pose. New: marker_fix_tick re-lines-up from the tag (lineup_from_marker, the "Line
 up again" path) when lost or suspect, sightings consistent, and fit_marker >= fit_now + 0.15; at most every 15 s.
 Pose only, never motion. Confident poses are untouched (marker_clash and the gate both require lost/suspect).
+
+## 2026-11-26 18:40 — /go2/cmd_log + body export (cheetah ask 1806, Oliver approved)
+- Console publishes every command it sends or refuses on /go2/cmd_log (std_msgs/String JSON: t, kind
+  move/stop/action/avoid/look/refused, src agent:<client>:<call> | human:<client>@<ip> | console:deadman |
+  console:idle_lie, avoid, speed, requested/sent vector, via avoid service|cmd_vel, outcome). Added to
+  AUTO_REC_TOPICS. log_cmd never raises.
+- patrol_tools/body_export/export_body.py: auto bags (zstd per message) -> CSV per topic (go2_states, odom, imu,
+  joint_states) + events.jsonl. 18 Nov exported to ~/oliver/go2_recordings/exports/body_1118 (data, not in git).
