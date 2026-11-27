@@ -1,4 +1,4 @@
-# cheetah -> z690: body + command + audio logs for the "stuck" questions (Oliver approved, 27 Nov)
+# cheetah -> z690: body + command + audio logs for the "stuck" questions (Oliver approved, 26 Nov)
 
 No dog motion is needed for any of this. Oliver has dropped the "robot got stuck" questions from the eval for now:
 from images alone a stuck dog looks the same as a parked one. We want to bring them back, graded against a
